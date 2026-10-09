@@ -16,7 +16,7 @@ orangui is a set of Tampermonkey userscripts that restyle the owner's work web a
 src/core.js               # every script: theme variables, the picker, the recolor engine, the menu, start()
 src/fluent.js             # Teams and Outlook: Fluent token map, zwipe shapes on fui-* classes
 orangui-teams.user.js     # Teams' own tokens, chat bubbles, the message-list grid
-orangui-outlook.user.js   # the Fluent look and nothing else yet
+orangui-outlook.user.js   # Outlook's surface variables, the reading-pane grid, message cards
 orangui-halo.user.js      # Halo: zwipe shapes on Halo's classes, note iframes, the recolor on everything
 scripts/sync.mjs          # fills the themes and src/ blocks in every *.user.js
 context/                  # this documentation
@@ -40,7 +40,9 @@ node scripts/sync.mjs                 # zwipe's palettes and src/ into every scr
 for f in *.user.js; do node --check "$f"; done
 ```
 
-To try a change without pushing, paste the file into a new Tampermonkey script and disable the installed one. A saved page ("Web Page, Complete") with its scripts stripped and the userscript plus `GM_*` stubs added renders fine in headless Chrome, which is how both scripts were first checked.
+Changes ship straight to `main`, look tweaks included: no holding them back for a review round. The scripts update from raw `main`, so that's where the owner tries them.
+
+A saved page ("Web Page, Complete") with its scripts stripped and the userscript plus `GM_*` stubs added renders in headless Chrome for Halo and Teams. Outlook's layout is built at runtime and doesn't survive the save, so Outlook changes get checked live.
 
 ## Commit Guidelines
 

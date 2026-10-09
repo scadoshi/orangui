@@ -270,6 +270,9 @@ const fluent8 = {
   neutralLight: v('b2'),
   neutralLighter: v('bg'),
   neutralLighterAlt: v('sink'),
+  // Outlook's surface pair: cards and rows on the primary, the panes behind them on the secondary.
+  neutralPrimarySurface: v('bg'),
+  neutralSecondarySurface: v('sink'),
   white: v('bg'),
   redDark: v('err'),
 };
