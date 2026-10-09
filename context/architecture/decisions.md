@@ -29,3 +29,15 @@ Fluent's resets and Teams' own CSS can't reach inside a closed shadow root, and 
 ## 7. Rounded, like zwipe, not square
 
 The script this grew from zeroed every radius and drew `[ ]` text buttons for a terminal look. orangui follows zwipe instead: 0.4rem inputs, 0.5rem buttons, 0.6rem chips, 1rem panels, and outlines that take the accent on hover. The ASCII spinner stayed because zwipe would have it.
+
+## 8. Shared code is copied, not required
+
+The picker, the theme code and the recolor live once in `src/core.js`, and `scripts/sync.mjs` copies them into each script between markers. Tampermonkey's `@require` would avoid the copy, but every script would then depend on a second URL being reachable from a work network, and the files would stop being readable on their own.
+
+## 9. Recolor the literals where there are no tokens
+
+Halo writes its colors as literals across five stylesheets and as inline styles in hundreds of places, so there is nothing to override the way Fluent's tokens are. The recolor reads each literal by its role (background, text, border), its hue and its gray level, and rewrites it to a theme variable in place. It's a cruder map than Fluent's, but it covers parts of Halo nobody has looked at yet, and a theme change still only touches the variables.
+
+## 10. Read dark rules as dark
+
+The gray ladder runs the other way on a dark page: `#353535` is the page in Halo's dark theme, but the same gray would be a heavy border in its light one. A rule whose selector or media query mentions dark is read as dark, and inline styles are read by whether the page currently has `.theme-dark`. Without this, every gray in Halo's dark theme lands on the same border color.

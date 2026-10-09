@@ -14,8 +14,8 @@ Read [`CLAUDE.md`](CLAUDE.md) first for the rules.
 
 ## Current focus
 
-**2026-10-09: first version.** `orangui-fluent.user.js` themes Teams and Outlook from zwipe's palettes, with the picker on Alt+Shift+T and a draggable ◐ launcher. It grew out of a Gruvbox-only Teams + Outlook script; the token map is the same idea, pointed at theme variables instead of fixed hex.
+**2026-10-09: Halo joins.** `orangui-halo.user.js` themes the Halo agent app with the same picker and stored theme as Teams and Outlook. Halo has no color variables, so the shared core gained a recolor engine that rewrites color literals in place; Teams uses it too, for the purple Fluent's tokens didn't reach. The picker walks with the arrow keys and has one dark/light button.
 
-It has been checked against a mock Fluent page in headless Chrome, not yet on live Teams or Outlook. That's the next thing: install it on the work machine and fix whatever Fluent does differently in production.
+Both scripts have been checked in headless Chrome: Teams against a mock Fluent page, Halo against a saved ticket page from the owner's instance (Halo's dark theme). Neither has run on the live sites yet, and that's next.
 
 See [`progress/todo.md`](progress/todo.md) for the ordered list.
