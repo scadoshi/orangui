@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-09: outlook 0.4.1
+
+Outlook's message list sits on zwipe's grid, under and around the rows.
+
 ## 2026-10-09: teams 0.3.3
 
 The chat list gets two levels. The open chat is primary: filled with the primary accent, outlined, with a bar at its left edge. Unread chats not yet opened are secondary: outlined in the secondary accent with the name in it, no fill.
