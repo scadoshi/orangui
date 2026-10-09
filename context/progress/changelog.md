@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-09: teams 0.3.0, outlook 0.3.0, halo 0.2.0
+
+The combined Teams + Outlook script splits into `orangui-teams.user.js` and `orangui-outlook.user.js`, sharing `src/fluent.js`. Teams' message list sits on zwipe's grid, and the purple that still leaked is gone where it can be reached: Teams' own tokens are mapped, and the recolor now catches token rules Fluent swaps in after load. In Halo, ticket notes and emails take the mono font and theme colors.
+
 ## 2026-10-09: fluent 0.2.0, halo 0.1.0
 
 Halo gets its own script, `orangui-halo.user.js`, for `*.haloservicedesk.com`. The picker and theme code move to `src/core.js`, which `scripts/sync.mjs` copies into every script, and the core gains a recolor engine that rewrites color literals in stylesheets, inline styles and SVG color attributes, reading Halo's dark-theme rules as dark.

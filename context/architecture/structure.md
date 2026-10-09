@@ -14,8 +14,10 @@ Every userscript has the same three parts, in the order they run: the generated 
 
 ## The site scripts
 
-`orangui-fluent.user.js` maps every Fluent v9 token (and Outlook's v8 palette) to a theme variable, then adds zwipe's shapes on `fui-*` classes: dialogs, cards, text buttons, inputs, chat bubbles, avatars, the spinner. It runs the recolor for saturated colors only, which catches Teams' purple wherever it's a literal.
+`src/fluent.js`, copied into the Teams and Outlook scripts, maps every Fluent v9 token (and Outlook's v8 palette) to a theme variable and adds zwipe's shapes on `fui-*` classes: dialogs, cards, text buttons, inputs, avatars, the spinner. It exports `FLUENT_CSS`.
 
-`orangui-halo.user.js` is mostly CSS on Halo's stable classes (nav, menu, widgets, modals, buttons, tabs, list headers, avatars) and runs the recolor on everything: grays, fonts and radii included. `darkPage: '.theme-dark'` tells it when inline styles were written for Halo's dark theme.
+`orangui-teams.user.js` adds Teams' own tokens (`colorTeamsBrand1*`, `colorBrandFlair*`, Copilot's glow, the bubble variables), the outlined chat bubbles, and zwipe's grid on `[data-tid="message-pane-list-viewport"]`. `orangui-outlook.user.js` is the Fluent look alone. Both run the recolor for saturated colors only, which catches purple wherever it's a literal or a rule Teams swaps in at runtime. Teams' biggest stylesheet comes from its CDN and can't be read, so the purple left in it (Copilot glows, brand gradients) stays.
+
+`orangui-halo.user.js` is mostly CSS on Halo's stable classes (nav, menu, widgets, modals, buttons, tabs, list headers, avatars) and runs the recolor on everything: grays, fonts and radii included. `darkPage: '.theme-dark'` tells it when inline styles were written for Halo's dark theme. Notes and emails render in a same-origin `iframe.halo-html-renderer` the script isn't loaded into, so it writes the theme and the font into each one from the parent, again on every theme change through `onTheme`.
 
 The picker only mounts in the top frame. Styles apply in every frame, and storage listeners keep frames and tabs on the same theme.

@@ -41,3 +41,11 @@ Halo writes its colors as literals across five stylesheets and as inline styles 
 ## 10. Read dark rules as dark
 
 The gray ladder runs the other way on a dark page: `#353535` is the page in Halo's dark theme, but the same gray would be a heavy border in its light one. A rule whose selector or media query mentions dark is read as dark, and inline styles are read by whether the page currently has `.theme-dark`. Without this, every gray in Halo's dark theme lands on the same border color.
+
+## 11. One script per app
+
+Teams and Outlook began as one script because they share Fluent UI. They are separate now so each can carry its own fixes and be turned on or updated alone; the part they share is `src/fluent.js`, copied into both like the core.
+
+## 12. Track rewritten rules one by one
+
+The recolor first skipped any stylesheet whose rule count hadn't changed. Fluent replaces its token rule at the same index when Teams finishes starting up, so the count stays put and the new purple went unread. Each rewritten rule now goes into a `WeakSet` and every scan walks all readable rules, which costs a few milliseconds every 1.5 seconds.
