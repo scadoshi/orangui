@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-09: teams 0.3.3
+
+The chat list gets two levels. The open chat is primary: filled with the primary accent, outlined, with a bar at its left edge. Unread chats not yet opened are secondary: outlined in the secondary accent with the name in it, no fill.
+
 ## 2026-10-09: teams 0.3.2
 
 Unread chats in the Teams list are outlined and tinted in the accent, with the chat's name in the accent too.

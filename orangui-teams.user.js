@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         orangui: Teams
 // @namespace    scadoshi
-// @version      0.3.2
+// @version      0.3.3
 // @description  zwipe's look and its 31 themes for Teams on the web. Alt+Shift+T opens the theme picker.
 // @author       scadoshi
 // @homepageURL  https://github.com/scadoshi/orangui
@@ -1182,18 +1182,29 @@ const THEMES = {
     /* nested bubbles, like a quoted reply inside a message, keep a single outline */
     :is(.fui-ChatMessage__body, .fui-ChatMyMessage__body) [data-tid="chat-pane-message"] { border: none !important; }
 
-    /* unread chats in the list: outlined and tinted in the accent, name in the accent too */
+    /* the chat list. The open chat is primary: filled with the primary accent, outlined, a bar at its left edge.
+       An unread chat not yet opened is secondary: outlined in the secondary accent, its name in it too, no fill.
+       Fill against outline keeps the two apart even where a theme's two accents sit close. */
     :is(
       [role="treeitem"][aria-labelledby~="chat_list_unread_text"] > .fui-TreeItemLayout,
       .fui-TreeItemLayout:has(> .fui-TreeItemLayout__main > [data-tid="unread"])
     ) {
-      outline: 1px solid var(--og-a1) !important; outline-offset: -1px;
-      background-color: color-mix(in srgb, var(--og-a1) 12%, transparent) !important;
+      outline: 1px solid var(--og-a2) !important; outline-offset: -1px;
+      background-color: transparent !important;
     }
     :is(
       [role="treeitem"][aria-labelledby~="chat_list_unread_text"] > .fui-TreeItemLayout,
       .fui-TreeItemLayout:has(> .fui-TreeItemLayout__main > [data-tid="unread"])
-    ) [id^="title-chat-list-item"] { color: var(--og-a1) !important; }
+    ) [id^="title-chat-list-item"] { color: var(--og-a2) !important; }
+
+    :is([role="treeitem"][data-tabster*="LeftRailSelectedItem"], [role="treeitem"][aria-selected="true"]) > .fui-TreeItemLayout {
+      outline: 1px solid var(--og-a1) !important; outline-offset: -1px;
+      background-color: color-mix(in srgb, var(--og-a1) 22%, var(--og-bg)) !important;
+      box-shadow: inset 3px 0 0 var(--og-a1) !important;
+    }
+    :is([role="treeitem"][data-tabster*="LeftRailSelectedItem"], [role="treeitem"][aria-selected="true"]) > .fui-TreeItemLayout [id^="title-chat-list-item"] {
+      color: var(--og-text) !important;
+    }
   `;
 
   // Fluent's tokens cover the grays; the recolor catches the Teams purple set as literals and in rules Teams rewrites in place.
