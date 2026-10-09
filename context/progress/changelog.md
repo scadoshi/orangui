@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-09: teams 0.3.1, outlook 0.4.0, halo 0.2.1
+
+The picker is bigger: about 60rem wide, the themes in a grid of larger cards, with a bigger title, toggle, swatches and buttons. In Outlook, the open email sits on zwipe's grid as an outlined card, and Outlook's surface variables follow the theme.
+
 ## 2026-10-09: teams 0.3.0, outlook 0.3.0, halo 0.2.0
 
 The combined Teams + Outlook script splits into `orangui-teams.user.js` and `orangui-outlook.user.js`, sharing `src/fluent.js`. Teams' message list sits on zwipe's grid, and the purple that still leaked is gone where it can be reached: Teams' own tokens are mapped, and the recolor now catches token rules Fluent swaps in after load. In Halo, ticket notes and emails take the mono font and theme colors.

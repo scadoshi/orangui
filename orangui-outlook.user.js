@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         orangui: Outlook
 // @namespace    scadoshi
-// @version      0.3.0
+// @version      0.4.0
 // @description  zwipe's look and its 31 themes for Outlook on the web. Alt+Shift+T opens the theme picker.
 // @author       scadoshi
 // @homepageURL  https://github.com/scadoshi/orangui
@@ -241,53 +241,58 @@ const THEMES = {
     .backdrop { position: fixed; inset: 0; z-index: 2147483646; background: var(--og-overlay); }
     .sheet {
       position: fixed; z-index: 2147483647; left: 50%; top: 50%;
-      width: min(26rem, calc(100vw - 2rem)); max-height: min(40rem, calc(100vh - 2rem));
+      width: min(60rem, calc(100vw - 2rem)); max-height: min(48rem, calc(100vh - 2rem));
       display: flex; flex-direction: column; overflow: hidden;
       background: var(--og-bg); color: var(--og-text);
       border: 1px solid var(--og-b2); border-radius: 1rem; box-shadow: var(--og-shadow-md);
     }
     .modal-header {
       position: relative; display: flex; justify-content: center; align-items: center; flex-shrink: 0;
-      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--og-b2); cursor: grab; touch-action: none; user-select: none;
+      padding: 1.5rem 2rem; border-bottom: 1px solid var(--og-b2); cursor: grab; touch-action: none; user-select: none;
     }
     .modal-header.dragging { cursor: grabbing; }
-    .modal-title { font-size: 1rem; color: var(--og-a3); }
-    .mode { position: absolute; right: 1rem; }
+    .modal-title { font-size: 1.3rem; color: var(--og-a3); letter-spacing: .05em; }
+    .mode { position: absolute; right: 1.5rem; }
 
     .chip {
-      padding: .3rem .6rem; border: 1px solid var(--og-b1); border-radius: .6rem; font-size: .75rem;
+      padding: .45rem .9rem; border: 1px solid var(--og-b1); border-radius: .6rem; font-size: .95rem;
       color: var(--og-text); background: var(--og-bg); box-shadow: var(--og-shadow-sm); cursor: pointer;
       transition: all .2s ease;
     }
     .chip:hover, .chip:focus-visible { border-color: var(--og-a2); color: var(--og-a2); outline: none; }
 
-    .modal-content { padding: 1rem 1.5rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: .4rem; scrollbar-width: none; }
+    /* the themes as a grid of cards, as many across as the width allows */
+    .modal-content {
+      padding: 1.5rem 2rem; overflow-y: auto; flex: 1; scrollbar-width: none;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: .6rem; align-content: start;
+    }
     .pref-row {
       display: flex; align-items: center; justify-content: space-between; gap: .5rem; width: 100%;
-      padding: .6rem 1rem; background: var(--og-bg); border: 1px solid var(--og-b1); border-radius: .4rem;
-      color: var(--og-muted); font-size: .85rem; text-align: left; cursor: pointer;
+      padding: .9rem 1.1rem; background: var(--og-bg); border: 1px solid var(--og-b1); border-radius: .6rem;
+      color: var(--og-muted); font-size: 1rem; text-align: left; cursor: pointer;
       transition: border-color .15s, color .15s;
     }
     .pref-row:hover, .pref-row:focus-visible { color: var(--og-text); outline: none; }
     .pref-row.selected { border-color: var(--og-a2); color: var(--og-text); }
+    .pref-row > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .theme-swatches {
-      display: flex; align-items: center; gap: .2rem; flex-shrink: 0; padding: .2rem .25rem;
-      border-radius: .35rem; background: var(--s-bg); border: 1px solid var(--s-muted);
+      display: flex; align-items: center; gap: .25rem; flex-shrink: 0; padding: .3rem .35rem;
+      border-radius: .45rem; background: var(--s-bg); border: 1px solid var(--s-muted);
     }
-    .theme-dot { width: .7rem; height: .7rem; border-radius: .22rem; flex-shrink: 0; }
-    .pref-section-label { font-size: 1rem; color: var(--og-a1); letter-spacing: .1em; text-align: center; margin: .75rem 0 .4rem; }
+    .theme-dot { width: .95rem; height: .95rem; border-radius: .3rem; flex-shrink: 0; }
+    .pref-section-label { grid-column: 1 / -1; font-size: 1.15rem; color: var(--og-a1); letter-spacing: .1em; text-align: center; margin: 1rem 0 .4rem; }
 
     .util-bar {
       flex-shrink: 0; display: flex; justify-content: center; align-items: center; gap: .5rem;
-      padding: 1rem; border-top: 1px solid var(--og-b2);
+      padding: 1.25rem; border-top: 1px solid var(--og-b2);
     }
     .util-btn {
-      padding: .4rem .8rem; font-size: .8rem; border-radius: .5rem; background: var(--og-bg);
+      padding: .55rem 1.3rem; font-size: 1rem; border-radius: .5rem; background: var(--og-bg);
       border: 1px solid var(--og-b1); color: var(--og-text); cursor: pointer; transition: all .1s ease;
     }
     .util-btn:hover:not(:disabled) { border-color: var(--og-a1); color: var(--og-a1); }
     .util-btn:disabled { opacity: .5; cursor: not-allowed; }
-    .hint { font-size: .7rem; color: var(--og-warn); text-align: center; padding: 0 1rem .75rem; }
+    .hint { font-size: .85rem; color: var(--og-warn); text-align: center; padding: 0 1rem 1rem; }
     .hint:empty { display: none; }
   `;
 
@@ -1053,6 +1058,9 @@ const THEMES = {
     neutralLight: v('b2'),
     neutralLighter: v('bg'),
     neutralLighterAlt: v('sink'),
+    // Outlook's surface pair: cards and rows on the primary, the panes behind them on the secondary.
+    neutralPrimarySurface: v('bg'),
+    neutralSecondarySurface: v('sink'),
     white: v('bg'),
     redDark: v('err'),
   };
@@ -1116,7 +1124,23 @@ const THEMES = {
   `;
   // </fluent>
 
+  // The reading pane's scroller, in single-message and conversation view.
+  const READING = '[data-app-section="ItemContainer"], [data-app-section="ConversationContainer"]';
+
+  const OUTLOOK_CSS = `
+    /* the open message sits on zwipe's sunken grid; the wrappers between them let it show through */
+    ${grid(READING)}
+    :is(${READING}) :is(.wide-content-host, .fui-FluentProvider) { background-color: transparent !important; }
+
+    /* each message is zwipe's panel card: solid, outlined, the accent on hover */
+    :is(${READING}) :has(> [data-test-id="mailMessageBodyContainer"]) {
+      background-color: var(--og-bg) !important; border: 1px solid var(--og-b2) !important;
+      border-radius: 1rem !important; transition: border-color .2s;
+    }
+    :is(${READING}) :has(> [data-test-id="mailMessageBodyContainer"]):hover { border-color: var(--og-a1) !important; }
+  `;
+
   // Fluent's tokens cover the grays; the recolor catches saturated literals Outlook writes outside them.
   // Teams embeds Outlook's calendar in an iframe from these addresses, so this script themes that too.
-  start({ css: FLUENT_CSS, onEnabled: recolorPage({ neutrals: false }) });
+  start({ css: FLUENT_CSS + OUTLOOK_CSS, onEnabled: recolorPage({ neutrals: false }) });
 })();
