@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         orangui: Outlook
 // @namespace    scadoshi
-// @version      0.4.0
+// @version      0.4.1
 // @description  zwipe's look and its 31 themes for Outlook on the web. Alt+Shift+T opens the theme picker.
 // @author       scadoshi
 // @homepageURL  https://github.com/scadoshi/orangui
@@ -1126,6 +1126,7 @@ const THEMES = {
 
   // The reading pane's scroller, in single-message and conversation view.
   const READING = '[data-app-section="ItemContainer"], [data-app-section="ConversationContainer"]';
+  const LIST = '[data-app-section="MessageList"]';
 
   const OUTLOOK_CSS = `
     /* the open message sits on zwipe's sunken grid; the wrappers between them let it show through */
@@ -1138,6 +1139,12 @@ const THEMES = {
       border-radius: 1rem !important; transition: border-color .2s;
     }
     :is(${READING}) :has(> [data-test-id="mailMessageBodyContainer"]):hover { border-color: var(--og-a1) !important; }
+
+    /* the message list on the grid too, under and around the rows; each row keeps its own background */
+    ${grid(`${LIST} [role="listbox"], ${LIST} [data-testid="virtuoso-scroller"]`)}
+    :is(${LIST} [role="listbox"] > div, ${LIST} [role="listbox"] > div > div, ${LIST} [data-viewport-type], ${LIST} [data-testid="virtuoso-item-list"]) {
+      background-color: transparent !important;
+    }
   `;
 
   // Fluent's tokens cover the grays; the recolor catches saturated literals Outlook writes outside them.
