@@ -13,8 +13,8 @@
 ## Before you push
 
 ```bash
-node scripts/sync-themes.mjs          # if zwipe's palettes changed
-node --check orangui-fluent.user.js
+node scripts/sync.mjs                 # if zwipe's palettes or src/core.js changed
+node --check orangui-fluent.user.js && node --check orangui-halo.user.js
 ```
 
-Bump `@version` in the userscript header when the change should reach installed copies. Tampermonkey compares versions and ignores a push that doesn't raise it.
+Bump `@version` in each userscript header when the change should reach installed copies; a change to `src/core.js` reaches every script. Tampermonkey compares versions and ignores a push that doesn't raise it.
