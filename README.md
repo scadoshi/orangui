@@ -2,10 +2,15 @@
 
 Tampermonkey scripts that make my work browser look like [zwipe](https://github.com/scadoshi/zwipe). Same JetBrains Mono, same rounded outlined panels, same 31 themes in light and dark, and the same theme picker with the wipe across the screen when you change themes.
 
-Two scripts so far, sharing one theme between them:
+Three scripts, sharing one theme between them:
 
-- [orangui-fluent.user.js](https://raw.githubusercontent.com/scadoshi/orangui/main/orangui-fluent.user.js) for Teams and Outlook on the web. Both run on Microsoft's Fluent UI, which reads its colors from a few hundred CSS variables, so the script points every one at the current theme. Chat bubbles get zwipe's outline and people's pictures are squircles.
-- [orangui-halo.user.js](https://raw.githubusercontent.com/scadoshi/orangui/main/orangui-halo.user.js) for Halo (`*.haloservicedesk.com`). Halo has no color variables, so this one reads every color in Halo's stylesheets and swaps it for the nearest theme color as the page loads. It works from Halo's light or dark theme.
+- [orangui-teams.user.js](https://raw.githubusercontent.com/scadoshi/orangui/main/orangui-teams.user.js) for Teams on the web. Chat bubbles get zwipe's outline, the message list sits on zwipe's grid, people's pictures are squircles, and Teams' purple goes to the theme accent.
+- [orangui-outlook.user.js](https://raw.githubusercontent.com/scadoshi/orangui/main/orangui-outlook.user.js) for Outlook on the web, and the Outlook calendar Teams shows inside itself.
+- [orangui-halo.user.js](https://raw.githubusercontent.com/scadoshi/orangui/main/orangui-halo.user.js) for Halo (`*.haloservicedesk.com`). Halo has no color variables, so this one reads every color in Halo's stylesheets and swaps it for the nearest theme color as the page loads, ticket notes included. It works from Halo's light or dark theme.
+
+Teams and Outlook both run on Microsoft's Fluent UI, which reads its colors from a few hundred CSS variables, so those two share a map that points every one at the current theme.
+
+Coming from the old combined "orangui: Teams + Outlook" script: delete it in Tampermonkey and install the Teams and Outlook ones. Its update link is gone.
 
 ## Install
 
@@ -30,7 +35,7 @@ The palettes are zwipe's, and the picker and color code are shared, so both get 
 node scripts/sync.mjs
 ```
 
-That pulls zwipe's `themes.css` (it expects zwipe checked out next to this repo, or takes the path as an argument) and copies `src/core.js` into every `*.user.js`.
+That pulls zwipe's `themes.css` (it expects zwipe checked out next to this repo, or takes the path as an argument) and copies the shared files in `src/` into every `*.user.js` that asks for them.
 
 ## A note on how it's built
 

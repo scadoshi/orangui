@@ -1,18 +1,14 @@
 // ==UserScript==
-// @name         orangui: Teams + Outlook
+// @name         orangui: Teams
 // @namespace    scadoshi
-// @version      0.2.0
-// @description  zwipe's look and its 31 themes for Teams and Outlook on the web. Alt+Shift+T opens the theme picker.
+// @version      0.3.0
+// @description  zwipe's look and its 31 themes for Teams on the web. Alt+Shift+T opens the theme picker.
 // @author       scadoshi
 // @homepageURL  https://github.com/scadoshi/orangui
-// @updateURL    https://raw.githubusercontent.com/scadoshi/orangui/main/orangui-fluent.user.js
-// @downloadURL  https://raw.githubusercontent.com/scadoshi/orangui/main/orangui-fluent.user.js
+// @updateURL    https://raw.githubusercontent.com/scadoshi/orangui/main/orangui-teams.user.js
+// @downloadURL  https://raw.githubusercontent.com/scadoshi/orangui/main/orangui-teams.user.js
 // @match        https://teams.microsoft.com/*
 // @match        https://teams.cloud.microsoft/*
-// @match        https://outlook.office.com/*
-// @match        https://outlook.office365.com/*
-// @match        https://outlook.cloud.microsoft/*
-// @match        https://outlook.live.com/*
 // @run-at       document-start
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -137,6 +133,8 @@ const THEMES = {
   const HOME = { right: 12, bottom: 12 };
   let picker = null;
   let onEnabled = () => {};
+  // Run after every theme swap, for anything that copies the theme somewhere the root variables don't reach.
+  const onTheme = [];
 
   // == the theme as variables: zwipe's names, prefixed so a page can't collide with them ==
 
@@ -154,6 +152,17 @@ const THEMES = {
   const squircle = (selector) => `
     :is(${selector}) { border-radius: 30% !important; }
     @supports (corner-shape: squircle) { :is(${selector}) { border-radius: 50% !important; corner-shape: squircle; } }
+  `;
+
+  // zwipe's sunken content area: the sink color under a faint 28px grid that holds still while the content scrolls over it.
+  const grid = (selector) => `
+    :is(${selector}) {
+      background-color: var(--og-sink) !important;
+      background-image:
+        linear-gradient(color-mix(in srgb, var(--og-text) 4%, transparent) 1px, transparent 1px),
+        linear-gradient(90deg, color-mix(in srgb, var(--og-text) 4%, transparent) 1px, transparent 1px) !important;
+      background-size: 28px 28px !important;
+    }
   `;
 
   const CORE_CSS = `
@@ -181,7 +190,10 @@ const THEMES = {
     const leaving = current;
     current = theme;
     // Writes whatever is current when it runs, as a fast run of picks can land their swaps out of order.
-    const swap = () => { themeStyle.textContent = themeCss(current); };
+    const swap = () => {
+      themeStyle.textContent = themeCss(current);
+      for (const hook of onTheme) hook();
+    };
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!wipe || !enabled || still || !document.startViewTransition) return swap();
     const root = document.documentElement;
@@ -575,18 +587,19 @@ const THEMES = {
       return v('bg');
     }
     if (role === 'border') return under < 0.36 ? v('b2') : v('b1');
-    if (under > 0.78 || under < 0.25) return v('text');
+    // Dark text in a dark rule sits on a light surface, which is the theme background by now (Froala's misnamed "dark-theme" editor is white with #414141 text).
+    if (under > 0.78 || under < 0.45) return v('text');
     if (under > 0.6) return v('subtle');
     return v('muted');
   }
 
   const roleOf = (prop) => {
-    // A custom property's role is a guess from its name: Teams' --colorBrandBackground, --toastify-color-light.
+    // A custom property's role is a guess from its name: Teams' --colorBrandBackground, --toastify-color-light. One holding a color with no hint in its name is taken as text.
     if (prop.startsWith('--')) {
       if (/shadow/i.test(prop)) return 'shadow';
       if (/background|bg|fill|surface/i.test(prop)) return 'bg';
       if (/stroke|border|outline/i.test(prop)) return 'border';
-      return /color|colour|brand|foreground/i.test(prop) ? 'fg' : null;
+      return 'fg';
     }
     if (prop === 'background-color' || prop === 'background-image') return 'bg';
     if (prop === 'box-shadow') return 'shadow';
@@ -635,25 +648,27 @@ const THEMES = {
     }
   }
 
-  const seen = new WeakMap();
+  // Every rule already rewritten. Tracked per rule, not per sheet: Fluent swaps its token rule out for a new one at the same index, which leaves the sheet's length unchanged.
+  let seen = new WeakSet();
   // A rule whose selector or media query mentions dark (.theme-dark, .fr-dark, prefers-color-scheme: dark) was written for a dark page.
   const walk = (rules, dark = false) => {
     for (const rule of rules) {
       const inDark = dark || /dark/i.test(rule.selectorText ?? rule.conditionText ?? '');
-      if (rule.style) restyle(rule.style, true, inDark);
+      if (rule.style && !seen.has(rule)) {
+        seen.add(rule);
+        restyle(rule.style, true, inDark);
+      }
       if (rule.cssRules) walk(rule.cssRules, inDark);
     }
   };
 
-  // Rewrites every sheet that is new or has grown. Cross-origin sheets can't be read and are skipped.
+  // Rewrites every rule not yet seen. Cross-origin sheets can't be read and are skipped.
   function scan() {
     if (!enabled) return;
     for (const sheet of [...document.styleSheets, ...document.adoptedStyleSheets]) {
       if (sheet.ownerNode?.dataset?.orangui) continue;
       let rules;
       try { rules = sheet.cssRules; } catch { continue; }
-      if (seen.get(sheet) === rules.length) continue;
-      seen.set(sheet, rules.length);
       walk(rules);
     }
   }
@@ -721,7 +736,7 @@ const THEMES = {
       timer = 0;
       for (const [style, prop, value, priority] of saved) style.setProperty(prop, value, priority);
       saved.length = 0;
-      for (const sheet of document.styleSheets) seen.delete(sheet);
+      seen = new WeakSet();
     }
   }
 
@@ -762,6 +777,10 @@ const THEMES = {
     });
   }
   // </core>
+
+  // <fluent> copied by scripts/sync.mjs from src/fluent.js, don't edit by hand
+  // What the Fluent UI scripts share: every Fluent v9 token and Outlook's v8 palette pointed at a theme variable, and zwipe's shapes on Fluent's components.
+  // scripts/sync.mjs copies this file into each Fluent userscript between the fluent markers, after the core.
 
   // == Fluent v9 tokens, every one pointed at a theme variable ==
 
@@ -1040,19 +1059,12 @@ const THEMES = {
 
   // == zwipe's shapes on Fluent's components ==
 
-  const BASE = `
+  const FLUENT_CSS = `
     :root, .fui-FluentProvider { ${decls(fluent)} }
     :root, body, [style*="--neutralPrimary"], [style*="--themePrimary"] { ${decls(fluent8)} }
 
-    html, body {
-      min-height: 100%;
-      background-color: var(--og-sink) !important;
-      background-attachment: fixed;
-      background-image:
-        linear-gradient(color-mix(in srgb, var(--og-text) 4%, transparent) 1px, transparent 1px),
-        linear-gradient(90deg, color-mix(in srgb, var(--og-text) 4%, transparent) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
+    html, body { min-height: 100%; background-attachment: fixed; }
+    ${grid('html, body')}
     body, input, textarea, button, select, [contenteditable] { font-family: ${FONT}; }
 
     /* panels: the dialog is zwipe's panel card, menus and popovers its banners */
@@ -1064,17 +1076,6 @@ const THEMES = {
     }
     .fui-Card { border: 1px solid var(--og-b2) !important; transition: border-color .2s; }
     .fui-Card:hover { border-color: var(--og-a1) !important; }
-
-    /* chat messages: zwipe's outlined panel, the accent on hover; your own carry the accent faintly */
-    :is(.fui-ChatMessage__body, .fui-ChatMyMessage__body, [data-tid="chat-pane-message"]) {
-      border: 1px solid var(--og-b2) !important; border-radius: .6rem !important; transition: border-color .2s;
-    }
-    :is(.fui-ChatMyMessage__body, .fui-ChatMyMessage [data-tid="chat-pane-message"]) {
-      border-color: color-mix(in srgb, var(--og-a1) 45%, var(--og-b2)) !important;
-    }
-    :is(.fui-ChatMessage__body, .fui-ChatMyMessage__body, [data-tid="chat-pane-message"]):hover { border-color: var(--og-a1) !important; }
-    /* nested bubbles, like a quoted reply inside a message, keep a single outline */
-    :is(.fui-ChatMessage__body, .fui-ChatMyMessage__body) [data-tid="chat-pane-message"] { border: none !important; }
 
     /* people as squircles; the presence dot stays round */
     ${squircle('.fui-Avatar, .fui-Avatar__image, .fui-Avatar__initials, .fui-Avatar__icon, .fui-Avatar::before, .fui-Avatar::after')}
@@ -1111,7 +1112,69 @@ const THEMES = {
       .fui-Button { transition: background-color .2s ease, border-color .2s ease, color .2s ease !important; }
     }
   `;
+  // </fluent>
 
-  // Fluent's tokens cover the grays; the recolor catches the Teams purple set as literals and Teams' own variables.
-  start({ css: BASE, onEnabled: recolorPage({ neutrals: false }) });
+  // == Teams' own tokens, on top of Fluent's: the purple Fluent's names don't reach ==
+
+  const teams = {
+    colorTeamsBrand1: v('a1'),
+    colorTeamsBrand1Hover: mix(v('a1'), 88, v('text')),
+    colorTeamsBrand1Pressed: mix(v('a1'), 80),
+    colorTeamsBrand1Selected: v('a1'),
+    colorBrandFlair1: v('a1'),
+    colorBrandFlair2: v('a3'),
+    colorBrandFlair3: v('p4'),
+    colorBrandFlair1Transparent: clear(v('a1'), 0),
+    colorBrandFlair2Transparent: clear(v('a3'), 0),
+    colorBrandFlair3Transparent: clear(v('p4'), 0),
+    colorSubtleBackground: 'transparent',
+    colorSubtleBackgroundLightAlphaSelected: clear(v('bg'), 70),
+    colorSubtleBackgroundInverted: 'transparent',
+    colorDefaultBackground7: v('bg'),
+    colorPrimaryBackgroundInteracted: mix(v('a1'), 25),
+    colorAvatar: v('text'),
+    colorAvatarBackground: v('b2'),
+    // Copilot's glowing border.
+    'ms-themeColorPaletteComponentGlowBorder1': v('a1'),
+    'ms-themeColorPaletteComponentGlowBorder2': v('a3'),
+    'ms-themeColorPaletteComponentGlowBorder3': v('p4'),
+    'ms-themeColorPaletteComponentGlowBorder4': v('a2'),
+    'ms-themeColorPaletteComponentGlowBorder5': v('a1'),
+    globalAccentMyBubbleForeground: v('text'),
+    chatThemeMyBubbleForeground: v('text'),
+    chatThemeIncomingBubbleBackground: v('bg'),
+    'icon-brand-color': v('a1'),
+    forwardMessageLinkColor: v('a1'),
+    forwardMessageLinkColorHover: v('a1'),
+    forwardMessageLinkColorActive: v('a1'),
+    themeTitleBarBackgroundColor: v('bg'),
+  };
+  for (let i = 1; i <= 9; i++) teams[`colorBrandMorseCode${i}`] = v('a1');
+  for (let i = 1; i <= 4; i++) {
+    teams[`colorTeamsCompositeHoverShadow${i}`] = clear(v('a1'), 25);
+    teams[`colorTeamsButtonCompositeHoverShadow${i}`] = clear(v('a1'), 25);
+    teams[`colorTeamsButtonCompositeFocusShadow${i}`] = clear(v('a1'), 40);
+  }
+
+  const TEAMS_CSS = `
+    :root, .fui-FluentProvider { ${decls(teams)} }
+
+    /* the message list sits on zwipe's sunken grid; the list inside it lets it show through */
+    ${grid('[data-tid="message-pane-list-viewport"]')}
+    [data-tid="message-pane-list-runway"] { background: transparent !important; }
+
+    /* chat messages: zwipe's outlined panel, the accent on hover; your own carry the accent faintly */
+    :is(.fui-ChatMessage__body, .fui-ChatMyMessage__body, [data-tid="chat-pane-message"]) {
+      border: 1px solid var(--og-b2) !important; border-radius: .6rem !important; transition: border-color .2s;
+    }
+    :is(.fui-ChatMyMessage__body, .fui-ChatMyMessage [data-tid="chat-pane-message"]) {
+      border-color: color-mix(in srgb, var(--og-a1) 45%, var(--og-b2)) !important;
+    }
+    :is(.fui-ChatMessage__body, .fui-ChatMyMessage__body, [data-tid="chat-pane-message"]):hover { border-color: var(--og-a1) !important; }
+    /* nested bubbles, like a quoted reply inside a message, keep a single outline */
+    :is(.fui-ChatMessage__body, .fui-ChatMyMessage__body) [data-tid="chat-pane-message"] { border: none !important; }
+  `;
+
+  // Fluent's tokens cover the grays; the recolor catches the Teams purple set as literals and in rules Teams rewrites in place.
+  start({ css: FLUENT_CSS + TEAMS_CSS, onEnabled: recolorPage({ neutrals: false }) });
 })();

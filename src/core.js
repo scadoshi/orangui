@@ -44,6 +44,8 @@ const spotKey = `launcher@${location.hostname}`;
 const HOME = { right: 12, bottom: 12 };
 let picker = null;
 let onEnabled = () => {};
+// Run after every theme swap, for anything that copies the theme somewhere the root variables don't reach.
+const onTheme = [];
 
 // == the theme as variables: zwipe's names, prefixed so a page can't collide with them ==
 
@@ -61,6 +63,17 @@ function themeCss({ name, dark }) {
 const squircle = (selector) => `
   :is(${selector}) { border-radius: 30% !important; }
   @supports (corner-shape: squircle) { :is(${selector}) { border-radius: 50% !important; corner-shape: squircle; } }
+`;
+
+// zwipe's sunken content area: the sink color under a faint 28px grid that holds still while the content scrolls over it.
+const grid = (selector) => `
+  :is(${selector}) {
+    background-color: var(--og-sink) !important;
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--og-text) 4%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--og-text) 4%, transparent) 1px, transparent 1px) !important;
+    background-size: 28px 28px !important;
+  }
 `;
 
 const CORE_CSS = `
@@ -88,7 +101,10 @@ function apply(theme, wipe = false) {
   const leaving = current;
   current = theme;
   // Writes whatever is current when it runs, as a fast run of picks can land their swaps out of order.
-  const swap = () => { themeStyle.textContent = themeCss(current); };
+  const swap = () => {
+    themeStyle.textContent = themeCss(current);
+    for (const hook of onTheme) hook();
+  };
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!wipe || !enabled || still || !document.startViewTransition) return swap();
   const root = document.documentElement;
@@ -482,18 +498,19 @@ function darkGray(c, role, l, under) {
     return v('bg');
   }
   if (role === 'border') return under < 0.36 ? v('b2') : v('b1');
-  if (under > 0.78 || under < 0.25) return v('text');
+  // Dark text in a dark rule sits on a light surface, which is the theme background by now (Froala's misnamed "dark-theme" editor is white with #414141 text).
+  if (under > 0.78 || under < 0.45) return v('text');
   if (under > 0.6) return v('subtle');
   return v('muted');
 }
 
 const roleOf = (prop) => {
-  // A custom property's role is a guess from its name: Teams' --colorBrandBackground, --toastify-color-light.
+  // A custom property's role is a guess from its name: Teams' --colorBrandBackground, --toastify-color-light. One holding a color with no hint in its name is taken as text.
   if (prop.startsWith('--')) {
     if (/shadow/i.test(prop)) return 'shadow';
     if (/background|bg|fill|surface/i.test(prop)) return 'bg';
     if (/stroke|border|outline/i.test(prop)) return 'border';
-    return /color|colour|brand|foreground/i.test(prop) ? 'fg' : null;
+    return 'fg';
   }
   if (prop === 'background-color' || prop === 'background-image') return 'bg';
   if (prop === 'box-shadow') return 'shadow';
@@ -542,25 +559,27 @@ function restyle(style, keep, dark) {
   }
 }
 
-const seen = new WeakMap();
+// Every rule already rewritten. Tracked per rule, not per sheet: Fluent swaps its token rule out for a new one at the same index, which leaves the sheet's length unchanged.
+let seen = new WeakSet();
 // A rule whose selector or media query mentions dark (.theme-dark, .fr-dark, prefers-color-scheme: dark) was written for a dark page.
 const walk = (rules, dark = false) => {
   for (const rule of rules) {
     const inDark = dark || /dark/i.test(rule.selectorText ?? rule.conditionText ?? '');
-    if (rule.style) restyle(rule.style, true, inDark);
+    if (rule.style && !seen.has(rule)) {
+      seen.add(rule);
+      restyle(rule.style, true, inDark);
+    }
     if (rule.cssRules) walk(rule.cssRules, inDark);
   }
 };
 
-// Rewrites every sheet that is new or has grown. Cross-origin sheets can't be read and are skipped.
+// Rewrites every rule not yet seen. Cross-origin sheets can't be read and are skipped.
 function scan() {
   if (!enabled) return;
   for (const sheet of [...document.styleSheets, ...document.adoptedStyleSheets]) {
     if (sheet.ownerNode?.dataset?.orangui) continue;
     let rules;
     try { rules = sheet.cssRules; } catch { continue; }
-    if (seen.get(sheet) === rules.length) continue;
-    seen.set(sheet, rules.length);
     walk(rules);
   }
 }
@@ -628,7 +647,7 @@ function run(on) {
     timer = 0;
     for (const [style, prop, value, priority] of saved) style.setProperty(prop, value, priority);
     saved.length = 0;
-    for (const sheet of document.styleSheets) seen.delete(sheet);
+    seen = new WeakSet();
   }
 }
 
