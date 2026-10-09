@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         orangui: Teams
 // @namespace    scadoshi
-// @version      0.3.1
+// @version      0.3.2
 // @description  zwipe's look and its 31 themes for Teams on the web. Alt+Shift+T opens the theme picker.
 // @author       scadoshi
 // @homepageURL  https://github.com/scadoshi/orangui
@@ -1181,6 +1181,19 @@ const THEMES = {
     :is(.fui-ChatMessage__body, .fui-ChatMyMessage__body, [data-tid="chat-pane-message"]):hover { border-color: var(--og-a1) !important; }
     /* nested bubbles, like a quoted reply inside a message, keep a single outline */
     :is(.fui-ChatMessage__body, .fui-ChatMyMessage__body) [data-tid="chat-pane-message"] { border: none !important; }
+
+    /* unread chats in the list: outlined and tinted in the accent, name in the accent too */
+    :is(
+      [role="treeitem"][aria-labelledby~="chat_list_unread_text"] > .fui-TreeItemLayout,
+      .fui-TreeItemLayout:has(> .fui-TreeItemLayout__main > [data-tid="unread"])
+    ) {
+      outline: 1px solid var(--og-a1) !important; outline-offset: -1px;
+      background-color: color-mix(in srgb, var(--og-a1) 12%, transparent) !important;
+    }
+    :is(
+      [role="treeitem"][aria-labelledby~="chat_list_unread_text"] > .fui-TreeItemLayout,
+      .fui-TreeItemLayout:has(> .fui-TreeItemLayout__main > [data-tid="unread"])
+    ) [id^="title-chat-list-item"] { color: var(--og-a1) !important; }
   `;
 
   // Fluent's tokens cover the grays; the recolor catches the Teams purple set as literals and in rules Teams rewrites in place.

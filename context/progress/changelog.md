@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-09: teams 0.3.2
+
+Unread chats in the Teams list are outlined and tinted in the accent, with the chat's name in the accent too.
+
 ## 2026-10-09: teams 0.3.1, outlook 0.4.0, halo 0.2.1
 
 The picker is bigger: about 60rem wide, the themes in a grid of larger cards, with a bigger title, toggle, swatches and buttons. In Outlook, the open email sits on zwipe's grid as an outlined card, and Outlook's surface variables follow the theme.
