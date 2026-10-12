@@ -14,3 +14,4 @@ crates.io is off the list for now; the plan's "Not now" section keeps what was l
 - A theme-sync helper so a host checks its own theme list against orangui's in one line.
 - A swatch page under `tests/` or `tools/` that renders all 62 theme blocks with their slots, for reviewing a new theme in one screenshot. zwipe has one; it could move here with the palettes.
 - Rename `zwipe-components` once it is only the Magic pieces, if a better name turns up.
+- The class rename pass in [`../plans/class_names.md`](../plans/class_names.md), once every host is on orangui: 12 renames, 1 drop, 3 rule moves, approved name by name first.

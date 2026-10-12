@@ -21,6 +21,8 @@ The running log, newest first. Update this when something ships.
 
 orangui is the generic part of zwipe's `zwipe-components`, lifted as is: 26 modules, the 31 themes, the component sheet with its Magic sections cut, the app and site sheets, the three scripts and the two stylesheet gates. The theme model (`ThemeConfig`, the theme list, the display names) moved in from `zwipe-core` so nothing here depends on zwipe. Component names, class names and the storage key a host passes are unchanged, so for a host the switch is a dependency line and an import path.
 
+[`plans/class_names.md`](plans/class_names.md) audits every class the kit defines, with a verdict per name, for a rename pass after the hosts switch.
+
 No host depends on it yet. The old `orangui` repository, the Tampermonkey scripts that give Teams and Outlook zwipe's look, is now [`tamper-orangui`](https://github.com/scadoshi/tamper-orangui).
 
 **Next:** each host on a branch, then the production switch one host at a time, at a device. [`plans/host_migration.md`](plans/host_migration.md) has the order and the pieces each host keeps.
