@@ -1,6 +1,6 @@
 # Class names
 
-**Status: PROPOSED.** An audit of every CSS class the kit defines or emits, with a verdict per class, for the owner to approve name by name. Nothing is renamed yet. The rename pass runs after every host is on orangui, as one orangui commit plus a mechanical substitution per host.
+**Status: APPROVED 2026-10-12.** Every verdict approved, with two changes: the Util button is named after the bar it sits in, `btn-action` with `ButtonVariant::Action`, and `stepper-btn` stays in the kit as a generic rule, so only the two architecture rules move. An audit of every CSS class the kit defines or emits, with a verdict per class, for the owner to approve name by name. Nothing is renamed yet. The rename pass runs after every host is on orangui, as one orangui commit plus a mechanical substitution per host.
 
 - [ ] Owner approves or strikes each `rename`, `drop` and `move` below.
 - [ ] Every host on orangui in production (see [`host_migration.md`](host_migration.md)).
@@ -9,7 +9,7 @@
 
 ## Counts
 
-132 classes: 126 defined in the four sheets (88 in `components.css`, 24 in `app.css`, 9 in `site.css`, 5 in `toast.css`) and 6 that a component or script emits for the hosts to style. Verdicts: 116 keep, 12 rename, 1 drop, 3 move. 17 of the 126 defined classes are host hooks, defined in a sheet and emitted by no component; none is dead, every one is emitted by at least one host.
+132 classes: 126 defined in the four sheets (88 in `components.css`, 24 in `app.css`, 9 in `site.css`, 5 in `toast.css`) and 6 that a component or script emits for the hosts to style. Verdicts: 117 keep, 12 rename, 1 drop, 2 move. 17 of the 126 defined classes are host hooks, defined in a sheet and emitted by no component; none is dead, every one is emitted by at least one host.
 
 The counts come from the sheets and the hosts' `orangui` worktrees on 2026-10-12. "Host uses" is css lines / Rust string literals per host, with `zwipe-components` counted apart from zwiper and zite since both inline it.
 
@@ -18,7 +18,7 @@ The counts come from the sheets and the hosts' `orangui` worktrees on 2026-10-12
 - A class is named after the component it belongs to or the role it serves, in kebab-case.
 - Each component family shares one prefix, the component's name: `panel-`, `nav-`, `nav-dropdown-`, `banner-`, `stat-`, `sheet-`, `hint-`, `toast-`, `diagram-`, `heat-`, `gallery-`.
 - The family root is the bare name when nothing collides (`chip`, `btn`, `stat`, `diagram`, `banner`) and the component's full name otherwise (`panel-card`, `bottom-sheet`, `stats-strip`).
-- Modifiers follow the prefix: `btn-xs`, `btn-danger`, `btn-util`, never `util-btn`.
+- Modifiers follow the prefix: `btn-xs`, `btn-danger`, `btn-action`, never `util-btn`.
 - State classes that mean the same thing everywhere stay bare: `active`, `selected`, `disabled`, `show`, `snap`, `expanded`, `centered`.
 
 ## Blast radius
@@ -27,14 +27,14 @@ The 13 renames and drops touch 26 host stylesheet lines (zwiper 12, zite 6, port
 
 Every rename is prefix-safe, so a substitution of the whole token in each host's stylesheet and sources is enough, longest name first: `profile-row` also carries cairn's own `profile-row-value` along as `settings-row-value`, and `util-btn` carries `util-btn-danger`, which is the intended result. No proposed name exists in any host sheet today.
 
-`ButtonVariant::Util` keeps its name under `btn-util`. If the owner prefers the button named after the bar (`btn-action`), the variant becomes `ButtonVariant::Action` and the hosts' Rust changes with it (zwiper 1 line, cairn 1 line).
+`ButtonVariant::Util` becomes `ButtonVariant::Action` and its class `btn-action`, the button named after the bar it sits in, and the hosts' Rust changes with it (zwiper 1 line, cairn 1 line).
 
 ## Rollout
 
 1. After the last host switches production to orangui, one orangui commit renames the classes in `assets/*.css`, the components and `lib.rs`'s docs, with the old and new names listed in the message.
 2. Each host: the substitution over its stylesheet and sources, `cargo update -p orangui`, build and lint.
 3. The gate is the screenshot diff used for the migration: nothing visible moves. A host whose diff is not clean stays on the previous pin until it is.
-4. The three moved rules (`stepper-btn`, `arch-carousel`, `arch-slide`) land in the host sheets in the same host commit, before the orangui rules are deleted in a later orangui commit.
+4. The two moved rules (`arch-carousel`, `arch-slide`) land in the host sheets in the same host commit, before the orangui rules are deleted in a later orangui commit.
 
 ## What was judged
 
@@ -53,7 +53,7 @@ Every rename is prefix-safe, so a substitution of the whole token in each host's
 - `profile-row`, `profile-row-label`: settings rows named after zwiper's profile screen; cairn uses them on its config screen.
 - `announcement-banner`: the Banner root under zite's old name, with every child already `banner-*`. No host styles it, so the rename is free.
 - `message-*`: not in the kit. `.message-empty` and `.message-error` are host classes in zwiper's and the portfolio's own sheets.
-- `stepper-btn`, `arch-carousel`, `arch-slide`: zwipe-only rules living in the kit's sheets (the site sheet's comment names ZwipeArchitecture). They move to the hosts that emit them.
+- `arch-carousel`, `arch-slide`: zwipe-only rules living in the kit's sheets (the site sheet's comment names ZwipeArchitecture). They move to the hosts that emit them. `stepper-btn` stays: a stepper is generic even though only zwiper uses it today.
 - `hint-key`: keep, but its rule sits under the StatsStrip banner; it belongs with the hints.
 
 ## The table
@@ -74,9 +74,9 @@ Grouped by sheet and section as the sheets are written. Classes with verdict kee
 |---|---|---|---|---|---|
 | `btn` | button | zwiper 4/1 | keep |  |  |
 | `btn-xs` | button | zwiper 4/0 | keep |  |  |
-| `util-btn` | button | zwiper 3/1, cairn 0/1 | rename | `btn-util` | `btn-` is the family prefix; `util-` put the modifier first |
+| `util-btn` | button | zwiper 3/1, cairn 0/1 | rename | `btn-action` | `btn-` is the family prefix, and the button is named after the bar it sits in; `ButtonVariant::Util` becomes `Action` |
 | `btn-danger` | button | zwiper 1/0 | keep |  |  |
-| `util-btn-danger` | button | zwiper 1/0 | rename | `btn-util-danger` | follows `btn-util`, matches `btn-danger` |
+| `util-btn-danger` | button | zwiper 1/0 | rename | `btn-action-danger` | follows `btn-action`, matches `btn-danger` |
 
 #### components.css: ActionBar (orangui::ActionBar)
 
@@ -128,7 +128,7 @@ Keep, no host use: `banner-header`, `banner-category`, `banner-text`, `banner-di
 | `panel-body` | panel | zite 3/0 | keep |  |  |
 | `panel-actions` | panel | zite 1/0 | keep |  |  |
 | `panel-action` | panel | zite 0/14, portfolio 5/12 | keep |  |  |
-| `stepper-btn` | hosts | zwiper 1/14, zwipe-components 0/2 | move | (host sheet) | zwiper only; the rule moves to zwiper's sheet |
+| `stepper-btn` | hosts | zwiper 1/14, zwipe-components 0/2 | keep | | generic; stays in the kit though only zwiper uses it today |
 
 Keep, no host use: `panel-eyebrow`, `panel-centered`.
 
