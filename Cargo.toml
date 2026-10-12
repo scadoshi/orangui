@@ -1,6 +1,6 @@
 [package]
 name = "orangui"
-version = "0.1.0"
+version = "0.0.0"
 edition = "2024"
 description = "Dioxus UI kit: themes, panels, nav, charts and the entrance effects shared by my apps and sites"
 repository = "https://github.com/scadoshi/orangui"

@@ -9,7 +9,7 @@ A Dioxus UI kit: themes, panels, nav, charts and the entrance effects shared by 
 orangui = { git = "https://github.com/scadoshi/orangui" }
 ```
 
-Add `features = ["toast"]` for the toast stack. The crate depends on base `dioxus` with no platform feature, so the host picks web, mobile, desktop or fullstack and cargo unifies.
+Add `features = ["toast"]` for the toast stack. The crate depends on base `dioxus` with no platform feature, so the host picks web, mobile, desktop or fullstack and cargo unifies. The version stays at 0.0.0: hosts pin a commit through their lockfile and move it on purpose, so nothing reads the number yet.
 
 Styling is inlined by the host, in this order: `THEMES_CSS`, then `COMPONENTS_CSS`, then `APP_CSS` (apps) or `SITE_CSS` (websites), then the host's own stylesheet. Component rules resolve theme variables, and the host's rules override shared defaults at equal specificity.
 
