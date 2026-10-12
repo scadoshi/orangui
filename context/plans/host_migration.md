@@ -8,7 +8,10 @@
 - [x] 2026-10-12 cairn branch `orangui` (head eafd652, pushed, not merged): depends on orangui with the `toast` feature; the vendored `tao` stays pinned to zwipe. Format, clippy, 114 tests and the hook-order check green with the default desktop feature. The simulator build and screenshots are still to do at a device.
 - [ ] The production switch, one host at a time, at a device: merge the branch, deploy, check live. zite and the portfolio are public pages; the app is a store cut. cairn needs its simulator build first.
 - [ ] The re-pin scripts move from `cargo update -p zwipe-components` to `cargo update -p orangui`, and zynergy's `zwipe-core` re-pin stays as it is.
-- [ ] crates.io: `orangui` 0.1.0. The toast stack blocks it, since `dioxus-primitives` is a git pin and crates.io refuses git dependencies even behind a feature. The split: the repo becomes a workspace with `orangui` (published) and `orangui-toast` (git only, the toast stack and its sheet), the timing constants staying in `orangui`. cairn's and zwipe's branches then take `orangui-toast` by git. Publishing needs the owner's crates.io token.
+
+## Not now: crates.io
+
+The crate stays a git dependency; the owner decided on 2026-10-12 to leave crates.io alone for now. For the record, the name `orangui` was free that day, and the one blocker is the toast stack: `dioxus-primitives` is a git pin, crates.io has only its 0.0.0, and crates.io refuses git dependencies even behind a feature. If that changes, the shape is a workspace with `orangui` (published) and `orangui-toast` (git only, the toast stack and its sheet), the timing constants staying in `orangui`, and the hosts taking `orangui-toast` by git.
 
 **One sentence:** every host takes its UI from orangui, and `zwipe-components` shrinks to the Magic pieces that need `zwipe-core`.
 
