@@ -1,0 +1,10 @@
+# Clippy configuration - thresholds and behavior settings only
+# Lint levels (warn/deny/allow) go in Cargo.toml [workspace.lints.clippy]
+
+# Threshold settings
+too-many-arguments-threshold = 7
+type-complexity-threshold = 250
+cognitive-complexity-threshold = 25
+
+# Allow unwrap/expect in test code - panics are the correct failure mode for tests
+allow-unwrap-in-tests = true

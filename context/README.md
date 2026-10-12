@@ -1,0 +1,26 @@
+# Context: Start Here
+
+Orientation for AI assistants and returning contributors. This `context/` tree is the project's living documentation; each subdirectory owns one concern. The outline mirrors zwipe's and cairn's so navigation carries over between repos.
+
+Read [`CLAUDE.md`](CLAUDE.md) first for the rules.
+
+## Directory map
+
+| Directory | What's in it |
+|-----------|--------------|
+| [`architecture/`](architecture/) | `structure.md`: the tree, the three kits, what is deliberately not here, the dependencies |
+| [`development/`](development/) | How to write code here: commit and comment guidelines, `styling.md` (the cascade, the color contract, the gates), the Dioxus 0.7 cheatsheet |
+| [`plans/`](plans/) | `host_migration.md`: each host's move onto the crate, with a running log |
+| [`progress/`](progress/) | `todo.md`: what is next, in order |
+
+## Where things stand
+
+The running log, newest first. Update this when something ships.
+
+## 2026-10-12: the crate exists
+
+orangui is the generic part of zwipe's `zwipe-components`, lifted as is: 26 modules, the 31 themes, the component sheet with its Magic sections cut, the app and site sheets, the three scripts and the two stylesheet gates. The theme model (`ThemeConfig`, the theme list, the display names) moved in from `zwipe-core` so nothing here depends on zwipe. Component names, class names and the storage key a host passes are unchanged, so for a host the switch is a dependency line and an import path.
+
+No host depends on it yet. The old `orangui` repository, the Tampermonkey scripts that give Teams and Outlook zwipe's look, is now [`tamper-orangui`](https://github.com/scadoshi/tamper-orangui).
+
+**Next:** each host on a branch, then the production switch one host at a time, at a device. [`plans/host_migration.md`](plans/host_migration.md) has the order and the pieces each host keeps.

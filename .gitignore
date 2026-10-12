@@ -1,0 +1,6 @@
+target/
+.DS_Store
+.vscode
+
+# Worktrees created by Claude Code sessions
+.claude/worktrees/
