@@ -4,7 +4,7 @@
 use orangui::status_uses;
 
 const ALLOWED: [&str; 6] = [
-    ".btn-danger, .util-btn-danger",
+    ".btn-danger, .btn-action-danger",
     ".status-doing",
     ".status-done",
     ".toast-container [data-type=\"error\"]",

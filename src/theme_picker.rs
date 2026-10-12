@@ -64,7 +64,7 @@ fn ModeLabel(dark: bool) -> Element {
 pub fn DarkModeButton(is_dark: bool, onclick: EventHandler<MouseEvent>) -> Element {
     rsx! {
         Button {
-            variant: ButtonVariant::Util,
+            variant: ButtonVariant::Action,
             onclick: move |evt| onclick.call(evt),
             ModeLabel { dark: is_dark }
         }
@@ -108,7 +108,7 @@ pub fn ThemePicker(
 
     rsx! {
         // Its children glide aside when the label changes width (NAV_GLIDE_JS).
-        div { class: "theme-switcher", "data-nav-glide": "true",
+        div { class: "theme-picker", "data-nav-glide": "true",
             NavDropdown {
                 open,
                 label: display_theme_name(&current),

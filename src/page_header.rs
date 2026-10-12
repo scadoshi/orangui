@@ -24,7 +24,7 @@ pub fn PageHeader(
             h2 { "{title}" }
             if let Some(open) = on_hint {
                 Button {
-                    variant: ButtonVariant::Util,
+                    variant: ButtonVariant::Action,
                     class: "page-header-corner",
                     onclick: move |_| open.call(()),
                     "?"

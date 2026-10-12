@@ -51,8 +51,8 @@ enum BannerState {
 impl BannerState {
     fn class(self) -> &'static str {
         match self {
-            BannerState::Leaving => "announcement-banner banner-leaving",
-            _ => "announcement-banner",
+            BannerState::Leaving => "banner banner-leaving",
+            _ => "banner",
         }
     }
 }

@@ -1,7 +1,7 @@
 //! Shared button component.
 //!
 //! The single source for a host's push buttons (the full-width form/dialog
-//! `.btn`, the compact bar `.util-btn`, and the small `.btn-xs`) so every
+//! `.btn`, the compact bar `.btn-action`, and the small `.btn-xs`) so every
 //! button looks and behaves the same in every host. Styling lives in
 //! `assets/components.css`.
 
@@ -15,8 +15,8 @@ pub enum ButtonVariant {
     Primary,
     /// Small inline button (`.btn-xs`).
     Small,
-    /// Compact action-bar button (`.util-btn`).
-    Util,
+    /// Compact action-bar button (`.btn-action`).
+    Action,
 }
 
 impl ButtonVariant {
@@ -25,14 +25,14 @@ impl ButtonVariant {
         match self {
             ButtonVariant::Primary => "btn",
             ButtonVariant::Small => "btn-xs",
-            ButtonVariant::Util => "util-btn",
+            ButtonVariant::Action => "btn-action",
         }
     }
 
     /// Danger modifier class for the variant (destructive actions).
     fn danger_class(self) -> &'static str {
         match self {
-            ButtonVariant::Util => "util-btn-danger",
+            ButtonVariant::Action => "btn-action-danger",
             // `.btn` and `.btn-xs` share the same danger treatment.
             ButtonVariant::Primary | ButtonVariant::Small => "btn-danger",
         }

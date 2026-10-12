@@ -57,11 +57,11 @@ pub fn BottomSheet(
     rsx! {
         div {
             class: if hidden {
-                "modal-backdrop snap"
+                "sheet-backdrop snap"
             } else if open() {
-                "modal-backdrop show"
+                "sheet-backdrop show"
             } else {
-                "modal-backdrop"
+                "sheet-backdrop"
             },
             onclick: move |_| dismiss.call(()),
         }
@@ -75,18 +75,18 @@ pub fn BottomSheet(
             } else {
                 "bottom-sheet bottom-sheet-premount"
             },
-            div { class: "modal-header",
-                span { class: "modal-title", "{title}" }
+            div { class: "sheet-header",
+                span { class: "sheet-title", "{title}" }
                 if let Some(mut hint) = hint {
                     Button {
-                        variant: ButtonVariant::Util,
+                        variant: ButtonVariant::Action,
                         class: "page-header-corner",
                         onclick: move |_| hint.set(true),
                         "?"
                     }
                 }
             }
-            div { class: "modal-content",
+            div { class: "sheet-content",
                 div { class: "flex-col", style: "gap: 0.5rem;", {children} }
             }
             ActionBar {
@@ -94,7 +94,7 @@ pub fn BottomSheet(
                     {f}
                 } else {
                     Button {
-                        variant: ButtonVariant::Util,
+                        variant: ButtonVariant::Action,
                         onclick: move |_| open.set(false),
                         "Close"
                     }

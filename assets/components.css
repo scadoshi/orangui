@@ -98,8 +98,8 @@
     transform: none;
 }
 
-/* Util: compact action-bar button. */
-.util-btn {
+/* Action: compact ActionBar button. */
+.btn-action {
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
     border-radius: 0.5rem;
@@ -115,22 +115,22 @@
     white-space: nowrap;
 }
 
-.util-btn:disabled {
+.btn-action:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
 }
 
-/* Danger modifier (destructive actions), shared by .btn/.btn-xs and .util-btn. */
+/* Danger modifier (destructive actions), shared by .btn/.btn-xs and .btn-action. */
 .btn-danger,
-.util-btn-danger {
+.btn-action-danger {
     border-color: var(--color-error);
     color: var(--color-error);
 }
 
 /* ---- ActionBar (orangui::ActionBar) ---- */
 
-.util-bar {
+.action-bar {
     flex-shrink: 0;
     border-top: 1px solid var(--border-secondary);
     background-color: var(--bg-primary);
@@ -457,7 +457,7 @@
         padding-bottom: var(--nav-row-pad);
     }
     /* ThemePicker as the panel's trailing item. */
-    .nav-panel .theme-switcher {
+    .nav-panel .theme-picker {
         flex-direction: row;
         align-items: center;
         justify-content: center;
@@ -594,7 +594,7 @@
        its bottom sits 0.5rem above the trigger (the nav's 1rem bottom
        padding plus the trigger's height), and it is no taller than the nav
        above that, so it never leaves the screen. */
-    .nav-panel .theme-switcher .nav-dropdown-content {
+    .nav-panel .theme-picker .nav-dropdown-content {
         top: auto;
         bottom: calc(1rem + 2 * var(--nav-trigger-pad) + 0.95rem + 2px + 0.5rem);
         margin-top: 0;
@@ -617,7 +617,7 @@
         --nav-row-gap: 0.4rem;
         --nav-trigger-pad: 0.4rem;
     }
-    .nav-panel .theme-switcher {
+    .nav-panel .theme-picker {
         padding-top: 0.5rem;
     }
 }
@@ -625,10 +625,10 @@
 /* ---- NavDropdown (orangui::NavDropdown) +
         ThemePicker (orangui::ThemePicker) ----
    The dropdown (trigger pill, floating menu, backdrop, hover bridge) is the
-   generic component; .theme-switcher and .mode-toggle are the picker's own
+   generic component; .theme-picker and .mode-toggle are the picker's own
    additions on top of it. */
 
-.theme-switcher {
+.theme-picker {
     display: flex;
     gap: 0.75rem;
     align-items: center;
@@ -792,7 +792,7 @@ a.nav-dropdown-item.active:visited {
 
 /* The theme menu is as wide as its widest row, so names stay on one line and
    nothing scrolls sideways, but never wider than the screen. */
-.theme-switcher .nav-dropdown-content {
+.theme-picker .nav-dropdown-content {
     width: max-content;
     max-width: calc(100vw - 2rem);
     overflow-x: hidden;
@@ -800,7 +800,7 @@ a.nav-dropdown-item.active:visited {
 
 /* Theme picker rows: the name on the left, the theme's color dots on the
    right. Scoped to the picker so the app's own .theme-dot rules stay apart. */
-.theme-switcher .nav-dropdown-item {
+.theme-picker .nav-dropdown-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -810,7 +810,7 @@ a.nav-dropdown-item.active:visited {
 
 /* A miniature of the theme: its background as the chip, its muted text as the
    border, and the six palette slots inside. */
-.theme-switcher .theme-swatches {
+.theme-picker .theme-swatches {
     display: flex;
     align-items: center;
     gap: 0.2rem;
@@ -821,7 +821,7 @@ a.nav-dropdown-item.active:visited {
     border: 1px solid var(--text-muted);
 }
 
-.theme-switcher .theme-dot {
+.theme-picker .theme-dot {
     width: 0.6rem;
     height: 0.6rem;
     border-radius: 0.2rem;
@@ -863,7 +863,7 @@ a.nav-dropdown-item.active:visited {
     transition: transform 0.25s ease;
 }
 
-.announcement-banner {
+.banner {
     position: relative;
     overflow: hidden;
     background: var(--bg-primary);
@@ -897,20 +897,20 @@ a.nav-dropdown-item.active:visited {
     line-height: 1.45;
 }
 
-.announcement-banner .banner-dismiss {
+.banner .banner-dismiss {
     position: absolute;
     top: 0.5rem;
     right: 0.7rem;
 }
 
-.announcement-banner + .announcement-banner {
+.banner + .banner {
     animation-delay: 1.2s;
 }
 
 /* Fade out, then collapse so a remaining toast slides up instead of jumping;
    the element leaves the DOM when this animation ends. Compound selector +
    placement after the slide-in rules so it overrides them. */
-.announcement-banner.banner-leaving {
+.banner.banner-leaving {
     animation: banner-leave 0.45s ease forwards;
     animation-delay: 0s;
     pointer-events: none;
@@ -950,11 +950,11 @@ a.nav-dropdown-item.active:visited {
     animation-delay: 1s;
 }
 
-.announcement-banner + .announcement-banner .banner-progress {
+.banner + .banner .banner-progress {
     animation-delay: 1.2s;
 }
 
-.announcement-banner:hover .banner-progress {
+.banner:hover .banner-progress {
     animation-play-state: paused;
 }
 
@@ -967,8 +967,8 @@ a.nav-dropdown-item.active:visited {
     }
 }
 
-.announcement-banner a,
-.announcement-banner a:visited {
+.banner a,
+.banner a:visited {
     color: var(--accent-primary);
     text-decoration: underline;
     text-underline-offset: 3px;
@@ -1116,7 +1116,7 @@ a.nav-dropdown-item.active:visited {
     text-align: center;
 }
 
-/* Footer action buttons/links — pill buttons with the util-bar look. Works on
+/* Footer action buttons/links — pill buttons with the action-bar look. Works on
    both <a> (external links) and <button>; add "\u{2197}" to external labels. */
 .panel-action {
     display: inline-flex;
@@ -1207,6 +1207,74 @@ a.nav-dropdown-item.active:visited {
     overflow-x: auto;
     scrollbar-width: thin;
     -webkit-overflow-scrolling: touch;
+}
+
+.diagram-node rect {
+    fill: color-mix(in srgb, var(--bg-primary), #000 10%);
+    stroke-width: 1.5;
+}
+
+.diagram-muted rect {
+    stroke: var(--text-muted);
+}
+
+.diagram-primary rect {
+    stroke: var(--accent-primary);
+}
+
+.diagram-secondary rect {
+    stroke: var(--accent-secondary);
+}
+
+.diagram-tertiary rect {
+    stroke: var(--accent-tertiary);
+}
+
+.diagram-success rect {
+    stroke: var(--palette-3);
+}
+
+.diagram-title {
+    fill: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.diagram-sub,
+.diagram-arrow text {
+    fill: var(--text-muted);
+    font-size: 11px;
+}
+
+/* A halo in the page's color so a label stays readable where it crosses its
+   own arrow. */
+.diagram-arrow text {
+    paint-order: stroke;
+    stroke: var(--bg-primary);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+}
+
+.diagram-arrow line {
+    stroke: var(--text-muted);
+    stroke-width: 1.5;
+}
+
+#diagram-head path {
+    fill: var(--text-muted);
+}
+
+/* A dashed frame around boxes that belong together. */
+.diagram-group rect {
+    fill: none;
+    stroke: var(--border-primary);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+}
+
+.diagram-group text {
+    fill: var(--text-muted);
+    font-size: 11px;
 }
 
 /* ==============================
@@ -1418,74 +1486,6 @@ a.nav-dropdown-item.active:visited {
     }
 }
 
-.diagram-node rect {
-    fill: color-mix(in srgb, var(--bg-primary), #000 10%);
-    stroke-width: 1.5;
-}
-
-.diagram-muted rect {
-    stroke: var(--text-muted);
-}
-
-.diagram-primary rect {
-    stroke: var(--accent-primary);
-}
-
-.diagram-secondary rect {
-    stroke: var(--accent-secondary);
-}
-
-.diagram-tertiary rect {
-    stroke: var(--accent-tertiary);
-}
-
-.diagram-success rect {
-    stroke: var(--palette-3);
-}
-
-.diagram-title {
-    fill: var(--text-primary);
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.diagram-sub,
-.diagram-arrow text {
-    fill: var(--text-muted);
-    font-size: 11px;
-}
-
-/* A halo in the page's color so a label stays readable where it crosses its
-   own arrow. */
-.diagram-arrow text {
-    paint-order: stroke;
-    stroke: var(--bg-primary);
-    stroke-width: 5px;
-    stroke-linejoin: round;
-}
-
-.diagram-arrow line {
-    stroke: var(--text-muted);
-    stroke-width: 1.5;
-}
-
-#diagram-head path {
-    fill: var(--text-muted);
-}
-
-/* A dashed frame around boxes that belong together. */
-.diagram-group rect {
-    fill: none;
-    stroke: var(--border-primary);
-    stroke-width: 1;
-    stroke-dasharray: 4 4;
-}
-
-.diagram-group text {
-    fill: var(--text-muted);
-    font-size: 11px;
-}
-
 /* ---- Theme wipe (orangui::use_theme_wipe) ----
    A picked theme sweeps across the page: the new page's snapshot is unclipped
    over the old one, left to right except from light to dark, which runs right
@@ -1589,9 +1589,11 @@ html[data-wipe="left"]::view-transition-new(root) {
     opacity: 0.7;
 }
 
-/* HintKey, shared by the apps' hints and the site. Colored by its inline style. The line height keeps the bordered box
-   the height of the text it sits in, so its padding spills over the line
-   rather than pushing the line above it up. */
+/* ---- HintKey (orangui::HintKey) ----
+   Shared by the apps' hints and the site. Colored by its inline style. The
+   line height keeps the bordered box the height of the text it sits in, so
+   its padding spills over the line rather than pushing the line above it up. */
+
 .hint-key {
     border: 1px solid var(--accent-tertiary);
     color: var(--accent-tertiary);

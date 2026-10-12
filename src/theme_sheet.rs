@@ -134,12 +134,12 @@ pub fn ThemeSheet(
             hidden: hidden(),
             footer: rsx! {
                 Button {
-                    variant: ButtonVariant::Util,
+                    variant: ButtonVariant::Action,
                     onclick: move |_| discard.call(()),
                     "Back"
                 }
                 Button {
-                    variant: ButtonVariant::Util,
+                    variant: ButtonVariant::Action,
                     disabled: unchanged,
                     onclick: move |_| {
                         open.set(false);

@@ -17,6 +17,10 @@ Read [`CLAUDE.md`](CLAUDE.md) first for the rules.
 
 The running log, newest first. Update this when something ships.
 
+## 2026-10-12: the class rename pass shipped
+
+The names [`plans/class_names.md`](plans/class_names.md) approved are in the sheets and the components: `action-bar`, `btn-action` with `ButtonVariant::Action`, `sheet-*` for BottomSheet's children, `settings-row`, `banner`, `theme-picker`, `stats-figures`; `tag-row` is dropped and the two Zwipe architecture rules left `site.css`. Each host runs the substitution from the plan's table before it re-pins.
+
 ## 2026-10-12: the crate exists
 
 orangui is the generic part of zwipe's `zwipe-components`, lifted as is: 26 modules, the 31 themes, the component sheet with its Magic sections cut, the app and site sheets, the three scripts and the two stylesheet gates. The theme model (`ThemeConfig`, the theme list, the display names) moved in from `zwipe-core` so nothing here depends on zwipe. Component names, class names and the storage key a host passes are unchanged, so for a host the switch is a dependency line and an import path.

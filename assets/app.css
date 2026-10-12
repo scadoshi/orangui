@@ -63,8 +63,8 @@
 }
 
 /* The corner buttons: the app's own on the left, the hint "?" on the right.
-   Both are util buttons made smaller and faded; this sheet loads after
-   components.css, so the padding here wins over .util-btn's. */
+   Both are action buttons made smaller and faded; this sheet loads after
+   components.css, so the padding here wins over .btn-action's. */
 .page-header-support,
 .page-header-corner {
     position: absolute;
@@ -168,7 +168,7 @@
 
 /* ---- Bottom sheet (orangui::BottomSheet) ---- */
 
-.modal-backdrop {
+.sheet-backdrop {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0);
@@ -177,7 +177,7 @@
     z-index: 200;
 }
 
-.modal-backdrop.show {
+.sheet-backdrop.show {
     background: var(--bg-overlay);
     pointer-events: auto;
 }
@@ -213,15 +213,15 @@
 /* Pulled off screen with no slide, so a theme wipe's new snapshot is taken
    without the sheet. */
 .bottom-sheet.snap,
-.modal-backdrop.snap {
+.sheet-backdrop.snap {
     transition: none;
 }
 
-.bottom-sheet .util-bar {
+.bottom-sheet .action-bar {
     padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
 }
 
-.modal-header {
+.sheet-header {
     padding: 1.5rem;
     border-bottom: 1px solid var(--border-secondary);
     display: flex;
@@ -232,16 +232,16 @@
 
 /* Relative so the corner "?" parks inside the header rather than against
    the sheet. */
-.bottom-sheet .modal-header {
+.bottom-sheet .sheet-header {
     position: relative;
 }
 
-.modal-title {
+.sheet-title {
     font-size: 1rem;
     color: var(--accent-tertiary);
 }
 
-.modal-content {
+.sheet-content {
     padding: 1.5rem;
     overflow-y: auto;
     flex: 1;
@@ -252,7 +252,7 @@
 
 /* ---- Settings rows and the theme sheet (orangui::ThemeSheet) ---- */
 
-.profile-row {
+.settings-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -262,11 +262,11 @@
     gap: 0.75rem;
 }
 
-.profile-row:last-child {
+.settings-row:last-child {
     border-bottom: none;
 }
 
-.profile-row-label {
+.settings-row-label {
     font-size: 1rem;
     font-weight: 400;
     letter-spacing: 0.1em;

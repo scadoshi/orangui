@@ -21,7 +21,7 @@ pub fn StatsStrip(
     #[props(default)] source: Option<Element>,
 ) -> Element {
     rsx! {
-        div { class: "hero-figures",
+        div { class: "stats-figures",
             section { class: "stats-strip",
                 for (value, label) in figures {
                     div { key: "{label}", class: "stat",
@@ -31,7 +31,7 @@ pub fn StatsStrip(
                 }
             }
             if let Some(source) = source {
-                div { class: "tag-row stats-source", {source} }
+                div { class: "stats-source", {source} }
             }
         }
     }

@@ -1,10 +1,10 @@
 # Class names
 
-**Status: APPROVED 2026-10-12.** Every verdict approved, with two changes: the Util button is named after the bar it sits in, `btn-action` with `ButtonVariant::Action`, and `stepper-btn` stays in the kit as a generic rule, so only the two architecture rules move. An audit of every CSS class the kit defines or emits, with a verdict per class, for the owner to approve name by name. Nothing is renamed yet. The rename pass runs after every host is on orangui, as one orangui commit plus a mechanical substitution per host.
+**Status: DONE in orangui 2026-10-12 (the commit "Rename the classes the audit approved"); host passes pending.** Every verdict approved, with two changes: the Util button is named after the bar it sits in, `btn-action` with `ButtonVariant::Action`, and `stepper-btn` stays in the kit as a generic rule, so only the two architecture rules move. The table below is the record of each class, its old name and its verdict; the kit now carries the proposed names, and `arch-carousel` and `arch-slide` are no longer in `site.css`. The `hint-key` rule has its own section in `components.css` rather than `app.css`, since the sites use it too.
 
-- [ ] Owner approves or strikes each `rename`, `drop` and `move` below.
+- [x] Owner approves or strikes each `rename`, `drop` and `move` below.
 - [ ] Every host on orangui in production (see [`host_migration.md`](host_migration.md)).
-- [ ] One orangui commit renames the classes in the sheets and the components, and says so in the message since class names are public.
+- [x] One orangui commit renames the classes in the sheets and the components, and says so in the message since class names are public.
 - [ ] Per host: the substitution, a re-pin, the screenshot diff.
 
 ## Counts
@@ -34,7 +34,7 @@ Every rename is prefix-safe, so a substitution of the whole token in each host's
 1. After the last host switches production to orangui, one orangui commit renames the classes in `assets/*.css`, the components and `lib.rs`'s docs, with the old and new names listed in the message.
 2. Each host: the substitution over its stylesheet and sources, `cargo update -p orangui`, build and lint.
 3. The gate is the screenshot diff used for the migration: nothing visible moves. A host whose diff is not clean stays on the previous pin until it is.
-4. The two moved rules (`arch-carousel`, `arch-slide`) land in the host sheets in the same host commit, before the orangui rules are deleted in a later orangui commit.
+4. The two moved rules (`arch-carousel`, `arch-slide`) land in the host sheets in the same host commit as the substitution, since the orangui commit deletes them from `site.css`.
 
 ## What was judged
 
