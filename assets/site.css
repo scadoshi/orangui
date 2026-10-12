@@ -17,6 +17,16 @@
     min-height: 70vh;
 }
 
+/* A diagram carousel reuses the gallery frame for short, wide diagrams: no video-height floor, and side padding so prev and next sit beside the slide. */
+.gallery-body.diagram-carousel {
+    min-height: 0;
+    padding: 0 3rem;
+}
+
+.diagram-slide {
+    width: 100%;
+}
+
 /* The round prev/next buttons, centered on the media's edges. */
 .gallery-nav {
     position: absolute;

@@ -2,6 +2,8 @@
 
 **Status: DONE in orangui 2026-10-12 (the commit "Rename the classes the audit approved"); host passes pending.** Every verdict approved, with two changes: the Util button is named after the bar it sits in, `btn-action` with `ButtonVariant::Action`, and `stepper-btn` stays in the kit as a generic rule, so only the two architecture rules move. The table below is the record of each class, its old name and its verdict; the kit now carries the proposed names, and `arch-carousel` and `arch-slide` are no longer in `site.css`. The `hint-key` rule has its own section in `components.css` rather than `app.css`, since the sites use it too.
 
+Amendment, same day: `arch-carousel` and `arch-slide` are back in `site.css` as `diagram-carousel` and `diagram-slide`, on the owner's decision that a diagram carousel inside a GalleryFrame is generic and only the name was Zwipe's. The rows below carry the rename.
+
 - [x] Owner approves or strikes each `rename`, `drop` and `move` below.
 - [ ] Every host on orangui in production (see [`host_migration.md`](host_migration.md)).
 - [x] One orangui commit renames the classes in the sheets and the components, and says so in the message since class names are public.
@@ -248,8 +250,8 @@ Keep, no host use: `pref-row-inner`, `pref-section-label`.
 | Class | Emitted by | Host uses (css/rs) | Verdict | Proposed | Why |
 |---|---|---|---|---|---|
 | `gallery-body` | gallery | zite 1/0, portfolio 1/0 | keep |  |  |
-| `arch-carousel` | hosts | zwipe-components 0/1, portfolio 0/1 | move | (host sheet) | ZwipeArchitecture only; the rule moves to the hosts that draw it |
-| `arch-slide` | hosts | zwipe-components 0/1, portfolio 1/1 | move | (host sheet) | ZwipeArchitecture only; the rule moves to the hosts that draw it |
+| `arch-carousel` | hosts | zwipe-components 0/1, portfolio 0/1 | rename | `diagram-carousel` | a diagram carousel in the gallery frame is generic; only the name was Zwipe's |
+| `arch-slide` | hosts | zwipe-components 0/1, portfolio 1/1 | rename | `diagram-slide` | follows `diagram-carousel` |
 | `gallery-nav` | gallery | zite 2/0, portfolio 2/0 | keep |  |  |
 | `gallery-footer` | gallery | portfolio 1/0 | keep |  |  |
 | `gallery-caption` | gallery | zite 1/0 | keep |  |  |
