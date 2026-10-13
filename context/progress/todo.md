@@ -15,4 +15,4 @@ crates.io is off the list for now; the plan's "Not now" section keeps what was l
 - A theme-sync helper so a host checks its own theme list against orangui's in one line.
 - A swatch page under `tests/` or `tools/` that renders all 62 theme blocks with their slots, for reviewing a new theme in one screenshot. zwipe has one; it could move here with the palettes.
 - Rename `zwipe-components` once it is only the Magic pieces, if a better name turns up.
-- The consolidation pass in [`../plans/consolidation.md`](../plans/consolidation.md), once the owner has ruled on its verdicts: one orangui commit per candidate group, then each host drops its copies behind the screenshot diff.
+- The consolidation host passes in [`../plans/consolidation.md`](../plans/consolidation.md): the kit side is done, and each host applies its section of "Host pass", re-pins and checks the screenshot diff.
