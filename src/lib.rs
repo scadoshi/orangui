@@ -107,7 +107,7 @@ pub use theme::{ALLOWED_THEMES, COLORBLIND_THEMES, ThemeConfig, display_theme_na
 pub use theme_picker::{DarkModeButton, ModeIcon, ThemePicker};
 pub use theme_sheet::ThemeSheet;
 pub use theme_store::use_persisted_theme;
-pub use theme_wipe::{ThemeFollow, use_theme_follow, use_theme_wipe};
+pub use theme_wipe::{ThemeFollow, use_theme_follow, use_theme_wipe, use_theme_wipe_follow};
 #[cfg(feature = "toast")]
 pub use toast_stack::ToastStack;
 pub use toast_timing::{TOAST_LONG, TOAST_NORMAL, TOAST_QUICK};

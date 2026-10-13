@@ -90,11 +90,24 @@ if (logo) {
 /// showing the old theme. A change to `theme` from elsewhere, such as the
 /// stored theme adopted after mount, moves both with it and does not wipe.
 pub fn use_theme_wipe(
-    mut theme: Signal<ThemeConfig>,
+    theme: Signal<ThemeConfig>,
     target: &'static str,
 ) -> (Signal<ThemeConfig>, Signal<ThemeConfig>) {
+    let (picked, follow) = use_theme_wipe_follow(theme, target);
+    (picked, follow.shown)
+}
+
+/// [`use_theme_wipe`] with its state as a [`ThemeFollow`] in place of the
+/// bare `shown`, for a site that also opens a [`ThemeSheet`](crate::ThemeSheet):
+/// the sheet reads the follower to stay up through a discarded pick's wipe
+/// and be gone on the other side of it.
+pub fn use_theme_wipe_follow(
+    mut theme: Signal<ThemeConfig>,
+    target: &'static str,
+) -> (Signal<ThemeConfig>, ThemeFollow) {
     let mut picked = use_signal(|| theme.peek().clone());
     let mut shown = use_signal(|| theme.peek().clone());
+    let mut running = use_signal(|| 0u32);
     let armed = use_hook(|| Rc::new(Cell::new(false)));
     // Wipes still running; `shown` is theirs to move until they finish.
     let wiping = use_hook(|| Rc::new(Cell::new(0u32)));
@@ -110,6 +123,7 @@ pub fn use_theme_wipe(
         }
         let wiping = Rc::clone(&wiping);
         wiping.set(wiping.get() + 1);
+        running += 1;
         spawn(async move {
             let mut js = document::eval(WIPE_JS);
             let _ = js.send((target, next.css_class()));
@@ -126,6 +140,7 @@ pub fn use_theme_wipe(
             let _ = js.send(true);
             let _ = js.recv::<bool>().await;
             wiping.set(wiping.get() - 1);
+            running -= 1;
         });
     });
 
@@ -139,7 +154,7 @@ pub fn use_theme_wipe(
         }
     });
 
-    (picked, shown)
+    (picked, ThemeFollow { shown, running })
 }
 
 /// What a host displays while its theme changes, from [`use_theme_follow`].
