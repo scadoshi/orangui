@@ -19,7 +19,7 @@ The running log, newest first. Update this when something ships.
 
 ## 2026-10-12: the class rename pass shipped
 
-The names [`plans/class_names.md`](plans/class_names.md) approved are in the sheets and the components: `action-bar`, `btn-action` with `ButtonVariant::Action`, `sheet-*` for BottomSheet's children, `settings-row`, `banner`, `theme-picker`, `stats-figures`; `tag-row` is dropped and the two Zwipe architecture rules left `site.css`. Each host runs the substitution from the plan's table before it re-pins. Later the same day the two architecture rules came back to `site.css` as `diagram-carousel` and `diagram-slide`, since a diagram carousel in the gallery frame is generic and only the name was Zwipe's.
+The names [`plans/class_names.md`](plans/class_names.md) approved are in the sheets and the components: `action-bar`, `btn-action` with `ButtonVariant::Action`, `sheet-*` for BottomSheet's children, `settings-row`, `banner`, `theme-picker`, `stats-figures`; `tag-row` is dropped and the two Zwipe architecture rules left `site.css`. Each host runs the substitution from the plan's table before it re-pins. Later the same day the two architecture rules came back to `site.css` as `diagram-carousel` and `diagram-slide`, since a diagram carousel in the gallery frame is generic and only the name was Zwipe's. [`plans/consolidation.md`](plans/consolidation.md) proposes what the hosts still duplicate, of the kit or of each other, with a verdict per candidate for a pass after the rename.
 
 ## 2026-10-12: the crate exists
 
