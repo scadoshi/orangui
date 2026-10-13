@@ -1937,9 +1937,11 @@ html[data-wipe="left"]::view-transition-new(root) {
     font-variant-numeric: tabular-nums;
 }
 
+/* A label that wraps stays centered under its figure. */
 .stats-strip .stat-label {
     color: var(--text-primary);
     opacity: 0.7;
+    text-align: center;
 }
 
 /* ---- InfoButton (orangui::InfoButton) ----
