@@ -230,6 +230,15 @@
     align-items: stretch;
 }
 
+/* A sheet's body sits on the same grid as the screen under it. */
+:where(.sheet-content) {
+    background-color: var(--bg-sink);
+    background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+}
+
 /* ---- Alert dialog (orangui::AlertDialog, DialogHostView) ---- */
 
 .alert-dialog-overlay {
