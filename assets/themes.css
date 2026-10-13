@@ -31,6 +31,16 @@
     --palette-4: #afc17e;
     --palette-5: #cc8738;
     --palette-6: #ff8873;
+    /* syntax: own scheme: built from this block's palette */
+    --syntax-keyword: var(--palette-3);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-4);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-5);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -60,6 +70,16 @@
     --palette-4: #334101;
     --palette-5: #7c4700;
     --palette-6: #760000;
+    /* syntax: own scheme: built from this block's palette */
+    --syntax-keyword: var(--palette-3);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-4);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-5);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -90,6 +110,16 @@
     --palette-4: #d3869b;
     --palette-5: #fabd2f;
     --palette-6: #8ec07c;
+    /* syntax: ellisonleao/gruvbox.nvim (bright for dark, faded for light) */
+    --syntax-keyword: #fb4934;
+    --syntax-type: #fabd2f;
+    --syntax-function: #b8bb26;
+    --syntax-string: #b8bb26;
+    --syntax-constant: #d3869b;
+    --syntax-comment: #928374;
+    --syntax-macro: #8ec07c;
+    --syntax-attribute: #8ec07c;
+    --syntax-punctuation: #fe8019;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -119,6 +149,16 @@
     --palette-4: #8f3f71;
     --palette-5: #b57614;
     --palette-6: #427b58;
+    /* syntax: ellisonleao/gruvbox.nvim (bright for dark, faded for light) */
+    --syntax-keyword: #9d0006;
+    --syntax-type: #b57614;
+    --syntax-function: #79740e;
+    --syntax-string: #79740e;
+    --syntax-constant: #8f3f71;
+    --syntax-comment: #928374;
+    --syntax-macro: #427b58;
+    --syntax-attribute: #427b58;
+    --syntax-punctuation: #af3a03;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -149,6 +189,16 @@
     --palette-4: #bd93f9;
     --palette-5: #f1fa8c;
     --palette-6: #ff79c6;
+    /* syntax: dracula/dracula-theme spec (Dracula, Alucard) */
+    --syntax-keyword: #ff79c6;
+    --syntax-type: #8be9fd;
+    --syntax-function: #50fa7b;
+    --syntax-string: #f1fa8c;
+    --syntax-constant: #bd93f9;
+    --syntax-comment: #6272a4;
+    --syntax-macro: #50fa7b;
+    --syntax-attribute: #50fa7b;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -178,6 +228,16 @@
     --palette-4: #644ac9;
     --palette-5: #846e15;
     --palette-6: #a3144d;
+    /* syntax: dracula/dracula-theme spec (Dracula, Alucard) */
+    --syntax-keyword: #a3144d;
+    --syntax-type: #036a96;
+    --syntax-function: #14710a;
+    --syntax-string: #846e15;
+    --syntax-constant: #644ac9;
+    --syntax-comment: #6c664b;
+    --syntax-macro: #14710a;
+    --syntax-attribute: #14710a;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -208,6 +268,16 @@
     --palette-4: #d699b6;
     --palette-5: #dbbc7f;
     --palette-6: #83c092;
+    /* syntax: sainnhe/everforest (medium) */
+    --syntax-keyword: #e67e80;
+    --syntax-type: #dbbc7f;
+    --syntax-function: #a7c080;
+    --syntax-string: #83c092;
+    --syntax-constant: #d699b6;
+    --syntax-comment: #859289;
+    --syntax-macro: #83c092;
+    --syntax-attribute: #d699b6;
+    --syntax-punctuation: #9da9a0;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -237,6 +307,16 @@
     --palette-4: #ca56a7;
     --palette-5: #b17400;
     --palette-6: #18946a;
+    /* syntax: sainnhe/everforest (medium) */
+    --syntax-keyword: #f85552;
+    --syntax-type: #dfa000;
+    --syntax-function: #8da101;
+    --syntax-string: #35a77c;
+    --syntax-constant: #df69ba;
+    --syntax-comment: #939f91;
+    --syntax-macro: #35a77c;
+    --syntax-attribute: #df69ba;
+    --syntax-punctuation: #829181;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -267,6 +347,16 @@
     --palette-4: #cba6f7;
     --palette-5: #f9e2af;
     --palette-6: #94e2d5;
+    /* syntax: catppuccin/nvim (Mocha, Latte) */
+    --syntax-keyword: #cba6f7;
+    --syntax-type: #f9e2af;
+    --syntax-function: #89b4fa;
+    --syntax-string: #a6e3a1;
+    --syntax-constant: #fab387;
+    --syntax-comment: #9399b2;
+    --syntax-macro: #94e2d5;
+    --syntax-attribute: #f9e2af;
+    --syntax-punctuation: #9399b2;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -296,6 +386,16 @@
     --palette-4: #8839ef;
     --palette-5: #c47500;
     --palette-6: #179299;
+    /* syntax: catppuccin/nvim (Mocha, Latte) */
+    --syntax-keyword: #8839ef;
+    --syntax-type: #df8e1d;
+    --syntax-function: #1e66f5;
+    --syntax-string: #40a02b;
+    --syntax-constant: #fe640b;
+    --syntax-comment: #7c7f93;
+    --syntax-macro: #179299;
+    --syntax-attribute: #df8e1d;
+    --syntax-punctuation: #7c7f93;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -326,6 +426,16 @@
     --palette-4: #bb9af7;
     --palette-5: #e0af68;
     --palette-6: #7dcfff;
+    /* syntax: folke/tokyonight.nvim (night, day) */
+    --syntax-keyword: #bb9af7;
+    --syntax-type: #2ac3de;
+    --syntax-function: #7aa2f7;
+    --syntax-string: #9ece6a;
+    --syntax-constant: #ff9e64;
+    --syntax-comment: #565f89;
+    --syntax-macro: #7dcfff;
+    --syntax-attribute: #2ac3de;
+    --syntax-punctuation: #89ddff;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -355,6 +465,16 @@
     --palette-4: #924dea;
     --palette-5: #8c6c3e;
     --palette-6: #007197;
+    /* syntax: folke/tokyonight.nvim (night, day) */
+    --syntax-keyword: #9854f1;
+    --syntax-type: #188092;
+    --syntax-function: #2e7de9;
+    --syntax-string: #587539;
+    --syntax-constant: #b15c00;
+    --syntax-comment: #848cb5;
+    --syntax-macro: #007197;
+    --syntax-attribute: #188092;
+    --syntax-punctuation: #006a83;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -385,6 +505,16 @@
     --palette-4: #b48ead;
     --palette-5: #ebcb8b;
     --palette-6: #88c0d0;
+    /* syntax: nordtheme/vim; light derived from dark */
+    --syntax-keyword: #81a1c1;
+    --syntax-type: #8fbcbb;
+    --syntax-function: #88c0d0;
+    --syntax-string: #a3be8c;
+    --syntax-constant: #b48ead;
+    --syntax-comment: #616e88;
+    --syntax-macro: #81a1c1;
+    --syntax-attribute: #d08770;
+    --syntax-punctuation: #eceff4;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -414,6 +544,16 @@
     --palette-4: #a17c9a;
     --palette-5: #9e8041;
     --palette-6: #578e9d;
+    /* syntax: nordtheme/vim; light derived from dark */
+    --syntax-keyword: #5e81ac;
+    --syntax-type: #4c8a89;
+    --syntax-function: #3f8c9e;
+    --syntax-string: #6b8a52;
+    --syntax-constant: #96708f;
+    --syntax-comment: #7b88a1;
+    --syntax-macro: #5e81ac;
+    --syntax-attribute: #b0634a;
+    --syntax-punctuation: #4c566a;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -444,6 +584,16 @@
     --palette-4: #c4a7e7;
     --palette-5: #ebbcba;
     --palette-6: #eb6f92;
+    /* syntax: rose-pine/neovim (main, dawn) */
+    --syntax-keyword: #31748f;
+    --syntax-type: #9ccfd8;
+    --syntax-function: #ebbcba;
+    --syntax-string: #f6c177;
+    --syntax-constant: #f6c177;
+    --syntax-comment: #6e6a86;
+    --syntax-macro: #c4a7e7;
+    --syntax-attribute: #c4a7e7;
+    --syntax-punctuation: #908caa;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -473,6 +623,16 @@
     --palette-4: #907aa9;
     --palette-5: #ca7672;
     --palette-6: #b4637a;
+    /* syntax: rose-pine/neovim (main, dawn) */
+    --syntax-keyword: #286983;
+    --syntax-type: #56949f;
+    --syntax-function: #d7827e;
+    --syntax-string: #ea9d34;
+    --syntax-constant: #ea9d34;
+    --syntax-comment: #9893a5;
+    --syntax-macro: #907aa9;
+    --syntax-attribute: #907aa9;
+    --syntax-punctuation: #797593;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -503,6 +663,16 @@
     --palette-4: #ae81ff;
     --palette-5: #e6db74;
     --palette-6: #f92672;
+    /* syntax: microsoft/vscode theme-monokai; light derived from dark */
+    --syntax-keyword: #f92672;
+    --syntax-type: #66d9ef;
+    --syntax-function: #a6e22e;
+    --syntax-string: #e6db74;
+    --syntax-constant: #ae81ff;
+    --syntax-comment: #88846f;
+    --syntax-macro: #a6e22e;
+    --syntax-attribute: #a6e22e;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -532,6 +702,16 @@
     --palette-4: #a274f1;
     --palette-5: #9a8e1e;
     --palette-6: #f92672;
+    /* syntax: microsoft/vscode theme-monokai; light derived from dark */
+    --syntax-keyword: #f92672;
+    --syntax-type: #1a9fb4;
+    --syntax-function: #649a00;
+    --syntax-string: #9a8e1e;
+    --syntax-constant: #a274f1;
+    --syntax-comment: #8a8670;
+    --syntax-macro: #649a00;
+    --syntax-attribute: #649a00;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -562,6 +742,16 @@
     --palette-4: #c678dd;
     --palette-5: #e5c07b;
     --palette-6: #56b6c2;
+    /* syntax: atom one-dark-syntax and one-light-syntax */
+    --syntax-keyword: #c678dd;
+    --syntax-type: #e5c07b;
+    --syntax-function: #61afef;
+    --syntax-string: #98c379;
+    --syntax-constant: #d19a66;
+    --syntax-comment: #5c6370;
+    --syntax-macro: #56b6c2;
+    --syntax-attribute: #d19a66;
+    --syntax-punctuation: #abb2bf;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -591,6 +781,16 @@
     --palette-4: #a626a4;
     --palette-5: #cb7701;
     --palette-6: #0184bc;
+    /* syntax: atom one-dark-syntax and one-light-syntax */
+    --syntax-keyword: #a626a4;
+    --syntax-type: #c18401;
+    --syntax-function: #4078f2;
+    --syntax-string: #50a14f;
+    --syntax-constant: #986801;
+    --syntax-comment: #a0a1a7;
+    --syntax-macro: #0184bc;
+    --syntax-attribute: #986801;
+    --syntax-punctuation: #383a42;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -621,6 +821,16 @@
     --palette-4: #6c71c4;
     --palette-5: #b58900;
     --palette-6: #2aa198;
+    /* syntax: altercation/solarized vim syntax groups */
+    --syntax-keyword: #859900;
+    --syntax-type: #b58900;
+    --syntax-function: #268bd2;
+    --syntax-string: #2aa198;
+    --syntax-constant: #d33682;
+    --syntax-comment: #586e75;
+    --syntax-macro: #cb4b16;
+    --syntax-attribute: #cb4b16;
+    --syntax-punctuation: #839496;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -650,6 +860,16 @@
     --palette-4: #6c71c4;
     --palette-5: #af8300;
     --palette-6: #209b92;
+    /* syntax: altercation/solarized vim syntax groups */
+    --syntax-keyword: #859900;
+    --syntax-type: #b58900;
+    --syntax-function: #268bd2;
+    --syntax-string: #2aa198;
+    --syntax-constant: #d33682;
+    --syntax-comment: #93a1a1;
+    --syntax-macro: #cb4b16;
+    --syntax-attribute: #cb4b16;
+    --syntax-punctuation: #657b83;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -684,6 +904,16 @@
     --palette-4: #d2a6ff;
     --palette-5: #ffb454;
     --palette-6: #95e6cb;
+    /* syntax: ayu-theme/ayu-colors syntax (dark, light) */
+    --syntax-keyword: #ff8f40;
+    --syntax-type: #59c2ff;
+    --syntax-function: #ffb454;
+    --syntax-string: #aad94c;
+    --syntax-constant: #d2a6ff;
+    --syntax-comment: #6c7380;
+    --syntax-macro: #f07178;
+    --syntax-attribute: #e6b673;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -713,6 +943,16 @@
     --palette-4: #a37acc;
     --palette-5: #ca8400;
     --palette-6: #229f7b;
+    /* syntax: ayu-theme/ayu-colors syntax (dark, light) */
+    --syntax-keyword: #fa8d3e;
+    --syntax-type: #399ee6;
+    --syntax-function: #f2ae49;
+    --syntax-string: #86b300;
+    --syntax-constant: #a37acc;
+    --syntax-comment: #adaeb1;
+    --syntax-macro: #f07171;
+    --syntax-attribute: #e59645;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -743,6 +983,16 @@
     --palette-4: #ab7df8;
     --palette-5: #d29922;
     --palette-6: #07ace4;
+    /* syntax: primer/github-vscode-theme (dark default, light default) */
+    --syntax-keyword: #ff7b72;
+    --syntax-type: #ffa657;
+    --syntax-function: #d2a8ff;
+    --syntax-string: #a5d6ff;
+    --syntax-constant: #79c0ff;
+    --syntax-comment: #8b949e;
+    --syntax-macro: #d2a8ff;
+    --syntax-attribute: #79c0ff;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -772,6 +1022,16 @@
     --palette-4: #8250df;
     --palette-5: #9a6700;
     --palette-6: #006a80;
+    /* syntax: primer/github-vscode-theme (dark default, light default) */
+    --syntax-keyword: #cf222e;
+    --syntax-type: #953800;
+    --syntax-function: #8250df;
+    --syntax-string: #0a3069;
+    --syntax-constant: #0550ae;
+    --syntax-comment: #6e7781;
+    --syntax-macro: #8250df;
+    --syntax-attribute: #0550ae;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -802,6 +1062,16 @@
     --palette-4: #957fb8;
     --palette-5: #e6c384;
     --palette-6: #7aa89f;
+    /* syntax: rebelot/kanagawa.nvim (Wave, Lotus) */
+    --syntax-keyword: #957fb8;
+    --syntax-type: #7aa89f;
+    --syntax-function: #7e9cd8;
+    --syntax-string: #98bb6c;
+    --syntax-constant: #ffa066;
+    --syntax-comment: #727169;
+    --syntax-macro: #e46876;
+    --syntax-attribute: #e46876;
+    --syntax-punctuation: #9cabca;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -831,6 +1101,16 @@
     --palette-4: #624c83;
     --palette-5: #77713f;
     --palette-6: #597b75;
+    /* syntax: rebelot/kanagawa.nvim (Wave, Lotus) */
+    --syntax-keyword: #624c83;
+    --syntax-type: #597b75;
+    --syntax-function: #4d699b;
+    --syntax-string: #6f894e;
+    --syntax-constant: #cc6d00;
+    --syntax-comment: #8a8980;
+    --syntax-macro: #c84053;
+    --syntax-attribute: #c84053;
+    --syntax-punctuation: #4e8ca2;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -861,6 +1141,16 @@
     --palette-4: #c792ea;
     --palette-5: #ecc48d;
     --palette-6: #7fdbca;
+    /* syntax: sdras/night-owl-vscode-theme (Night Owl, Light Owl) */
+    --syntax-keyword: #c792ea;
+    --syntax-type: #ffcb8b;
+    --syntax-function: #82aaff;
+    --syntax-string: #ecc48d;
+    --syntax-constant: #f78c6c;
+    --syntax-comment: #637777;
+    --syntax-macro: #82aaff;
+    --syntax-attribute: #addb67;
+    --syntax-punctuation: #7fdbca;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -890,6 +1180,16 @@
     --palette-4: #994cc3;
     --palette-5: #b98900;
     --palette-6: #2aa298;
+    /* syntax: sdras/night-owl-vscode-theme (Night Owl, Light Owl) */
+    --syntax-keyword: #994cc3;
+    --syntax-type: #0c969b;
+    --syntax-function: #4876d6;
+    --syntax-string: #c96765;
+    --syntax-constant: #aa0982;
+    --syntax-comment: #989fb1;
+    --syntax-macro: #4876d6;
+    --syntax-attribute: #4876d6;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -920,6 +1220,16 @@
     --palette-4: #cecece;
     --palette-5: #9b9b9b;
     --palette-6: #b0b0b0;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -949,6 +1259,16 @@
     --palette-4: #8f8f8f;
     --palette-5: #8f8f8f;
     --palette-6: #919191;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -979,6 +1299,16 @@
     --palette-4: #c586c0;
     --palette-5: #dcdcaa;
     --palette-6: #4ec9b0;
+    /* syntax: microsoft/vscode theme-defaults (dark_plus, light_plus) */
+    --syntax-keyword: #569cd6;
+    --syntax-type: #4ec9b0;
+    --syntax-function: #dcdcaa;
+    --syntax-string: #ce9178;
+    --syntax-constant: #b5cea8;
+    --syntax-comment: #6a9955;
+    --syntax-macro: #dcdcaa;
+    --syntax-attribute: #9cdcfe;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1008,6 +1338,16 @@
     --palette-4: #af00db;
     --palette-5: #a31515;
     --palette-6: #267f99;
+    /* syntax: microsoft/vscode theme-defaults (dark_plus, light_plus) */
+    --syntax-keyword: #0000ff;
+    --syntax-type: #267f99;
+    --syntax-function: #795e26;
+    --syntax-string: #a31515;
+    --syntax-constant: #098658;
+    --syntax-comment: #008000;
+    --syntax-macro: #795e26;
+    --syntax-attribute: #0070c1;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1038,6 +1378,16 @@
     --palette-4: #dc8cc3;
     --palette-5: #f0dfaf;
     --palette-6: #93e0e3;
+    /* syntax: bbatsov/zenburn-emacs font-lock faces; light derived from dark */
+    --syntax-keyword: #f0dfaf;
+    --syntax-type: #7cb8bb;
+    --syntax-function: #93e0e3;
+    --syntax-string: #cc9393;
+    --syntax-constant: #8cd0d3;
+    --syntax-comment: #7f9f7f;
+    --syntax-macro: #dfaf8f;
+    --syntax-attribute: #dfaf8f;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1067,6 +1417,16 @@
     --palette-4: #b4689d;
     --palette-5: #908154;
     --palette-6: #408d91;
+    /* syntax: bbatsov/zenburn-emacs font-lock faces; light derived from dark */
+    --syntax-keyword: #908154;
+    --syntax-type: #488b8e;
+    --syntax-function: #408d91;
+    --syntax-string: #a86565;
+    --syntax-constant: #4a7e9e;
+    --syntax-comment: #7a8c7a;
+    --syntax-macro: #a57859;
+    --syntax-attribute: #a57859;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1101,6 +1461,16 @@
     --palette-4: #c89dc1;
     --palette-5: #e9bb4f;
     --palette-6: #a3bfd1;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1130,6 +1500,16 @@
     --palette-4: #a87fa1;
     --palette-5: #af8200;
     --palette-6: #738d9e;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1160,6 +1540,16 @@
     --palette-4: #86a7df;
     --palette-5: #50f7d4;
     --palette-6: #7cf8f7;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1189,6 +1579,16 @@
     --palette-4: #6888be;
     --palette-5: #009b7d;
     --palette-6: #009797;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1219,6 +1619,16 @@
     --palette-4: #c63d3d;
     --palette-5: #d35f5f;
     --palette-6: #c02523;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1248,6 +1658,16 @@
     --palette-4: #c63d3d;
     --palette-5: #d35f5f;
     --palette-6: #b91c1c;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1278,6 +1698,16 @@
     --palette-4: #bb7744;
     --palette-5: #c9a554;
     --palette-6: #7f6e58;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1307,6 +1737,16 @@
     --palette-4: #b4713e;
     --palette-5: #9d7a24;
     --palette-6: #685742;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1337,6 +1777,16 @@
     --palette-4: #d2689c;
     --palette-5: #e5c736;
     --palette-6: #2dd5b7;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1366,6 +1816,16 @@
     --palette-4: #cb6296;
     --palette-5: #9f8100;
     --palette-6: #00957a;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1396,6 +1856,16 @@
     --palette-4: #a8a9eb;
     --palette-5: #f9cc6c;
     --palette-6: #f38d70;
+    /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
+    --syntax-keyword: #fd6883;
+    --syntax-type: #85dacc;
+    --syntax-function: #adda78;
+    --syntax-string: #f9cc6c;
+    --syntax-constant: #a8a9eb;
+    --syntax-comment: #72696a;
+    --syntax-macro: #adda78;
+    --syntax-attribute: #85dacc;
+    --syntax-punctuation: #948a8b;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1425,6 +1895,16 @@
     --palette-4: #7e7ebd;
     --palette-5: #ab800e;
     --palette-6: #ca684c;
+    /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
+    --syntax-keyword: #c94a63;
+    --syntax-type: #3d9488;
+    --syntax-function: #6a9431;
+    --syntax-string: #ab800e;
+    --syntax-constant: #7e7ebd;
+    --syntax-comment: #8c8283;
+    --syntax-macro: #6a9431;
+    --syntax-attribute: #3d9488;
+    --syntax-punctuation: #7b7072;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1455,6 +1935,16 @@
     --palette-4: #9b27ff;
     --palette-5: #f3e70f;
     --palette-6: #ff7edb;
+    /* syntax: robb0wen/synthwave-vscode syntax; light derived from dark */
+    --syntax-keyword: #fede5d;
+    --syntax-type: #fe4450;
+    --syntax-function: #36f9f6;
+    --syntax-string: #ff8b39;
+    --syntax-constant: #f97e72;
+    --syntax-comment: #848bbd;
+    --syntax-macro: #36f9f6;
+    --syntax-attribute: #fede5d;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1484,6 +1974,16 @@
     --palette-4: #8f00ff;
     --palette-5: #9a8c00;
     --palette-6: #d557b4;
+    /* syntax: robb0wen/synthwave-vscode syntax; light derived from dark */
+    --syntax-keyword: #9a8c00;
+    --syntax-type: #e0303e;
+    --syntax-function: #0098a5;
+    --syntax-string: #d06a1c;
+    --syntax-constant: #d6564b;
+    --syntax-comment: #7a6f94;
+    --syntax-macro: #0098a5;
+    --syntax-attribute: #9a8c00;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1514,6 +2014,16 @@
     --palette-4: #ff00ff;
     --palette-5: #ffff00;
     --palette-6: #00ffff;
+    /* syntax: PSReadLine default colors on the Vintage scheme (dark), PowerShell ISE script pane (light) */
+    --syntax-keyword: #00ff00;
+    --syntax-type: #c0c0c0;
+    --syntax-function: #ffff00;
+    --syntax-string: #008080;
+    --syntax-constant: #ffffff;
+    --syntax-comment: #008000;
+    --syntax-macro: #ffff00;
+    --syntax-attribute: #c0c0c0;
+    --syntax-punctuation: #808080;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1543,6 +2053,16 @@
     --palette-4: #800080;
     --palette-5: #808000;
     --palette-6: #008080;
+    /* syntax: PSReadLine default colors on the Vintage scheme (dark), PowerShell ISE script pane (light) */
+    --syntax-keyword: #00008b;
+    --syntax-type: #008080;
+    --syntax-function: #0000ff;
+    --syntax-string: #8b0000;
+    --syntax-constant: #800080;
+    --syntax-comment: #006400;
+    --syntax-macro: #0000ff;
+    --syntax-attribute: #00bfff;
+    --syntax-punctuation: #a9a9a9;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1573,6 +2093,16 @@
     --palette-4: #ab8ac1;
     --palette-5: #d2991d;
     --palette-6: #3e999f;
+    /* syntax: rust-lang/rust rustdoc dark and light syntax colors */
+    --syntax-keyword: #ab8ac1;
+    --syntax-type: var(--text-primary);
+    --syntax-function: var(--text-primary);
+    --syntax-string: #83a300;
+    --syntax-constant: #d97f26;
+    --syntax-comment: #8d8d8b;
+    --syntax-macro: #3e999f;
+    --syntax-attribute: #ee6868;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1602,6 +2132,16 @@
     --palette-4: #8959a8;
     --palette-5: #de6d00;
     --palette-6: #3e999f;
+    /* syntax: rust-lang/rust rustdoc dark and light syntax colors */
+    --syntax-keyword: #8959a8;
+    --syntax-type: var(--text-primary);
+    --syntax-function: var(--text-primary);
+    --syntax-string: #718c00;
+    --syntax-constant: #718c00;
+    --syntax-comment: #8e908c;
+    --syntax-macro: #3e999f;
+    --syntax-attribute: #c82829;
+    --syntax-punctuation: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1636,6 +2176,16 @@
     --palette-4: #81b2fd;
     --palette-5: #a58118;
     --palette-6: #5886ce;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1665,6 +2215,16 @@
     --palette-4: #215193;
     --palette-5: #947700;
     --palette-6: #497bc0;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1695,6 +2255,16 @@
     --palette-4: #c8b04f;
     --palette-5: #488acb;
     --palette-6: #9c851a;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1724,6 +2294,16 @@
     --palette-4: #675000;
     --palette-5: #447cbf;
     --palette-6: #907900;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1754,6 +2334,16 @@
     --palette-4: #f39097;
     --palette-5: #009d8c;
     --palette-6: #c4656d;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1783,6 +2373,16 @@
     --palette-4: #883136;
     --palette-5: #009178;
     --palette-6: #b65a5c;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1813,6 +2413,16 @@
     --palette-4: #696969;
     --palette-5: #bababa;
     --palette-6: #9e9e9e;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1842,6 +2452,16 @@
     --palette-4: #5d5d5d;
     --palette-5: #2e2e2e;
     --palette-6: #777777;
+    /* syntax: no editor syntax of its own: mapped from this block's palette */
+    --syntax-keyword: var(--palette-4);
+    --syntax-type: var(--palette-5);
+    --syntax-function: var(--palette-1);
+    --syntax-string: var(--palette-3);
+    --syntax-constant: var(--palette-2);
+    --syntax-comment: var(--text-muted);
+    --syntax-macro: var(--palette-6);
+    --syntax-attribute: var(--palette-6);
+    --syntax-punctuation: var(--text-muted);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

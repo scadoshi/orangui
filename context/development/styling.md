@@ -26,6 +26,7 @@ Class names are the public surface as much as the Rust names. A host styles agai
 | Semantic accents | `--accent-primary`, `--accent-secondary`, `--accent-tertiary` | title and link, selected state, eyebrow | no |
 | Status | `--color-success`, `--color-warning`, `--color-error` and their `--border-*` twins | outcomes: saved, over budget, failed | never |
 | Palette | `--palette-1` to `--palette-6` | variety with no meaning: tags, chart series, chip tints, logo stripes | only here |
+| Syntax | `--syntax-keyword`, `-type`, `-function`, `-string`, `-constant`, `-comment`, `-macro`, `-attribute`, `-punctuation` | code: a host's highlighter colors each token class from these | no |
 
 No variable crosses tiers. A status variable means an outcome and ships with its context (a toast, a check, an error box); a palette slot means nothing. A slot may hold the same hex as a status color, since in half the themes the only green and yellow are the success and warning colors. The reservation is on the variable, not the color.
 
@@ -46,11 +47,12 @@ Where a theme has fewer than six hues, slots repeat the theme's own published sh
 
 ## Themes
 
-A theme is a `.theme-{name}-dark` block and a `.theme-{name}-light` block in `assets/themes.css`, and its name is in `ALLOWED_THEMES` in `src/theme.rs`. The `:root` block repeats gruvbox dark as the default. Each block defines every variable the components reference: backgrounds, text, borders, the three accents, the three status colors with their borders, `--color-money`, the six palette slots and the shadows. Three more are derived from them at the end of the sheet, on whichever element carries the theme class: `--bg-sink` (the background under the panels, darkened on a dark theme and lifted toward white on a light one), `--grid-line` and `--grid-size` (the grid drawn on the sink).
+A theme is a `.theme-{name}-dark` block and a `.theme-{name}-light` block in `assets/themes.css`, and its name is in `ALLOWED_THEMES` in `src/theme.rs`. The `:root` block repeats gruvbox dark as the default. Each block defines every variable the components reference: backgrounds, text, borders, the three accents, the three status colors with their borders, `--color-money`, the six palette slots, the nine syntax slots and the shadows. Three more are derived from them at the end of the sheet, on whichever element carries the theme class: `--bg-sink` (the background under the panels, darkened on a dark theme and lifted toward white on a light one), `--grid-line` and `--grid-size` (the grid drawn on the sink).
 
 ## The gates
 
 - `tests/themes_palette.rs`: every theme block carries `--palette-1` to `--palette-6` and `--color-money`, and each slot reads on the block's `--bg-primary` at 3:1 or better. Pairs closer than 15 in OKLab are printed, never failed, since published colors stay as published. The accessibility themes are the exception: their six are built, so every pair must stay 8 apart under the deficiency they are built for.
+- `tests/themes_syntax.rs`: every theme block carries the nine `--syntax-*` slots, each a hex or one of the block's own palette or text variables. The values are the theme's editor scheme (gruvbox.nvim for Gruvbox, catppuccin/nvim for Catppuccin, and so on), with the source in a `/* syntax: ... */` comment, so code on a host looks like the theme does in an editor. A theme with no editor scheme of its own, such as the terminal-only omarchy themes and the accessibility themes, maps them from its palette.
 - `tests/status_colors.rs`: every status variable reference in the crate's own sheets sits under a selector in the test's allowlist, each of which marks an outcome. Decoration that wants a color takes a palette slot. A host holds its own stylesheet to the same rule with `status_uses`.
 - `tests/soft_defaults.rs`: every value a host tunes today sits in a `:where()` rule, and no plain rule sets a property that a `:where()` rule sets for the same selector, since that plain rule would beat a host rule of equal specificity whenever the kit's sheet loads last.
 - `src/theme.rs`: the theme list and the stylesheet name the same themes, alphabetically, each with both blocks.
