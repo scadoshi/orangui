@@ -8,7 +8,7 @@ orangui is a Dioxus UI kit: themes, panels, nav, charts and the entrance effects
 
 - One Rust crate, flat: every module is one component or one hook family, and `src/lib.rs` is the whole public surface. `architecture/structure.md` walks it.
 - Hosts: [zwipe](https://github.com/scadoshi/zwipe) (the app and zwipe.net), [portfolio](https://github.com/scadoshi/portfolio) and [cairn](https://github.com/scadoshi/cairn). Each takes the crate as a git dependency and pins a commit in its lockfile. `plans/host_migration.md` is where each one stands.
-- Styling ships as string constants a host inlines: `THEMES_CSS`, `COMPONENTS_CSS`, then `APP_CSS` or `SITE_CSS`. `development/styling.md` has the cascade and the color contract.
+- Styling ships as string constants a host inlines: `THEMES_CSS`, `COMPONENTS_CSS`, then `APP_CSS` or `SITE_CSS`. They land after the host's own sheet. `development/styling.md` has the cascade and the color contract.
 
 ## Purity Rules
 
@@ -18,6 +18,7 @@ The crate knows no host. These are non-negotiable:
 - **One native exception.** The OS back gesture (`os_back.rs`) branches on `#[cfg(target_os = "ios")]` and `#[cfg(target_os = "android")]`, does nothing elsewhere, and takes its native crates (`objc2`, `jni`, `ndk-context`) under the matching target tables in `Cargo.toml`. That is the only target-OS code allowed, and it still pulls no Dioxus platform feature: what only a host has, such as the WKWebView from `dioxus/mobile` or the patched Android activity, comes in as an argument.
 - **No host knowledge.** Nothing in here names a product, a domain model, a route or a URL. A component that needs to know about the host takes it as a prop or a callback. If a piece only makes sense for one host, it belongs in that host, built from the pieces here.
 - **No color literals in component rules.** A rule names a theme variable. Status colors mean an outcome; decoration takes a `--palette-N` slot. The two stylesheet gates in `tests/` hold this.
+- **Defaults are soft; structure is not.** A value a host tunes goes in a `:where(...)` rule so any host rule wins; display, position and the keyframes stay in the class rule. `development/styling.md` has the rule.
 - **Class names are public.** A host styles against them, so renaming one is a breaking change and gets called out in the commit.
 - **The theme list lives here** (`src/theme.rs`) beside the palettes it names. A host that stores a user's theme elsewhere keeps its own list and checks it against this one in a test.
 

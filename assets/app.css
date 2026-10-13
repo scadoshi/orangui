@@ -1,14 +1,14 @@
 /* App shell styles, for the apps only (zwiper and cairn).
  *
- * Opt-in through the crate's APP_CSS constant, loaded after COMPONENTS_CSS
- * and before the app's own stylesheet: themes, then components, then this,
- * then the app. The website and the portfolio never load it; zite defines
- * .page-header itself, differently.
+ * Opt-in through the crate's APP_CSS constant, after COMPONENTS_CSS. The
+ * website and the portfolio never load it; zite defines .page-header itself,
+ * differently.
  *
  * Holds the rules both apps had word for word, plus the base the shared app
  * components need (BottomSheet, PageHeader, ThemeSheet, the hint pieces).
  * Where the apps differ, the base here is what they share and each app keeps
- * its own difference in its own stylesheet, which wins by loading later. */
+ * its own difference in its own stylesheet. The values an app tunes sit in
+ * :where() rules, so any rule of the app's wins over them. */
 
 /* ---- Screen ---- */
 
@@ -270,9 +270,15 @@
 
 /* Leaves a band above and below for the app's header and footer, so a tall
    dialog never reaches them; env() adds room where the device reports safe
-   insets. --dialog-pad-x is the side padding, which the rules break out of. */
-.alert-dialog {
+   insets. --dialog-pad-x is the side padding, which the rules break out of;
+   it and the padding are soft defaults an app sets with a rule of any
+   specificity. */
+:where(.alert-dialog) {
     --dialog-pad-x: 2rem;
+    padding: 2rem var(--dialog-pad-x);
+}
+
+.alert-dialog {
     position: fixed;
     z-index: 1001;
     top: 50%;
@@ -287,7 +293,6 @@
         100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16rem
     );
     box-sizing: border-box;
-    padding: 2rem var(--dialog-pad-x);
     border: 1px solid var(--border-secondary);
     border-radius: 1rem;
     background: var(--bg-primary);
@@ -305,12 +310,16 @@
     overflow-wrap: break-word;
 }
 
-.alert-dialog-title {
-    margin: 0;
+/* The title's color and type are soft defaults. */
+:where(.alert-dialog-title) {
     color: var(--accent-tertiary);
     font-size: 1.25rem;
-    font-weight: 400;
     letter-spacing: 0.1em;
+}
+
+.alert-dialog-title {
+    margin: 0;
+    font-weight: 400;
 }
 
 /* The body scrolls on its own when it is tall, so the title and the actions
@@ -408,12 +417,16 @@
 
 /* ---- Settings lists and the theme sheet (orangui::ThemeSheet) ---- */
 
-/* The column of boxed lists on a settings or detail screen. */
+/* The column of boxed lists on a settings or detail screen. The width is a
+   soft default. */
+:where(.settings-sections) {
+    width: calc(100% - 2rem);
+}
+
 .settings-sections {
     display: flex;
     flex-direction: column;
     gap: var(--panel-gap);
-    width: calc(100% - 2rem);
     max-width: 40rem;
     padding-bottom: 1rem;
 }
@@ -545,13 +558,17 @@
 }
 
 /* A quiet line under a group of preference rows. A path or an error has no
-   spaces to wrap at, so it breaks anywhere. */
-.pref-note {
+   spaces to wrap at, so it breaks anywhere. The size and margin are soft
+   defaults. */
+:where(.pref-note) {
     font-size: 0.75rem;
+    margin: 0 0 0.6rem;
+}
+
+.pref-note {
     color: var(--text-muted);
     text-align: center;
     line-height: 1.4;
-    margin: 0 0 0.6rem;
     overflow-wrap: anywhere;
 }
 

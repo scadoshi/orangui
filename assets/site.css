@@ -1,11 +1,9 @@
 /* Site styles, for the websites only (zite and the portfolio).
  *
- * Opt-in through the crate's SITE_CSS constant, loaded after COMPONENTS_CSS
- * and before the site's own stylesheet. Holds the base both sites share: the
- * scroll reveal, the gallery (orangui::GalleryFrame, GalleryFooter) and the
- * footer. Each
- * site keeps its own colors, hover, sizes and entrance, which win by loading
- * later. */
+ * Opt-in through the crate's SITE_CSS constant, after COMPONENTS_CSS. Holds
+ * the base both sites share: the scroll reveal, the gallery
+ * (orangui::GalleryFrame, GalleryFooter) and the footer. The values a site
+ * tunes sit in :where() rules, so any rule of the site's wins over them. */
 
 /* ---- Scroll reveal (REVEAL_JS) ----
    The script marks an element below the fold pending, then adds reveal-in
@@ -76,7 +74,10 @@ body .reveal-pending.reveal-in {
     justify-content: center;
     box-shadow: var(--shadow-sm);
     font-family: monospace;
-    /* Solid but a touch faded over the media, full on hover. */
+}
+
+/* Solid but a touch faded over the media, full on hover. */
+:where(.gallery-nav) {
     background-color: var(--bg-primary);
     opacity: 0.9;
     transition: opacity 0.15s;
@@ -116,10 +117,14 @@ body .reveal-pending.reveal-in {
 /* ---- Site footer (.site-footer, .site-footer-note) ----
    The bar along the page's foot: the copyright line, then any smaller notes
    under it. `margin-top: auto` sinks it to the bottom of a column page; a
-   site that wants a fixed gap above it sets its own. */
+   site that wants a fixed gap above it sets its own, which wins over this
+   one at any specificity. */
+
+:where(.site-footer) {
+    margin-top: auto;
+}
 
 .site-footer {
-    margin-top: auto;
     padding: 2rem 1.5rem;
     background-color: var(--bg-primary);
     border-top: 1px solid var(--accent-primary);

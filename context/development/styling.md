@@ -4,7 +4,9 @@ How the stylesheets are written, and the two gates `cargo test` holds them to.
 
 ## The cascade
 
-A host inlines the sheets in this order: `THEMES_CSS`, then `COMPONENTS_CSS`, then `APP_CSS` (apps) or `SITE_CSS` (websites), then its own stylesheet. Component rules resolve theme variables, and the host's rules override shared defaults at equal specificity. A component rule never carries a color literal: it names a theme variable, so it resolves to whichever theme the host has active.
+A host includes the sheets in this order: `THEMES_CSS`, then `COMPONENTS_CSS`, then `APP_CSS` (apps) or `SITE_CSS` (websites). Each goes in as an inline `<style>`, and in the page those land after the host's own linked stylesheet, so at equal specificity a kit rule beats the host's. Component rules resolve theme variables. A component rule never carries a color literal: it names a theme variable, so it resolves to whichever theme the host has active.
+
+**Defaults are soft; structure is not.** A value a host is expected to tune (a size, a padding, a color default, a width, an animation's duration and delay, a menu's side) sits in a `:where(...)` rule, which has zero specificity, so any host rule wins over it whatever the load order: `:where(.chart-line) { stroke-width: 2 }` gives way to a host's `.chart-line { stroke-width: 1.6 }`. What a component cannot work without stays in the plain class rule: display, position, grid and flex structure, stacking, the keyframes and an animation's name and fill. A host's universal reset (`* { margin: 0; padding: 0 }`) also has zero specificity; it stays under the soft defaults because the kit's sheets come after it. Soft rules sit just above the class rule they belong to, and a comment says which values are soft.
 
 Class names are the public surface as much as the Rust names. A host styles against them, so renaming one is a breaking change. Every section of `components.css` opens with a one-line comment naming the component it styles, in the form `/* ---- Panel (orangui::Panel) ---- */`.
 
