@@ -1753,10 +1753,16 @@ a.nav-dropdown-item.active:visited {
 /* A line that draws itself left to right on mount. The path carries
    pathLength="1", so one dash the length of the line slides into place
    whatever its real length. `backwards` holds the undrawn state through a
-   delay and hands back to the resting style after. */
+   delay and hands back to the resting style after. The series color is
+   `--chart-series` on the path or any ancestor, else the path's `color`,
+   which is the accent until a host rule of any specificity sets it. */
+:where(.chart-line) {
+    color: var(--accent-primary);
+}
+
 .chart-line {
     fill: none;
-    stroke: var(--accent-primary);
+    stroke: var(--chart-series, currentColor);
     stroke-width: 2;
     stroke-linejoin: round;
     stroke-linecap: round;
