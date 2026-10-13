@@ -3,8 +3,11 @@
 
 use orangui::status_uses;
 
-const ALLOWED: [&str; 6] = [
+const ALLOWED: [&str; 9] = [
     ".btn-danger, .btn-action-danger",
+    ".tag-error, .stat-chip-error",
+    ".tag-success, .stat-chip-success",
+    ".tag-warning, .stat-chip-warning",
     ".status-doing",
     ".status-done",
     ".toast-container [data-type=\"error\"]",

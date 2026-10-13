@@ -29,6 +29,8 @@ Slot order is fixed across themes, so a given element has the same temperature e
 | 5 | the theme's yellow | `#fabd2f` |
 | 6 | the theme's cyan or aqua | `#8ec07c` |
 
+The tinted tags take their color the same way: `.tag` and `.stat-chip` read `--tone`, and a modifier sets it, `-p1` to `-p6` for a palette slot, `-muted` and `-money` for those variables, and `-success`, `-warning` and `-error` only where the chip reports an outcome. The number in `tag-p2` is the slot, so it is the same color on every host.
+
 Where a theme has fewer than six hues, slots repeat the theme's own published shades. Nothing is invented. Values come from published palettes, with the source in a comment above each theme block. The four accessibility themes (protanopia, deuteranopia, tritanopia, achromatopsia) are built from the deficiency outward instead.
 
 ## Themes

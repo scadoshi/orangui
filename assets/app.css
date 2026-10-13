@@ -3,7 +3,7 @@
  * Opt-in through the crate's APP_CSS constant, loaded after COMPONENTS_CSS
  * and before the app's own stylesheet: themes, then components, then this,
  * then the app. The website and the portfolio never load it; zite defines
- * .page-header, .info-button and .stat-chip itself, differently.
+ * .page-header and .info-button itself, differently.
  *
  * Holds the rules both apps had word for word, plus the base the shared app
  * components need (BottomSheet, PageHeader, ThemeSheet, the hint pieces).
@@ -122,7 +122,7 @@
     margin-bottom: 0.4rem;
 }
 
-/* ---- Inputs and chips ---- */
+/* ---- Inputs ---- */
 
 .input {
     width: 100%;
@@ -150,20 +150,6 @@
 .input::placeholder {
     color: var(--text-muted);
     font-weight: 400;
-}
-
-/* Capped at the row width, so a long label wraps onto a second line,
-   centered, instead of overflowing the border. */
-.stat-chip {
-    display: inline-block;
-    padding: 0.2rem 0.55rem;
-    border-radius: 0.6rem;
-    font-size: 0.75rem;
-    max-width: 100%;
-    text-align: center;
-    color: var(--accent-primary);
-    background-color: color-mix(in srgb, var(--accent-primary) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, transparent);
 }
 
 /* ---- Bottom sheet (orangui::BottomSheet) ---- */

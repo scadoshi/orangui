@@ -51,6 +51,116 @@
     box-shadow: none;
 }
 
+/* ---- Tinted tags (.tag, .stat-chip) ----
+   Colored text on a faint tint of the same color with a soft outline of it.
+   One tone drives all three: --tone is the color, a modifier sets it, and the
+   number in a -pN modifier is the palette slot, so tag-p2 and stat-chip-p2
+   are the same color on every host. The tint mixes into --tone-base, which
+   is transparent unless an ancestor sets an opaque background for chips that
+   sit over a pattern. */
+
+.tag,
+.stat-chip {
+    --tone: var(--accent-primary);
+    color: var(--tone);
+    background-color: color-mix(in srgb, var(--tone) 12%, var(--tone-base, transparent));
+    border: 1px solid color-mix(in srgb, var(--tone) var(--tone-edge, 35%), var(--tone-base, transparent));
+}
+
+/* A label on a project, a guide, a source row. */
+.tag {
+    display: inline-block;
+    border-radius: 0.6rem;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    transition:
+        border-color 0.15s,
+        color 0.15s,
+        filter 0.15s;
+}
+
+/* A figure or attribute beside a name. Capped at the row width, so a long
+   label wraps onto a second line, centered, instead of overflowing the
+   border. */
+.stat-chip {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 0.6rem;
+    font-size: 0.75rem;
+    max-width: 100%;
+    text-align: center;
+}
+
+a.tag,
+a.stat-chip {
+    text-decoration: none;
+}
+
+/* A link inside a tag keeps the tag's color. */
+.tag a,
+.stat-chip a {
+    color: inherit;
+}
+
+.tag-p1,
+.stat-chip-p1 {
+    --tone: var(--palette-1);
+}
+
+.tag-p2,
+.stat-chip-p2 {
+    --tone: var(--palette-2);
+}
+
+.tag-p3,
+.stat-chip-p3 {
+    --tone: var(--palette-3);
+}
+
+.tag-p4,
+.stat-chip-p4 {
+    --tone: var(--palette-4);
+}
+
+.tag-p5,
+.stat-chip-p5 {
+    --tone: var(--palette-5);
+}
+
+.tag-p6,
+.stat-chip-p6 {
+    --tone: var(--palette-6);
+}
+
+/* A label, not a figure: gray, with a fainter outline. */
+.tag-muted,
+.stat-chip-muted {
+    --tone: var(--text-muted);
+    --tone-edge: 30%;
+}
+
+.tag-money,
+.stat-chip-money {
+    --tone: var(--color-money);
+}
+
+/* The outcome tones: met, short of it, failed. */
+.tag-success,
+.stat-chip-success {
+    --tone: var(--color-success);
+}
+
+.tag-warning,
+.stat-chip-warning {
+    --tone: var(--color-warning);
+}
+
+.tag-error,
+.stat-chip-error {
+    --tone: var(--color-error);
+}
+
 /* ---- Button (orangui::Button) ---- */
 
 /* Primary: full-width form/dialog button. */
