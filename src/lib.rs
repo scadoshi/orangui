@@ -63,8 +63,8 @@ mod toast_timing;
 
 pub use action_bar::ActionBar;
 pub use alert_dialog::{
-    AlertDialog, DialogAction, DialogHost, DialogHostView, DialogSpec, use_dialog_host,
-    use_hosted_dialog,
+    ActionButton, AlertDialog, DialogAction, DialogHost, DialogHostView, DialogSpec,
+    use_dialog_host, use_hosted_dialog,
 };
 pub use banner::{Banner, BannerStatus};
 pub use bottom_sheet::BottomSheet;

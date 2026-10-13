@@ -415,6 +415,25 @@
     color: var(--color-error);
 }
 
+/* A disabled action looks like a disabled Button: faded, with a not-allowed
+   cursor. Every action is disabled while one runs its busy work. */
+.alert-dialog-cancel:disabled,
+.alert-dialog-action:disabled,
+.alert-dialog-action-danger:disabled,
+.alert-dialog-cancel[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* The action whose work is running keeps full strength, so its busy label
+   reads as working rather than off. */
+.alert-dialog-cancel[aria-busy="true"],
+.alert-dialog-action[aria-busy="true"],
+.alert-dialog-action-danger[aria-busy="true"] {
+    opacity: 1;
+    cursor: progress;
+}
+
 /* ---- Settings lists and the theme sheet (orangui::ThemeSheet) ---- */
 
 /* The column of boxed lists on a settings or detail screen. The width is a

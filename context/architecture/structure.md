@@ -28,7 +28,7 @@ src/
 │
 │   # the app kit, styled by APP_CSS
 ├── bottom_sheet.rs      # BottomSheet
-├── alert_dialog.rs      # AlertDialog, DialogAction, DialogSpec, and the app-root DialogHost that draws them
+├── alert_dialog.rs      # AlertDialog, DialogAction, ActionButton, DialogSpec, and the app-root DialogHost that draws them
 ├── page_header.rs       # PageHeader
 ├── theme_sheet.rs       # ThemeSheet: every theme as a row, previewed live
 ├── hint.rs              # InfoButton, HintLine, HintBullets, HintBullet, HintKey

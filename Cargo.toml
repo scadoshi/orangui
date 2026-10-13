@@ -19,6 +19,10 @@ serde = { version = "1", features = ["derive"] }
 # The toast stack, behind the `toast` feature so the sites never build it.
 dioxus-primitives = { git = "https://github.com/DioxusLabs/components", rev = "02801f27e4b3e30606e5c77e435c9d955c708eb3", version = "0.0.1", default-features = false, optional = true }
 
+[dev-dependencies]
+# Renders a component tree to HTML in the dialog tests.
+dioxus-ssr = "0.7"
+
 [features]
 # ToastStack and TOAST_CSS, for the apps.
 toast = ["dep:dioxus-primitives"]

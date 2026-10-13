@@ -10,14 +10,28 @@
 //!
 //! Closing fades the dim and the dialog out before they leave the DOM. Every
 //! label is the host's: the kit draws the buttons it is given.
+//!
+//! The spec is built once, when the dialog opens. An action that has to
+//! change while it shows (a countdown, a field that must not be empty, a
+//! request in flight) is a [`DialogAction::Button`] built from an
+//! [`ActionButton`], whose label and disabled state are signals the host
+//! owns.
 
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::{
+    cell::RefCell,
+    future::Future,
+    pin::Pin,
+    rc::Rc,
+    sync::atomic::{AtomicU64, Ordering},
+};
 
 use dioxus::prelude::*;
 
 use crate::use_overlay_back;
 
-/// One button in a dialog's action row. Every action closes the dialog.
+/// One button in a dialog's action row. `Dismiss`, `Confirm` and `Link`
+/// close the dialog; a [`Button`](DialogAction::Button) closes it or not, as
+/// its [`ActionButton`] says.
 #[derive(Clone, PartialEq)]
 pub enum DialogAction {
     /// Closes the dialog and does nothing else: Cancel, Got it.
@@ -41,6 +55,225 @@ pub enum DialogAction {
         /// Where it goes.
         href: String,
     },
+    /// A button the host drives: disabled from a signal, relabeled from a
+    /// signal, running async work under a busy label, or leaving the dialog
+    /// open. See [`ActionButton`].
+    Button(ActionButton),
+}
+
+impl From<ActionButton> for DialogAction {
+    fn from(button: ActionButton) -> Self {
+        DialogAction::Button(button)
+    }
+}
+
+/// The future an [`ActionButton::busy`] handler returns: `true` closes the
+/// dialog, `false` keeps it open.
+type BusyFuture = Pin<Box<dyn Future<Output = bool>>>;
+
+/// What clicking an [`ActionButton`] does.
+#[derive(Clone)]
+enum Run {
+    /// Starts closing the dialog, then runs the handler.
+    Close(Rc<RefCell<dyn FnMut()>>),
+    /// Runs the handler; the dialog stays open.
+    StayOpen(Rc<RefCell<dyn FnMut()>>),
+    /// Shows the busy label and holds the dialog open while the future runs,
+    /// then closes it if the future returns `true`.
+    Busy {
+        label: String,
+        work: Rc<RefCell<dyn FnMut() -> BusyFuture>>,
+    },
+}
+
+impl PartialEq for Run {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Run::Close(a), Run::Close(b)) | (Run::StayOpen(a), Run::StayOpen(b)) => {
+                Rc::ptr_eq(a, b)
+            }
+            (Run::Busy { label: la, work: a }, Run::Busy { label: lb, work: b }) => {
+                la == lb && Rc::ptr_eq(a, b)
+            }
+            _ => false,
+        }
+    }
+}
+
+/// A dialog action whose state can change while the dialog shows. Build one
+/// with [`ActionButton::new`] and the methods below, and pass it as
+/// `DialogAction::Button(..)` or `.into()`.
+///
+/// With no handler it closes the dialog, like [`DialogAction::Dismiss`].
+/// The label and the disabled state are read from signals the host owns, so
+/// they update in place; the dialog reads them when it draws, never at open.
+///
+/// ```
+/// # use dioxus::prelude::*;
+/// # use orangui::{ActionButton, DialogAction};
+/// # fn _f(seconds: Signal<u8>, mut flipped: Signal<bool>) {
+/// // Disabled through a countdown, relabeled each second.
+/// let label = use_memo(move || match seconds() {
+///     0 => "Delete".to_string(),
+///     n => format!("Delete ({n})"),
+/// });
+/// let delete: DialogAction = ActionButton::new("Delete")
+///     .danger()
+///     .live_label(label)
+///     .disabled(use_memo(move || seconds() > 0))
+///     .on_click(|| { /* runs as the dialog closes */ })
+///     .into();
+/// // A toggle that leaves the dialog open.
+/// let flip: DialogAction = ActionButton::new("Flip")
+///     .stay_open(move || flipped.toggle())
+///     .into();
+/// # }
+/// ```
+#[derive(Clone, PartialEq)]
+pub struct ActionButton {
+    label: String,
+    live_label: Option<ReadSignal<String>>,
+    danger: bool,
+    disabled: Option<ReadSignal<bool>>,
+    run: Option<Run>,
+}
+
+impl ActionButton {
+    /// A button with this text that closes the dialog.
+    pub fn new(label: impl Into<String>) -> Self {
+        ActionButton {
+            label: label.into(),
+            live_label: None,
+            danger: false,
+            disabled: None,
+            run: None,
+        }
+    }
+
+    /// Draws the button in the error color, for an action that cannot be
+    /// undone.
+    #[must_use]
+    pub fn danger(mut self) -> Self {
+        self.danger = true;
+        self
+    }
+
+    /// Takes the text from `label` while the dialog shows, in place of the
+    /// text given to [`new`](Self::new), which stays as the fallback once the
+    /// signal is gone.
+    ///
+    /// ```
+    /// # use dioxus::prelude::*;
+    /// # use orangui::ActionButton;
+    /// # fn _f(seconds: Signal<u8>) {
+    /// let label = use_memo(move || format!("Delete ({})", seconds()));
+    /// let delete = ActionButton::new("Delete").live_label(label);
+    /// # }
+    /// ```
+    #[must_use]
+    pub fn live_label(mut self, label: impl Into<ReadSignal<String>>) -> Self {
+        self.live_label = Some(label.into());
+        self
+    }
+
+    /// Disables the button while `disabled` is true. A `Signal<bool>` passes
+    /// as it is; a condition over other state passes as a `use_memo`.
+    ///
+    /// ```
+    /// # use dioxus::prelude::*;
+    /// # use orangui::ActionButton;
+    /// # fn _f(name: Signal<String>) {
+    /// let save = ActionButton::new("Save")
+    ///     .disabled(use_memo(move || name().trim().is_empty()));
+    /// # }
+    /// ```
+    #[must_use]
+    pub fn disabled(mut self, disabled: impl Into<ReadSignal<bool>>) -> Self {
+        self.disabled = Some(disabled.into());
+        self
+    }
+
+    /// Starts closing the dialog, then runs `handler`, as
+    /// [`DialogAction::Confirm`] does.
+    ///
+    /// ```
+    /// # use dioxus::prelude::*;
+    /// # use orangui::ActionButton;
+    /// # fn _f(mut saved: Signal<bool>) {
+    /// let save = ActionButton::new("Save").on_click(move || saved.set(true));
+    /// # }
+    /// ```
+    #[must_use]
+    pub fn on_click(mut self, handler: impl FnMut() + 'static) -> Self {
+        self.run = Some(Run::Close(Rc::new(RefCell::new(handler))));
+        self
+    }
+
+    /// Runs `handler` and leaves the dialog open, for a toggle inside it.
+    ///
+    /// ```
+    /// # use dioxus::prelude::*;
+    /// # use orangui::ActionButton;
+    /// # fn _f(mut flipped: Signal<bool>) {
+    /// let flip = ActionButton::new("Flip").stay_open(move || flipped.toggle());
+    /// # }
+    /// ```
+    #[must_use]
+    pub fn stay_open(mut self, handler: impl FnMut() + 'static) -> Self {
+        self.run = Some(Run::StayOpen(Rc::new(RefCell::new(handler))));
+        self
+    }
+
+    /// Runs `work` with the dialog held open: the button shows `busy_label`,
+    /// and every action and the dim are inert until the future finishes (the
+    /// OS back gesture still closes it). It resolves to `true` to close the
+    /// dialog, or `false` to keep it open with its body as it was, for a
+    /// request that failed.
+    ///
+    /// ```
+    /// # use dioxus::prelude::*;
+    /// # use orangui::ActionButton;
+    /// # async fn clone_deck(_name: String) -> Result<(), ()> { Ok(()) }
+    /// # fn _f(name: Signal<String>) {
+    /// let save = ActionButton::new("Save")
+    ///     .disabled(use_memo(move || name().trim().is_empty()))
+    ///     .busy("Cloning...", move || async move {
+    ///         clone_deck(name()).await.is_ok()
+    ///     });
+    /// # }
+    /// ```
+    #[must_use]
+    pub fn busy<F>(
+        mut self,
+        busy_label: impl Into<String>,
+        mut work: impl FnMut() -> F + 'static,
+    ) -> Self
+    where
+        F: Future<Output = bool> + 'static,
+    {
+        let work = move || -> BusyFuture { Box::pin(work()) };
+        self.run = Some(Run::Busy {
+            label: busy_label.into(),
+            work: Rc::new(RefCell::new(work)),
+        });
+        self
+    }
+
+    /// The text and whether the button takes clicks, given whether this
+    /// button's work is running and whether any action's is.
+    fn face(&self, running: bool, any_running: bool) -> (String, bool) {
+        let label = match (&self.run, running) {
+            (Some(Run::Busy { label, .. }), true) => label.clone(),
+            _ => self
+                .live_label
+                .and_then(|l| l.try_read().ok().map(|l| l.clone()))
+                .unwrap_or_else(|| self.label.clone()),
+        };
+        let disabled = self
+            .disabled
+            .is_some_and(|d| d.try_read().is_ok_and(|d| *d));
+        (label, !(disabled || any_running))
+    }
 }
 
 /// What a dialog draws: its title, its body, and its actions left to right.
@@ -63,6 +296,8 @@ struct Shown {
     close: Callback<()>,
     /// Fading out; inert until the animation ends and the slot clears.
     leaving: bool,
+    /// The index of the action whose busy work is running.
+    running: Option<usize>,
 }
 
 /// The app root's dialog slot. A `Copy` handle; create it with
@@ -94,6 +329,46 @@ impl DialogHost {
         }
         showing
     }
+
+    /// Runs a click on `owner`'s action `index`, which [`ActionButton`]'s
+    /// `run` describes: `None` closes the dialog, the rest as each says.
+    fn activate(self, owner: u64, close: Callback<()>, index: usize, run: Option<&Run>) {
+        match run {
+            None => {
+                if self.leave(owner) {
+                    close.call(());
+                }
+            }
+            Some(Run::Close(handler)) => {
+                if self.leave(owner) {
+                    close.call(());
+                    (handler.borrow_mut())();
+                }
+            }
+            Some(Run::StayOpen(handler)) => (handler.borrow_mut())(),
+            Some(Run::Busy { work, .. }) => {
+                let work = (work.borrow_mut())();
+                self.set_running(owner, Some(index));
+                spawn(async move {
+                    let done = work.await;
+                    self.set_running(owner, None);
+                    if done && self.leave(owner) {
+                        close.call(());
+                    }
+                });
+            }
+        }
+    }
+
+    /// Marks `owner`'s action `index` as running busy work, or clears it with
+    /// `None`. Does nothing once another dialog holds the slot.
+    fn set_running(self, owner: u64, index: Option<usize>) {
+        let mut slot = self.slot;
+        let mine = slot.peek().as_ref().is_some_and(|s| s.owner == owner);
+        if mine && let Some(shown) = slot.write().as_mut() {
+            shown.running = index;
+        }
+    }
 }
 
 static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
@@ -105,7 +380,8 @@ static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
 /// closes the dialog first.
 ///
 /// The spec is built when `open` turns true. A body that changes while it is
-/// showing does so through its own components and signals.
+/// showing does so through its own components and signals, and an action
+/// through the signals its [`ActionButton`] reads.
 pub fn use_hosted_dialog(open: Signal<bool>, build: impl Fn() -> DialogSpec + 'static) {
     let host = use_context::<DialogHost>();
     let owner = use_hook(|| NEXT_OWNER.fetch_add(1, Ordering::Relaxed));
@@ -125,6 +401,7 @@ pub fn use_hosted_dialog(open: Signal<bool>, build: impl Fn() -> DialogSpec + 's
                 owner,
                 close,
                 leaving: false,
+                running: None,
             }));
         } else {
             host.leave(owner);
@@ -166,10 +443,12 @@ pub fn DialogHostView() -> Element {
         owner,
         close,
         leaving,
+        running,
     } = shown;
     let state = if leaving { "closed" } else { "open" };
+    let busy = running.is_some();
     let dismiss = move || {
-        if host.leave(owner) {
+        if !busy && host.leave(owner) {
             close.call(());
         }
     };
@@ -197,12 +476,13 @@ pub fn DialogHostView() -> Element {
             div { class: "alert-dialog-description", {spec.body} }
             hr { class: "alert-dialog-rule" }
             div { class: "alert-dialog-actions",
-                for action in spec.actions {
+                for (index , action) in spec.actions.into_iter().enumerate() {
                     match action {
                         DialogAction::Dismiss(label) => rsx! {
                             button {
                                 class: "alert-dialog-cancel",
                                 r#type: "button",
+                                disabled: busy,
                                 onclick: move |_| dismiss(),
                                 "{label}"
                             }
@@ -211,6 +491,7 @@ pub fn DialogHostView() -> Element {
                             button {
                                 class: if danger { "alert-dialog-action-danger" } else { "alert-dialog-action" },
                                 r#type: "button",
+                                disabled: busy,
                                 onclick: move |_| {
                                     if host.leave(owner) {
                                         close.call(());
@@ -226,13 +507,278 @@ pub fn DialogHostView() -> Element {
                                 href,
                                 target: "_blank",
                                 rel: "noopener noreferrer",
-                                onclick: move |_| dismiss(),
+                                aria_disabled: if busy { "true" },
+                                onclick: move |evt| {
+                                    if busy {
+                                        evt.prevent_default();
+                                    }
+                                    dismiss();
+                                },
                                 "{label}"
                             }
                         },
+                        DialogAction::Button(button) => {
+                            let this_running = running == Some(index);
+                            let (label, enabled) = button.face(this_running, busy);
+                            let class = match (&button.run, button.danger) {
+                                (None, false) => "alert-dialog-cancel",
+                                (_, true) => "alert-dialog-action-danger",
+                                (Some(_), false) => "alert-dialog-action",
+                            };
+                            let run = button.run;
+                            rsx! {
+                                button {
+                                    class,
+                                    r#type: "button",
+                                    disabled: !enabled,
+                                    aria_busy: if this_running { "true" },
+                                    onclick: move |_| {
+                                        if enabled {
+                                            host.activate(owner, close, index, run.as_ref());
+                                        }
+                                    },
+                                    "{label}"
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::cell::Cell;
+
+    use dioxus::dioxus_core::NoOpMutations;
+
+    use super::*;
+    use crate::use_overlay_back_stack;
+
+    /// The owner's state, reached from the test between renders.
+    #[derive(Clone, Copy)]
+    struct Probe {
+        host: DialogHost,
+        open: Signal<bool>,
+        ready: Signal<bool>,
+        seconds: Signal<u8>,
+        flips: Signal<u32>,
+        confirmed: Signal<u32>,
+    }
+
+    thread_local! {
+        static PROBE: Cell<Option<Probe>> = const { Cell::new(None) };
+        static OUTCOME: Cell<bool> = const { Cell::new(true) };
+    }
+
+    fn probe() -> Probe {
+        PROBE.with(Cell::get).unwrap()
+    }
+
+    fn app() -> Element {
+        let stack = use_overlay_back_stack();
+        use_context_provider(|| stack);
+        let host = use_dialog_host();
+        use_context_provider(|| host);
+        rsx! {
+            Owner {}
+            DialogHostView {}
+        }
+    }
+
+    #[component]
+    fn Owner() -> Element {
+        let host = use_context::<DialogHost>();
+        let open = use_signal(|| true);
+        let ready = use_signal(|| false);
+        let seconds = use_signal(|| 3u8);
+        let mut flips = use_signal(|| 0u32);
+        let mut confirmed = use_signal(|| 0u32);
+        let label = use_memo(move || match seconds() {
+            0 => "Delete".to_string(),
+            n => format!("Delete ({n})"),
+        });
+        let blocked = use_memo(move || !ready());
+        PROBE.with(|p| {
+            p.set(Some(Probe {
+                host,
+                open,
+                ready,
+                seconds,
+                flips,
+                confirmed,
+            }));
+        });
+        rsx! {
+            AlertDialog {
+                open,
+                title: "Title",
+                actions: vec![
+                    DialogAction::Dismiss("Cancel".into()),
+                    ActionButton::new("Delete")
+                        .danger()
+                        .live_label(label)
+                        .disabled(blocked)
+                        .on_click(move || confirmed += 1)
+                        .into(),
+                    ActionButton::new("Flip").stay_open(move || flips += 1).into(),
+                    ActionButton::new("Save")
+                        .busy("Saving...", || async { OUTCOME.with(Cell::get) })
+                        .into(),
+                ],
+                "Body"
+            }
+        }
+    }
+
+    fn mount() -> VirtualDom {
+        let mut dom = VirtualDom::new(app);
+        dom.rebuild_in_place();
+        settle(&mut dom);
+        dom
+    }
+
+    fn settle(dom: &mut VirtualDom) {
+        for _ in 0..8 {
+            dom.process_events();
+            dom.render_immediate(&mut NoOpMutations);
+        }
+    }
+
+    /// The `<button>` tag whose text is `text`.
+    fn button(html: &str, text: &str) -> String {
+        let end = html.find(&format!(">{text}</button>")).unwrap();
+        let start = html[..end].rfind("<button").unwrap();
+        html[start..end].to_string()
+    }
+
+    /// Clicks action `index` as DialogHostView does.
+    fn click(dom: &VirtualDom, index: usize) {
+        let p = probe();
+        dom.in_scope(ScopeId::APP, || {
+            let shown = p.host.slot.peek().clone().unwrap();
+            let run = match shown.spec.actions.get(index) {
+                Some(DialogAction::Button(b)) => b.run.clone(),
+                _ => None,
+            };
+            p.host
+                .activate(shown.owner, shown.close, index, run.as_ref());
+        });
+    }
+
+    fn leaving(dom: &VirtualDom) -> bool {
+        let p = probe();
+        dom.in_runtime(|| p.host.slot.peek().as_ref().is_some_and(|s| s.leaving))
+    }
+
+    #[test]
+    fn label_and_disabled_follow_the_hosts_signals() {
+        let mut dom = mount();
+        let html = dioxus_ssr::render(&dom);
+        assert!(button(&html, "Delete (3)").contains("disabled"));
+        assert!(!button(&html, "Flip").contains("disabled"));
+
+        let p = probe();
+        dom.in_runtime(|| {
+            let (mut seconds, mut ready) = (p.seconds, p.ready);
+            seconds.set(0);
+            ready.set(true);
+        });
+        settle(&mut dom);
+        let html = dioxus_ssr::render(&dom);
+        let delete = button(&html, "Delete");
+        assert!(!delete.contains("disabled"));
+        assert!(delete.contains("alert-dialog-action-danger"));
+    }
+
+    #[test]
+    fn on_click_closes_then_runs() {
+        let mut dom = mount();
+        click(&dom, 1);
+        settle(&mut dom);
+        let p = probe();
+        assert!(leaving(&dom));
+        dom.in_runtime(|| {
+            assert_eq!(*p.confirmed.peek(), 1);
+            assert!(!*p.open.peek());
+        });
+    }
+
+    #[test]
+    fn stay_open_runs_and_keeps_the_dialog() {
+        let mut dom = mount();
+        click(&dom, 2);
+        settle(&mut dom);
+        let p = probe();
+        assert!(!leaving(&dom));
+        dom.in_runtime(|| {
+            assert_eq!(*p.flips.peek(), 1);
+            assert!(*p.open.peek());
+        });
+    }
+
+    #[test]
+    fn busy_shows_its_label_and_holds_every_action() {
+        let mut dom = mount();
+        let p = probe();
+        dom.in_runtime(|| {
+            let owner = p.host.slot.peek().as_ref().unwrap().owner;
+            p.host.set_running(owner, Some(3));
+        });
+        dom.render_immediate(&mut NoOpMutations);
+        let html = dioxus_ssr::render(&dom);
+        let save = button(&html, "Saving...");
+        assert!(save.contains("disabled"));
+        assert!(save.contains("aria-busy"));
+        assert!(button(&html, "Cancel").contains("disabled"));
+        assert!(button(&html, "Flip").contains("disabled"));
+    }
+
+    #[test]
+    fn busy_work_that_succeeds_closes() {
+        OUTCOME.with(|o| o.set(true));
+        let mut dom = mount();
+        click(&dom, 3);
+        settle(&mut dom);
+        let p = probe();
+        assert!(leaving(&dom));
+        dom.in_runtime(|| assert!(!*p.open.peek()));
+    }
+
+    #[test]
+    fn busy_work_that_fails_stays_open() {
+        OUTCOME.with(|o| o.set(false));
+        let mut dom = mount();
+        click(&dom, 3);
+        settle(&mut dom);
+        let p = probe();
+        assert!(!leaving(&dom));
+        dom.in_runtime(|| {
+            assert!(*p.open.peek());
+            assert!(p.host.slot.peek().as_ref().unwrap().running.is_none());
+        });
+        let html = dioxus_ssr::render(&dom);
+        assert!(!button(&html, "Save").contains("disabled"));
+        assert!(html.contains("Body"));
+    }
+
+    #[test]
+    fn face_without_signals() {
+        let plain = ActionButton::new("Go");
+        assert_eq!(plain.face(false, false), ("Go".to_string(), true));
+        assert_eq!(plain.face(false, true), ("Go".to_string(), false));
+        let busy = ActionButton::new("Save").busy("Saving...", || async { true });
+        assert_eq!(busy.face(true, true), ("Saving...".to_string(), false));
+        assert_eq!(busy.face(false, false), ("Save".to_string(), true));
+    }
+
+    #[test]
+    fn a_clone_is_equal_and_a_rebuild_is_not() {
+        let a = ActionButton::new("Flip").stay_open(|| {});
+        assert!(a == a.clone());
+        assert!(a != ActionButton::new("Flip").stay_open(|| {}));
+        assert!(ActionButton::new("Ok") == ActionButton::new("Ok"));
     }
 }
