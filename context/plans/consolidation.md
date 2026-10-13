@@ -212,3 +212,24 @@ Per host, what to delete and what to rename, in group order. Re-pin with `cargo 
 6. Sink and grid. Delete `--grid-line`, `--grid-size`, `--bg-sink` from `.screen` and delete `.screen[class$="-light"]`.
 7. Settings list. Rename `profile-sections` to `settings-sections`, `profile-list` to `settings-list`, `card-header` to `settings-list-header` (`.card-header.home-hero-head` becomes `.settings-list-header.home-hero-head`; `card-header-flow` stays a host modifier), `card-title` to `settings-list-title`. Delete `.profile-sections`, `.profile-list`, `.card-header`, `.card-title`, `.profile-list > .action-bar`, `.settings-row-value`, `.pref-note`. Visible: `.pref-note` is 0.75rem with a 0.6rem bottom margin against 0.85rem and none; to keep it, `.pref-note { font-size: 0.85rem; margin: 0; }`.
 8. Drops. Delete the `.info-button` override (font and cursor are the kit's now) and `.heat-cell`, `.heat-halo` from the reduced-motion block.
+
+## Follow-ups
+
+**Soft defaults (0468830).** The kit's sheets land after each host's own stylesheet, so a kit rule beat a host rule of the same specificity. The values a host tunes now sit in `:where()` rules (see `development/styling.md`), so any host rule wins. These host rules start winning, each a visible change on its host:
+
+| Host | Rule | Property | Was (kit) | Now (host) |
+|---|---|---|---|---|
+| zwiper | `.home-hero .stat` | `padding` | `0.7rem 0.35rem 0.6rem` | `0.6rem 0.25rem 0.5rem` |
+| zwiper | `.home-hero .stat-num` | `font-size` | `clamp(0.9rem, 3.8vw, 1.5rem)` | `1.25rem` |
+| zwiper | `.home-hero .stat-label` | `font-size`, `letter-spacing` | `clamp(0.6rem, 2.4vw, 0.75rem)`, `0.06em` | `0.65rem`, `0.04em` |
+| zite | `.gallery-nav` | `transition` | `opacity 0.15s` | `opacity 0.15s, border-color 0.15s, color 0.15s` |
+| portfolio | `.nav-brand` | `font-size`, `font-weight` | `1.1rem`, `400` | `1.2rem`, `700` |
+| portfolio | `.nav-dropdown-content` | `right` | `0` | `auto` (with its `left: 0`, menus hang from the trigger's left edge; the theme menu keeps its own `right: 0` above 60rem) |
+| portfolio | `.title-tag` | `font-size` | `0.78rem` | `0.7rem` |
+| portfolio | `.gallery-nav` | `transition` | `opacity 0.15s` | `opacity 0.15s, background 0.15s` |
+| cairn | `.chart-line` | `stroke-width` | `2` | `1.6` |
+| cairn | `.chart-overlay` | `stroke-width`, `animation-duration`, `animation-delay` | `2`, `1.1s`, `0s` | `2.2`, `1.3s`, `0.15s` |
+
+Host work: check each row in the screenshot diff and keep or delete the host rule. Rules that raised their specificity only to beat the kit can drop the extra part (zite's `footer.site-footer` back to `.site-footer`). The "to keep the old look" lines in the host pass above now work as written at plain class specificity.
+
+**Dialog actions (e76bbe1).** `DialogAction::Button(ActionButton)` adds an action whose label (`live_label`) and disabled state (`disabled`) are signals the host owns, one that leaves the dialog open (`stay_open`), and one that runs async work under a busy label (`busy`), holding the dialog open and closing only when the work returns `true`. `app.css` styles disabled actions like a disabled Button and the running one at full strength with a progress cursor. Host work, zwiper: move the delete-account countdown Delete, clone deck's Save (disabled while the name is empty, "Cloning..." while the request runs) and card details' Flip back into the action row, and drop the body copies of those buttons.
