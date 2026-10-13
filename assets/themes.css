@@ -1884,3 +1884,25 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
+
+/* ==================
+   derived: the sink and the grid
+ ==================== */
+
+/* The recessed background under the panels, and the faint grid drawn on it,
+   mixed from the active theme's own colors. Declared on the element that
+   carries the theme class, so color-mix() resolves against that theme
+   rather than the root's. */
+:root,
+[class*="theme-"][class*="-dark"],
+[class*="theme-"][class*="-light"] {
+    --grid-line: color-mix(in srgb, var(--text-primary) 4%, transparent);
+    --grid-size: 28px;
+    --bg-sink: color-mix(in srgb, var(--bg-primary), #000 15%);
+}
+
+/* A light theme lifts the sink toward white: darkening a cream palette reads
+   muddy. */
+[class*="theme-"][class*="-light"] {
+    --bg-sink: color-mix(in srgb, var(--bg-primary), #fff 35%);
+}

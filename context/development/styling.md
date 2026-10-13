@@ -35,7 +35,7 @@ Where a theme has fewer than six hues, slots repeat the theme's own published sh
 
 ## Themes
 
-A theme is a `.theme-{name}-dark` block and a `.theme-{name}-light` block in `assets/themes.css`, and its name is in `ALLOWED_THEMES` in `src/theme.rs`. The `:root` block repeats gruvbox dark as the default. Each block defines every variable the components reference: backgrounds, text, borders, the three accents, the three status colors with their borders, `--color-money`, the six palette slots and the shadows.
+A theme is a `.theme-{name}-dark` block and a `.theme-{name}-light` block in `assets/themes.css`, and its name is in `ALLOWED_THEMES` in `src/theme.rs`. The `:root` block repeats gruvbox dark as the default. Each block defines every variable the components reference: backgrounds, text, borders, the three accents, the three status colors with their borders, `--color-money`, the six palette slots and the shadows. Three more are derived from them at the end of the sheet, on whichever element carries the theme class: `--bg-sink` (the background under the panels, darkened on a dark theme and lifted toward white on a light one), `--grid-line` and `--grid-size` (the grid drawn on the sink).
 
 ## The gates
 
