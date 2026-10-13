@@ -37,7 +37,7 @@ Lint levels live in `Cargo.toml` `[lints.clippy]`: the same 22 lints zwipe uses,
 cargo test --all-features
 ```
 
-Unit tests, plus the two stylesheet gates in `tests/` (`context/development/styling.md`). No environment, no network.
+Unit tests, plus the stylesheet gates in `tests/` (`context/development/styling.md`). No environment, no network.
 
 ## Hosts pin a commit
 

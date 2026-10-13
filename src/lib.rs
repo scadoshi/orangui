@@ -25,9 +25,20 @@
 //!
 //! **CSS cascade order matters:** load themes first, then components, then the
 //! opt-in sheet (`THEMES_CSS`, then `COMPONENTS_CSS`, then `APP_CSS` or
-//! `SITE_CSS`) so component rules resolve theme variables. Inline styles land
-//! after a host's linked stylesheet, so the values a host tunes sit in
-//! zero-specificity `:where()` rules that any host rule overrides.
+//! `SITE_CSS`), then the host's own sheet. That order makes component rules
+//! resolve theme variables; the host's place in it is a recommendation, not
+//! something the kit depends on. Dioxus appends head elements in hook order, so
+//! a host that mounts its `document::Link` after the kit's `document::Style`
+//! puts its sheet last, and a prerendered page may put it first. Either way,
+//! structure sits in plain class rules and the values a host tunes sit in
+//! zero-specificity `:where()` rules, which a host rule of class specificity
+//! or higher overrides. What the order does not cover is a host's universal or
+//! element reset (`* { margin: 0 }`): it would zero the soft defaults, so it
+//! goes in a cascade layer, which loses to every unlayered rule:
+//!
+//! ```css
+//! @layer reset { * { margin: 0; padding: 0; } }
+//! ```
 
 mod action_bar;
 mod alert_dialog;

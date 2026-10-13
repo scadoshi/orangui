@@ -1,12 +1,21 @@
 # Styling
 
-How the stylesheets are written, and the two gates `cargo test` holds them to.
+How the stylesheets are written, and the three gates `cargo test` holds them to.
 
 ## The cascade
 
-A host includes the sheets in this order: `THEMES_CSS`, then `COMPONENTS_CSS`, then `APP_CSS` (apps) or `SITE_CSS` (websites). Each goes in as an inline `<style>`, and in the page those land after the host's own linked stylesheet, so at equal specificity a kit rule beats the host's. Component rules resolve theme variables. A component rule never carries a color literal: it names a theme variable, so it resolves to whichever theme the host has active.
+A host includes the sheets in this order: `THEMES_CSS`, then `COMPONENTS_CSS`, then `APP_CSS` (apps) or `SITE_CSS` (websites), each as an inline `<style>`. That order is what makes component rules resolve theme variables. A component rule never carries a color literal: it names a theme variable, so it resolves to whichever theme the host has active.
 
-**Defaults are soft; structure is not.** A value a host is expected to tune (a size, a padding, a color default, a width, an animation's duration and delay, a menu's side) sits in a `:where(...)` rule, which has zero specificity, so any host rule wins over it whatever the load order: `:where(.chart-line) { stroke-width: 2 }` gives way to a host's `.chart-line { stroke-width: 1.6 }`. What a component cannot work without stays in the plain class rule: display, position, grid and flex structure, stacking, the keyframes and an animation's name and fill. A host's universal reset (`* { margin: 0; padding: 0 }`) also has zero specificity; it stays under the soft defaults because the kit's sheets come after it. Soft rules sit just above the class rule they belong to, and a comment says which values are soft.
+**The kit does not rely on load order.** Where the host's own sheet lands against the kit's differs by host. Dioxus appends head elements in hook order, so a host that mounts its `document::Link` after the kit's `document::Style` sheets puts its own sheet last; a prerendered page that links the host sheet in its head template puts it first. Both work, and the kit's rules behave the same either way:
+
+- **Structure is plain.** What a component cannot work without sits in the plain class rule: display, position, grid and flex structure, stacking, the keyframes and an animation's name and fill. A plain kit rule beats a host's universal or element rule in either order. A host is not expected to change structure; where it must, it uses a selector more specific than the kit's, which also wins in either order.
+- **Defaults are soft.** A value a host is expected to tune (a size, a padding, a color default, a width, an animation's duration and delay, a menu's side) sits in a `:where(...)` rule, which has zero specificity. Any host rule of class specificity or higher overrides it, before or after: `:where(.chart-line) { stroke-width: 2 }` gives way to a host's `.chart-line { stroke-width: 1.6 }`. Soft rules sit just above the class rule they belong to, and a comment says which values are soft.
+- **Resets go in a layer.** A host's universal reset (`* { margin: 0; padding: 0 }`) also has zero specificity, so between it and a soft default the one later in the page wins, and a host that loads last zeroes every soft margin and padding. An element reset (`p { margin: 0 }`) outranks a soft default in any order. A host whose reset touches a property the kit sets softly puts the reset in a cascade layer. Layered rules lose to every unlayered rule, so the kit's soft defaults win wherever the sheets land, and the reset still beats the browser's defaults:
+
+```css
+/* Layered, so every unlayered rule (the kit's soft defaults included) wins over it. */
+@layer reset { * { margin: 0; padding: 0; } }
+```
 
 Class names are the public surface as much as the Rust names. A host styles against them, so renaming one is a breaking change. Every section of `components.css` opens with a one-line comment naming the component it styles, in the form `/* ---- Panel (orangui::Panel) ---- */`.
 
@@ -43,4 +52,5 @@ A theme is a `.theme-{name}-dark` block and a `.theme-{name}-light` block in `as
 
 - `tests/themes_palette.rs`: every theme block carries `--palette-1` to `--palette-6` and `--color-money`, and each slot reads on the block's `--bg-primary` at 3:1 or better. Pairs closer than 15 in OKLab are printed, never failed, since published colors stay as published. The accessibility themes are the exception: their six are built, so every pair must stay 8 apart under the deficiency they are built for.
 - `tests/status_colors.rs`: every status variable reference in the crate's own sheets sits under a selector in the test's allowlist, each of which marks an outcome. Decoration that wants a color takes a palette slot. A host holds its own stylesheet to the same rule with `status_uses`.
+- `tests/soft_defaults.rs`: every value a host tunes today sits in a `:where()` rule, and no plain rule sets a property that a `:where()` rule sets for the same selector, since that plain rule would beat a host rule of equal specificity whenever the kit's sheet loads last.
 - `src/theme.rs`: the theme list and the stylesheet name the same themes, alphabetically, each with both blocks.

@@ -8,7 +8,10 @@
  * components need (BottomSheet, PageHeader, ThemeSheet, the hint pieces).
  * Where the apps differ, the base here is what they share and each app keeps
  * its own difference in its own stylesheet. The values an app tunes sit in
- * :where() rules, so any rule of the app's wins over them. */
+ * :where() rules, so an app rule of class specificity or higher wins over
+ * them whether the app's sheet loads before or after this one. An app's
+ * universal or element reset goes in @layer reset { ... } so it stays under
+ * them. */
 
 /* ---- Screen ---- */
 

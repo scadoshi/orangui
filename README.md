@@ -11,7 +11,7 @@ orangui = { git = "https://github.com/scadoshi/orangui" }
 
 Add `features = ["toast"]` for the toast stack. The crate depends on base `dioxus` with no platform feature, so the host picks web, mobile, desktop or fullstack and cargo unifies. The version stays at 0.0.0: hosts pin a commit through their lockfile and move it on purpose, so nothing reads the number yet.
 
-Styling is inlined by the host, in this order: `THEMES_CSS`, then `COMPONENTS_CSS`, then `APP_CSS` (apps) or `SITE_CSS` (websites). Component rules resolve theme variables. The inline sheets land after the host's own, so every value a host tunes is a soft default in a `:where()` rule that any host rule overrides.
+Styling is inlined by the host, in this order: `THEMES_CSS`, then `COMPONENTS_CSS`, then `APP_CSS` (apps) or `SITE_CSS` (websites). That order makes component rules resolve theme variables. It says nothing about where the host's own sheet lands, and the kit does not depend on it: Dioxus appends head elements in hook order, so a host that mounts its `document::Link` after the kit's `document::Style` puts its sheet last, and a prerendered page may put it first. Structure sits in plain class rules and every value a host tunes is a soft default in a zero-specificity `:where()` rule, so a host rule of class specificity or higher overrides a default in either order. A universal or element reset (`* { margin: 0; padding: 0 }`) would zero those defaults, so a host puts it in a cascade layer, which loses to every unlayered rule: `@layer reset { * { margin: 0; padding: 0; } }`.
 
 ## What is in it
 
@@ -27,6 +27,7 @@ The theme model: `ThemeConfig`, `ALLOWED_THEMES`, `COLORBLIND_THEMES` and `displ
 
 - Every theme block carries `--palette-1` to `--palette-6` and `--color-money`, each readable on the block's background (`tests/themes_palette.rs`).
 - Status colors (`--color-success`, `--color-warning`, `--color-error` and their borders) appear only where they mean an outcome; decoration draws from the palette slots (`tests/status_colors.rs`). A host can hold its own stylesheet to the same rule with `status_uses`.
+- Every value a host tunes sits in a `:where()` rule, and no plain kit rule sets the same property for the same selector (`tests/soft_defaults.rs`).
 - The theme list and the stylesheet name the same themes, alphabetically.
 
 ## Hosts

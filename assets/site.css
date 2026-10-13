@@ -3,7 +3,10 @@
  * Opt-in through the crate's SITE_CSS constant, after COMPONENTS_CSS. Holds
  * the base both sites share: the scroll reveal, the gallery
  * (orangui::GalleryFrame, GalleryFooter) and the footer. The values a site
- * tunes sit in :where() rules, so any rule of the site's wins over them. */
+ * tunes sit in :where() rules, so a site rule of class specificity or higher
+ * wins over them whether the site's sheet loads before or after this one. A
+ * site's universal or element reset goes in @layer reset { ... } so it stays
+ * under them. */
 
 /* ---- Scroll reveal (REVEAL_JS) ----
    The script marks an element below the fold pending, then adds reveal-in

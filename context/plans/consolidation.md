@@ -215,7 +215,7 @@ Per host, what to delete and what to rename, in group order. Re-pin with `cargo 
 
 ## Follow-ups
 
-**Soft defaults (0468830).** The kit's sheets land after each host's own stylesheet, so a kit rule beat a host rule of the same specificity. The values a host tunes now sit in `:where()` rules (see `development/styling.md`), so any host rule wins. These host rules start winning, each a visible change on its host:
+**Soft defaults (0468830).** Where a host's sheet loads before the kit's, a kit rule beat a host rule of the same specificity. The values a host tunes now sit in `:where()` rules (see `development/styling.md`), so any host rule wins. These host rules start winning, each a visible change on its host:
 
 | Host | Rule | Property | Was (kit) | Now (host) |
 |---|---|---|---|---|
@@ -229,6 +229,8 @@ Per host, what to delete and what to rename, in group order. Re-pin with `cargo 
 | portfolio | `.gallery-nav` | `transition` | `opacity 0.15s` | `opacity 0.15s, background 0.15s` |
 | cairn | `.chart-line` | `stroke-width` | `2` | `1.6` |
 | cairn | `.chart-overlay` | `stroke-width`, `animation-duration`, `animation-delay` | `2`, `1.1s`, `0s` | `2.2`, `1.3s`, `0.15s` |
+
+Resets: zwiper and cairn mount their `document::Link` after the kit's `document::Style` sheets, so their sheet loads last and their universal resets zeroed every soft margin and padding (the dialog's 2rem padding measured 0). Both wrap the reset in `@layer reset { ... }` on their `orangui` branches; the portfolio and zite load their sheet first and need no change.
 
 Host work: check each row in the screenshot diff and keep or delete the host rule. Rules that raised their specificity only to beat the kit can drop the extra part (zite's `footer.site-footer` back to `.site-footer`). The "to keep the old look" lines in the host pass above now work as written at plain class specificity.
 
