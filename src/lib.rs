@@ -126,7 +126,7 @@ pub const SCROLL_FADE_JS: &str = include_str!("../assets/scroll-fade.js");
 /// [`COMPONENTS_CSS`] and before the site's own stylesheet.
 pub const SITE_CSS: &str = include_str!("../assets/site.css");
 /// The app shell's rules (screen, page header, bottom sheet, alert dialog,
-/// settings rows, hints), for the apps only. Load it after [`COMPONENTS_CSS`] and before the
+/// settings lists, hints), for the apps only. Load it after [`COMPONENTS_CSS`] and before the
 /// app's own stylesheet. Sites leave it out: they style these class names
 /// their own way.
 pub const APP_CSS: &str = include_str!("../assets/app.css");
