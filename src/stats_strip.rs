@@ -1,7 +1,7 @@
 //! A row of headline figures, each rolling to its value over a label, with
 //! an optional row of chips under it saying where the numbers come from.
-//! The base look is in `assets/components.css`; each host sizes the numbers
-//! for its own space.
+//! The look, sizes included, is in `assets/components.css`; a host with less
+//! room sets smaller numbers.
 
 use dioxus::prelude::*;
 

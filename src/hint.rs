@@ -1,5 +1,6 @@
-//! The pieces of a hint, for the apps: the small "?" that opens one and the
-//! lines inside it. Styled by `assets/app.css`.
+//! The pieces of a hint: the small "?" that opens one, styled by
+//! `assets/components.css` since the sites use it too, and the lines inside
+//! it, styled by `assets/app.css`.
 //!
 //! A hint is an [`AlertDialog`](crate::AlertDialog) whose body is these
 //! lines; what each hint says stays the app's.

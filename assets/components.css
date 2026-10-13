@@ -275,15 +275,16 @@ a.stat-chip {
 }
 
 /* Scoped to the shell's wrapper so a consumer's other semantic <nav>
-   (breadcrumbs, a TOC) doesn't inherit site-header layout. The width is a
-   variable so a host can match its own content column. */
+   (breadcrumbs, a TOC) doesn't inherit site-header layout. The bar spans
+   the page; a host that wants it to match a content column sets
+   --nav-max-width. */
 .nav-wrapper nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 2rem;
     padding: 1.25rem 1.5rem;
-    max-width: var(--nav-max-width, 60rem);
+    max-width: var(--nav-max-width, none);
     margin: 0 auto;
     position: relative;
 }
@@ -1781,9 +1782,10 @@ html[data-wipe="left"]::view-transition-new(root) {
 }
 
 /* ---- StatsStrip (orangui::StatsStrip) ----
-   What every host's strip shares. The numbers' and labels' sizes, the
-   figures' padding and the source row's spacing are each host's, for the
-   space it has. */
+   The figures' box and sizes. The numbers scale with the viewport so three
+   seven-digit figures share a phone's panel, and top out at the desktop
+   size; a host with less room sets smaller ones. The source row's spacing is
+   each host's. */
 
 .stats-strip {
     display: grid;
@@ -1798,6 +1800,7 @@ html[data-wipe="left"]::view-transition-new(root) {
     align-items: center;
     gap: 0.15rem;
     min-width: 0;
+    padding: 0.7rem 0.35rem 0.6rem;
     border: 1px solid var(--border-secondary);
     border-radius: 0.8rem;
     background-color: var(--bg-sink);
@@ -1805,6 +1808,7 @@ html[data-wipe="left"]::view-transition-new(root) {
 }
 
 .stats-strip .stat-num {
+    font-size: clamp(0.9rem, 3.8vw, 1.5rem);
     font-weight: 600;
     color: var(--palette-5);
     line-height: 1.1;
@@ -1812,8 +1816,33 @@ html[data-wipe="left"]::view-transition-new(root) {
 }
 
 .stats-strip .stat-label {
+    font-size: clamp(0.6rem, 2.4vw, 0.75rem);
+    letter-spacing: 0.06em;
     color: var(--text-primary);
     opacity: 0.7;
+}
+
+/* ---- InfoButton (orangui::InfoButton) ----
+   The "?" beside a label, faded like the header corners but sized for a
+   label row. Shared by the apps' hints and the sites. */
+
+.info-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+    margin-left: 0.35rem;
+    padding: 0;
+    border: 1px solid var(--border-primary);
+    border-radius: 0.5rem;
+    background: var(--bg-primary);
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    line-height: 1;
+    flex-shrink: 0;
+    cursor: pointer;
 }
 
 /* ---- HintKey (orangui::HintKey) ----

@@ -3,7 +3,7 @@
  * Opt-in through the crate's APP_CSS constant, loaded after COMPONENTS_CSS
  * and before the app's own stylesheet: themes, then components, then this,
  * then the app. The website and the portfolio never load it; zite defines
- * .page-header and .info-button itself, differently.
+ * .page-header itself, differently.
  *
  * Holds the rules both apps had word for word, plus the base the shared app
  * components need (BottomSheet, PageHeader, ThemeSheet, the hint pieces).
@@ -86,26 +86,7 @@
     right: 1rem;
 }
 
-/* ---- Hints (orangui::InfoButton, HintLine, HintBullets, HintKey) ---- */
-
-/* The "?" beside a label, faded like the header corners but sized for a
-   label row. */
-.info-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-    margin-left: 0.35rem;
-    padding: 0;
-    border: 1px solid var(--border-primary);
-    border-radius: 0.5rem;
-    background: var(--bg-primary);
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    line-height: 1;
-    flex-shrink: 0;
-}
+/* ---- Hints (orangui::HintLine, HintBullets) ---- */
 
 .hint-line {
     margin: 0 0 0.5rem 0;
@@ -150,6 +131,16 @@
 .input::placeholder {
     color: var(--text-muted);
     font-weight: 400;
+}
+
+/* PasswordInput's wrapper takes the field's bottom margin, so the wrapper is
+   exactly the field's height and the Show/Hide toggle centers on it. */
+.password-input-wrapper {
+    margin-bottom: 1rem;
+}
+
+.password-input-wrapper .input {
+    margin-bottom: 0;
 }
 
 /* ---- Bottom sheet (orangui::BottomSheet) ---- */

@@ -75,6 +75,14 @@ body .reveal-pending.reveal-in {
     justify-content: center;
     box-shadow: var(--shadow-sm);
     font-family: monospace;
+    /* Solid but a touch faded over the media, full on hover. */
+    background-color: var(--bg-primary);
+    opacity: 0.9;
+    transition: opacity 0.15s;
+}
+
+.gallery-nav:hover {
+    opacity: 1;
 }
 
 .gallery-prev {
