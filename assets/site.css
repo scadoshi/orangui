@@ -2,7 +2,8 @@
  *
  * Opt-in through the crate's SITE_CSS constant, loaded after COMPONENTS_CSS
  * and before the site's own stylesheet. Holds the base both sites share: the
- * scroll reveal and the gallery (orangui::GalleryFrame, GalleryFooter). Each
+ * scroll reveal, the gallery (orangui::GalleryFrame, GalleryFooter) and the
+ * footer. Each
  * site keeps its own colors, hover, sizes and entrance, which win by loading
  * later. */
 
@@ -110,4 +111,31 @@ body .reveal-pending.reveal-in {
 .gallery-counter {
     flex-shrink: 0;
     font-variant-numeric: tabular-nums;
+}
+
+/* ---- Site footer (.site-footer, .site-footer-note) ----
+   The bar along the page's foot: the copyright line, then any smaller notes
+   under it. `margin-top: auto` sinks it to the bottom of a column page; a
+   site that wants a fixed gap above it sets its own. */
+
+.site-footer {
+    margin-top: auto;
+    padding: 2rem 1.5rem;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--accent-primary);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+/* A quieter line under the first: a credit, a license notice, how the site
+   is built. */
+.site-footer-note {
+    max-width: 42rem;
+    margin: 0.85rem auto 0;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    color: var(--text-subtle);
+    opacity: 0.75;
 }
