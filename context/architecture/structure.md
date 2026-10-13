@@ -23,6 +23,7 @@ src/
 ├── diagram.rs           # DiagramNode, DiagramArrow, DiagramDefs: boxes and arrows in an inline svg
 ├── entrance.rs          # CountUp, Decode, Figure, Replay: the figures that resolve on arrival
 ├── chart_math.rs        # curve, area, tip_anchor, peak_indices
+├── chart_tip.rs         # ChartTip: the chip over a chart's point
 ├── heat_grid.rs         # HeatGrid: a year of days, a column per week
 │
 │   # the app kit, styled by APP_CSS

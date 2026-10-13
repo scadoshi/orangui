@@ -30,7 +30,8 @@ body .reveal-pending.reveal-in {
    and start the moment the reveal does, so a chart sweeps in as its panel
    rises rather than off screen. */
 .reveal-pending:not(.reveal-in) .heat-cell,
-.reveal-pending:not(.reveal-in) .heat-halo {
+.reveal-pending:not(.reveal-in) .heat-halo,
+.reveal-pending:not(.reveal-in) .chart-line {
     animation-play-state: paused;
 }
 

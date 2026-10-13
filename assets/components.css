@@ -1645,6 +1645,74 @@ a.nav-dropdown-item.active:visited {
     }
 }
 
+/* ---- Charts (orangui::ChartTip, .chart-line) ---- */
+
+/* The point's chip, anchored above it; tip_anchor's tip-start and tip-end
+   hang it from an edge near either side of the chart. */
+.chart-tip {
+    position: absolute;
+    transform: translate(-50%, calc(-100% - 0.4rem));
+    background-color: var(--bg-primary);
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 1;
+    animation: chart-tip-in 0.18s ease-out;
+    transition:
+        left 0.12s ease-out,
+        top 0.12s ease-out;
+}
+
+.chart-tip.tip-start {
+    transform: translate(-0.5rem, calc(-100% - 0.4rem));
+}
+
+.chart-tip.tip-end {
+    transform: translate(calc(-100% + 0.5rem), calc(-100% - 0.4rem));
+}
+
+@keyframes chart-tip-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* A line that draws itself left to right on mount. The path carries
+   pathLength="1", so one dash the length of the line slides into place
+   whatever its real length. `backwards` holds the undrawn state through a
+   delay and hands back to the resting style after. */
+.chart-line {
+    fill: none;
+    stroke: var(--accent-primary);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    animation: chart-draw 1.1s ease-out backwards;
+}
+
+@keyframes chart-draw {
+    from {
+        stroke-dashoffset: 1;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chart-tip {
+        animation: none;
+        transition: none;
+    }
+
+    .chart-line {
+        animation: none;
+    }
+}
+
 /* ---- Theme wipe (orangui::use_theme_wipe) ----
    A picked theme sweeps across the page: the new page's snapshot is unclipped
    over the old one, left to right except from light to dark, which runs right

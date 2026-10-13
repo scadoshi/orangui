@@ -15,7 +15,7 @@ Styling is inlined by the host, in this order: `THEMES_CSS`, then `COMPONENTS_CS
 
 ## What is in it
 
-For every host: `ActionBar`, `Banner`, `Button`, `Chip`, `NavBar`, `NavDropdown`, `PageMeta`, `Panel`, `PasswordInput`, `ThemePicker`; the diagram pieces (`DiagramNode`, `DiagramArrow`, `DiagramDefs`); the entrance figures (`CountUp`, `Decode`, `Figure`, `Replay`); `HeatGrid` for a year of days; and the chart helpers `curve`, `area`, `tip_anchor`, `peak_indices`.
+For every host: `ActionBar`, `Banner`, `Button`, `Chip`, `NavBar`, `NavDropdown`, `PageMeta`, `Panel`, `PasswordInput`, `ThemePicker`; the diagram pieces (`DiagramNode`, `DiagramArrow`, `DiagramDefs`); the entrance figures (`CountUp`, `Decode`, `Figure`, `Replay`); `HeatGrid` for a year of days; the chart helpers `curve`, `area`, `tip_anchor`, `peak_indices`; and `ChartTip`, the chip over a chart's point, with the `.chart-line` draw.
 
 The app kit: `BottomSheet`, `AlertDialog` with its root host (`DialogAction`, `DialogSpec`, `use_hosted_dialog`, `DialogHost`, `use_dialog_host`, `DialogHostView`), `PageHeader`, `ThemeSheet`, the hint pieces (`InfoButton`, `HintLine`, `HintBullets`, `HintBullet`, `HintKey`), the OS back stack (`OverlayBackStack`, `use_overlay_back_stack`, `use_overlay_back`, `use_overlay_back_action`), the OS back gesture `use_os_back` (the iOS edge swipe and Android back, native code behind target-OS gates) and, behind the `toast` feature, `ToastStack`.
 
