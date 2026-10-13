@@ -733,6 +733,76 @@ a.stat-chip {
     }
 }
 
+/* ---- NavBar calls to action (.nav-persistent, .nav-cta, .nav-cta-item) ----
+   An outbound call to action (a store, a download) as a nav pill in palette
+   slot 5. At hamburger widths NavBar's persistent slot shows the CTAs beside
+   the toggle, smaller, and the panel's own copies, each in an
+   li.nav-cta-item, hide; above it the slot hides and the panel shows them.
+   :visited rides along so a site's own a:visited never recolors a pill. */
+
+.nav-cta,
+.nav-cta:visited {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 1.85rem;
+    text-decoration: none;
+    color: var(--palette-5);
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 0.4rem;
+    padding: 0 0.8rem;
+    font-family: inherit;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition:
+        color 0.15s,
+        border-color 0.15s;
+}
+
+/* In the panel the pill rule above gives the shape; this keeps the color. */
+.nav-links > li > a.nav-cta,
+.nav-links > li > a.nav-cta:visited {
+    color: var(--palette-5);
+}
+
+@media (hover: hover) {
+    .nav-cta:hover,
+    .nav-cta:visited:hover,
+    .nav-links > li > a.nav-cta:hover,
+    .nav-links > li > a.nav-cta:visited:hover {
+        color: var(--palette-5);
+        border-color: var(--palette-5);
+    }
+}
+
+.nav-persistent {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@media (max-width: 60rem) {
+    .nav-persistent {
+        display: flex;
+        gap: 0.35rem;
+    }
+
+    .nav-persistent .nav-cta {
+        height: 1.65rem;
+        padding: 0 0.55rem;
+        font-size: 0.7rem;
+    }
+
+    .nav-panel .nav-cta-item {
+        display: none;
+    }
+}
+
 /* ---- NavDropdown (orangui::NavDropdown) +
         ThemePicker (orangui::ThemePicker) ----
    The dropdown (trigger pill, floating menu, backdrop, hover bridge) is the

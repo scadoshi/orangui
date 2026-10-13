@@ -32,9 +32,10 @@ pub fn NavBar(
     open: Signal<bool>,
     /// Brand element (the host's home link).
     brand: Element,
-    /// Optional content pinned outside the collapsing panel, rendered between
-    /// the brand and the toggle (e.g. a site's always-visible store links at
-    /// hamburger widths). The host styles it; the shell just places it.
+    /// Optional content pinned outside the collapsing panel, between the
+    /// brand and the toggle, shown only at hamburger widths: typically the
+    /// site's `a.nav-cta` pills, whose panel copies sit in `li.nav-cta-item`
+    /// and hide there. Wrapped in `div.nav-persistent`, whose children glide.
     persistent: Option<Element>,
     /// Link items (`li` elements) rendered inside the panel's `ul.nav-links`.
     links: Element,
@@ -63,7 +64,7 @@ pub fn NavBar(
             nav {
                 {brand}
                 if let Some(p) = persistent {
-                    {p}
+                    div { class: "nav-persistent", "data-nav-glide": "true", {p} }
                 }
                 button {
                     class: "{toggle_class}",

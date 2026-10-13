@@ -111,9 +111,9 @@ pub const THEMES_CSS: &str = include_str!("../assets/themes.css");
 /// `.reveal-in` classes it sets.
 pub const REVEAL_JS: &str = include_str!("../assets/reveal.js");
 /// The sites' nav glide: the children of every element marked
-/// `data-nav-glide` (the [`NavBar`] links and the [`ThemePicker`]) slide to
-/// their new places when a neighbor changes width. Inline it with
-/// `document::Script`.
+/// `data-nav-glide` (the [`NavBar`] links and persistent slot, and the
+/// [`ThemePicker`]) slide to their new places when a neighbor changes width.
+/// Inline it with `document::Script`.
 pub const NAV_GLIDE_JS: &str = include_str!("../assets/nav-glide.js");
 /// The sites' scroll fade for browsers without scroll timelines (Firefox,
 /// older Safari): sets the edge fades on every `.scroll-fade-x`,
