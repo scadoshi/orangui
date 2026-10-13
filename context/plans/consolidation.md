@@ -79,7 +79,7 @@ The counts come from the hosts' `orangui` worktrees and orangui `main` on 2026-1
 |---|---|---|---|
 | `.password-input-wrapper`, `.password-input-wrapper .input-password`, `.password-toggle-btn`, `:hover` | zwiper (24) | drop | the kit's rules; only the toggle's `translateY(calc(-50% - 0.5rem))` stays, as an override |
 | `.info-button` | zite (17) | drop | 13 of 15 declarations are the kit's; the other two go to the kit (next table) |
-| `:root` | portfolio (19) | drop | 18 of 19 variables are the kit's gruvbox dark. The 19th is `--text-primary`: the portfolio has `#ebdbb2`, published gruvbox fg1, and the kit has `#ebdba2` in both `:root` and the gruvbox dark block, which looks like a typo to check |
+| `:root` | portfolio (19) | drop | all 19 variables are the kit's gruvbox dark, `--text-primary` included (`#ebdbb2`, published gruvbox fg1) |
 | `.hero-rule` | portfolio (5) | drop | the kit's `.panel-rule`, and the hero is a Panel |
 | `.profile-link`, `.profile-links` | zite (about 25) | drop | the kit's nav link pill and `.panel-actions`; zite can emit the kit classes |
 | `.info-row`, `.info-row-label` | zwiper (about 15) | drop | the kit's `.settings-row` and `.settings-row-label`, same body |
