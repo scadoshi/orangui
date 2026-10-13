@@ -1596,6 +1596,55 @@ a.nav-dropdown-item.active:visited {
     }
 }
 
+/* ---- Entrance (.content-enter, .content-enter-delayed, .chip-in) ----
+   A block fades up into place as it mounts; the delayed one follows the
+   first. A chip fades up a shorter way, for a chip that swaps its text.
+   Each ends on `transform: none` rather than translateY(0): `both` keeps the
+   end state, and any other transform makes the element a containing block
+   that traps a position: fixed overlay inside it. */
+
+@keyframes content-enter {
+    from {
+        opacity: 0;
+        transform: translateY(0.625rem);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes chip-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.35rem);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.content-enter {
+    animation: content-enter 0.3s ease-out both;
+}
+
+.content-enter-delayed {
+    animation: content-enter 0.3s ease-out 0.15s both;
+}
+
+.chip-in {
+    animation: chip-in 0.3s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .content-enter,
+    .content-enter-delayed,
+    .chip-in {
+        animation: none;
+    }
+}
+
 /* ---- Theme wipe (orangui::use_theme_wipe) ----
    A picked theme sweeps across the page: the new page's snapshot is unclipped
    over the old one, left to right except from light to dark, which runs right
