@@ -9,7 +9,8 @@
 //! rules), then one opt-in sheet per kind of host.
 //!
 //! Three kits sit on the shared base. The app kit ([`BottomSheet`],
-//! [`PageHeader`], [`ThemeSheet`], the hint pieces, the overlay back stack,
+//! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
+//! the hint pieces, the overlay back stack,
 //! the OS back bridge [`use_os_back`] and, behind the `toast` feature,
 //! `ToastStack`) is for apps and styled by [`APP_CSS`]. The site kit
 //! ([`use_persisted_theme`], [`StatsStrip`], [`GalleryFrame`], [`REVEAL_JS`],
@@ -29,6 +30,7 @@
 //! equal specificity.
 
 mod action_bar;
+mod alert_dialog;
 mod banner;
 mod bottom_sheet;
 mod button;
@@ -59,6 +61,10 @@ mod toast_stack;
 mod toast_timing;
 
 pub use action_bar::ActionBar;
+pub use alert_dialog::{
+    AlertDialog, DialogAction, DialogHost, DialogHostView, DialogSpec, use_dialog_host,
+    use_hosted_dialog,
+};
 pub use banner::{Banner, BannerStatus};
 pub use bottom_sheet::BottomSheet;
 pub use button::{Button, ButtonVariant};
@@ -117,8 +123,8 @@ pub const SCROLL_FADE_JS: &str = include_str!("../assets/scroll-fade.js");
 /// [`GalleryFooter`]), for the websites only. Load it after
 /// [`COMPONENTS_CSS`] and before the site's own stylesheet.
 pub const SITE_CSS: &str = include_str!("../assets/site.css");
-/// The app shell's rules (screen, page header, bottom sheet, settings rows,
-/// hints), for the apps only. Load it after [`COMPONENTS_CSS`] and before the
+/// The app shell's rules (screen, page header, bottom sheet, alert dialog,
+/// settings rows, hints), for the apps only. Load it after [`COMPONENTS_CSS`] and before the
 /// app's own stylesheet. Sites leave it out: they style these class names
 /// their own way.
 pub const APP_CSS: &str = include_str!("../assets/app.css");

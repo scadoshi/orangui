@@ -1,8 +1,8 @@
 //! The pieces of a hint, for the apps: the small "?" that opens one and the
 //! lines inside it. Styled by `assets/app.css`.
 //!
-//! The dialog shell around them stays each app's, since it is wired to the
-//! app's own dialog and back handling.
+//! A hint is an [`AlertDialog`](crate::AlertDialog) whose body is these
+//! lines; what each hint says stays the app's.
 
 use dioxus::prelude::*;
 

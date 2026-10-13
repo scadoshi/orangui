@@ -27,6 +27,7 @@ src/
 │
 │   # the app kit, styled by APP_CSS
 ├── bottom_sheet.rs      # BottomSheet
+├── alert_dialog.rs      # AlertDialog, DialogAction, DialogSpec, and the app-root DialogHost that draws them
 ├── page_header.rs       # PageHeader
 ├── theme_sheet.rs       # ThemeSheet: every theme as a row, previewed live
 ├── hint.rs              # InfoButton, HintLine, HintBullets, HintBullet, HintKey
@@ -43,7 +44,7 @@ src/
 assets/
 ├── themes.css           # 31 themes, a dark and a light block each, gruvbox dark in :root
 ├── components.css       # the rules for the components above
-├── app.css              # the app shell: screen, page header, bottom sheet, settings rows, hints
+├── app.css              # the app shell: screen, page header, bottom sheet, alert dialog, settings rows, hints
 ├── site.css             # the gallery base
 ├── toast.css            # the toast stack
 ├── reveal.js            # elements marked data-reveal fade up as they scroll in

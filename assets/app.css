@@ -236,6 +236,185 @@
     align-items: stretch;
 }
 
+/* ---- Alert dialog (orangui::AlertDialog, DialogHostView) ---- */
+
+.alert-dialog-overlay {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background: var(--bg-overlay);
+}
+
+/* The dim and the dialog fade in together and out together. Opacity only:
+   any transform left on the dialog by an animation would fight its
+   centering. */
+.alert-dialog-overlay[data-state="open"],
+.alert-dialog[data-state="open"] {
+    animation: alert-dialog-in 150ms ease-out forwards;
+}
+
+.alert-dialog-overlay[data-state="closed"],
+.alert-dialog[data-state="closed"] {
+    animation: alert-dialog-out 150ms ease-in forwards;
+    pointer-events: none;
+}
+
+@keyframes alert-dialog-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes alert-dialog-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Leaves a band above and below for the app's header and footer, so a tall
+   dialog never reaches them; env() adds room where the device reports safe
+   insets. --dialog-pad-x is the side padding, which the rules break out of. */
+.alert-dialog {
+    --dialog-pad-x: 2rem;
+    position: fixed;
+    z-index: 1001;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: calc(100% - 2rem);
+    max-width: 20rem;
+    max-height: calc(
+        100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16rem
+    );
+    box-sizing: border-box;
+    padding: 2rem var(--dialog-pad-x);
+    border: 1px solid var(--border-secondary);
+    border-radius: 1rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 400;
+    text-align: center;
+}
+
+/* A long unbroken word in a title or body wraps rather than running out
+   through the side. break-word splits only a word too long for a line of its
+   own. */
+.alert-dialog-title,
+.alert-dialog-description {
+    overflow-wrap: break-word;
+}
+
+.alert-dialog-title {
+    margin: 0;
+    color: var(--accent-tertiary);
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+}
+
+/* The body scrolls on its own when it is tall, so the title and the actions
+   stay pinned. */
+.alert-dialog-description {
+    margin: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+/* A long body (a hint, or anything marked .alert-dialog-long) fades at its
+   scrolling edges. Short confirms stay sharp. */
+.alert-dialog-description:has(.hint-line, .hint-bullets, .alert-dialog-long) {
+    margin-top: -0.5rem;
+    margin-bottom: -0.5rem;
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        black 0.8rem,
+        black calc(100% - 0.8rem),
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        black 0.8rem,
+        black calc(100% - 0.8rem),
+        transparent 100%
+    );
+}
+
+/* The dialog's gap spaces its children, so a Button inside drops its form
+   margin. */
+.alert-dialog .btn {
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+/* Full width under the title and above the actions, out through the side
+   padding. */
+.alert-dialog-rule {
+    align-self: stretch;
+    margin: 0 calc(-1 * var(--dialog-pad-x));
+    border: none;
+    border-top: 1px solid var(--border-secondary);
+}
+
+.alert-dialog-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+/* Filled and lifted like the action bar's buttons. A link takes the same
+   classes, so the text rules are set here too. */
+.alert-dialog-cancel,
+.alert-dialog-action,
+.alert-dialog-action-danger {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border-primary);
+    border-radius: 0.6rem;
+    background-color: var(--bg-primary);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-primary);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8rem;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.alert-dialog-cancel:focus-visible,
+.alert-dialog-action:focus-visible,
+.alert-dialog-action-danger:focus-visible {
+    outline: 1px solid var(--accent-secondary);
+    outline-offset: 2px;
+}
+
+/* An action that cannot be undone. */
+.alert-dialog-action-danger {
+    border-color: var(--color-error);
+    color: var(--color-error);
+}
+
 /* ---- Settings rows and the theme sheet (orangui::ThemeSheet) ---- */
 
 .settings-row {

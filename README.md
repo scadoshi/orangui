@@ -17,7 +17,7 @@ Styling is inlined by the host, in this order: `THEMES_CSS`, then `COMPONENTS_CS
 
 For every host: `ActionBar`, `Banner`, `Button`, `Chip`, `NavBar`, `NavDropdown`, `PageMeta`, `Panel`, `PasswordInput`, `ThemePicker`; the diagram pieces (`DiagramNode`, `DiagramArrow`, `DiagramDefs`); the entrance figures (`CountUp`, `Decode`, `Figure`, `Replay`); `HeatGrid` for a year of days; and the chart helpers `curve`, `area`, `tip_anchor`, `peak_indices`.
 
-The app kit: `BottomSheet`, `PageHeader`, `ThemeSheet`, the hint pieces (`InfoButton`, `HintLine`, `HintBullets`, `HintBullet`, `HintKey`), the OS back stack (`OverlayBackStack`, `use_overlay_back_stack`, `use_overlay_back`, `use_overlay_back_action`), the OS back gesture `use_os_back` (the iOS edge swipe and Android back, native code behind target-OS gates) and, behind the `toast` feature, `ToastStack`.
+The app kit: `BottomSheet`, `AlertDialog` with its root host (`DialogAction`, `DialogSpec`, `use_hosted_dialog`, `DialogHost`, `use_dialog_host`, `DialogHostView`), `PageHeader`, `ThemeSheet`, the hint pieces (`InfoButton`, `HintLine`, `HintBullets`, `HintBullet`, `HintKey`), the OS back stack (`OverlayBackStack`, `use_overlay_back_stack`, `use_overlay_back`, `use_overlay_back_action`), the OS back gesture `use_os_back` (the iOS edge swipe and Android back, native code behind target-OS gates) and, behind the `toast` feature, `ToastStack`.
 
 The site kit: `use_persisted_theme`, `StatsStrip`, `GalleryFrame`, `GalleryFooter`, the theme wipe (`use_theme_wipe`, `use_theme_follow`) and the `REVEAL_JS`, `NAV_GLIDE_JS` and `SCROLL_FADE_JS` scripts.
 
