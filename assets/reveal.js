@@ -3,8 +3,7 @@
 // the same frame. Elements already on screen at setup are left alone, so this
 // never fights the load-time entrance animations. The classes come off once
 // the transition finishes, returning each element to plain styling (and its
-// normal hover transition). The host's stylesheet styles .reveal-pending and
-// .reveal-in.
+// normal hover transition). SITE_CSS styles .reveal-pending and .reveal-in.
 //
 // The MutationObserver re-scans after route changes, since the SPA router
 // swaps page content without a page load. Revealed elements are dropped from

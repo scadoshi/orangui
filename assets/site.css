@@ -1,10 +1,38 @@
 /* Site styles, for the websites only (zite and the portfolio).
  *
  * Opt-in through the crate's SITE_CSS constant, loaded after COMPONENTS_CSS
- * and before the site's own stylesheet. Holds the base both sites share for
- * the gallery (orangui::GalleryFrame, GalleryFooter); each site
- * keeps its own colors, hover, sizes and entrance, which win by loading
+ * and before the site's own stylesheet. Holds the base both sites share: the
+ * scroll reveal and the gallery (orangui::GalleryFrame, GalleryFooter). Each
+ * site keeps its own colors, hover, sizes and entrance, which win by loading
  * later. */
+
+/* ---- Scroll reveal (REVEAL_JS) ----
+   The script marks an element below the fold pending, then adds reveal-in
+   as it scrolls into view and strips both once the transition ends, handing
+   the element back to its own transitions. Without the script nothing is
+   pending and everything shows. Scoped under body so the reveal's transition
+   outranks a component's own. */
+
+body .reveal-pending {
+    opacity: 0;
+    transform: translateY(14px);
+}
+
+body .reveal-pending.reveal-in {
+    opacity: 1;
+    transform: none;
+    transition:
+        opacity 0.55s ease-out,
+        transform 0.55s ease-out;
+}
+
+/* The kit's own entrances inside a pending element hold their first frame
+   and start the moment the reveal does, so a chart sweeps in as its panel
+   rises rather than off screen. */
+.reveal-pending:not(.reveal-in) .heat-cell,
+.reveal-pending:not(.reveal-in) .heat-halo {
+    animation-play-state: paused;
+}
 
 /* ---- Gallery ---- */
 

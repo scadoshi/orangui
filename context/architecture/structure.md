@@ -45,7 +45,7 @@ assets/
 ├── themes.css           # 31 themes, a dark and a light block each, gruvbox dark in :root
 ├── components.css       # the rules for the components above
 ├── app.css              # the app shell: screen, page header, bottom sheet, alert dialog, settings rows, hints
-├── site.css             # the gallery base
+├── site.css             # the sites: scroll reveal, gallery
 ├── toast.css            # the toast stack
 ├── reveal.js            # elements marked data-reveal fade up as they scroll in
 ├── nav-glide.js         # nav items slide to their new places when a neighbor changes width

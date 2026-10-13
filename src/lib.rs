@@ -105,8 +105,8 @@ pub const COMPONENTS_CSS: &str = include_str!("../assets/components.css");
 pub const THEMES_CSS: &str = include_str!("../assets/themes.css");
 /// The sites' scroll reveal: elements marked `data-reveal` (every [`Panel`])
 /// that start below the fold fade up as they scroll in. Inline it with
-/// `document::Script`; the host's stylesheet styles `.reveal-pending` and
-/// `.reveal-in`.
+/// `document::Script`; [`SITE_CSS`] styles the `.reveal-pending` and
+/// `.reveal-in` classes it sets.
 pub const REVEAL_JS: &str = include_str!("../assets/reveal.js");
 /// The sites' nav glide: the children of every element marked
 /// `data-nav-glide` (the [`NavBar`] links and the [`ThemePicker`]) slide to
@@ -119,8 +119,8 @@ pub const NAV_GLIDE_JS: &str = include_str!("../assets/nav-glide.js");
 /// scroll position, which [`COMPONENTS_CSS`] animates where it can, and does
 /// nothing elsewhere. Inline it with `document::Script`.
 pub const SCROLL_FADE_JS: &str = include_str!("../assets/scroll-fade.js");
-/// The sites' shared base for the gallery ([`GalleryFrame`],
-/// [`GalleryFooter`]), for the websites only. Load it after
+/// The sites' shared base: the scroll reveal for [`REVEAL_JS`] and the
+/// gallery ([`GalleryFrame`], [`GalleryFooter`]), for the websites only. Load it after
 /// [`COMPONENTS_CSS`] and before the site's own stylesheet.
 pub const SITE_CSS: &str = include_str!("../assets/site.css");
 /// The app shell's rules (screen, page header, bottom sheet, alert dialog,
