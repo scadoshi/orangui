@@ -29,13 +29,13 @@
 
 # orangui
 
-A Dioxus UI kit with the themes, panels, nav, charts and entrance effects my apps and sites share. The name is orangutan, a call sign of mine, plus GUI.
+The Dioxus UI kit behind my apps and sites. The name is orangutan, a call sign of mine, plus GUI.
 
-## Hosts
+It runs in:
 
 - [zwipe](https://github.com/scadoshi/zwipe), the app and zwipe.net
-- [portfolio](https://github.com/scadoshi/portfolio), scottyfermo.com, where the [orangui page](https://scottyfermo.com/projects/orangui/) shows the components live
 - [cairn](https://github.com/scadoshi/cairn), a counter app
+- [portfolio](https://github.com/scadoshi/portfolio), where the [orangui page](https://scottyfermo.com/projects/orangui/) shows every piece live
 
 ## Use
 
@@ -44,12 +44,10 @@ A Dioxus UI kit with the themes, panels, nav, charts and entrance effects my app
 orangui = { git = "https://github.com/scadoshi/orangui" }
 ```
 
-Add `features = ["toast"]` for the toast stack. The full list of components is in `src/lib.rs`.
+Turn on `features = ["toast"]` if you want toasts. Then inline the stylesheets in this order:
 
-Inline the stylesheets in this order:
+1. `THEMES_CSS`
+2. `COMPONENTS_CSS`
+3. `APP_CSS` for an app, `SITE_CSS` for a site
 
-- `THEMES_CSS`
-- `COMPONENTS_CSS`
-- `APP_CSS` for an app, or `SITE_CSS` for a website
-
-The host's own sheet can load before or after these. The rules the kit keeps and the tests that hold them are in [context/](context/).
+Your own sheet can load before or after them. The rules the kit sticks to, and the tests that check them, are in [context/](context/).
