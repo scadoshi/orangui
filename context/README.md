@@ -17,6 +17,10 @@ Read [`CLAUDE.md`](CLAUDE.md) first for the rules.
 
 The running log, newest first. Update this when something ships.
 
+## 2026-10-13: every host is on orangui
+
+The portfolio (3cdb06f), cairn (650e008) and zwipe (791f3920) merged their `orangui` branches and take their UI from this crate; the re-pin scripts run `cargo update -p orangui`. zwipe's Magic crate, `zwipe-components` in the entries below, is now `components`. [`plans/host_migration.md`](plans/host_migration.md) has the log.
+
 ## 2026-10-12: the class rename pass shipped
 
 The names [`plans/class_names.md`](plans/class_names.md) approved are in the sheets and the components: `action-bar`, `btn-action` with `ButtonVariant::Action`, `sheet-*` for BottomSheet's children, `settings-row`, `banner`, `theme-picker`, `stats-figures`; `tag-row` is dropped and the two Zwipe architecture rules left `site.css`. Each host runs the substitution from the plan's table before it re-pins. Later the same day the two architecture rules came back to `site.css` as `diagram-carousel` and `diagram-slide`, since a diagram carousel in the gallery frame is generic and only the name was Zwipe's. [`plans/consolidation.md`](plans/consolidation.md) audited what the hosts still duplicate, of the kit or of each other; the owner approved the top ten, the kit side is done (tinted tags, `AlertDialog`, the entrance and reveal rules, `ChartTip`, the sink and grid variables, the settings list, the site footer and the nav CTAs), and its "Host pass" section lists each host's deletions and renames.

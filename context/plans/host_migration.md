@@ -1,13 +1,14 @@
 # Host migration
 
-**Status: IN PROGRESS.** This block is the running log; update it as each item lands.
+**Status: DONE 2026-10-13.** Every host takes its UI from orangui. This block is the log. zwipe's Magic crate, named `zwipe-components` throughout this plan, is now `components`.
 
 - [x] 2026-10-12 The crate exists: the generic parts of zwipe's `zwipe-components` lifted as is, with the theme model moved in beside the palettes, the Magic sections cut from the stylesheet, and CI green on the first push. No host depends on it yet.
 - [x] 2026-10-12 zwipe branch `orangui` (head d9f10b05, pushed, not merged): `zwipe-components` depends on orangui, keeps the Magic pieces, and re-exports the rest, so zwiper and zite kept their import paths. Its stylesheet is now `assets/magic.css`, exposed as `MAGIC_CSS`, which both hosts inline right after `COMPONENTS_CSS`. The hosts hold orangui's `ThemeConfig`; `zwipe_components::theme_from_preferences` converts from core's `UserPreferences`, and two tests pin core's theme list and names to orangui's. All gates green; zite before and after screenshots identical except four pixels of a banner countdown between captures. The app itself was not screenshotted.
 - [x] 2026-10-12 portfolio branch `orangui` (head ccfef21, pushed, not merged): depends on orangui, the Zwipe architecture carousel is the site's own copy under `src/components/zwipe_architecture.rs`, and the explicit `getrandom` dependency went with zwipe-core. All five deploy gates and the static build green; home, the Zwipe page and a side quest pixel-identical before and after, bar a playing video.
 - [x] 2026-10-12 cairn branch `orangui` (head eafd652, pushed, not merged): depends on orangui with the `toast` feature; the vendored `tao` stays pinned to zwipe. Format, clippy, 114 tests and the hook-order check green with the default desktop feature. The simulator build and screenshots are still to do at a device.
-- [ ] The production switch, one host at a time, at a device: merge the branch, deploy, check live. zite and the portfolio are public pages; the app is a store cut. cairn needs its simulator build first.
-- [ ] The re-pin scripts move from `cargo update -p zwipe-components` to `cargo update -p orangui`, and zynergy's `zwipe-core` re-pin stays as it is.
+- [x] 2026-10-13 The production switch, all three hosts: portfolio main 3cdb06f (live), cairn main 650e008, zwipe main 791f3920. The `orangui` branches are deleted. cairn's simulator build and device checks are still owed; cairn's todo has the list.
+- [x] 2026-10-13 The re-pin scripts moved from `cargo update -p zwipe-components` to `cargo update -p orangui`; zynergy's `zwipe-core` re-pin stays as it is.
+- [x] 2026-10-13 zwipe's Magic crate is now `components`, at the workspace root: it holds only the Magic pieces, so the owner dropped the `zwipe-` prefix.
 
 ## Not now: crates.io
 
@@ -38,4 +39,4 @@ cairn uses the app kit and the toast stack. It also takes `tao` from zwipe's ven
 ## Open questions
 
 - Whether orangui should ship the theme-sync test as a helper (a function a host calls with its own list), so each host writes one line instead of its own test.
-- Whether `zwipe-components` keeps its name once it is only the Magic pieces. It could, since it is still zwipe's components.
+- Settled 2026-10-13: `zwipe-components`, once it held only the Magic pieces, became `components`.

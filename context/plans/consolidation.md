@@ -9,10 +9,10 @@
 
 ## Summary
 
-The five host sheets hold 1,481 rules (one rule per selector and at-rule context): zwiper `main.css` 482, zite `style.css` 393, portfolio `main.css` 268, cairn `main.css` 188, zwipe-components `magic.css` 150. The kit's four sheets hold 265: `components.css` 188, `app.css` 36, `site.css` 9, `toast.css` 32.
+The five host sheets hold 1,481 rules (one rule per selector and at-rule context): zwiper `main.css` 482, zite `style.css` 393, portfolio `main.css` 268, cairn `main.css` 188, zwipe's `components` `magic.css` 150. The kit's four sheets hold 265: `components.css` 188, `app.css` 36, `site.css` 9, `toast.css` 32.
 
 - **Host copies of a kit rule: 14.** 7 under the kit's own selector (5 exact, 2 with one declaration changed) and 7 under another name with the kit's body (zite's `.profile-link` is the nav link rule, all 18 declarations).
-- **Rules two or more hosts define and the kit does not: 87 selectors.** 41 identical in every host that has them, 24 close (half the declarations or more the same), 22 diverged. 29 of the 87 are zwiper and zite only, the same repository, and mostly belong in `zwipe-components` rather than here. Another 9 groups share a body under different selectors, such as zite's `footer` and the portfolio's `.footer`.
+- **Rules two or more hosts define and the kit does not: 87 selectors.** 41 identical in every host that has them, 24 close (half the declarations or more the same), 22 diverged. 29 of the 87 are zwiper and zite only, the same repository, and mostly belong in zwipe's `components` crate rather than here. Another 9 groups share a body under different selectors, such as zite's `footer` and the portfolio's `.footer`.
 - **Host overrides of a kit rule with a host value: 28** (portfolio 11, zite 9, cairn 6, zwiper 2). Fine as they are, except 4 that two hosts override the same way, which says the kit's default is wrong.
 
 The top ten, ranked by value: duplicates already drifting between hosts first, then what two hosts both need.
