@@ -34,6 +34,17 @@ web-sys = { version = "0.3", features = ["Window", "Storage"] }
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 tokio = { version = "1.47", features = ["time"] }
 
+# use_os_back: the edge-swipe recognizer is a UIKit object on the WKWebView,
+# and it reaches the app over a tokio channel.
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2 = "0.6"
+tokio = { version = "1.47", features = ["sync"] }
+
+# use_os_back: back at a root screen finishes the Activity through JNI.
+[target.'cfg(target_os = "android")'.dependencies]
+jni = "0.21"
+ndk-context = "0.1"
+
 [lints.clippy]
 clone_on_ref_ptr = "warn"
 dbg_macro = "warn"

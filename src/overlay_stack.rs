@@ -1,8 +1,8 @@
 //! Back-aware overlay stack, for the apps.
 //!
 //! The OS back intent (the iOS edge swipe, Android's hardware or gesture
-//! back) is bridged by each app's back handler, which normally routes it to
-//! the router's `go_back`. Overlays, anything shown on top of the current
+//! back) is bridged by [`use_os_back`](crate::use_os_back), which normally
+//! routes it to the router's `go_back`. Overlays, anything shown on top of the current
 //! screen without a route change (bottom sheets, dialogs, in-place overlay
 //! screens), are not routes, so a raw `go_back` would blow past them and
 //! leave the screen. This stack lets the back intent close the top-most open
@@ -11,7 +11,7 @@
 //! Each overlay registers a close action while it is open, through
 //! [`use_overlay_back`] for one toggled by a signal or
 //! [`use_overlay_back_action`] for one that closes through a callback. The
-//! back handler calls [`OverlayBackStack::close_top`]. Because closing flips
+//! back bridge calls [`OverlayBackStack::close_top`]. Because closing flips
 //! the overlay's open state, the registration effect then deregisters it: the
 //! stack stays truthful with no manual bookkeeping.
 
@@ -37,7 +37,7 @@ pub struct OverlayBackStack {
 }
 
 /// Creates the stack. Provide it with `use_context_provider` above the router
-/// so both the overlays and the back handler can reach it.
+/// so both the overlays and the back bridge can reach it.
 pub fn use_overlay_back_stack() -> OverlayBackStack {
     OverlayBackStack {
         entries: use_signal(Vec::new),
@@ -60,7 +60,7 @@ impl OverlayBackStack {
 
     /// Closes the most recently opened overlay if there is one, popping it
     /// and invoking its close action. Returns `true` when an overlay was
-    /// closed, so the back handler skips the router.
+    /// closed, so the back bridge skips the router.
     pub fn close_top(&mut self) -> bool {
         let popped = self.entries.write().pop();
         if let Some((_, close)) = popped {

@@ -2,18 +2,20 @@
 //!
 //! The components depend only on base `dioxus` (no platform features) so any
 //! Dioxus target can consume them; a host enables its own web, mobile or
-//! desktop feature and cargo unifies. Styling ships alongside as string
+//! desktop feature and cargo unifies. The one native piece, [`use_os_back`],
+//! branches on the target OS rather than on a Dioxus feature. Styling ships alongside as string
 //! constants to inline through `document::Style`: [`THEMES_CSS`] (the 31
 //! palettes, each dark and light) and [`COMPONENTS_CSS`] (the components'
 //! rules), then one opt-in sheet per kind of host.
 //!
 //! Three kits sit on the shared base. The app kit ([`BottomSheet`],
-//! [`PageHeader`], [`ThemeSheet`], the hint pieces, the overlay back stack
-//! and, behind the `toast` feature, `ToastStack`) is for apps and styled by
-//! [`APP_CSS`]. The site kit ([`use_persisted_theme`], [`StatsStrip`],
-//! [`GalleryFrame`], [`REVEAL_JS`], [`NAV_GLIDE_JS`], [`SCROLL_FADE_JS`]) is
-//! for websites, with the gallery base in [`SITE_CSS`]. [`HeatGrid`] draws a
-//! year of days for any surface that shows one.
+//! [`PageHeader`], [`ThemeSheet`], the hint pieces, the overlay back stack,
+//! the OS back bridge [`use_os_back`] and, behind the `toast` feature,
+//! `ToastStack`) is for apps and styled by [`APP_CSS`]. The site kit
+//! ([`use_persisted_theme`], [`StatsStrip`], [`GalleryFrame`], [`REVEAL_JS`],
+//! [`NAV_GLIDE_JS`], [`SCROLL_FADE_JS`]) is for websites, with the gallery
+//! base in [`SITE_CSS`]. [`HeatGrid`] draws a year of days for any surface
+//! that shows one.
 //!
 //! The theme model ([`ThemeConfig`], [`ALLOWED_THEMES`], [`COLORBLIND_THEMES`],
 //! [`display_theme_name`]) lives here beside the palettes it names. A host that
@@ -39,6 +41,7 @@ mod heat_grid;
 mod hint;
 mod nav_bar;
 mod nav_dropdown;
+mod os_back;
 mod overlay_stack;
 mod page_header;
 mod page_meta;
@@ -71,6 +74,7 @@ pub use heat_grid::{
 pub use hint::{HintBullet, HintBullets, HintKey, HintLine, InfoButton};
 pub use nav_bar::{BRAND_RESET_JS, NavBar};
 pub use nav_dropdown::NavDropdown;
+pub use os_back::use_os_back;
 pub use overlay_stack::{
     OverlayBackStack, use_overlay_back, use_overlay_back_action, use_overlay_back_stack,
 };
