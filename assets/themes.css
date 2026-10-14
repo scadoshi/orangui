@@ -41,6 +41,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-5);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -80,6 +82,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-5);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -120,6 +124,8 @@
     --syntax-macro: #8ec07c;
     --syntax-attribute: #8ec07c;
     --syntax-punctuation: #fe8019;
+    --syntax-parameter: #83a598;
+    --syntax-member: #83a598;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -159,6 +165,8 @@
     --syntax-macro: #427b58;
     --syntax-attribute: #427b58;
     --syntax-punctuation: #af3a03;
+    --syntax-parameter: #076678;
+    --syntax-member: #076678;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -199,6 +207,8 @@
     --syntax-macro: #50fa7b;
     --syntax-attribute: #50fa7b;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: #ffb86c;
+    --syntax-member: #ffb86c;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -238,6 +248,8 @@
     --syntax-macro: #14710a;
     --syntax-attribute: #14710a;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: #a34d14;
+    --syntax-member: #a34d14;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -278,6 +290,8 @@
     --syntax-macro: #83c092;
     --syntax-attribute: #d699b6;
     --syntax-punctuation: #9da9a0;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #7fbbb3;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -317,6 +331,8 @@
     --syntax-macro: #35a77c;
     --syntax-attribute: #df69ba;
     --syntax-punctuation: #829181;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #3a94c5;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -357,6 +373,8 @@
     --syntax-macro: #94e2d5;
     --syntax-attribute: #f9e2af;
     --syntax-punctuation: #9399b2;
+    --syntax-parameter: #eba0ac;
+    --syntax-member: #b4befe;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -396,6 +414,8 @@
     --syntax-macro: #179299;
     --syntax-attribute: #df8e1d;
     --syntax-punctuation: #7c7f93;
+    --syntax-parameter: #e64553;
+    --syntax-member: #7287fd;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -436,6 +456,8 @@
     --syntax-macro: #7dcfff;
     --syntax-attribute: #2ac3de;
     --syntax-punctuation: #89ddff;
+    --syntax-parameter: #e0af68;
+    --syntax-member: #73daca;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -475,6 +497,8 @@
     --syntax-macro: #007197;
     --syntax-attribute: #188092;
     --syntax-punctuation: #006a83;
+    --syntax-parameter: #8c6c3e;
+    --syntax-member: #387068;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -515,6 +539,8 @@
     --syntax-macro: #81a1c1;
     --syntax-attribute: #d08770;
     --syntax-punctuation: #eceff4;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -554,6 +580,8 @@
     --syntax-macro: #5e81ac;
     --syntax-attribute: #b0634a;
     --syntax-punctuation: #4c566a;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -594,6 +622,8 @@
     --syntax-macro: #c4a7e7;
     --syntax-attribute: #c4a7e7;
     --syntax-punctuation: #908caa;
+    --syntax-parameter: #c4a7e7;
+    --syntax-member: #9ccfd8;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -633,6 +663,8 @@
     --syntax-macro: #907aa9;
     --syntax-attribute: #907aa9;
     --syntax-punctuation: #797593;
+    --syntax-parameter: #907aa9;
+    --syntax-member: #56949f;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -673,6 +705,8 @@
     --syntax-macro: #a6e22e;
     --syntax-attribute: #a6e22e;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--palette-2);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -712,6 +746,8 @@
     --syntax-macro: #649a00;
     --syntax-attribute: #649a00;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--palette-2);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -752,6 +788,8 @@
     --syntax-macro: #56b6c2;
     --syntax-attribute: #d19a66;
     --syntax-punctuation: #abb2bf;
+    --syntax-parameter: #e06c75;
+    --syntax-member: #e06c75;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -791,6 +829,8 @@
     --syntax-macro: #0184bc;
     --syntax-attribute: #986801;
     --syntax-punctuation: #383a42;
+    --syntax-parameter: #e45649;
+    --syntax-member: #e45649;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -831,6 +871,8 @@
     --syntax-macro: #cb4b16;
     --syntax-attribute: #cb4b16;
     --syntax-punctuation: #839496;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -870,6 +912,8 @@
     --syntax-macro: #cb4b16;
     --syntax-attribute: #cb4b16;
     --syntax-punctuation: #657b83;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -914,6 +958,8 @@
     --syntax-macro: #f07178;
     --syntax-attribute: #e6b673;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #39bae6;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -953,6 +999,8 @@
     --syntax-macro: #f07171;
     --syntax-attribute: #e59645;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #55b4d4;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -993,6 +1041,8 @@
     --syntax-macro: #d2a8ff;
     --syntax-attribute: #79c0ff;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #79c0ff;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1032,6 +1082,8 @@
     --syntax-macro: #8250df;
     --syntax-attribute: #0550ae;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #0550ae;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1072,6 +1124,8 @@
     --syntax-macro: #e46876;
     --syntax-attribute: #e46876;
     --syntax-punctuation: #9cabca;
+    --syntax-parameter: #b8b4d0;
+    --syntax-member: #e6c384;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1111,6 +1165,8 @@
     --syntax-macro: #c84053;
     --syntax-attribute: #c84053;
     --syntax-punctuation: #4e8ca2;
+    --syntax-parameter: #5d57a3;
+    --syntax-member: #77713f;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1151,6 +1207,8 @@
     --syntax-macro: #82aaff;
     --syntax-attribute: #addb67;
     --syntax-punctuation: #7fdbca;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1190,6 +1248,8 @@
     --syntax-macro: #4876d6;
     --syntax-attribute: #4876d6;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1230,6 +1290,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1269,6 +1331,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1309,6 +1373,8 @@
     --syntax-macro: #dcdcaa;
     --syntax-attribute: #9cdcfe;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: #9cdcfe;
+    --syntax-member: #9cdcfe;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1348,6 +1414,8 @@
     --syntax-macro: #795e26;
     --syntax-attribute: #0070c1;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: #001080;
+    --syntax-member: #001080;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1388,6 +1456,8 @@
     --syntax-macro: #dfaf8f;
     --syntax-attribute: #dfaf8f;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1427,6 +1497,8 @@
     --syntax-macro: #a57859;
     --syntax-attribute: #a57859;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1471,6 +1543,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1510,6 +1584,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1550,6 +1626,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1589,6 +1667,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1629,6 +1709,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1668,6 +1750,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1708,6 +1792,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1747,6 +1833,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1787,6 +1875,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1826,6 +1916,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1866,6 +1958,8 @@
     --syntax-macro: #adda78;
     --syntax-attribute: #85dacc;
     --syntax-punctuation: #948a8b;
+    --syntax-parameter: #fc9867;
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1905,6 +1999,8 @@
     --syntax-macro: #6a9431;
     --syntax-attribute: #3d9488;
     --syntax-punctuation: #7b7072;
+    --syntax-parameter: var(--palette-2);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1945,6 +2041,8 @@
     --syntax-macro: #36f9f6;
     --syntax-attribute: #fede5d;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -1984,6 +2082,8 @@
     --syntax-macro: #0098a5;
     --syntax-attribute: #9a8c00;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -2024,6 +2124,8 @@
     --syntax-macro: #ffff00;
     --syntax-attribute: #c0c0c0;
     --syntax-punctuation: #808080;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -2063,6 +2165,8 @@
     --syntax-macro: #0000ff;
     --syntax-attribute: #00bfff;
     --syntax-punctuation: #a9a9a9;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -2103,6 +2207,8 @@
     --syntax-macro: #3e999f;
     --syntax-attribute: #ee6868;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -2142,6 +2248,8 @@
     --syntax-macro: #3e999f;
     --syntax-attribute: #c82829;
     --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -2186,6 +2294,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -2225,6 +2335,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -2265,6 +2377,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -2304,6 +2418,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -2344,6 +2460,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -2383,6 +2501,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -2423,6 +2543,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -2462,6 +2584,8 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

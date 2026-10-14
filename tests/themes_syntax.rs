@@ -1,13 +1,13 @@
 //! The syntax gate for `assets/themes.css`.
 //!
-//! Every theme block carries nine `--syntax-*` slots, the colors its editor
+//! Every theme block carries eleven `--syntax-*` slots, the colors its editor
 //! scheme gives code, so a host's code blocks look like that theme in an
 //! editor. A theme with no editor scheme of its own maps them from its palette.
 //! Each value is a hex or one of the block's own palette or text variables.
 
 const CSS: &str = include_str!("../assets/themes.css");
 
-const SLOTS: [&str; 9] = [
+const SLOTS: [&str; 11] = [
     "keyword",
     "type",
     "function",
@@ -17,6 +17,8 @@ const SLOTS: [&str; 9] = [
     "macro",
     "attribute",
     "punctuation",
+    "parameter",
+    "member",
 ];
 
 /// Each theme block's name and body, `gruvbox-dark` and the text between its
@@ -64,7 +66,7 @@ fn allowed(v: &str) -> bool {
 }
 
 #[test]
-fn every_theme_block_has_the_nine_syntax_slots() {
+fn every_theme_block_has_the_eleven_syntax_slots() {
     let blocks = blocks();
     assert_eq!(blocks.len(), 62, "31 themes, dark and light");
     for (name, body) in blocks {
