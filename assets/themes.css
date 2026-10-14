@@ -2197,12 +2197,14 @@
     --palette-4: #ab8ac1;
     --palette-5: #d2991d;
     --palette-6: #3e999f;
-    /* syntax: rust-lang/rust rustdoc dark and light syntax colors */
+    /* syntax: rust-lang/rust rustdoc dark and light syntax colors; types take its
+       prelude-type blue, functions its function-link color, and constants
+       its prelude-value red so they stand apart from strings */
     --syntax-keyword: #ab8ac1;
-    --syntax-type: var(--text-primary);
-    --syntax-function: var(--text-primary);
+    --syntax-type: #769acb;
+    --syntax-function: #2bab63;
     --syntax-string: #83a300;
-    --syntax-constant: #d97f26;
+    --syntax-constant: #ee6868;
     --syntax-comment: #8d8d8b;
     --syntax-macro: #3e999f;
     --syntax-attribute: #ee6868;
@@ -2238,12 +2240,14 @@
     --palette-4: #8959a8;
     --palette-5: #de6d00;
     --palette-6: #3e999f;
-    /* syntax: rust-lang/rust rustdoc dark and light syntax colors */
+    /* syntax: rust-lang/rust rustdoc dark and light syntax colors; types take its
+       prelude-type blue, functions its function-link color, and constants
+       its prelude-value red so they stand apart from strings */
     --syntax-keyword: #8959a8;
-    --syntax-type: var(--text-primary);
-    --syntax-function: var(--text-primary);
+    --syntax-type: #4271ae;
+    --syntax-function: #ad7c37;
     --syntax-string: #718c00;
-    --syntax-constant: #718c00;
+    --syntax-constant: #c82829;
     --syntax-comment: #8e908c;
     --syntax-macro: #3e999f;
     --syntax-attribute: #c82829;
