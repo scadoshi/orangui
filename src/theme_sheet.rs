@@ -49,7 +49,7 @@ fn ThemeRow(
 
 /// Bottom sheet for picking a theme. A pick previews at once by setting
 /// `theme`, the app's live theme. Save closes the sheet and hands the pick to
-/// `on_save`, and is greyed until the pick differs from what the sheet opened
+/// `on_save`, and is grayed until the pick differs from what the sheet opened
 /// on. Back and the backdrop restore the theme that was active when the sheet
 /// opened: the sheet holds still while that theme wipes back in, leaves
 /// inside the wipe, and calls `on_unchanged` once the sweep is done.
