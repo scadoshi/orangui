@@ -8,9 +8,15 @@ A host includes the sheets in this order: `THEMES_CSS`, then `COMPONENTS_CSS`, t
 
 **The kit does not rely on load order.** Where the host's own sheet lands against the kit's differs by host. Dioxus appends head elements in hook order, so a host that mounts its `document::Link` after the kit's `document::Style` sheets puts its own sheet last; a prerendered page that links the host sheet in its head template puts it first. Both work, and the kit's rules behave the same either way:
 
-- Structure is plain. What a component cannot work without sits in the plain class rule: display, position, grid and flex structure, stacking, the keyframes and an animation's name and fill. A plain kit rule beats a host's universal or element rule in either order. A host is not expected to change structure; where it must, it uses a selector more specific than the kit's, which also wins in either order.
-- Defaults are soft. A value a host is expected to tune (a size, a padding, a color default, a width, an animation's duration and delay, a menu's side) sits in a `:where(...)` rule, which has zero specificity. Any host rule of class specificity or higher overrides it, before or after: `:where(.chart-line) { stroke-width: 2 }` gives way to a host's `.chart-line { stroke-width: 1.6 }`. Soft rules sit just above the class rule they belong to, and a comment says which values are soft.
-- Resets go in a layer. A host's universal reset (`* { margin: 0; padding: 0 }`) also has zero specificity, so between it and a soft default the one later in the page wins, and a host that loads last zeroes every soft margin and padding. An element reset (`p { margin: 0 }`) outranks a soft default in any order. A host whose reset touches a property the kit sets softly puts the reset in a cascade layer. Layered rules lose to every unlayered rule, so the kit's soft defaults win wherever the sheets land, and the reset still beats the browser's defaults:
+- Structure is plain. What a component cannot work without sits in the plain class rule: display, position, grid and flex structure, stacking, the keyframes and an animation's name and fill.
+  - A plain kit rule beats a host's universal or element rule in either order.
+  - A host is not expected to change structure. Where it must, it uses a selector more specific than the kit's, which also wins in either order.
+- Defaults are soft. A value a host is expected to tune (a size, a padding, a color default, a width, an animation's duration and delay, a menu's side) sits in a `:where(...)` rule, which has zero specificity.
+  - Any host rule of class specificity or higher overrides it, before or after: `:where(.chart-line) { stroke-width: 2 }` gives way to a host's `.chart-line { stroke-width: 1.6 }`.
+  - Soft rules sit just above the class rule they belong to, and a comment says which values are soft.
+- Resets go in a layer. A host's universal reset (`* { margin: 0; padding: 0 }`) also has zero specificity, so between it and a soft default the one later in the page wins, and a host that loads last zeroes every soft margin and padding.
+  - An element reset (`p { margin: 0 }`) outranks a soft default in any order.
+  - A host whose reset touches a property the kit sets softly puts the reset in a cascade layer. Layered rules lose to every unlayered rule, so the kit's soft defaults win wherever the sheets land, and the reset still beats the browser's defaults:
 
 ```css
 /* Layered, so every unlayered rule (the kit's soft defaults included) wins over it. */
@@ -28,7 +34,9 @@ Class names are the public surface as much as the Rust names. A host styles agai
 | Palette | `--palette-1` to `--palette-6` | variety with no meaning: tags, chart series, chip tints, logo stripes | only here |
 | Syntax | `--syntax-keyword`, `-type`, `-function`, `-string`, `-constant`, `-comment`, `-macro`, `-attribute`, `-punctuation` | code: a host's highlighter colors each token class from these | no |
 
-No variable crosses tiers. A status variable means an outcome and ships with its context (a toast, a check, an error box); a palette slot means nothing. A slot may hold the same hex as a status color, since in half the themes the only green and yellow are the success and warning colors. The reservation is on the variable, not the color.
+No variable crosses tiers. A status variable means an outcome and ships with its context (a toast, a check, an error box); a palette slot means nothing.
+
+A slot may hold the same hex as a status color, since in half the themes the only green and yellow are the success and warning colors. The reservation is on the variable, not the color.
 
 Slot order is fixed across themes, so a given element has the same temperature everywhere and neighbors in a row alternate warm and cool:
 
@@ -47,7 +55,10 @@ Where a theme has fewer than six hues, slots repeat the theme's own published sh
 
 ## Themes
 
-A theme is a `.theme-{name}-dark` block and a `.theme-{name}-light` block in `assets/themes.css`, and its name is in `ALLOWED_THEMES` in `src/theme.rs`. The `:root` block repeats gruvbox dark as the default. Each block defines every variable the components reference: backgrounds, text, borders, the three accents, the three status colors with their borders, `--color-money`, the six palette slots, the eleven syntax slots and the shadows. Three more are derived from them at the end of the sheet, on whichever element carries the theme class: `--bg-sink` (the background under the panels, darkened on a dark theme and lifted toward white on a light one), `--grid-line` and `--grid-size` (the grid drawn on the sink).
+A theme is a `.theme-{name}-dark` block and a `.theme-{name}-light` block in `assets/themes.css`, and its name is in `ALLOWED_THEMES` in `src/theme.rs`. The `:root` block repeats gruvbox dark as the default.
+
+- Each block defines every variable the components reference: backgrounds, text, borders, the three accents, the three status colors with their borders, `--color-money`, the six palette slots, the eleven syntax slots and the shadows.
+- Three more are derived from them at the end of the sheet, on whichever element carries the theme class: `--bg-sink` (the background under the panels, darkened on a dark theme and lifted toward white on a light one), and `--grid-line` and `--grid-size` (the grid drawn on the sink).
 
 ## The gates
 

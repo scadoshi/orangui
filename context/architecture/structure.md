@@ -63,4 +63,8 @@ Anything that knows a host. The crate names no product, no domain model and no r
 
 ## Dependencies
 
-`dioxus` with no platform feature, so any Dioxus target can consume the crate and cargo unifies the host's feature with it. `serde` for `ThemeConfig`. On the web, `gloo-timers`, `web-sys` and `serde_json` for the entrance timer and local storage; elsewhere `tokio`'s timer. On iOS, `objc2` and `tokio`'s channel for the edge-swipe recognizer; on Android, `jni` and `ndk-context` to finish the Activity. Those two are the only target-OS dependencies, for `use_os_back`. `dioxus-primitives`, pinned to one commit, only behind the `toast` feature.
+- `dioxus` with no platform feature, so any Dioxus target can consume the crate and cargo unifies the host's feature with it.
+- `serde` for `ThemeConfig`.
+- On the web, `gloo-timers`, `web-sys` and `serde_json` for the entrance timer and local storage; elsewhere `tokio`'s timer.
+- On iOS, `objc2` and `tokio`'s channel for the edge-swipe recognizer; on Android, `jni` and `ndk-context` to finish the Activity. Those two are the only target-OS dependencies, for `use_os_back`.
+- `dioxus-primitives`, pinned to one commit, only behind the `toast` feature.
