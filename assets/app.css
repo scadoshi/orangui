@@ -347,25 +347,34 @@
     opacity: 0.8;
 }
 
-/* A long body (a hint, or anything marked .alert-dialog-long) fades at its
-   scrolling edges. Short confirms stay sharp. */
+/* A long body (a hint, or anything marked .alert-dialog-long) fades at an
+   edge only while more of it sits past that edge, the same scroll-driven
+   mask as .scroll-fade-y. A body that fits is never faded, and a scrolled
+   one is sharp at the end it has reached, so no line of a hint sits under
+   the fade. Short confirms stay sharp. Without scroll timelines the fade
+   widths stay at their 0px initial values and the edges are hard. */
 .alert-dialog-description:has(.hint-line, .hint-bullets, .alert-dialog-long) {
-    margin-top: -0.5rem;
-    margin-bottom: -0.5rem;
     -webkit-mask-image: linear-gradient(
         to bottom,
-        transparent 0,
-        black 0.8rem,
-        black calc(100% - 0.8rem),
-        transparent 100%
+        transparent,
+        #000 var(--fade-top),
+        #000 calc(100% - var(--fade-bottom)),
+        transparent
     );
     mask-image: linear-gradient(
         to bottom,
-        transparent 0,
-        black 0.8rem,
-        black calc(100% - 0.8rem),
-        transparent 100%
+        transparent,
+        #000 var(--fade-top),
+        #000 calc(100% - var(--fade-bottom)),
+        transparent
     );
+}
+
+@supports (animation-timeline: scroll()) {
+    .alert-dialog-description:has(.hint-line, .hint-bullets, .alert-dialog-long) {
+        animation: scroll-fade-y linear both;
+        animation-timeline: scroll(self block);
+    }
 }
 
 /* The dialog's gap spaces its children, so a Button inside drops its form
