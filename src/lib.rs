@@ -88,7 +88,7 @@ pub use chip::Chip;
 pub use diagram::{DIAGRAM_NODE_HEIGHT, DiagramArrow, DiagramDefs, DiagramNode, DiagramTone};
 pub use entrance::{CountUp, Decode, Figure, Replay, with_separators};
 pub use gallery::{GalleryFooter, GalleryFrame};
-pub use grid_cells::GridCells;
+pub use grid_cells::{GRID_CELLS_JS, GridCells};
 pub use heat_grid::{
     HEAT_CELL, HEAT_GAP, HEAT_ROWS, HEAT_STEP, HeatCell, HeatGrid, HeatHit, heat_span,
     use_scroll_to_end,

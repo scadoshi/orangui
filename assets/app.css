@@ -210,7 +210,7 @@
     z-index: 0;
 }
 
-.bottom-sheet > .grid-cells .grid-cells-field {
+.bottom-sheet > .grid-cells .grid-cells-canvas {
     opacity: 0.8;
 }
 

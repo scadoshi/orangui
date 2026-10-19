@@ -47,6 +47,7 @@ src/
 assets/
 ├── themes.css           # 50 themes, a dark and a light block each, gruvbox dark in :root, and the sink and grid mixed from them
 ├── components.css       # the rules for the components above
+├── grid-cells.js        # GridCells' canvas drawing: the rain, then one redraw per theme change
 ├── app.css              # the app shell: screen, page header, bottom sheet, alert dialog, settings lists, hints
 ├── site.css             # the sites: scroll reveal, gallery, footer
 ├── toast.css            # the toast stack
