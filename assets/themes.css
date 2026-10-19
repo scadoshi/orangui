@@ -1660,6 +1660,88 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.theme-bluloco-dark {
+    --bg-primary: #282c34;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #abb2bf;
+    --text-muted: #636d83;
+    --text-subtle: #8b93a3;
+    --border-primary: #3d434f;
+    --border-secondary: #22252a;
+    --border-muted: #30353f;
+    --color-error: #ff2e3f;
+    --color-money: #37bd58;
+    --color-success: #37bd58;
+    --color-warning: #da7a43;
+    --border-error: #d42e3d;
+    --border-success: #34a051;
+    --border-warning: #b66a40;
+    --accent-primary: #3691ff;
+    --accent-secondary: #10b1fe;
+    --accent-tertiary: #ff6480;
+    /* palette: uloco/theme-bluloco-dark and -light (editor, terminal and git colors); light slots under 3:1 take its property and terminal tones */
+    --palette-1: #3375fe;
+    --palette-2: #ff936a;
+    --palette-3: #3fc56b;
+    --palette-4: #9f7efe;
+    --palette-5: #f9c859;
+    --palette-6: #10b1fe;
+    /* syntax: uloco/theme-bluloco tokenColors */
+    --syntax-keyword: #10b1fe;
+    --syntax-type: #ff6480;
+    --syntax-function: #3fc56b;
+    --syntax-string: #f9c859;
+    --syntax-constant: #ff78f8;
+    --syntax-comment: #636d83;
+    --syntax-macro: #3fc56b;
+    --syntax-attribute: #ff936a;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: #8bcdef;
+    --syntax-member: #ce9887;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-bluloco-light {
+    --bg-primary: #f9f9f9;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #383a42;
+    --text-muted: #a0a1a7;
+    --text-subtle: #6b6d75;
+    --border-primary: #d5d7d8;
+    --border-secondary: #e8e8e8;
+    --border-muted: #dfe0e1;
+    --color-error: #ff0000;
+    --color-money: #23974a;
+    --color-success: #23974a;
+    --color-warning: #ff8f3a;
+    --border-error: #d10000;
+    --border-success: #1d7c3d;
+    --border-warning: #d17530;
+    --accent-primary: #0099e1;
+    --accent-secondary: #0098dd;
+    --accent-tertiary: #d52753;
+    /* palette: uloco/theme-bluloco-dark and -light (editor, terminal and git colors); light slots under 3:1 take its property and terminal tones */
+    --palette-1: #275fe4;
+    --palette-2: #a05a48;
+    --palette-3: #23974a;
+    --palette-4: #823ff1;
+    --palette-5: #df631c;
+    --palette-6: #26608c;
+    /* syntax: uloco/theme-bluloco tokenColors */
+    --syntax-keyword: #0098dd;
+    --syntax-type: #d52753;
+    --syntax-function: #23974a;
+    --syntax-string: #c5a332;
+    --syntax-constant: #ce33c0;
+    --syntax-comment: #a0a1a7;
+    --syntax-macro: #23974a;
+    --syntax-attribute: #df631c;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: #40b8c5;
+    --syntax-member: #a05a48;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
 .theme-github-dark {
     --bg-primary: #0d1117;
@@ -1990,6 +2072,88 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.theme-material-dark {
+    --bg-primary: #212121;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #eeffff;
+    --text-muted: #616161;
+    --text-subtle: #b0bec5;
+    --border-primary: #3a3a3a;
+    --border-secondary: #1a1a1a;
+    --border-muted: #2b2b2b;
+    --color-error: #f07178;
+    --color-money: #c3e88d;
+    --color-success: #c3e88d;
+    --color-warning: #ffcb6b;
+    --border-error: #c76167;
+    --border-success: #a3c077;
+    --border-warning: #d3a95c;
+    --accent-primary: #80cbc4;
+    --accent-secondary: #82aaff;
+    --accent-tertiary: #c792ea;
+    /* palette: material-theme/vsc-material-theme Darker and Lighter; light text is the theme's UI foreground and light slots under 3:1 step to Material Design 700 tones */
+    --palette-1: #82aaff;
+    --palette-2: #f78c6c;
+    --palette-3: #c3e88d;
+    --palette-4: #c792ea;
+    --palette-5: #ffcb6b;
+    --palette-6: #89ddff;
+    /* syntax: material-theme/vsc-material-theme Darker and Lighter tokenColors, keywords from the storage rule */
+    --syntax-keyword: #c792ea;
+    --syntax-type: #ffcb6b;
+    --syntax-function: #82aaff;
+    --syntax-string: #c3e88d;
+    --syntax-constant: #f78c6c;
+    --syntax-comment: #616161;
+    --syntax-macro: #89ddff;
+    --syntax-attribute: #c792ea;
+    --syntax-punctuation: #89ddff;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #f07178;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-material-light {
+    --bg-primary: #fafafa;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #546e7a;
+    --text-muted: #90a4ae;
+    --text-subtle: #607d8b;
+    --border-primary: #cfd8dc;
+    --border-secondary: #f0f0f0;
+    --border-muted: #e7eaec;
+    --color-error: #e53935;
+    --color-money: #388e3c;
+    --color-success: #388e3c;
+    --color-warning: #e2931d;
+    --border-error: #bc2f2b;
+    --border-success: #2e7432;
+    --border-warning: #b97918;
+    --accent-primary: #39adb5;
+    --accent-secondary: #6182b8;
+    --accent-tertiary: #9c3eda;
+    /* palette: material-theme/vsc-material-theme Darker and Lighter; light text is the theme's UI foreground and light slots under 3:1 step to Material Design 700 tones */
+    --palette-1: #6182b8;
+    --palette-2: #e64a19;
+    --palette-3: #388e3c;
+    --palette-4: #9c3eda;
+    --palette-5: #827717;
+    --palette-6: #0097a7;
+    /* syntax: material-theme/vsc-material-theme Darker and Lighter tokenColors, keywords from the storage rule */
+    --syntax-keyword: #9c3eda;
+    --syntax-type: #e2931d;
+    --syntax-function: #6182b8;
+    --syntax-string: #91b859;
+    --syntax-constant: #f76d47;
+    --syntax-comment: #90a4ae;
+    --syntax-macro: #39adb5;
+    --syntax-attribute: #9c3eda;
+    --syntax-punctuation: #39adb5;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #e53935;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
 .theme-night-owl-dark {
     --bg-primary: #011627;
@@ -2070,6 +2234,88 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-nightfox-dark {
+    --bg-primary: #192330;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #cdcecf;
+    --text-muted: #71839b;
+    --text-subtle: #aeafb0;
+    --border-primary: #39506d;
+    --border-secondary: #212e3f;
+    --border-muted: #29394f;
+    --color-error: #c94f6d;
+    --color-money: #81b29a;
+    --color-success: #81b29a;
+    --color-warning: #dbc074;
+    --border-error: #a64661;
+    --border-success: #6c9585;
+    --border-warning: #b4a166;
+    --accent-primary: #719cd6;
+    --accent-secondary: #63cdcf;
+    --accent-tertiary: #f4a261;
+    /* palette: EdenEast/nightfox.nvim palette/nightfox.lua; light is palette/dayfox.lua */
+    --palette-1: #719cd6;
+    --palette-2: #f4a261;
+    --palette-3: #81b29a;
+    --palette-4: #9d79d6;
+    --palette-5: #dbc074;
+    --palette-6: #63cdcf;
+    /* syntax: nightfox.nvim spec (Nightfox, Dayfox) */
+    --syntax-keyword: #9d79d6;
+    --syntax-type: #dbc074;
+    --syntax-function: #86abdc;
+    --syntax-string: #81b29a;
+    --syntax-constant: #f6b079;
+    --syntax-comment: #738091;
+    --syntax-macro: #dc8ed9;
+    --syntax-attribute: #dc8ed9;
+    --syntax-punctuation: #aeafb0;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #719cd6;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-nightfox-light {
+    --bg-primary: #f6f2ee;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #3d2b5a;
+    --text-muted: #824d5b;
+    --text-subtle: #643f61;
+    --border-primary: #aab0ad;
+    --border-secondary: #dbd1dd;
+    --border-muted: #d3c7bb;
+    --color-error: #a5222f;
+    --color-money: #396847;
+    --color-success: #396847;
+    --color-warning: #ac5402;
+    --border-error: #871c27;
+    --border-success: #2f553a;
+    --border-warning: #8d4502;
+    --accent-primary: #2848a9;
+    --accent-secondary: #287980;
+    --accent-tertiary: #955f61;
+    /* palette: EdenEast/nightfox.nvim palette/nightfox.lua; light is palette/dayfox.lua */
+    --palette-1: #2848a9;
+    --palette-2: #955f61;
+    --palette-3: #396847;
+    --palette-4: #6e33ce;
+    --palette-5: #ac5402;
+    --palette-6: #287980;
+    /* syntax: nightfox.nvim spec (Nightfox, Dayfox) */
+    --syntax-keyword: #6e33ce;
+    --syntax-type: #ac5402;
+    --syntax-function: #223d90;
+    --syntax-string: #396847;
+    --syntax-constant: #7f5152;
+    --syntax-comment: #837a72;
+    --syntax-macro: #8b369a;
+    --syntax-attribute: #8b369a;
+    --syntax-punctuation: #643f61;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #2848a9;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -2739,6 +2985,88 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.theme-melange-dark {
+    --bg-primary: #292522;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #ece1d7;
+    --text-muted: #867462;
+    --text-subtle: #c1a78e;
+    --border-primary: #5a4f45;
+    --border-secondary: #34302c;
+    --border-muted: #403a36;
+    --color-error: #bd8183;
+    --color-money: #78997a;
+    --color-success: #78997a;
+    --color-warning: #ebc06d;
+    --border-error: #9f6f70;
+    --border-success: #688268;
+    --border-warning: #c4a15e;
+    --accent-primary: #e49b5d;
+    --accent-secondary: #a3a9ce;
+    --accent-tertiary: #cf9bc2;
+    /* palette: savq/melange-nvim palettes dark.lua and light.lua; light slots under 3:1 take the b tones */
+    --palette-1: #7f91b2;
+    --palette-2: #e49b5d;
+    --palette-3: #85b695;
+    --palette-4: #b380b0;
+    --palette-5: #ebc06d;
+    --palette-6: #89b3b6;
+    /* syntax: savq/melange-nvim colors/melange.lua */
+    --syntax-keyword: #e49b5d;
+    --syntax-type: #7b9695;
+    --syntax-function: #ebc06d;
+    --syntax-string: #a3a9ce;
+    --syntax-constant: #cf9bc2;
+    --syntax-comment: #c1a78e;
+    --syntax-macro: #85b695;
+    --syntax-attribute: #85b695;
+    --syntax-punctuation: #8b7449;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-melange-light {
+    --bg-primary: #f1f1f1;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #54433a;
+    --text-muted: #a98a78;
+    --text-subtle: #7d6658;
+    --border-primary: #bfb2a8;
+    --border-secondary: #e9e1db;
+    --border-muted: #d9d3ce;
+    --color-error: #c77b8b;
+    --color-money: #3a684a;
+    --color-success: #3a684a;
+    --color-warning: #a06d00;
+    --border-error: #a36572;
+    --border-success: #30553d;
+    --border-warning: #835900;
+    --accent-primary: #bc5c00;
+    --accent-secondary: #465aa4;
+    --accent-tertiary: #904180;
+    /* palette: savq/melange-nvim palettes dark.lua and light.lua; light slots under 3:1 take the b tones */
+    --palette-1: #465aa4;
+    --palette-2: #bc5c00;
+    --palette-3: #3a684a;
+    --palette-4: #904180;
+    --palette-5: #a06d00;
+    --palette-6: #3d6568;
+    /* syntax: savq/melange-nvim colors/melange.lua */
+    --syntax-keyword: #bc5c00;
+    --syntax-type: #739797;
+    --syntax-function: #a06d00;
+    --syntax-string: #465aa4;
+    --syntax-constant: #904180;
+    --syntax-comment: #7d6658;
+    --syntax-macro: #3a684a;
+    --syntax-attribute: #3a684a;
+    --syntax-punctuation: #cca478;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
 .theme-miasma-dark {
     --bg-primary: #222222;
@@ -2819,6 +3147,88 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-modus-dark {
+    --bg-primary: #000000;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #ffffff;
+    --text-muted: #989898;
+    --text-subtle: #c6daff;
+    --border-primary: #646464;
+    --border-secondary: #1e1e1e;
+    --border-muted: #303030;
+    --color-error: #ff5f59;
+    --color-money: #44bc44;
+    --color-success: #44bc44;
+    --color-warning: #fec43f;
+    --border-error: #cc4c47;
+    --border-success: #369636;
+    --border-warning: #cb9d32;
+    --accent-primary: #00bcff;
+    --accent-secondary: #f78fe7;
+    --accent-tertiary: #6ae4b9;
+    /* palette: protesilaos/modus-themes vivendi and operandi palettes */
+    --palette-1: #79a8ff;
+    --palette-2: #fec43f;
+    --palette-3: #44bc44;
+    --palette-4: #b6a0ff;
+    --palette-5: #d0bc00;
+    --palette-6: #00d3d0;
+    /* syntax: modus-themes semantic mappings: keyword magenta-cooler, string blue-warmer, fnname magenta, type cyan-cooler */
+    --syntax-keyword: #b6a0ff;
+    --syntax-type: #6ae4b9;
+    --syntax-function: #feacd0;
+    --syntax-string: #79a8ff;
+    --syntax-constant: #00bcff;
+    --syntax-comment: #989898;
+    --syntax-macro: #f78fe7;
+    --syntax-attribute: #ff7f86;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #00d3d0;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-modus-light {
+    --bg-primary: #ffffff;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #000000;
+    --text-muted: #595959;
+    --text-subtle: #193668;
+    --border-primary: #9f9f9f;
+    --border-secondary: #f2f2f2;
+    --border-muted: #e0e0e0;
+    --color-error: #a60000;
+    --color-money: #006800;
+    --color-success: #006800;
+    --color-warning: #884900;
+    --border-error: #880000;
+    --border-success: #005500;
+    --border-warning: #703c00;
+    --accent-primary: #0031a9;
+    --accent-secondary: #8f0075;
+    --accent-tertiary: #005e8b;
+    /* palette: protesilaos/modus-themes vivendi and operandi palettes */
+    --palette-1: #3548cf;
+    --palette-2: #884900;
+    --palette-3: #006800;
+    --palette-4: #531ab6;
+    --palette-5: #6f5500;
+    --palette-6: #005f5f;
+    /* syntax: modus-themes semantic mappings: keyword magenta-cooler, string blue-warmer, fnname magenta, type cyan-cooler */
+    --syntax-keyword: #531ab6;
+    --syntax-type: #005f5f;
+    --syntax-function: #721045;
+    --syntax-string: #3548cf;
+    --syntax-constant: #0000b0;
+    --syntax-comment: #595959;
+    --syntax-macro: #8f0075;
+    --syntax-attribute: #a0132f;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #005e8b;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -3071,6 +3481,88 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.theme-terafox-dark {
+    --bg-primary: #152528;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #e6eaea;
+    --text-muted: #587b7b;
+    --text-subtle: #cbd9d8;
+    --border-primary: #2d4f56;
+    --border-secondary: #1d3337;
+    --border-muted: #254147;
+    --color-error: #e85c51;
+    --color-money: #7aa4a1;
+    --color-success: #7aa4a1;
+    --color-warning: #fda47f;
+    --border-error: #be5149;
+    --border-success: #668b89;
+    --border-warning: #cf8b6e;
+    --accent-primary: #5a93aa;
+    --accent-secondary: #a1cdd8;
+    --accent-tertiary: #ff8349;
+    /* palette: EdenEast/nightfox.nvim palette/terafox.lua; light is palette/dayfox.lua */
+    --palette-1: #5a93aa;
+    --palette-2: #ff8349;
+    --palette-3: #7aa4a1;
+    --palette-4: #ad5c7c;
+    --palette-5: #fda47f;
+    --palette-6: #a1cdd8;
+    /* syntax: nightfox.nvim spec (Terafox, Dayfox) */
+    --syntax-keyword: #ad5c7c;
+    --syntax-type: #fda47f;
+    --syntax-function: #73a3b7;
+    --syntax-string: #7aa4a1;
+    --syntax-constant: #ff9664;
+    --syntax-comment: #6d7f8b;
+    --syntax-macro: #d38d97;
+    --syntax-attribute: #d38d97;
+    --syntax-punctuation: #cbd9d8;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #5a93aa;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-terafox-light {
+    --bg-primary: #f6f2ee;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #3d2b5a;
+    --text-muted: #824d5b;
+    --text-subtle: #643f61;
+    --border-primary: #aab0ad;
+    --border-secondary: #dbd1dd;
+    --border-muted: #d3c7bb;
+    --color-error: #a5222f;
+    --color-money: #396847;
+    --color-success: #396847;
+    --color-warning: #ac5402;
+    --border-error: #871c27;
+    --border-success: #2f553a;
+    --border-warning: #8d4502;
+    --accent-primary: #2848a9;
+    --accent-secondary: #287980;
+    --accent-tertiary: #955f61;
+    /* palette: EdenEast/nightfox.nvim palette/terafox.lua; light is palette/dayfox.lua */
+    --palette-1: #2848a9;
+    --palette-2: #955f61;
+    --palette-3: #396847;
+    --palette-4: #6e33ce;
+    --palette-5: #ac5402;
+    --palette-6: #287980;
+    /* syntax: nightfox.nvim spec (Terafox, Dayfox) */
+    --syntax-keyword: #6e33ce;
+    --syntax-type: #ac5402;
+    --syntax-function: #223d90;
+    --syntax-string: #396847;
+    --syntax-constant: #7f5152;
+    --syntax-comment: #837a72;
+    --syntax-macro: #8b369a;
+    --syntax-attribute: #8b369a;
+    --syntax-punctuation: #643f61;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #2848a9;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
 .theme-powershell-dark {
     --bg-primary: #012456;
@@ -3238,6 +3730,88 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-eclipse-dark {
+    --bg-primary: #1e1f22;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #d9e8f7;
+    --text-muted: #808080;
+    --text-subtle: #a0a0a0;
+    --border-primary: #515658;
+    --border-secondary: #2b2d31;
+    --border-muted: #34393d;
+    --color-error: #eb4b64;
+    --color-money: #a7ec21;
+    --color-success: #a7ec21;
+    --color-warning: #f3ec79;
+    --border-error: #c24257;
+    --border-success: #8cc321;
+    --border-warning: #c8c368;
+    --accent-primary: #cc6c1d;
+    --accent-secondary: #17c6a3;
+    --accent-tertiary: #1290c3;
+    /* palette: eclipse.platform.ui e4-dark css and JDT dark semantic colors; light is JDT's classic defaults; status derived */
+    --palette-1: #1290c3;
+    --palette-2: #cc6c1d;
+    --palette-3: #a7ec21;
+    --palette-4: #b166da;
+    --palette-5: #f3ec79;
+    --palette-6: #17c6a3;
+    /* syntax: Eclipse Dark (JDT dark semantic colors) and JDT classic light */
+    --syntax-keyword: #cc6c1d;
+    --syntax-type: #1290c3;
+    --syntax-function: #a7ec21;
+    --syntax-string: #17c6a3;
+    --syntax-constant: #6897bb;
+    --syntax-comment: #808080;
+    --syntax-macro: #a7ec21;
+    --syntax-attribute: #a0a0a0;
+    --syntax-punctuation: #e6e6fa;
+    --syntax-parameter: #79abff;
+    --syntax-member: #66e1f8;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-eclipse-light {
+    --bg-primary: #ffffff;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #000000;
+    --text-muted: #808080;
+    --text-subtle: #4d4d4d;
+    --border-primary: #c0c0c0;
+    --border-secondary: #f0f0f0;
+    --border-muted: #dcdcdc;
+    --color-error: #ff0000;
+    --color-money: #3f7f5f;
+    --color-success: #3f7f5f;
+    --color-warning: #8c7a00;
+    --border-error: #d10000;
+    --border-success: #34684e;
+    --border-warning: #736400;
+    --accent-primary: #7f0055;
+    --accent-secondary: #2a00ff;
+    --accent-tertiary: #0000c0;
+    /* palette: eclipse.platform.ui e4-dark css and JDT dark semantic colors; light is JDT's classic defaults; status derived */
+    --palette-1: #2a00ff;
+    --palette-2: #6a3e3e;
+    --palette-3: #3f7f5f;
+    --palette-4: #7f0055;
+    --palette-5: #646464;
+    --palette-6: #3f5fbf;
+    /* syntax: Eclipse Dark (JDT dark semantic colors) and JDT classic light */
+    --syntax-keyword: #7f0055;
+    --syntax-type: var(--text-primary);
+    --syntax-function: var(--text-primary);
+    --syntax-string: #2a00ff;
+    --syntax-constant: var(--text-primary);
+    --syntax-comment: #3f7f5f;
+    --syntax-macro: var(--text-primary);
+    --syntax-attribute: #646464;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: #6a3e3e;
+    --syntax-member: #0000c0;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

@@ -43,7 +43,7 @@ src/
 └── gallery.rs           # GalleryFrame, GalleryFooter
 
 assets/
-├── themes.css           # 43 themes, a dark and a light block each, gruvbox dark in :root, and the sink and grid mixed from them
+├── themes.css           # 50 themes, a dark and a light block each, gruvbox dark in :root, and the sink and grid mixed from them
 ├── components.css       # the rules for the components above
 ├── app.css              # the app shell: screen, page header, bottom sheet, alert dialog, settings lists, hints
 ├── site.css             # the sites: scroll reveal, gallery, footer
