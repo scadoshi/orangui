@@ -104,13 +104,13 @@
     --border-error: #cc241d;
     --border-success: #98971a;
     --border-warning: #d79921;
-    --accent-primary: #83a598;
+    --accent-primary: #8ec07c;
     --accent-secondary: #fabd2f;
     --accent-tertiary: #d3869b;
-    /* The heatmap and the commit line draw in gruvbox's aqua, not its blue.
-       Set here and in the light block only, never in :root: a value set there
-       resolves to this aqua and every theme would inherit it. */
-    --heat: #8ec07c;
+    /* The UI accent is gruvbox's aqua; the heatmap and the commit line keep
+       its blue. Set here and in the light block only, never in :root: a value
+       set there resolves to this blue and every theme would inherit it. */
+    --heat: #83a598;
     /* palette: morhetz/gruvbox gruvbox.vim (bright for dark, faded for light) */
     --palette-1: #83a598;
     --palette-2: #fe8019;
@@ -149,11 +149,11 @@
     --border-error: #cc241d;
     --border-success: #98971a;
     --border-warning: #d79921;
-    --accent-primary: #076678;
+    --accent-primary: #427b58;
     --accent-secondary: #b57614;
     --accent-tertiary: #8f3f71;
-    /* The heatmap and the commit line draw in gruvbox's aqua, not its blue. */
-    --heat: #427b58;
+    /* The UI accent is gruvbox's aqua; the charts keep its blue. */
+    --heat: #076678;
     /* palette: morhetz/gruvbox gruvbox.vim (bright for dark, faded for light) */
     --palette-1: #076678;
     --palette-2: #af3a03;
