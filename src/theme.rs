@@ -12,6 +12,7 @@ pub const ALLOWED_THEMES: &[&str] = &[
     "achromatopsia",
     "ayu",
     "catppuccin",
+    "darcula",
     "deuteranopia",
     "docs-rs",
     "dracula",

@@ -68,7 +68,7 @@ fn allowed(v: &str) -> bool {
 #[test]
 fn every_theme_block_has_the_eleven_syntax_slots() {
     let blocks = blocks();
-    assert_eq!(blocks.len(), 78, "39 themes, dark and light");
+    assert_eq!(blocks.len(), 80, "40 themes, dark and light");
     for (name, body) in blocks {
         for slot in SLOTS {
             let v = value(body, slot).unwrap_or_default();
