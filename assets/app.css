@@ -202,11 +202,16 @@
     overflow: hidden;
 }
 
-/* The sheet's own GridCells sits under its header, content and action bar;
-   the header and the bar keep the sheet's fill, the content shows the field. */
+/* The sheet's own GridCells sits under its header, content and action bar,
+   a step dimmer than the screen's; the header and the bar keep the sheet's
+   fill, the content shows the field. */
 .bottom-sheet > .grid-cells {
     position: absolute;
     z-index: 0;
+}
+
+.bottom-sheet > .grid-cells .grid-cells-field {
+    opacity: 0.8;
 }
 
 .bottom-sheet > :not(.grid-cells) {
@@ -655,4 +660,28 @@
     letter-spacing: 0.1em;
     text-align: center;
     margin: 0.75rem 0 0.4rem;
+}
+
+/* ---- Splash (orangui::Splash) ----
+   The opening overlay: over everything while the first screen mounts under
+   it. Its GridCells rains in, the host's mark resolves in the middle, then
+   the whole overlay fades and unmounts. The fade length matches FADE_MS. */
+.splash {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.splash-out {
+    opacity: 0;
+}
+
+.splash-mark {
+    display: flex;
+    justify-content: center;
 }

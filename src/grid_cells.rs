@@ -59,8 +59,8 @@ fn cells() -> Vec<Cell> {
 }
 
 /// The backdrop: a fixed layer of shaded cells under everything on screen.
-/// `still` is the bottom sheet's copy: already in place, a step dimmer, and
-/// it never animates.
+/// `still` is the copy that is already in place and never moves: the app
+/// screens' backdrop, and the bottom sheet's.
 #[component]
 pub fn GridCells(#[props(default)] still: bool) -> Element {
     rsx! {

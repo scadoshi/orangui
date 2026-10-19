@@ -2078,11 +2078,7 @@ html[data-wipe="left"]::view-transition-new(root) {
     }
 }
 
-/* The still copy: in place from the start, a step dimmer, never moving. */
-.grid-cells-still .grid-cells-field {
-    opacity: 0.8;
-}
-
+/* The still copy: in place from the start, never moving. */
 .grid-cells-still .grid-cell {
     animation: none;
 }
