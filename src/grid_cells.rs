@@ -14,7 +14,8 @@
 //! ```
 //!
 //! An app host also drops its screen's fill (`assets/app.css` clears the
-//! screen column and the sheet grid) so the layer shows through.
+//! screen column) so the layer shows through. [`crate::BottomSheet`] carries
+//! its own still copy under its header, content and action bar.
 
 use dioxus::prelude::*;
 
@@ -58,10 +59,14 @@ fn cells() -> Vec<Cell> {
 }
 
 /// The backdrop: a fixed layer of shaded cells under everything on screen.
+/// `still` is the bottom sheet's copy: already in place, a step dimmer, and
+/// it never animates.
 #[component]
-pub fn GridCells() -> Element {
+pub fn GridCells(#[props(default)] still: bool) -> Element {
     rsx! {
-        div { class: "grid-cells", aria_hidden: "true",
+        div {
+            class: if still { "grid-cells grid-cells-still" } else { "grid-cells" },
+            aria_hidden: "true",
             div { class: "grid-cells-field",
                 for cell in cells() {
                     if let Some(breathe) = cell.breathe_ms {

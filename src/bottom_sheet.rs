@@ -3,7 +3,8 @@
 use dioxus::prelude::*;
 
 use crate::{
-    ActionBar, Button, ButtonVariant, entrance::sleep_ms, overlay_stack::use_overlay_back_action,
+    ActionBar, Button, ButtonVariant, entrance::sleep_ms, grid_cells::GridCells,
+    overlay_stack::use_overlay_back_action,
 };
 
 /// A bottom sheet with backdrop, title, content slot, and footer.
@@ -75,6 +76,8 @@ pub fn BottomSheet(
             } else {
                 "bottom-sheet bottom-sheet-premount"
             },
+            // The same backdrop as the screen, in place and a step dimmer.
+            GridCells { still: true }
             div { class: "sheet-header",
                 span { class: "sheet-title", "{title}" }
                 if let Some(mut hint) = hint {
