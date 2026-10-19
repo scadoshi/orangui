@@ -997,6 +997,88 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.theme-monokai-pro-ristretto-dark {
+    --bg-primary: #2c2525;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #fff1f3;
+    --text-muted: #988e8f;
+    --text-subtle: #c3b7b8;
+    --border-primary: #5b5152;
+    --border-secondary: #362e2e;
+    --border-muted: #453b3b;
+    --color-error: #fd6883;
+    --color-money: #adda78;
+    --color-success: #adda78;
+    --color-warning: #f9cc6c;
+    --border-error: #d1546c;
+    --border-success: #8fb85f;
+    --border-warning: #d1aa54;
+    --accent-primary: #fd6883;
+    --accent-secondary: #f38d70;
+    --accent-tertiary: #85dacc;
+    /* palette: basecamp/omarchy themes/ristretto/colors.toml; light derived from dark */
+    --palette-1: #85dacc;
+    --palette-2: #fb9a77;
+    --palette-3: #adda78;
+    --palette-4: #a8a9eb;
+    --palette-5: #f9cc6c;
+    --palette-6: #f38d70;
+    /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
+    --syntax-keyword: #fd6883;
+    --syntax-type: #85dacc;
+    --syntax-function: #adda78;
+    --syntax-string: #f9cc6c;
+    --syntax-constant: #a8a9eb;
+    --syntax-comment: #72696a;
+    --syntax-macro: #adda78;
+    --syntax-attribute: #85dacc;
+    --syntax-punctuation: #948a8b;
+    --syntax-parameter: #fc9867;
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-monokai-pro-ristretto-light {
+    --bg-primary: #f5ece9;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #43383a;
+    --text-muted: #736668;
+    --text-subtle: #5e5254;
+    --border-primary: #cbb9b6;
+    --border-secondary: #e8dcd8;
+    --border-muted: #d8c8c4;
+    --color-error: #c33f5a;
+    --color-money: #6f9440;
+    --color-success: #6f9440;
+    --color-warning: #b08a2a;
+    --border-error: #a02c46;
+    --border-success: #587733;
+    --border-warning: #8e6c1e;
+    --accent-primary: #c33f5a;
+    --accent-secondary: #ca684c;
+    --accent-tertiary: #3d9488;
+    /* palette: basecamp/omarchy themes/ristretto/colors.toml; light derived from dark */
+    --palette-1: #3d9488;
+    --palette-2: #cb6f4d;
+    --palette-3: #6a9431;
+    --palette-4: #7e7ebd;
+    --palette-5: #ab800e;
+    --palette-6: #ca684c;
+    /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
+    --syntax-keyword: #c94a63;
+    --syntax-type: #3d9488;
+    --syntax-function: #6a9431;
+    --syntax-string: #ab800e;
+    --syntax-constant: #7e7ebd;
+    --syntax-comment: #8c8283;
+    --syntax-macro: #6a9431;
+    --syntax-attribute: #3d9488;
+    --syntax-punctuation: #7b7072;
+    --syntax-parameter: var(--palette-2);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 .theme-monokai-pro-spectrum-dark {
     --bg-primary: #222222;
     --bg-overlay: rgba(0, 0, 0, 0.6);
@@ -1497,6 +1579,88 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.theme-github-high-contrast-dark {
+    --bg-primary: #0a0c10;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #f0f3f6;
+    --text-muted: #9ea7b3;
+    --text-subtle: #bdc4cc;
+    --border-primary: #7a828e;
+    --border-secondary: #272b33;
+    --border-muted: #525964;
+    --color-error: #ff6a69;
+    --color-money: #26cd4d;
+    --color-success: #26cd4d;
+    --color-warning: #f0b72f;
+    --border-error: #ce5757;
+    --border-success: #20a641;
+    --border-warning: #c29529;
+    --accent-primary: #71b7ff;
+    --accent-secondary: #b780ff;
+    --accent-tertiary: #f0b72f;
+    /* palette: @primer/primitives 7.15.1 dark_high_contrast and light_high_contrast (fg tokens) */
+    --palette-1: #71b7ff;
+    --palette-2: #e7811d;
+    --palette-3: #26cd4d;
+    --palette-4: #b780ff;
+    --palette-5: #f0b72f;
+    --palette-6: #ef6eb1;
+    /* syntax: @primer/primitives 7.15.1 prettylights.syntax tokens, high contrast */
+    --syntax-keyword: #ff9492;
+    --syntax-type: #ffb757;
+    --syntax-function: #dbb7ff;
+    --syntax-string: #addcff;
+    --syntax-constant: #91cbff;
+    --syntax-comment: #bdc4cc;
+    --syntax-macro: #dbb7ff;
+    --syntax-attribute: #91cbff;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #91cbff;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-github-high-contrast-light {
+    --bg-primary: #ffffff;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #0e1116;
+    --text-muted: #66707b;
+    --text-subtle: #3d444d;
+    --border-primary: #20252c;
+    --border-secondary: #e7ecf0;
+    --border-muted: #88929d;
+    --color-error: #d1242f;
+    --color-money: #055d20;
+    --color-success: #055d20;
+    --color-warning: #744500;
+    --border-error: #ab1e27;
+    --border-success: #044c1a;
+    --border-warning: #5f3900;
+    --accent-primary: #0349b4;
+    --accent-secondary: #622cbc;
+    --accent-tertiary: #873800;
+    /* palette: @primer/primitives 7.15.1 dark_high_contrast and light_high_contrast (fg tokens) */
+    --palette-1: #0349b4;
+    --palette-2: #873800;
+    --palette-3: #055d20;
+    --palette-4: #622cbc;
+    --palette-5: #744500;
+    --palette-6: #971368;
+    /* syntax: @primer/primitives 7.15.1 prettylights.syntax tokens, high contrast */
+    --syntax-keyword: #a0111f;
+    --syntax-type: #702c00;
+    --syntax-function: #512598;
+    --syntax-string: #032563;
+    --syntax-constant: #023b95;
+    --syntax-comment: #66707b;
+    --syntax-macro: #512598;
+    --syntax-attribute: #023b95;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #023b95;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
 .theme-kanagawa-dark {
     --bg-primary: #1f1f28;
@@ -1566,6 +1730,88 @@
     --palette-5: #77713f;
     --palette-6: #597b75;
     /* syntax: rebelot/kanagawa.nvim (Wave, Lotus) */
+    --syntax-keyword: #624c83;
+    --syntax-type: #597b75;
+    --syntax-function: #4d699b;
+    --syntax-string: #6f894e;
+    --syntax-constant: #cc6d00;
+    --syntax-comment: #8a8980;
+    --syntax-macro: #c84053;
+    --syntax-attribute: #c84053;
+    --syntax-punctuation: #4e8ca2;
+    --syntax-parameter: #5d57a3;
+    --syntax-member: #77713f;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-kanagawa-dragon-dark {
+    --bg-primary: #181616;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #c5c9c5;
+    --text-muted: #7a8382;
+    --text-subtle: #9e9b93;
+    --border-primary: #625e5a;
+    --border-secondary: #282727;
+    --border-muted: #393836;
+    --color-error: #e82424;
+    --color-money: #98bb6c;
+    --color-success: #98bb6c;
+    --color-warning: #ff9e3b;
+    --border-error: #be2121;
+    --border-success: #7e9a5b;
+    --border-warning: #d18334;
+    --accent-primary: #8992a7;
+    --accent-secondary: #8ba4b0;
+    --accent-tertiary: #b6927b;
+    /* palette: rebelot/kanagawa.nvim colors.lua (Dragon, Lotus) */
+    --palette-1: #8ba4b0;
+    --palette-2: #b6927b;
+    --palette-3: #87a987;
+    --palette-4: #a292a3;
+    --palette-5: #c4b28a;
+    --palette-6: #c4746e;
+    /* syntax: rebelot/kanagawa.nvim themes.lua (Dragon, Lotus) */
+    --syntax-keyword: #8992a7;
+    --syntax-type: #8ea4a2;
+    --syntax-function: #8ba4b0;
+    --syntax-string: #8a9a7b;
+    --syntax-constant: #b6927b;
+    --syntax-comment: #737c73;
+    --syntax-macro: #c4746e;
+    --syntax-attribute: #949fb5;
+    --syntax-punctuation: #9e9b93;
+    --syntax-parameter: #a6a69c;
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-kanagawa-dragon-light {
+    --bg-primary: #f2ecbc;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #545464;
+    --text-muted: #686760;
+    --text-subtle: #66666f;
+    --border-primary: #c9c093;
+    --border-secondary: #e7e0ad;
+    --border-muted: #d9d1a0;
+    --color-error: #c84053;
+    --color-money: #6f894e;
+    --color-success: #6f894e;
+    --color-warning: #de9800;
+    --border-error: #a8323f;
+    --border-success: #5a7040;
+    --border-warning: #b87c00;
+    --accent-primary: #624c83;
+    --accent-secondary: #4d699b;
+    --accent-tertiary: #597b75;
+    /* palette: rebelot/kanagawa.nvim colors.lua (Dragon, Lotus) */
+    --palette-1: #4d699b;
+    --palette-2: #cc6d00;
+    --palette-3: #6f894e;
+    --palette-4: #624c83;
+    --palette-5: #77713f;
+    --palette-6: #597b75;
+    /* syntax: rebelot/kanagawa.nvim (Dragon, Lotus) */
     --syntax-keyword: #624c83;
     --syntax-type: #597b75;
     --syntax-function: #4d699b;
@@ -2414,88 +2660,6 @@
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.theme-ristretto-dark {
-    --bg-primary: #2c2525;
-    --bg-overlay: rgba(0, 0, 0, 0.6);
-    --text-primary: #fff1f3;
-    --text-muted: #988e8f;
-    --text-subtle: #c3b7b8;
-    --border-primary: #5b5152;
-    --border-secondary: #362e2e;
-    --border-muted: #453b3b;
-    --color-error: #fd6883;
-    --color-money: #adda78;
-    --color-success: #adda78;
-    --color-warning: #f9cc6c;
-    --border-error: #d1546c;
-    --border-success: #8fb85f;
-    --border-warning: #d1aa54;
-    --accent-primary: #fd6883;
-    --accent-secondary: #f38d70;
-    --accent-tertiary: #85dacc;
-    /* palette: basecamp/omarchy themes/ristretto/colors.toml; light derived from dark */
-    --palette-1: #85dacc;
-    --palette-2: #fb9a77;
-    --palette-3: #adda78;
-    --palette-4: #a8a9eb;
-    --palette-5: #f9cc6c;
-    --palette-6: #f38d70;
-    /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
-    --syntax-keyword: #fd6883;
-    --syntax-type: #85dacc;
-    --syntax-function: #adda78;
-    --syntax-string: #f9cc6c;
-    --syntax-constant: #a8a9eb;
-    --syntax-comment: #72696a;
-    --syntax-macro: #adda78;
-    --syntax-attribute: #85dacc;
-    --syntax-punctuation: #948a8b;
-    --syntax-parameter: #fc9867;
-    --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-.theme-ristretto-light {
-    --bg-primary: #f5ece9;
-    --bg-overlay: rgba(0, 0, 0, 0.3);
-    --text-primary: #43383a;
-    --text-muted: #736668;
-    --text-subtle: #5e5254;
-    --border-primary: #cbb9b6;
-    --border-secondary: #e8dcd8;
-    --border-muted: #d8c8c4;
-    --color-error: #c33f5a;
-    --color-money: #6f9440;
-    --color-success: #6f9440;
-    --color-warning: #b08a2a;
-    --border-error: #a02c46;
-    --border-success: #587733;
-    --border-warning: #8e6c1e;
-    --accent-primary: #c33f5a;
-    --accent-secondary: #ca684c;
-    --accent-tertiary: #3d9488;
-    /* palette: basecamp/omarchy themes/ristretto/colors.toml; light derived from dark */
-    --palette-1: #3d9488;
-    --palette-2: #cb6f4d;
-    --palette-3: #6a9431;
-    --palette-4: #7e7ebd;
-    --palette-5: #ab800e;
-    --palette-6: #ca684c;
-    /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
-    --syntax-keyword: #c94a63;
-    --syntax-type: #3d9488;
-    --syntax-function: #6a9431;
-    --syntax-string: #ab800e;
-    --syntax-constant: #7e7ebd;
-    --syntax-comment: #8c8283;
-    --syntax-macro: #6a9431;
-    --syntax-attribute: #3d9488;
-    --syntax-punctuation: #7b7072;
-    --syntax-parameter: var(--palette-2);
-    --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
 
 .theme-synthwave-84-dark {
     --bg-primary: #262335;
