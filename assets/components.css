@@ -724,6 +724,15 @@ a.stat-chip {
         bottom: calc(1rem + 2 * var(--nav-trigger-pad) + 0.95rem + 2px + 0.5rem);
         margin-top: 0;
         max-height: min(50vh, calc(100% - 7rem));
+        /* Centered in the nav, not hung from the trigger: the row is
+           centered, so a short theme name moves the trigger right and a
+           menu hung from it ran off the screen and scrolled the page
+           sideways. The menu is as wide as its rows, so auto margins
+           between the nav's edges center it. */
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
