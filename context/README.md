@@ -27,7 +27,7 @@ The names [`plans/class_names.md`](plans/class_names.md) approved are in the she
 
 ## 2026-10-12: the crate exists
 
-orangui is the generic part of zwipe's `zwipe-components`, lifted as is: 26 modules, the 34 themes, the component sheet with its Magic sections cut, the app and site sheets, the three scripts and the two stylesheet gates. The theme model (`ThemeConfig`, the theme list, the display names) moved in from `zwipe-core` so nothing here depends on zwipe. Component names, class names and the storage key a host passes are unchanged, so for a host the switch is a dependency line and an import path.
+orangui is the generic part of zwipe's `zwipe-components`, lifted as is: 26 modules, the 37 themes, the component sheet with its Magic sections cut, the app and site sheets, the three scripts and the two stylesheet gates. The theme model (`ThemeConfig`, the theme list, the display names) moved in from `zwipe-core` so nothing here depends on zwipe. Component names, class names and the storage key a host passes are unchanged, so for a host the switch is a dependency line and an import path.
 
 [`plans/class_names.md`](plans/class_names.md) audits every class the kit defines, with a verdict per name, for a rename pass after the hosts switch.
 

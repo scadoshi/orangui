@@ -751,7 +751,171 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-.theme-monokai-octagon-dark {
+.theme-monokai-pro-dark {
+    --bg-primary: #2d2a2e;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #fcfcfa;
+    --text-muted: #939293;
+    --text-subtle: #c1c0c0;
+    --border-primary: #5b595c;
+    --border-secondary: #403e41;
+    --border-muted: #4e4c4e;
+    --color-error: #ff6188;
+    --color-money: #a9dc76;
+    --color-success: #a9dc76;
+    --color-warning: #ffd866;
+    --border-error: #d55676;
+    --border-success: #90b868;
+    --border-warning: #d5b55b;
+    --accent-primary: #ff6188;
+    --accent-secondary: #fc9867;
+    --accent-tertiary: #78dce8;
+    /* palette: monokai-pro.nvim palette/pro.lua; light is palette/light.lua (Filter Light) */
+    --palette-1: #78dce8;
+    --palette-2: #fc9867;
+    --palette-3: #a9dc76;
+    --palette-4: #ab9df2;
+    --palette-5: #ffd866;
+    --palette-6: #ff6188;
+    /* syntax: Monokai Pro syntax; light is Monokai Pro (Filter Light) */
+    --syntax-keyword: #ff6188;
+    --syntax-type: #78dce8;
+    --syntax-function: #a9dc76;
+    --syntax-string: #ffd866;
+    --syntax-constant: #ab9df2;
+    --syntax-comment: #727072;
+    --syntax-macro: #a9dc76;
+    --syntax-attribute: #78dce8;
+    --syntax-punctuation: #939293;
+    --syntax-parameter: #fc9867;
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-monokai-pro-light {
+    --bg-primary: #faf4f2;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #29242a;
+    --text-muted: #918c8e;
+    --text-subtle: #706b6e;
+    --border-primary: #bfb9ba;
+    --border-secondary: #ede7e5;
+    --border-muted: #d3cdcc;
+    --color-error: #e14775;
+    --color-money: #269d69;
+    --color-success: #269d69;
+    --color-warning: #cc7a0a;
+    --border-error: #b83a60;
+    --border-success: #1f8156;
+    --border-warning: #a76408;
+    --accent-primary: #e14775;
+    --accent-secondary: #e16032;
+    --accent-tertiary: #1c8ca8;
+    /* palette: monokai-pro.nvim palette/pro.lua; light is palette/light.lua (Filter Light) */
+    --palette-1: #1c8ca8;
+    --palette-2: #e16032;
+    --palette-3: #269d69;
+    --palette-4: #7058be;
+    --palette-5: #cc7a0a;
+    --palette-6: #e14775;
+    /* syntax: Monokai Pro syntax; light is Monokai Pro (Filter Light) */
+    --syntax-keyword: #e14775;
+    --syntax-type: #1c8ca8;
+    --syntax-function: #269d69;
+    --syntax-string: #cc7a0a;
+    --syntax-constant: #7058be;
+    --syntax-comment: #a59fa0;
+    --syntax-macro: #269d69;
+    --syntax-attribute: #1c8ca8;
+    --syntax-punctuation: #918c8e;
+    --syntax-parameter: var(--palette-2);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-monokai-pro-machine-dark {
+    --bg-primary: #273136;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #f2fffc;
+    --text-muted: #8b9798;
+    --text-subtle: #b8c4c3;
+    --border-primary: #545f62;
+    --border-secondary: #3a4449;
+    --border-muted: #475256;
+    --color-error: #ff6d7e;
+    --color-money: #a2e57b;
+    --color-success: #a2e57b;
+    --color-warning: #ffed72;
+    --border-error: #d46170;
+    --border-success: #89c16d;
+    --border-warning: #d4c766;
+    --accent-primary: #ff6d7e;
+    --accent-secondary: #ffb270;
+    --accent-tertiary: #7cd5f1;
+    /* palette: monokai-pro.nvim palette/machine.lua; light derived from dark */
+    --palette-1: #7cd5f1;
+    --palette-2: #ffb270;
+    --palette-3: #a2e57b;
+    --palette-4: #baa0f8;
+    --palette-5: #ffed72;
+    --palette-6: #ff6d7e;
+    /* syntax: Monokai Pro (Filter Machine) syntax; light derived from dark */
+    --syntax-keyword: #ff6d7e;
+    --syntax-type: #7cd5f1;
+    --syntax-function: #a2e57b;
+    --syntax-string: #ffed72;
+    --syntax-constant: #baa0f8;
+    --syntax-comment: #6b7678;
+    --syntax-macro: #a2e57b;
+    --syntax-attribute: #7cd5f1;
+    --syntax-punctuation: #8b9798;
+    --syntax-parameter: #ffb270;
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-monokai-pro-machine-light {
+    --bg-primary: #eaf2f5;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #2c3438;
+    --text-muted: #646a6d;
+    --text-subtle: #4d5457;
+    --border-primary: #bfc5c8;
+    --border-secondary: #dce2e6;
+    --border-muted: #ccd2d5;
+    --color-error: #d05966;
+    --color-money: #5a8f39;
+    --color-success: #5a8f39;
+    --color-warning: #8f8108;
+    --border-error: #ab4954;
+    --border-success: #4a752f;
+    --border-warning: #756a07;
+    --accent-primary: #d05966;
+    --accent-secondary: #b1743e;
+    --accent-tertiary: #418ba1;
+    /* palette: monokai-pro.nvim palette/machine.lua; light derived from dark */
+    --palette-1: #418ba1;
+    --palette-2: #b1743e;
+    --palette-3: #5a8f39;
+    --palette-4: #8b75bc;
+    --palette-5: #8f8108;
+    --palette-6: #d05966;
+    /* syntax: Monokai Pro (Filter Machine) syntax; light derived from dark */
+    --syntax-keyword: #d05966;
+    --syntax-type: #418ba1;
+    --syntax-function: #5a8f39;
+    --syntax-string: #8f8108;
+    --syntax-constant: #8b75bc;
+    --syntax-comment: #8b9798;
+    --syntax-macro: #5a8f39;
+    --syntax-attribute: #418ba1;
+    --syntax-punctuation: #646a6d;
+    --syntax-parameter: var(--palette-2);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-monokai-pro-octagon-dark {
     --bg-primary: #282a3a;
     --bg-overlay: rgba(0, 0, 0, 0.6);
     --text-primary: #eaf2f1;
@@ -792,7 +956,7 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
-.theme-monokai-octagon-light {
+.theme-monokai-pro-octagon-light {
     --bg-primary: #eff0f6;
     --bg-overlay: rgba(0, 0, 0, 0.3);
     --text-primary: #2f3140;
@@ -828,6 +992,88 @@
     --syntax-macro: #6f8f1f;
     --syntax-attribute: #2f8f7a;
     --syntax-punctuation: #737887;
+    --syntax-parameter: var(--palette-2);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-monokai-pro-spectrum-dark {
+    --bg-primary: #222222;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #f7f1ff;
+    --text-muted: #8b888f;
+    --text-subtle: #bab6c0;
+    --border-primary: #525053;
+    --border-secondary: #363537;
+    --border-muted: #444245;
+    --color-error: #fc618d;
+    --color-money: #7bd88f;
+    --color-success: #7bd88f;
+    --color-warning: #fce566;
+    --border-error: #d05478;
+    --border-success: #69b479;
+    --border-warning: #d0be58;
+    --accent-primary: #fc618d;
+    --accent-secondary: #fd9353;
+    --accent-tertiary: #5ad4e6;
+    /* palette: monokai-pro.nvim palette/spectrum.lua; light derived from dark */
+    --palette-1: #5ad4e6;
+    --palette-2: #fd9353;
+    --palette-3: #7bd88f;
+    --palette-4: #948ae3;
+    --palette-5: #fce566;
+    --palette-6: #fc618d;
+    /* syntax: Monokai Pro (Filter Spectrum) syntax; light derived from dark */
+    --syntax-keyword: #fc618d;
+    --syntax-type: #5ad4e6;
+    --syntax-function: #7bd88f;
+    --syntax-string: #fce566;
+    --syntax-constant: #948ae3;
+    --syntax-comment: #69676c;
+    --syntax-macro: #7bd88f;
+    --syntax-attribute: #5ad4e6;
+    --syntax-punctuation: #8b888f;
+    --syntax-parameter: #fd9353;
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-monokai-pro-spectrum-light {
+    --bg-primary: #f0f0f0;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #333333;
+    --text-muted: #696969;
+    --text-subtle: #525252;
+    --border-primary: #c4c4c4;
+    --border-secondary: #e1e1e1;
+    --border-muted: #d1d1d1;
+    --color-error: #d45578;
+    --color-money: #438f55;
+    --color-success: #438f55;
+    --color-warning: #928000;
+    --border-error: #ae4662;
+    --border-success: #377546;
+    --border-warning: #786900;
+    --accent-primary: #d45578;
+    --accent-secondary: #c06b36;
+    --accent-tertiary: #1f8c9a;
+    /* palette: monokai-pro.nvim palette/spectrum.lua; light derived from dark */
+    --palette-1: #1f8c9a;
+    --palette-2: #c06b36;
+    --palette-3: #438f55;
+    --palette-4: #7f78c1;
+    --palette-5: #928000;
+    --palette-6: #d45578;
+    /* syntax: Monokai Pro (Filter Spectrum) syntax; light derived from dark */
+    --syntax-keyword: #d45578;
+    --syntax-type: #1f8c9a;
+    --syntax-function: #438f55;
+    --syntax-string: #928000;
+    --syntax-constant: #7f78c1;
+    --syntax-comment: #8b888f;
+    --syntax-macro: #438f55;
+    --syntax-attribute: #1f8c9a;
+    --syntax-punctuation: #696969;
     --syntax-parameter: var(--palette-2);
     --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);

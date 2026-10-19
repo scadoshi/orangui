@@ -24,7 +24,10 @@ pub const ALLOWED_THEMES: &[&str] = &[
     "matte-black",
     "miasma",
     "monokai",
-    "monokai-octagon",
+    "monokai-pro",
+    "monokai-pro-machine",
+    "monokai-pro-octagon",
+    "monokai-pro-spectrum",
     "night-owl",
     "nord",
     "one-dark",
@@ -62,6 +65,7 @@ pub fn display_theme_name(slug: &str) -> String {
         "synthwave-84" => return "Synthwave '84".to_string(),
         "powershell" => return "PowerShell".to_string(),
         "docs-rs" => return "docs.rs".to_string(),
+        "ristretto" => return "Monokai Pro Ristretto".to_string(),
         _ => {}
     }
     slug.split('-')
@@ -116,6 +120,11 @@ mod tests {
         assert_eq!(display_theme_name("rose-pine"), "Rosé Pine");
         assert_eq!(display_theme_name("vscode"), "VS Code");
         assert_eq!(display_theme_name("docs-rs"), "docs.rs");
+        assert_eq!(display_theme_name("ristretto"), "Monokai Pro Ristretto");
+        assert_eq!(
+            display_theme_name("monokai-pro-octagon"),
+            "Monokai Pro Octagon"
+        );
     }
 
     #[test]
