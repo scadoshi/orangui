@@ -27,9 +27,10 @@
     function setup(canvas) {
         if (layers.has(canvas)) return;
         const layer = canvas.parentElement;
+        // data-delay holds the rain while a host's content fades in over it.
         const state = {
             canvas, layer, cells: [], cell: 28, dpr: 1, raf: 0, ink: '',
-            start: performance.now(),
+            start: performance.now() + (parseInt(layer.dataset.delay, 10) || 0),
             still: reduced || layer.hasAttribute('data-still'),
         };
         layers.set(canvas, state);

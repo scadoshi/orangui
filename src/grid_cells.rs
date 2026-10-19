@@ -24,9 +24,13 @@ pub const GRID_CELLS_JS: &str = include_str!("../assets/grid-cells.js");
 
 /// The backdrop: a fixed layer of shaded cells under everything on screen.
 /// `still` is the copy that is already in place and never moves: the app
-/// screens' backdrop, and the bottom sheet's.
+/// screens' backdrop, and the bottom sheet's. `delay_ms` holds the rain, for
+/// a site whose content fades in over the layer: with the cells landing
+/// under a half-transparent panel they read as drawn over it, so the sites
+/// wait out their `content-enter` and the cells arrive once the panels are
+/// solid.
 #[component]
-pub fn GridCells(#[props(default)] still: bool) -> Element {
+pub fn GridCells(#[props(default)] still: bool, #[props(default)] delay_ms: u32) -> Element {
     rsx! {
         document::Script { {GRID_CELLS_JS} }
         if still {
@@ -34,7 +38,7 @@ pub fn GridCells(#[props(default)] still: bool) -> Element {
                 canvas { class: "grid-cells-canvas" }
             }
         } else {
-            div { class: "grid-cells", aria_hidden: "true",
+            div { class: "grid-cells", "data-delay": "{delay_ms}", aria_hidden: "true",
                 canvas { class: "grid-cells-canvas" }
             }
         }
