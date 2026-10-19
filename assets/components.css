@@ -1639,32 +1639,34 @@ a.nav-dropdown-item.active:visited {
     animation: heat-sweep 0.4s ease-out backwards;
 }
 
+/* The chart color: a theme's --heat where it sets one (gruvbox's green),
+   the accent otherwise. */
 .heat-1 {
-    fill: color-mix(in srgb, var(--accent-primary) 30%, var(--bg-primary));
+    fill: color-mix(in srgb, var(--heat, var(--accent-primary)) 30%, var(--bg-primary));
 }
 
 .heat-2 {
-    fill: color-mix(in srgb, var(--accent-primary) 55%, var(--bg-primary));
+    fill: color-mix(in srgb, var(--heat, var(--accent-primary)) 55%, var(--bg-primary));
 }
 
 .heat-3 {
-    fill: color-mix(in srgb, var(--accent-primary) 80%, var(--bg-primary));
+    fill: color-mix(in srgb, var(--heat, var(--accent-primary)) 80%, var(--bg-primary));
 }
 
 .heat-4 {
-    fill: var(--accent-primary);
+    fill: var(--heat, var(--accent-primary));
 }
 
 /* The year's outlier days: a lit edge in a lighter shade of the accent, and a
    soft square of the accent behind the cell, drawn as a shape so every
    browser shows it. The halo sweeps in with its cell. */
 .heat-peak {
-    stroke: color-mix(in srgb, var(--accent-primary) 60%, #fff);
+    stroke: color-mix(in srgb, var(--heat, var(--accent-primary)) 60%, #fff);
     stroke-width: 1;
 }
 
 .heat-halo {
-    fill: color-mix(in srgb, var(--accent-primary) 45%, transparent);
+    fill: color-mix(in srgb, var(--heat, var(--accent-primary)) 45%, transparent);
     transform-box: fill-box;
     transform-origin: center;
     animation: heat-sweep 0.4s ease-out backwards;
