@@ -13,6 +13,14 @@ use dioxus::prelude::*;
 
 use crate::{entrance::sleep_ms, grid_cells::GridCells};
 
+/// Whether the opening is over. A host provides one at its root, closed; the
+/// [`Splash`] opens it as it starts to fade, and the entrances ([`crate::CountUp`],
+/// [`crate::Figure`], [`crate::Decode`]) wait on it, so the first screen's
+/// figures roll and its marks resolve as the overlay leaves rather than
+/// underneath it. A host with no splash provides nothing and they run on mount.
+#[derive(Clone, Copy)]
+pub struct SplashGate(pub Signal<bool>);
+
 /// When the mark mounts, so it resolves as the field is landing.
 const MARK_AT_MS: u32 = 400;
 /// When the fade starts.
@@ -26,12 +34,19 @@ pub fn Splash(children: Element) -> Element {
     let mut mark = use_signal(|| false);
     let mut out = use_signal(|| false);
     let mut gone = use_signal(|| false);
+    // The host's gate, read before this scope provides its own open one for
+    // the mark, so the mark resolves on the overlay while the screen waits.
+    let host_gate = try_consume_context::<SplashGate>();
+    use_context_provider(|| SplashGate(Signal::new(true)));
     use_hook(move || {
         spawn(async move {
             sleep_ms(MARK_AT_MS).await;
             mark.set(true);
             sleep_ms(OUT_AT_MS - MARK_AT_MS).await;
             out.set(true);
+            if let Some(mut gate) = host_gate {
+                gate.0.set(true);
+            }
             sleep_ms(FADE_MS).await;
             gone.set(true);
         });

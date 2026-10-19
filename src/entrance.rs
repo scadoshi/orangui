@@ -10,6 +10,7 @@
 //! script runs, and the motion only ever starts from what is already there.
 //! A viewer who asks for less motion gets the settled value at once.
 
+use crate::splash::SplashGate;
 use dioxus::prelude::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -23,6 +24,16 @@ pub struct Replay(pub Signal<u32>);
 fn use_replay() -> Signal<u32> {
     let own = use_signal(|| 0u32);
     try_consume_context::<Replay>().map_or(own, |replay| replay.0)
+}
+
+/// The host's [`SplashGate`], if it has one. Read inside an entrance's effect
+/// so the flip to open runs it; with no gate the entrance runs on mount.
+fn use_gate() -> Option<SplashGate> {
+    try_consume_context::<SplashGate>()
+}
+
+fn open(gate: Option<SplashGate>) -> bool {
+    gate.is_none_or(|gate| gate.0())
 }
 
 /// Whether the viewer has asked for less motion. Asked of the page, so it
@@ -72,9 +83,13 @@ pub fn CountUp(
     });
     let mut target = use_signal(|| value);
     let mut shown = use_signal(|| value);
+    let gate = use_gate();
     use_effect(use_reactive!(|value| target.set(value)));
     use_effect(move || {
         let run = replay();
+        if !open(gate) {
+            return;
+        }
         spawn(async move {
             if reduced_motion().await {
                 shown.set(*target.peek());
@@ -218,12 +233,13 @@ pub fn Figure(text: String, #[props(default)] start: Option<Signal<bool>>) -> El
     });
     let mut target = use_signal(|| text.clone());
     let mut shown = use_signal(|| text.clone());
+    let gate = use_gate();
     use_effect(use_reactive!(|text| target.set(text)));
     use_effect(move || {
         let run = replay();
         let goal = target();
-        // Reading it here subscribes the effect, so the flip to true runs it.
-        let go = start.is_none_or(|start| start());
+        // Reading them here subscribes the effect, so a flip to true runs it.
+        let go = start.is_none_or(|start| start()) && open(gate);
         if !go {
             return;
         }
@@ -303,8 +319,12 @@ const NOISE: [char; 5] = ['░', '▒', '▓', '▎', '▍'];
 pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>) -> Element {
     let replay = use_replay();
     let mut shown = use_signal(|| text.to_string());
+    let gate = use_gate();
     use_effect(move || {
         let run = replay();
+        if !open(gate) {
+            return;
+        }
         spawn(async move {
             if reduced_motion().await {
                 shown.set(text.to_string());
