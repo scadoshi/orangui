@@ -25,6 +25,7 @@ src/
 ├── chart_math.rs        # curve, area, tip_anchor, peak_indices
 ├── chart_tip.rs         # ChartTip: the chip over a chart's point
 ├── heat_grid.rs         # HeatGrid: a year of days, a column per week
+├── grid_cells.rs        # GridCells: the backdrop as shaded squares that rain in
 │
 │   # the app kit, styled by APP_CSS
 ├── bottom_sheet.rs      # BottomSheet

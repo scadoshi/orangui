@@ -25,11 +25,32 @@
     width: 100%;
     min-height: 0;
     padding-top: 1rem;
-    background-color: var(--bg-sink);
-    background-image:
-        linear-gradient(var(--grid-line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: var(--grid-size) var(--grid-size);
+    /* No fill: the host's GridCells layer under the screen is the backdrop. */
+    background-color: transparent;
+}
+
+/* The screen's safe-area padding sits outside the header and the action
+   bar, so the layer would show in the status bar and home indicator strips.
+   Two fixed bands in the primary color fill them. */
+.screen::before,
+.screen::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-color: var(--bg-primary);
+}
+
+.screen::before {
+    top: 0;
+    height: env(safe-area-inset-top, 0px);
+}
+
+.screen::after {
+    bottom: 0;
+    height: env(safe-area-inset-bottom, 0px);
 }
 
 .screen-content.centered {
@@ -230,13 +251,10 @@
     align-items: stretch;
 }
 
-/* A sheet's body sits on the same grid as the screen under it. */
+/* A sheet's body sits on the sink, solid, so the screen under it stays
+   hidden. */
 :where(.sheet-content) {
     background-color: var(--bg-sink);
-    background-image:
-        linear-gradient(var(--grid-line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: var(--grid-size) var(--grid-size);
 }
 
 /* ---- Alert dialog (orangui::AlertDialog, DialogHostView) ---- */
