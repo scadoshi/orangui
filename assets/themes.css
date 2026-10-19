@@ -104,16 +104,16 @@
     --border-error: #cc241d;
     --border-success: #98971a;
     --border-warning: #d79921;
-    --accent-primary: #8ec07c;
+    --accent-primary: #83a598;
     --accent-secondary: #fabd2f;
     --accent-tertiary: #d3869b;
     /* palette: morhetz/gruvbox gruvbox.vim (bright for dark, faded for light) */
-    --palette-1: #8ec07c;
+    --palette-1: #83a598;
     --palette-2: #fe8019;
     --palette-3: #b8bb26;
     --palette-4: #d3869b;
     --palette-5: #fabd2f;
-    --palette-6: #83a598;
+    --palette-6: #8ec07c;
     /* syntax: ellisonleao/gruvbox.nvim (bright for dark, faded for light) */
     --syntax-keyword: #fb4934;
     --syntax-type: #fabd2f;
@@ -121,11 +121,11 @@
     --syntax-string: #b8bb26;
     --syntax-constant: #d3869b;
     --syntax-comment: #928374;
-    --syntax-macro: #83a598;
-    --syntax-attribute: #83a598;
+    --syntax-macro: #8ec07c;
+    --syntax-attribute: #8ec07c;
     --syntax-punctuation: #fe8019;
-    --syntax-parameter: #8ec07c;
-    --syntax-member: #8ec07c;
+    --syntax-parameter: #83a598;
+    --syntax-member: #83a598;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -145,16 +145,16 @@
     --border-error: #cc241d;
     --border-success: #98971a;
     --border-warning: #d79921;
-    --accent-primary: #427b58;
+    --accent-primary: #076678;
     --accent-secondary: #b57614;
     --accent-tertiary: #8f3f71;
     /* palette: morhetz/gruvbox gruvbox.vim (bright for dark, faded for light) */
-    --palette-1: #427b58;
+    --palette-1: #076678;
     --palette-2: #af3a03;
     --palette-3: #79740e;
     --palette-4: #8f3f71;
     --palette-5: #b57614;
-    --palette-6: #076678;
+    --palette-6: #427b58;
     /* syntax: ellisonleao/gruvbox.nvim (bright for dark, faded for light) */
     --syntax-keyword: #9d0006;
     --syntax-type: #b57614;
@@ -162,11 +162,11 @@
     --syntax-string: #79740e;
     --syntax-constant: #8f3f71;
     --syntax-comment: #928374;
-    --syntax-macro: #076678;
-    --syntax-attribute: #076678;
+    --syntax-macro: #427b58;
+    --syntax-attribute: #427b58;
     --syntax-punctuation: #af3a03;
-    --syntax-parameter: #427b58;
-    --syntax-member: #427b58;
+    --syntax-parameter: #076678;
+    --syntax-member: #076678;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
