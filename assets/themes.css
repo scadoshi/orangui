@@ -107,8 +107,9 @@
     --accent-primary: #83a598;
     --accent-secondary: #fabd2f;
     --accent-tertiary: #d3869b;
-    /* The heatmap and the commit line draw in gruvbox's green, not its blue;
-       every other theme leaves this unset and the charts use the accent. */
+    /* The heatmap and the commit line draw in gruvbox's green, not its blue.
+       Set here and in the light block only, never in :root: a value set there
+       resolves to this green and every theme would inherit it. */
     --heat: var(--color-success);
     /* palette: morhetz/gruvbox gruvbox.vim (bright for dark, faded for light) */
     --palette-1: #83a598;
@@ -151,8 +152,9 @@
     --accent-primary: #076678;
     --accent-secondary: #b57614;
     --accent-tertiary: #8f3f71;
-    /* The heatmap and the commit line draw in gruvbox's green, not its blue;
-       every other theme leaves this unset and the charts use the accent. */
+    /* The heatmap and the commit line draw in gruvbox's green, not its blue.
+       Set here and in the light block only, never in :root: a value set there
+       resolves to this green and every theme would inherit it. */
     --heat: var(--color-success);
     /* palette: morhetz/gruvbox gruvbox.vim (bright for dark, faded for light) */
     --palette-1: #076678;
@@ -4191,9 +4193,6 @@
     --accent-primary: #689d6a;
     --accent-secondary: #cc241d;
     --accent-tertiary: #d79921;
-    /* The heatmap and the commit line draw in gruvbox's green, not its blue;
-       every other theme leaves this unset and the charts use the accent. */
-    --heat: var(--color-success);
 
     /* Shadows */
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
