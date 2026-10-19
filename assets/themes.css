@@ -751,6 +751,88 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.theme-monokai-octagon-dark {
+    --bg-primary: #282a3a;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #eaf2f1;
+    --text-muted: #888d94;
+    --text-subtle: #b2b9bd;
+    --border-primary: #535763;
+    --border-secondary: #3a3d4b;
+    --border-muted: #454858;
+    --color-error: #ff657a;
+    --color-money: #bad761;
+    --color-success: #bad761;
+    --color-warning: #ffd76d;
+    --border-error: #d4596d;
+    --border-success: #9db459;
+    --border-warning: #d4b463;
+    --accent-primary: #ff657a;
+    --accent-secondary: #ff9b5e;
+    --accent-tertiary: #9cd1bb;
+    /* palette: monokai-pro.nvim palette/octagon.lua; light derived from dark */
+    --palette-1: #9cd1bb;
+    --palette-2: #ff9b5e;
+    --palette-3: #bad761;
+    --palette-4: #c39ac9;
+    --palette-5: #ffd76d;
+    --palette-6: #ff657a;
+    /* syntax: Monokai Pro (Filter Octagon) syntax; light derived from dark */
+    --syntax-keyword: #ff657a;
+    --syntax-type: #9cd1bb;
+    --syntax-function: #bad761;
+    --syntax-string: #ffd76d;
+    --syntax-constant: #c39ac9;
+    --syntax-comment: #696d77;
+    --syntax-macro: #bad761;
+    --syntax-attribute: #9cd1bb;
+    --syntax-punctuation: #888d94;
+    --syntax-parameter: #ff9b5e;
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-monokai-octagon-light {
+    --bg-primary: #eff0f6;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #2f3140;
+    --text-muted: #686c7e;
+    --text-subtle: #50546a;
+    --border-primary: #c4c7d6;
+    --border-secondary: #e1e3ec;
+    --border-muted: #d2d5e0;
+    --color-error: #d43f55;
+    --color-money: #6f8f1f;
+    --color-success: #6f8f1f;
+    --color-warning: #a97d00;
+    --border-error: #ae3446;
+    --border-success: #5b7519;
+    --border-warning: #8b6600;
+    --accent-primary: #d43f55;
+    --accent-secondary: #cf6a2d;
+    --accent-tertiary: #2f8f7a;
+    /* palette: monokai-pro.nvim palette/octagon.lua; light derived from dark */
+    --palette-1: #2f8f7a;
+    --palette-2: #cf6a2d;
+    --palette-3: #6f8f1f;
+    --palette-4: #8a63a8;
+    --palette-5: #a97d00;
+    --palette-6: #d43f55;
+    /* syntax: Monokai Pro (Filter Octagon) syntax; light derived from dark */
+    --syntax-keyword: #d43f55;
+    --syntax-type: #2f8f7a;
+    --syntax-function: #6f8f1f;
+    --syntax-string: #a97d00;
+    --syntax-constant: #8a63a8;
+    --syntax-comment: #888d94;
+    --syntax-macro: #6f8f1f;
+    --syntax-attribute: #2f8f7a;
+    --syntax-punctuation: #737887;
+    --syntax-parameter: var(--palette-2);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
 .theme-one-dark-dark {
     --bg-primary: #282c34;
@@ -831,6 +913,88 @@
     --syntax-punctuation: #383a42;
     --syntax-parameter: #e45649;
     --syntax-member: #e45649;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-poimandres-dark {
+    --bg-primary: #1b1e28;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #e4f0fb;
+    --text-muted: #767c9d;
+    --text-subtle: #a6accd;
+    --border-primary: #506477;
+    --border-secondary: #242836;
+    --border-muted: #303340;
+    --color-error: #d0679d;
+    --color-money: #5de4c7;
+    --color-success: #5de4c7;
+    --color-warning: #fffac2;
+    --border-error: #ac5886;
+    --border-success: #50bca7;
+    --border-warning: #d1cea3;
+    --accent-primary: #5de4c7;
+    --accent-secondary: #89ddff;
+    --accent-tertiary: #d0679d;
+    /* palette: olivercederborg/poimandres.nvim palette.lua; light derived from dark */
+    --palette-1: #89ddff;
+    --palette-2: #d0679d;
+    --palette-3: #5de4c7;
+    --palette-4: #fcc5e9;
+    --palette-5: #fffac2;
+    --palette-6: #5fb3a1;
+    /* syntax: drcmda/poimandres-theme tokenColors; light derived from dark */
+    --syntax-keyword: #91b4d5;
+    --syntax-type: #a6accd;
+    --syntax-function: #add7ff;
+    --syntax-string: #5de4c7;
+    --syntax-constant: #5de4c7;
+    --syntax-comment: #767c9d;
+    --syntax-macro: #add7ff;
+    --syntax-attribute: #91b4d5;
+    --syntax-punctuation: #a6accd;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-poimandres-light {
+    --bg-primary: #eef2f9;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #2a2f45;
+    --text-muted: #6b7191;
+    --text-subtle: #525877;
+    --border-primary: #bcc4d8;
+    --border-secondary: #dfe4ee;
+    --border-muted: #cdd3e2;
+    --color-error: #b8407a;
+    --color-money: #1f8f78;
+    --color-success: #1f8f78;
+    --color-warning: #8f7f12;
+    --border-error: #973464;
+    --border-success: #197562;
+    --border-warning: #75680f;
+    --accent-primary: #1f8f78;
+    --accent-secondary: #2b7fb3;
+    --accent-tertiary: #b8407a;
+    /* palette: olivercederborg/poimandres.nvim palette.lua; light derived from dark */
+    --palette-1: #2b7fb3;
+    --palette-2: #b8407a;
+    --palette-3: #1f8f78;
+    --palette-4: #4a6fa5;
+    --palette-5: #8f7f12;
+    --palette-6: #3f8a7a;
+    /* syntax: drcmda/poimandres-theme tokenColors; light derived from dark */
+    --syntax-keyword: #4a6fa5;
+    --syntax-type: #525877;
+    --syntax-function: #2b7fb3;
+    --syntax-string: #1f8f78;
+    --syntax-constant: #1f8f78;
+    --syntax-comment: #7a809c;
+    --syntax-macro: #2b7fb3;
+    --syntax-attribute: #4a6fa5;
+    --syntax-punctuation: #6b7191;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1916,6 +2080,88 @@
     --syntax-macro: var(--palette-6);
     --syntax-attribute: var(--palette-6);
     --syntax-punctuation: var(--text-muted);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-oxocarbon-dark {
+    --bg-primary: #161616;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #dde1e6;
+    --text-muted: #8d8d8d;
+    --text-subtle: #a8a8a8;
+    --border-primary: #525252;
+    --border-secondary: #262626;
+    --border-muted: #393939;
+    --color-error: #ee5396;
+    --color-money: #42be65;
+    --color-success: #42be65;
+    --color-warning: #be95ff;
+    --border-error: #c3477c;
+    --border-success: #399c55;
+    --border-warning: #9c7cd0;
+    --accent-primary: #78a9ff;
+    --accent-secondary: #3ddbd9;
+    --accent-tertiary: #ff7eb6;
+    /* palette: nyoom-engineering/oxocarbon.nvim README palette; light slots under 3:1 stepped to IBM Carbon 60 tones */
+    --palette-1: #78a9ff;
+    --palette-2: #ff7eb6;
+    --palette-3: #42be65;
+    --palette-4: #be95ff;
+    --palette-5: #82cfff;
+    --palette-6: #08bdba;
+    /* syntax: nyoom-engineering/oxocarbon.nvim; light stepped to IBM Carbon 60 tones where it does not read on white */
+    --syntax-keyword: #78a9ff;
+    --syntax-type: #78a9ff;
+    --syntax-function: #ff7eb6;
+    --syntax-string: #be95ff;
+    --syntax-constant: #82cfff;
+    --syntax-comment: #525252;
+    --syntax-macro: #08bdba;
+    --syntax-attribute: #82cfff;
+    --syntax-punctuation: #3ddbd9;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-oxocarbon-light {
+    --bg-primary: #ffffff;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #161616;
+    --text-muted: #525252;
+    --text-subtle: #37474f;
+    --border-primary: #90a4ae;
+    --border-secondary: #f2f4f8;
+    --border-muted: #dde1e6;
+    --color-error: #ff6f00;
+    --color-money: #198038;
+    --color-success: #198038;
+    --color-warning: #8a3ffc;
+    --border-error: #d15b00;
+    --border-success: #14692e;
+    --border-warning: #7134cf;
+    --accent-primary: #0f62fe;
+    --accent-secondary: #007d79;
+    --accent-tertiary: #ee5396;
+    /* palette: nyoom-engineering/oxocarbon.nvim README palette; light slots under 3:1 stepped to IBM Carbon 60 tones */
+    --palette-1: #0f62fe;
+    --palette-2: #ee5396;
+    --palette-3: #198038;
+    --palette-4: #673ab7;
+    --palette-5: #ba4e00;
+    --palette-6: #007d79;
+    /* syntax: nyoom-engineering/oxocarbon.nvim; light stepped to IBM Carbon 60 tones where it does not read on white */
+    --syntax-keyword: #ee5396;
+    --syntax-type: #ee5396;
+    --syntax-function: #673ab7;
+    --syntax-string: #8a3ffc;
+    --syntax-constant: #ba4e00;
+    --syntax-comment: #525252;
+    --syntax-macro: #007d79;
+    --syntax-attribute: #ba4e00;
+    --syntax-punctuation: #d02670;
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
