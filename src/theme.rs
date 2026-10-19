@@ -32,6 +32,7 @@ pub const ALLOWED_THEMES: &[&str] = &[
     "monokai-pro-octagon",
     "monokai-pro-ristretto",
     "monokai-pro-spectrum",
+    "neovim",
     "night-owl",
     "nord",
     "one-dark",
@@ -47,7 +48,9 @@ pub const ALLOWED_THEMES: &[&str] = &[
     "tokyo-night",
     "tritanopia",
     "vantablack",
+    "visual-studio",
     "vscode",
+    "xcode",
     "zenburn",
 ];
 

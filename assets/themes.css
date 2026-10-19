@@ -1243,6 +1243,88 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.theme-neovim-dark {
+    --bg-primary: #14161b;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #e0e2ea;
+    --text-muted: #9b9ea4;
+    --text-subtle: #c4c6cd;
+    --border-primary: #4f5258;
+    --border-secondary: #2c2e33;
+    --border-muted: #3a3d43;
+    --color-error: #ffc0b9;
+    --color-money: #b3f6c0;
+    --color-success: #b3f6c0;
+    --color-warning: #fce094;
+    --border-error: #d09e99;
+    --border-success: #93c99f;
+    --border-warning: #ceb87c;
+    --accent-primary: #a6dbff;
+    --accent-secondary: #8cf8f7;
+    --accent-tertiary: #ffcaff;
+    /* palette: neovim/neovim highlight_group.c Nvim* palette, dark and light backgrounds */
+    --palette-1: #a6dbff;
+    --palette-2: #fce094;
+    --palette-3: #b3f6c0;
+    --palette-4: #ffcaff;
+    --palette-5: #ffc0b9;
+    --palette-6: #8cf8f7;
+    /* syntax: neovim 0.10 default highlight groups, dark and light backgrounds */
+    --syntax-keyword: var(--text-primary);
+    --syntax-type: var(--text-primary);
+    --syntax-function: #8cf8f7;
+    --syntax-string: #b3f6c0;
+    --syntax-constant: var(--text-primary);
+    --syntax-comment: #9b9ea4;
+    --syntax-macro: var(--text-primary);
+    --syntax-attribute: var(--text-primary);
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #a6dbff;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-neovim-light {
+    --bg-primary: #e0e2ea;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #14161b;
+    --text-muted: #4f5258;
+    --text-subtle: #2c2e33;
+    --border-primary: #9b9ea4;
+    --border-secondary: #eef1f8;
+    --border-muted: #c4c6cd;
+    --color-error: #590008;
+    --color-money: #005523;
+    --color-success: #005523;
+    --color-warning: #6b5300;
+    --border-error: #490007;
+    --border-success: #00461d;
+    --border-warning: #584400;
+    --accent-primary: #004c73;
+    --accent-secondary: #007373;
+    --accent-tertiary: #470045;
+    /* palette: neovim/neovim highlight_group.c Nvim* palette, dark and light backgrounds */
+    --palette-1: #004c73;
+    --palette-2: #6b5300;
+    --palette-3: #005523;
+    --palette-4: #470045;
+    --palette-5: #590008;
+    --palette-6: #007373;
+    /* syntax: neovim 0.10 default highlight groups, dark and light backgrounds */
+    --syntax-keyword: var(--text-primary);
+    --syntax-type: var(--text-primary);
+    --syntax-function: #007373;
+    --syntax-string: #005523;
+    --syntax-constant: var(--text-primary);
+    --syntax-comment: #4f5258;
+    --syntax-macro: var(--text-primary);
+    --syntax-attribute: var(--text-primary);
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #004c73;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
 .theme-one-dark-dark {
     --bg-primary: #282c34;
@@ -2074,6 +2156,88 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+.theme-visual-studio-dark {
+    --bg-primary: #1e1e1e;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #dcdcdc;
+    --text-muted: #9b9b9b;
+    --text-subtle: #c6c6c6;
+    --border-primary: #3f3f46;
+    --border-secondary: #252526;
+    --border-muted: #2d2d30;
+    --color-error: #f14c4c;
+    --color-money: #89d185;
+    --color-success: #89d185;
+    --color-warning: #cca700;
+    --border-error: #c74343;
+    --border-success: #74ad70;
+    --border-warning: #a98c06;
+    --accent-primary: #569cd6;
+    --accent-secondary: #4ec9b0;
+    --accent-tertiary: #d8a0df;
+    /* palette: Visual Studio 2022 Dark and Light editor and shell colors; status derived */
+    --palette-1: #569cd6;
+    --palette-2: #d69d85;
+    --palette-3: #b5cea8;
+    --palette-4: #d8a0df;
+    --palette-5: #dcdcaa;
+    --palette-6: #4ec9b0;
+    /* syntax: Visual Studio 2022 Dark and Light editor colors */
+    --syntax-keyword: #569cd6;
+    --syntax-type: #4ec9b0;
+    --syntax-function: #dcdcaa;
+    --syntax-string: #d69d85;
+    --syntax-constant: #b5cea8;
+    --syntax-comment: #57a64a;
+    --syntax-macro: #bd63c5;
+    --syntax-attribute: #4ec9b0;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: #9cdcfe;
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-visual-studio-light {
+    --bg-primary: #ffffff;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #000000;
+    --text-muted: #808080;
+    --text-subtle: #4d4d4d;
+    --border-primary: #cccedb;
+    --border-secondary: #f3f3f3;
+    --border-muted: #e5e5e5;
+    --color-error: #e51400;
+    --color-money: #008000;
+    --color-success: #008000;
+    --color-warning: #bf8803;
+    --border-error: #bc1000;
+    --border-success: #006900;
+    --border-warning: #9d7002;
+    --accent-primary: #0000ff;
+    --accent-secondary: #2b91af;
+    --accent-tertiary: #8f08c4;
+    /* palette: Visual Studio 2022 Dark and Light editor and shell colors; status derived */
+    --palette-1: #0000ff;
+    --palette-2: #a31515;
+    --palette-3: #008000;
+    --palette-4: #8f08c4;
+    --palette-5: #74531f;
+    --palette-6: #2b91af;
+    /* syntax: Visual Studio 2022 Dark and Light editor colors */
+    --syntax-keyword: #0000ff;
+    --syntax-type: #2b91af;
+    --syntax-function: #74531f;
+    --syntax-string: #a31515;
+    --syntax-constant: #098658;
+    --syntax-comment: #008000;
+    --syntax-macro: #8f08c4;
+    --syntax-attribute: #2b91af;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: #001080;
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
 .theme-vscode-dark {
     --bg-primary: #1e1e1e;
@@ -2154,6 +2318,88 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: #001080;
     --syntax-member: #001080;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.theme-xcode-dark {
+    --bg-primary: #1f1f24;
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --text-primary: #ffffff;
+    --text-muted: #6c7986;
+    --text-subtle: #92a1b1;
+    --border-primary: #515b70;
+    --border-secondary: #2a2a30;
+    --border-muted: #35353c;
+    --color-error: #fc6a5d;
+    --color-money: #67b7a4;
+    --color-success: #67b7a4;
+    --color-warning: #d0bf69;
+    --border-error: #d05b52;
+    --border-success: #59998a;
+    --border-warning: #ad9f5b;
+    --accent-primary: #fc5fa3;
+    --accent-secondary: #5dd8ff;
+    --accent-tertiary: #fd8f3f;
+    /* palette: Xcode Default (Dark) and Default (Light) .xccolortheme; status and borders derived */
+    --palette-1: #5dd8ff;
+    --palette-2: #fd8f3f;
+    --palette-3: #67b7a4;
+    --palette-4: #d0a8ff;
+    --palette-5: #d0bf69;
+    --palette-6: #fc5fa3;
+    /* syntax: Xcode Default (Dark) and Default (Light) syntax colors */
+    --syntax-keyword: #fc5fa3;
+    --syntax-type: #d0a8ff;
+    --syntax-function: #67b7a4;
+    --syntax-string: #fc6a5d;
+    --syntax-constant: #d0bf69;
+    --syntax-comment: #6c7986;
+    --syntax-macro: #fd8f3f;
+    --syntax-attribute: #bf8555;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.theme-xcode-light {
+    --bg-primary: #ffffff;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    --text-primary: #000000;
+    --text-muted: #5d6c79;
+    --text-subtle: #4a5560;
+    --border-primary: #c9c9cf;
+    --border-secondary: #f0f0f2;
+    --border-muted: #e2e2e6;
+    --color-error: #c41a16;
+    --color-money: #326d74;
+    --color-success: #326d74;
+    --color-warning: #815f03;
+    --border-error: #a11512;
+    --border-success: #29595f;
+    --border-warning: #6a4e02;
+    --accent-primary: #9b2393;
+    --accent-secondary: #0b4f79;
+    --accent-tertiary: #643820;
+    /* palette: Xcode Default (Dark) and Default (Light) .xccolortheme; status and borders derived */
+    --palette-1: #0b4f79;
+    --palette-2: #643820;
+    --palette-3: #326d74;
+    --palette-4: #3900a0;
+    --palette-5: #815f03;
+    --palette-6: #9b2393;
+    /* syntax: Xcode Default (Dark) and Default (Light) syntax colors */
+    --syntax-keyword: #9b2393;
+    --syntax-type: #3900a0;
+    --syntax-function: #326d74;
+    --syntax-string: #c41a16;
+    --syntax-constant: #1c00cf;
+    --syntax-comment: #5d6c79;
+    --syntax-macro: #643820;
+    --syntax-attribute: #815f03;
+    --syntax-punctuation: var(--text-primary);
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: var(--text-primary);
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
