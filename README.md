@@ -1,4 +1,7 @@
-<img src="docs/orangutan.png" alt="An orangutan in ASCII art, cropped to the face" width="720">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/orangutan-dark.png">
+  <img src="docs/orangutan-light.png" alt="An orangutan in ASCII art, cropped to the face" width="720">
+</picture>
 
 # orangui
 
