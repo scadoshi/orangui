@@ -5,7 +5,7 @@ One crate, flat. Every module is one component or one hook family, and `lib.rs` 
 ```
 src/
 ├── lib.rs               # the exports, the CSS and JS string constants, the kit docs
-├── theme.rs             # ThemeConfig, ALLOWED_THEMES, COLORBLIND_THEMES, display_theme_name
+├── theme.rs             # ThemeConfig, ALLOWED_THEMES, THEME_GROUPS, COLORBLIND_THEMES, display_theme_name
 ├── palette_guard.rs     # status_uses: finds status-color references in a stylesheet, for the gates
 │
 │   # for every host

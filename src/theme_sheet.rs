@@ -4,7 +4,7 @@
 //! What a save means (an API call, a local store) and what each outcome says
 //! (a toast) stay the host's, through [`ThemeSheet`]'s callbacks.
 
-use crate::{ALLOWED_THEMES, COLORBLIND_THEMES, ThemeConfig, display_theme_name};
+use crate::{THEME_GROUPS, ThemeConfig, display_theme_name};
 use dioxus::prelude::*;
 
 use crate::{BottomSheet, Button, ButtonVariant, ThemeFollow};
@@ -116,14 +116,6 @@ pub fn ThemeSheet(
 
     let unchanged = selected() == original().name && dark() == original().is_dark;
     let mode = (if dark() { "dark" } else { "light" }).to_string();
-    let regular = ALLOWED_THEMES
-        .iter()
-        .copied()
-        .filter(|t| !COLORBLIND_THEMES.contains(t));
-    let colorblind = ALLOWED_THEMES
-        .iter()
-        .copied()
-        .filter(|t| COLORBLIND_THEMES.contains(t));
 
     rsx! {
         BottomSheet {
@@ -151,23 +143,16 @@ pub fn ThemeSheet(
                     "Save"
                 }
             },
-            for t in regular {
-                ThemeRow {
-                    theme: t.to_string(),
-                    mode: mode.clone(),
-                    selected,
-                    live: theme,
-                    dark,
-                }
-            }
-            div { class: "pref-section-label", "Color blind" }
-            for t in colorblind {
-                ThemeRow {
-                    theme: t.to_string(),
-                    mode: mode.clone(),
-                    selected,
-                    live: theme,
-                    dark,
+            for group in THEME_GROUPS {
+                div { class: "pref-section-label", "{group.label}" }
+                for t in group.themes.iter().copied() {
+                    ThemeRow {
+                        theme: t.to_string(),
+                        mode: mode.clone(),
+                        selected,
+                        live: theme,
+                        dark,
+                    }
                 }
             }
         }

@@ -1,12 +1,12 @@
 //! Site-style theme picker: a [`NavDropdown`] of every allowed theme
-//! (color-blind themes grouped in their own bottom section) plus a dark/light
+//! (sectioned by look, the color-blind themes last) plus a dark/light
 //! mode toggle.
 //!
 //! This is the canonical copy for every site; the host passes its `Signal<ThemeConfig>` in,
 //! so how the theme is provided (context, prop drilling) and applied (body
 //! class, wrapper div) stays the host's business.
 
-use crate::{ALLOWED_THEMES, COLORBLIND_THEMES, ThemeConfig, display_theme_name};
+use crate::{THEME_GROUPS, ThemeConfig, display_theme_name};
 use dioxus::prelude::*;
 
 use crate::{Button, ButtonVariant, NavDropdown};
@@ -95,16 +95,6 @@ pub fn ThemePicker(
     let current = shown.read().name.clone();
     let is_dark = shown.read().is_dark;
     let mode = if is_dark { "dark" } else { "light" };
-    // ALLOWED_THEMES is already alphabetical; filtering preserves that order
-    // for the main group and pulls the color-blind themes into a bottom section.
-    let regular_themes = ALLOWED_THEMES
-        .iter()
-        .copied()
-        .filter(|t| !COLORBLIND_THEMES.contains(t));
-    let colorblind_themes = ALLOWED_THEMES
-        .iter()
-        .copied()
-        .filter(|t| COLORBLIND_THEMES.contains(t));
 
     rsx! {
         // Its children glide aside when the label changes width (NAV_GLIDE_JS).
@@ -112,36 +102,22 @@ pub fn ThemePicker(
             NavDropdown {
                 open,
                 label: display_theme_name(&current),
-                div { class: "nav-dropdown-label", "Themes" }
-                for name in regular_themes {
-                    button {
-                        class: if current == *name { "nav-dropdown-item active" } else { "nav-dropdown-item" },
-                        onclick: move |_| {
-                            let dark = theme.read().is_dark;
-                            theme.set(ThemeConfig {
-                                name: name.to_string(),
-                                is_dark: dark,
-                            });
-                            open.set(false);
-                        },
-                        span { "{display_theme_name(name)}" }
-                        ThemeDots { name, mode }
-                    }
-                }
-                div { class: "nav-dropdown-label", "Color blind" }
-                for name in colorblind_themes {
-                    button {
-                        class: if current == *name { "nav-dropdown-item active" } else { "nav-dropdown-item" },
-                        onclick: move |_| {
-                            let dark = theme.read().is_dark;
-                            theme.set(ThemeConfig {
-                                name: name.to_string(),
-                                is_dark: dark,
-                            });
-                            open.set(false);
-                        },
-                        span { "{display_theme_name(name)}" }
-                        ThemeDots { name, mode }
+                for group in THEME_GROUPS {
+                    div { class: "nav-dropdown-label", "{group.label}" }
+                    for name in group.themes.iter().copied() {
+                        button {
+                            class: if current == *name { "nav-dropdown-item active" } else { "nav-dropdown-item" },
+                            onclick: move |_| {
+                                let dark = theme.read().is_dark;
+                                theme.set(ThemeConfig {
+                                    name: name.to_string(),
+                                    is_dark: dark,
+                                });
+                                open.set(false);
+                            },
+                            span { "{display_theme_name(name)}" }
+                            ThemeDots { name, mode }
+                        }
                     }
                 }
             }

@@ -61,6 +61,96 @@ pub const ALLOWED_THEMES: &[&str] = &[
     "zenburn",
 ];
 
+/// A section of the theme pickers: a label and the themes under it,
+/// alphabetical. The sections sort by look, warm to cool to neutral, so
+/// someone who has never heard of a theme finds one by the color they want;
+/// a family whose variants differ in look stays together under its flagship.
+pub struct ThemeGroup {
+    /// The section's heading.
+    pub label: &'static str,
+    /// The slugs under it, alphabetical.
+    pub themes: &'static [&'static str],
+}
+
+/// Every allowed theme, once, in the order the pickers show them.
+pub const THEME_GROUPS: &[ThemeGroup] = &[
+    ThemeGroup {
+        label: "Warm & earthy",
+        themes: &[
+            "darcula",
+            "gruvbox",
+            "kanagawa-dragon",
+            "melange",
+            "miasma",
+            "rustbox",
+            "zenburn",
+        ],
+    },
+    ThemeGroup {
+        label: "Cool & blue",
+        themes: &[
+            "ayu",
+            "bluloco",
+            "kanagawa",
+            "night-owl",
+            "nightfox",
+            "nord",
+            "one-dark",
+            "poimandres",
+            "powershell",
+            "solarized",
+            "tokyo-night",
+        ],
+    },
+    ThemeGroup {
+        label: "Green & teal",
+        themes: &["everforest", "hackerman", "osaka-jade", "terafox"],
+    },
+    ThemeGroup {
+        label: "Purple & pink",
+        themes: &["catppuccin", "dracula", "rose-pine", "synthwave-84"],
+    },
+    ThemeGroup {
+        label: "Black & gray",
+        themes: &[
+            "docs-rs",
+            "eclipse",
+            "github",
+            "matte-black",
+            "neovim",
+            "oxocarbon",
+            "vantablack",
+            "visual-studio",
+            "vscode",
+        ],
+    },
+    ThemeGroup {
+        label: "Bright & colorful",
+        themes: &[
+            "ethereal",
+            "material",
+            "monokai",
+            "monokai-pro",
+            "monokai-pro-machine",
+            "monokai-pro-octagon",
+            "monokai-pro-ristretto",
+            "monokai-pro-spectrum",
+            "xcode",
+        ],
+    },
+    ThemeGroup {
+        label: "High contrast & color blind",
+        themes: &[
+            "achromatopsia",
+            "deuteranopia",
+            "github-high-contrast",
+            "modus",
+            "protanopia",
+            "tritanopia",
+        ],
+    },
+];
+
 /// The themes with palettes adjusted for color-vision deficiency. Every theme
 /// picker groups these in their own section at the bottom, so the list lives
 /// here once.
@@ -145,6 +235,38 @@ mod tests {
             display_theme_name("monokai-pro-octagon"),
             "Monokai Pro Octagon"
         );
+    }
+
+    #[test]
+    fn every_theme_sits_in_exactly_one_group() {
+        let mut seen: Vec<&str> = Vec::new();
+        for group in THEME_GROUPS {
+            for slug in group.themes {
+                assert!(ALLOWED_THEMES.contains(slug), "{slug}");
+                assert!(!seen.contains(slug), "{slug} is in two groups");
+                seen.push(slug);
+            }
+        }
+        assert_eq!(seen.len(), ALLOWED_THEMES.len());
+    }
+
+    #[test]
+    fn groups_are_alphabetical_inside() {
+        for group in THEME_GROUPS {
+            let mut sorted = group.themes.to_vec();
+            sorted.sort_unstable();
+            assert_eq!(sorted, group.themes, "{}", group.label);
+        }
+    }
+
+    #[test]
+    fn the_colorblind_themes_share_the_last_group() {
+        for slug in COLORBLIND_THEMES {
+            assert!(
+                THEME_GROUPS.last().is_some_and(|g| g.themes.contains(slug)),
+                "{slug}"
+            );
+        }
     }
 
     #[test]
