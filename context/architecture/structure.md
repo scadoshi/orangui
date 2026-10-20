@@ -36,6 +36,7 @@ src/
 ├── hint.rs              # InfoButton, HintLine, HintBullets, HintBullet, HintKey
 ├── overlay_stack.rs     # OverlayBackStack and the use_overlay_back hooks
 ├── os_back.rs           # use_os_back: the iOS edge swipe and Android back, through the overlay stack to the host's go_back
+├── boot.rs              # BOOT_HEAD, BOOT_BG, BootReveal: the WebView launch hides #main until the styles are in
 ├── toast_timing.rs      # TOAST_QUICK, TOAST_NORMAL, TOAST_LONG
 ├── toast_stack.rs       # ToastStack, behind the toast feature
 │
@@ -48,6 +49,7 @@ assets/
 ├── themes.css           # 50 themes, a dark and a light block each, gruvbox dark in :root, and the sink and grid mixed from them
 ├── components.css       # the rules for the components above
 ├── grid-cells.js        # GridCells' canvas drawing: the rain, then one redraw per theme change
+├── boot-reveal.js       # BootReveal: shows #main once the linked stylesheets have loaded
 ├── app.css              # the app shell: screen, page header, bottom sheet, alert dialog, settings lists, hints
 ├── site.css             # the sites: scroll reveal, gallery, footer
 ├── toast.css            # the toast stack

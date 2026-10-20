@@ -4,14 +4,15 @@
 //! Dioxus target can consume them; a host enables its own web, mobile or
 //! desktop feature and cargo unifies. The one native piece, [`use_os_back`],
 //! branches on the target OS rather than on a Dioxus feature. Styling ships alongside as string
-//! constants to inline through `document::Style`: [`THEMES_CSS`] (the 31
+//! constants to inline through `document::Style`: [`THEMES_CSS`] (the 50
 //! palettes, each dark and light) and [`COMPONENTS_CSS`] (the components'
 //! rules), then one opt-in sheet per kind of host.
 //!
 //! Three kits sit on the shared base. The app kit ([`BottomSheet`],
 //! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
 //! the hint pieces, the overlay back stack,
-//! the OS back bridge [`use_os_back`] and, behind the `toast` feature,
+//! the OS back bridge [`use_os_back`], the launch guard ([`BOOT_HEAD`],
+//! [`BOOT_BG`], [`BootReveal`]) and, behind the `toast` feature,
 //! `ToastStack`) is for apps and styled by [`APP_CSS`]. The site kit
 //! ([`use_persisted_theme`], [`StatsStrip`], [`GalleryFrame`], [`REVEAL_JS`],
 //! [`NAV_GLIDE_JS`], [`SCROLL_FADE_JS`]) is for websites, with the gallery
@@ -43,6 +44,7 @@
 mod action_bar;
 mod alert_dialog;
 mod banner;
+mod boot;
 mod bottom_sheet;
 mod button;
 mod chart_math;
@@ -80,6 +82,7 @@ pub use alert_dialog::{
     use_dialog_host, use_hosted_dialog,
 };
 pub use banner::{Banner, BannerStatus};
+pub use boot::{BOOT_BG, BOOT_HEAD, BootReveal};
 pub use bottom_sheet::BottomSheet;
 pub use button::{Button, ButtonVariant};
 pub use chart_math::{area, curve, peak_indices, tip_anchor};
@@ -120,7 +123,7 @@ pub use toast_timing::{TOAST_LONG, TOAST_NORMAL, TOAST_QUICK};
 
 /// The shared component rules.
 pub const COMPONENTS_CSS: &str = include_str!("../assets/components.css");
-/// The 31 theme palettes, each dark and light.
+/// The 50 theme palettes, each dark and light.
 pub const THEMES_CSS: &str = include_str!("../assets/themes.css");
 /// The sites' scroll reveal: elements marked `data-reveal` (every [`Panel`])
 /// that start below the fold fade up as they scroll in. Inline it with
