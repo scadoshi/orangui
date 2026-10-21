@@ -10,7 +10,7 @@
 //! script runs, and the motion only ever starts from what is already there.
 //! A viewer who asks for less motion gets the settled value at once.
 
-use crate::splash::SplashGate;
+use crate::splash::{SplashGate, SplashLeave};
 use dioxus::prelude::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -298,6 +298,8 @@ fn scrambled(text: &str, fraction: f64, seed: u64) -> String {
 
 /// How long the glyphs take to settle, and the tick between frames.
 const DECODE_MS: u64 = 850;
+/// How long the art takes to leave a splash.
+pub(crate) const EXIT_MS: u32 = 450;
 const DECODE_TICK_MS: u32 = 40;
 /// Columns the decode front runs past the end, so the last ones get their wobble.
 const OVERRUN: usize = 4;
@@ -320,11 +322,17 @@ const NOISE: [char; 5] = ['░', '▒', '▓', '▎', '▍'];
 /// `hover` is a signal the caller sets from the element around this one.
 /// While it is true the art keeps resolving, pass after pass, and settles on
 /// the pass that finishes after it goes false.
+///
+/// Inside a [`crate::Splash`] the art also leaves: when the splash says so it
+/// runs the same two waves in reverse, the art turning to noise and the noise
+/// clearing, left to right.
 #[component]
 pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>) -> Element {
     let replay = use_replay();
     let mut shown = use_signal(|| blank(text));
     let gate = use_gate();
+    let leave = try_consume_context::<SplashLeave>();
+    let leaving = move || leave.is_some_and(|leave| *leave.0.peek());
     use_effect(move || {
         let run = replay();
         if !open(gate) {
@@ -335,7 +343,18 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
                 shown.set(text.to_string());
                 return;
             }
-            resolve(text, shown, || replay.peek().ne(&run)).await;
+            resolve(text, shown, || replay.peek().ne(&run) || leaving()).await;
+        });
+    });
+    use_effect(move || {
+        if !leave.is_some_and(|leave| (leave.0)()) {
+            return;
+        }
+        spawn(async move {
+            if reduced_motion().await {
+                return;
+            }
+            evaporate(text, shown).await;
         });
     });
     // Under the pointer a band of noise travels across the art, over and over,
@@ -383,6 +402,24 @@ async fn resolve(text: &'static str, mut shown: Signal<String>, give_up: impl Fn
     shown.set(text.to_string());
 }
 
+/// The way out, over `EXIT_MS`: the two waves of [`resolve`] in reverse, a
+/// fast wave turning the art to noise and a slower one clearing the noise.
+async fn evaporate(text: &'static str, mut shown: Signal<String>) {
+    let frames = usize::try_from(EXIT_MS.div_ceil(DECODE_TICK_MS)).unwrap_or(1);
+    let columns = columns_of(text);
+    for frame in 1..=frames {
+        sleep_ms(DECODE_TICK_MS).await;
+        let (noise, clear) = fronts(columns, frame, frames);
+        shown.set(encoded(
+            text,
+            noise,
+            clear,
+            u64::try_from(frame).unwrap_or(0),
+        ));
+    }
+    shown.set(blank(text));
+}
+
 /// Where the two waves stand at `frame` of `frames`: the noise front, which
 /// covers the art in the first `NOISE_PCT` of the pass, and the decode front,
 /// which starts at `DECODE_DELAY_PCT` and runs past the end by the finish.
@@ -417,6 +454,39 @@ fn shimmered(text: &str, center: usize, seed: u64) -> String {
             state = noise(state);
             let pick = usize::try_from(state % 5).unwrap_or(0);
             out.push(NOISE.get(pick).copied().unwrap_or('░'));
+        }
+        out.push('\n');
+    }
+    out
+}
+
+/// `text` on its way out: spaces behind the `clear` front, noise from there
+/// to the `noise` front, and the art past that. The few columns just behind
+/// each front wobble, so the edges are ragged rather than ruled.
+fn encoded(text: &str, noise: usize, clear: usize, seed: u64) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut state = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1;
+    let mut next = move || {
+        state ^= state << 13;
+        state ^= state >> 7;
+        state ^= state << 17;
+        state
+    };
+    for line in text.lines() {
+        for (column, glyph) in line.chars().enumerate() {
+            if glyph == ' ' {
+                out.push(' ');
+                continue;
+            }
+            let wobble = usize::try_from(next() % 4).unwrap_or(0);
+            if column + wobble < clear {
+                out.push(' ');
+            } else if column + wobble < noise {
+                let pick = usize::try_from(next() % 5).unwrap_or(0);
+                out.push(NOISE.get(pick).copied().unwrap_or('░'));
+            } else {
+                out.push(glyph);
+            }
         }
         out.push('\n');
     }
@@ -568,6 +638,23 @@ mod tests {
             // Well behind it, only the art or noise.
             for c in out.iter().take(4) {
                 assert!(*c == '▉' || NOISE.contains(c), "{out:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn the_way_out_turns_the_art_to_noise_then_clears_it() {
+        let art = "▎▉▉▉▉▉▉▉▉▉\n ▉ ▉ ▉ ▉ ▉\n";
+        assert_eq!(encoded(art, 0, 0, 1), art, "before the waves, the art");
+        assert_eq!(encoded(art, 100, 100, 1), blank(art), "after them, blank");
+        for seed in 1..50u64 {
+            let out: Vec<char> = encoded(art, 100, 0, seed).chars().collect();
+            for (c, a) in out.iter().zip(art.chars()) {
+                if a == ' ' || a == '\n' {
+                    assert_eq!(*c, a, "spaces stay spaces");
+                } else {
+                    assert!(NOISE.contains(c), "{out:?}");
+                }
             }
         }
     }
