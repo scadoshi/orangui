@@ -17,6 +17,10 @@ Read [`CLAUDE.md`](CLAUDE.md) first for the rules.
 
 The running log, newest first. Update this when something ships.
 
+## 2026-10-20: the launch guard, the two-wave decode and the splash exit
+
+`BOOT_HEAD`, `BOOT_BG` and `BootReveal` (200fd24) keep an app's WebView dark until every stylesheet has loaded, which ended cairn's flash of unstyled text before the splash; both apps passed on a phone in release builds. `Decode` builds its art left to right in two waves (0de3e1d): a fast wave of noise draws the shape out of blank and the decode wave follows it into the glyphs. Under a `Splash` the mark then leaves the same way in reverse before the fade (ede1e2d), which stretched the splash to 1.8 s. `Splash` takes a `pace` (06e3b75), a percent of that timeline with the mark's passes included; the portfolio and zite run it at 67, about 1.2 s, and the apps keep the default. Trials of falling letters and hex rain for the noise were tried on the phone and dropped. Every host re-pinned each step: portfolio, cairn and zwipe.
+
 ## 2026-10-13: every host is on orangui
 
 The portfolio (3cdb06f), cairn (650e008) and zwipe (791f3920) merged their `orangui` branches and take their UI from this crate; the re-pin scripts run `cargo update -p orangui`. zwipe's Magic crate, `zwipe-components` in the entries below, is now `components`. [`plans/host_migration.md`](plans/host_migration.md) has the log.
