@@ -297,12 +297,14 @@ fn scrambled(text: &str, fraction: f64, seed: u64) -> String {
 }
 
 /// How long the glyphs take to settle, and the tick between frames.
-const DECODE_MS: u64 = 700;
+const DECODE_MS: u64 = 850;
 const DECODE_TICK_MS: u32 = 40;
-/// Columns the front runs past the end, so the last ones get their wobble.
+/// Columns the decode front runs past the end, so the last ones get their wobble.
 const OVERRUN: usize = 4;
-/// Columns of noise ahead of the front; past them the art is not there yet.
-const LEAD: usize = 3;
+/// The share of the pass, in percent, the noise wave takes to cover the art.
+const NOISE_PCT: usize = 45;
+/// How far into the pass, in percent, the decode wave starts after it.
+const DECODE_DELAY_PCT: usize = 35;
 /// The shimmer: how many columns the traveling band covers, and how far it
 /// moves each frame.
 const SHIMMER_SPAN: usize = 10;
@@ -310,10 +312,10 @@ const SHIMMER_STEP: usize = 2;
 /// The glyphs a column shows before it resolves.
 const NOISE: [char; 5] = ['░', '▒', '▓', '▎', '▍'];
 
-/// Block-glyph art that builds left to right: a front sweeps across it with a
-/// short band of noise ahead, the glyphs behind the front are the art, and
-/// the columns past the band are blank until it reaches them. The blank
-/// columns are spaces, so the art keeps its size while it builds.
+/// Block-glyph art that builds left to right in two waves: a fast wave of
+/// noise draws the shape out of blank, and a slower decode wave follows it,
+/// turning the noise into the art. The blank columns are spaces, so the art
+/// keeps its size while it builds.
 ///
 /// `hover` is a signal the caller sets from the element around this one.
 /// While it is true the art keeps resolving, pass after pass, and settles on
@@ -363,19 +365,33 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
 /// One pass of the front across `text`, writing each frame into `shown`.
 /// Stops early when `give_up` says someone else owns the art now.
 async fn resolve(text: &'static str, mut shown: Signal<String>, give_up: impl Fn() -> bool) {
-    let frames = DECODE_MS.div_ceil(u64::from(DECODE_TICK_MS));
-    // The columns resolve on a front that runs across the art.
+    let frames = usize::try_from(DECODE_MS.div_ceil(u64::from(DECODE_TICK_MS))).unwrap_or(1);
     let columns = columns_of(text);
     for frame in 1..=frames {
         sleep_ms(DECODE_TICK_MS).await;
         if give_up() {
             return;
         }
-        let front = usize::try_from(frame).unwrap_or(usize::MAX) * (columns + OVERRUN)
-            / usize::try_from(frames).unwrap_or(1);
-        shown.set(decoded(text, front, frame));
+        let (noise, decode) = fronts(columns, frame, frames);
+        shown.set(decoded(
+            text,
+            decode,
+            noise,
+            u64::try_from(frame).unwrap_or(0),
+        ));
     }
     shown.set(text.to_string());
+}
+
+/// Where the two waves stand at `frame` of `frames`: the noise front, which
+/// covers the art in the first `NOISE_PCT` of the pass, and the decode front,
+/// which starts at `DECODE_DELAY_PCT` and runs past the end by the finish.
+fn fronts(columns: usize, frame: usize, frames: usize) -> (usize, usize) {
+    let pct = frame * 100;
+    let noise = ((columns + 1) * pct / (frames * NOISE_PCT).max(1)).min(columns + 1);
+    let decode = (columns + OVERRUN) * pct.saturating_sub(frames * DECODE_DELAY_PCT)
+        / (frames * (100 - DECODE_DELAY_PCT)).max(1);
+    (noise, decode)
 }
 
 /// The widest line in `text`, in characters.
@@ -414,11 +430,11 @@ fn blank(text: &str) -> String {
         .collect()
 }
 
-/// `text` as of the front at `front`: the glyphs behind it, noise in the
-/// `LEAD` columns ahead of it, and spaces past those. The noise changes with
-/// `seed` so it flickers between frames; the few columns just behind the
-/// front wobble too, so the edge is ragged rather than ruled.
-fn decoded(text: &str, front: usize, seed: u64) -> String {
+/// `text` as of the two waves: the glyphs behind the decode `front`, noise
+/// from there to the `noise` front, and spaces past that. The noise changes
+/// with `seed` so it flickers between frames; the few columns just behind
+/// each front wobble too, so the edges are ragged rather than ruled.
+fn decoded(text: &str, front: usize, noise: usize, seed: u64) -> String {
     let mut out = String::with_capacity(text.len());
     let mut state = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1;
     let mut next = move || {
@@ -437,7 +453,7 @@ fn decoded(text: &str, front: usize, seed: u64) -> String {
             let wobble = usize::try_from(next() % 4).unwrap_or(0);
             if column + wobble < front {
                 out.push(glyph);
-            } else if column >= front + LEAD {
+            } else if column + wobble >= noise {
                 out.push(' ');
             } else {
                 let pick = usize::try_from(next() % 5).unwrap_or(0);
@@ -524,8 +540,8 @@ mod tests {
     #[test]
     fn a_front_past_the_end_is_the_text_and_at_the_start_is_noise() {
         let art = "▎▉▉\n ▉ \n";
-        assert_eq!(decoded(art, 100, 1), art);
-        let noisy = decoded(art, 0, 1);
+        assert_eq!(decoded(art, 100, 100, 1), art);
+        let noisy = decoded(art, 0, 100, 1);
         assert_eq!(
             noisy.chars().count(),
             art.chars().count(),
@@ -540,19 +556,38 @@ mod tests {
     }
 
     #[test]
-    fn the_art_builds_from_blank_with_noise_only_ahead_of_the_front() {
+    fn the_art_builds_from_blank_with_noise_ahead_of_the_decode() {
         let art = "▉▉▉▉▉▉▉▉▉▉\n";
         assert_eq!(blank(art), "          \n");
         for seed in 1..50u64 {
-            let out: Vec<char> = decoded(art, 2, seed).chars().collect();
-            // Everything at or past the front plus the lead is not there yet.
-            for c in out.iter().skip(2 + LEAD).take(10 - 2 - LEAD) {
+            let out: Vec<char> = decoded(art, 2, 7, seed).chars().collect();
+            // Past the noise front the art is not there yet.
+            for c in out.iter().skip(7).take(3) {
                 assert_eq!(*c, ' ', "{out:?}");
             }
-            // Only the art or noise before that.
-            for c in out.iter().take(2 + LEAD) {
+            // Well behind it, only the art or noise.
+            for c in out.iter().take(4) {
                 assert!(*c == '▉' || NOISE.contains(c), "{out:?}");
             }
         }
+    }
+
+    #[test]
+    fn the_noise_wave_leads_and_both_land_by_the_last_frame() {
+        let (columns, frames) = (40, 22);
+        let mut last = (0, 0);
+        for frame in 1..=frames {
+            let (noise, decode) = fronts(columns, frame, frames);
+            assert!(
+                noise >= last.0 && decode >= last.1,
+                "fronts only move forward"
+            );
+            if decode > 0 && decode <= columns {
+                assert!(noise > decode, "noise leads at frame {frame}");
+            }
+            last = (noise, decode);
+        }
+        assert!(last.0 > columns && last.1 >= columns + OVERRUN);
+        assert_eq!(fronts(columns, 1, frames).1, 0, "decode waits");
     }
 }
