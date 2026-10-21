@@ -1098,13 +1098,13 @@
     --accent-primary: #fd6883;
     --accent-secondary: #f38d70;
     --accent-tertiary: #85dacc;
-    /* palette: basecamp/omarchy themes/ristretto/colors.toml; light derived from dark */
+    /* palette: monokai-pro.nvim palette/ristretto.lua; light derived from dark */
     --palette-1: #85dacc;
-    --palette-2: #fb9a77;
+    --palette-2: #f38d70;
     --palette-3: #adda78;
     --palette-4: #a8a9eb;
     --palette-5: #f9cc6c;
-    --palette-6: #f38d70;
+    --palette-6: #fd6883;
     /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
     --syntax-keyword: #fd6883;
     --syntax-type: #85dacc;
@@ -1139,13 +1139,13 @@
     --accent-primary: #c33f5a;
     --accent-secondary: #ca684c;
     --accent-tertiary: #3d9488;
-    /* palette: basecamp/omarchy themes/ristretto/colors.toml; light derived from dark */
+    /* palette: monokai-pro.nvim palette/ristretto.lua; light derived from dark */
     --palette-1: #3d9488;
-    --palette-2: #cb6f4d;
+    --palette-2: #ca684c;
     --palette-3: #6a9431;
     --palette-4: #7e7ebd;
     --palette-5: #ab800e;
-    --palette-6: #ca684c;
+    --palette-6: #c33f5a;
     /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
     --syntax-keyword: #c94a63;
     --syntax-type: #3d9488;
