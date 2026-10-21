@@ -297,10 +297,10 @@ fn scrambled(text: &str, fraction: f64, seed: u64) -> String {
 }
 
 /// How long the glyphs take to settle, and the tick between frames.
-const DECODE_MS: u64 = 850;
+pub(crate) const DECODE_MS: u64 = 850;
 /// How long the art takes to leave a splash.
 pub(crate) const EXIT_MS: u32 = 450;
-const DECODE_TICK_MS: u32 = 40;
+pub(crate) const DECODE_TICK_MS: u32 = 40;
 /// Columns the decode front runs past the end, so the last ones get their wobble.
 const OVERRUN: usize = 4;
 /// The share of the pass, in percent, the noise wave takes to cover the art.
@@ -325,19 +325,29 @@ const NOISE: [char; 5] = ['░', '▒', '▓', '▎', '▍'];
 ///
 /// Inside a [`crate::Splash`] the art also leaves: when the splash says so it
 /// runs the same two waves in reverse, the art turning to noise and the noise
-/// clearing, left to right.
+/// clearing, left to right. Inside a prerendered one the page's script runs
+/// both passes instead (`assets/splash.js`).
 #[component]
 pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>) -> Element {
     let replay = use_replay();
-    let mut shown = use_signal(|| blank(text));
     let gate = use_gate();
     let leave = try_consume_context::<SplashLeave>();
+    // Under a prerendered splash the page's script runs the art, so this
+    // renders it whole into the HTML for the script to find and never writes.
+    let scripted = leave.is_some_and(|leave| leave.2);
+    let mut shown = use_signal(|| {
+        if scripted {
+            text.to_string()
+        } else {
+            blank(text)
+        }
+    });
     let leaving = move || leave.is_some_and(|leave| *leave.0.peek());
     // A splash's pace, in percent, shortens both passes with its timeline.
     let pace = leave.map_or(100, |leave| leave.1);
     use_effect(move || {
         let run = replay();
-        if !open(gate) {
+        if scripted || !open(gate) {
             return;
         }
         spawn(async move {

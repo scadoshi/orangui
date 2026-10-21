@@ -49,6 +49,7 @@ assets/
 ├── themes.css           # 50 themes, a dark and a light block each, gruvbox dark in :root, and the sink and grid mixed from them
 ├── components.css       # the rules for the components above
 ├── grid-cells.js        # GridCells' canvas drawing: the rain, then one redraw per theme change
+├── splash.js            # Splash on a prerendered page: the whole opening from first paint, before the app is up
 ├── boot-reveal.js       # BootReveal: shows #main once the linked stylesheets have loaded
 ├── app.css              # the app shell: screen, page header, bottom sheet, alert dialog, settings lists, hints
 ├── site.css             # the sites: scroll reveal, gallery, footer

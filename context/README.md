@@ -17,6 +17,10 @@ Read [`CLAUDE.md`](CLAUDE.md) first for the rules.
 
 The running log, newest first. Update this when something ships.
 
+## 2026-10-21: the prerendered splash
+
+On the sites the splash's mark waited on the app: the overlay painted from the prerendered HTML, but the mark only mounted once the wasm (about 1.1 MB compressed for zite) had downloaded and started, so a slow load showed an empty field first. `Splash { prerendered: true }` puts the mark in the HTML, and `SPLASH_JS` runs the whole opening from first paint on the timings the overlay carries as data attributes, driving it through `splash-running`, `splash-fading` and `splash-over` on the root. The app only waits for the fade, opens the gate and unmounts the overlay, so the opening takes its 1.2 s however long the app takes. The apps keep the Rust timeline. The portfolio and zite also draw their backdrop still, so the field rains in once, inside the splash.
+
 ## 2026-10-20: the launch guard, the two-wave decode and the splash exit
 
 `BOOT_HEAD`, `BOOT_BG` and `BootReveal` (200fd24) keep an app's WebView dark until every stylesheet has loaded, which ended cairn's flash of unstyled text before the splash; both apps passed on a phone in release builds. `Decode` builds its art left to right in two waves (0de3e1d): a fast wave of noise draws the shape out of blank and the decode wave follows it into the glyphs. Under a `Splash` the mark then leaves the same way in reverse before the fade (ede1e2d), which stretched the splash to 1.8 s. `Splash` takes a `pace` (06e3b75), a percent of that timeline with the mark's passes included; the portfolio and zite run it at 67, about 1.2 s, and the apps keep the default. Trials of falling letters and hex rain for the noise were tried on the phone and dropped. Every host re-pinned each step: portfolio, cairn and zwipe.

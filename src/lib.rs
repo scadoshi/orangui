@@ -108,7 +108,7 @@ pub use page_meta::{PageMeta, SiteMeta};
 pub use palette_guard::{StatusUse, status_uses};
 pub use panel::Panel;
 pub use password_input::PasswordInput;
-pub use splash::{Splash, SplashGate};
+pub use splash::{SPLASH_JS, Splash, SplashGate};
 pub use stats_strip::StatsStrip;
 pub use theme::{
     ALLOWED_THEMES, COLORBLIND_THEMES, THEME_GROUPS, ThemeConfig, ThemeGroup, display_theme_name,
