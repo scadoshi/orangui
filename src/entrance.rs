@@ -333,6 +333,8 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
     let gate = use_gate();
     let leave = try_consume_context::<SplashLeave>();
     let leaving = move || leave.is_some_and(|leave| *leave.0.peek());
+    // A splash's pace, in percent, shortens both passes with its timeline.
+    let pace = leave.map_or(100, |leave| leave.1);
     use_effect(move || {
         let run = replay();
         if !open(gate) {
@@ -343,7 +345,8 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
                 shown.set(text.to_string());
                 return;
             }
-            resolve(text, shown, || replay.peek().ne(&run) || leaving()).await;
+            let ms = DECODE_MS * u64::from(pace) / 100;
+            resolve(text, shown, ms, || replay.peek().ne(&run) || leaving()).await;
         });
     });
     use_effect(move || {
@@ -354,7 +357,7 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
             if reduced_motion().await {
                 return;
             }
-            evaporate(text, shown).await;
+            evaporate(text, shown, EXIT_MS * pace / 100).await;
         });
     });
     // Under the pointer a band of noise travels across the art, over and over,
@@ -383,8 +386,15 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
 
 /// One pass of the front across `text`, writing each frame into `shown`.
 /// Stops early when `give_up` says someone else owns the art now.
-async fn resolve(text: &'static str, mut shown: Signal<String>, give_up: impl Fn() -> bool) {
-    let frames = usize::try_from(DECODE_MS.div_ceil(u64::from(DECODE_TICK_MS))).unwrap_or(1);
+async fn resolve(
+    text: &'static str,
+    mut shown: Signal<String>,
+    ms: u64,
+    give_up: impl Fn() -> bool,
+) {
+    let frames = usize::try_from(ms.div_ceil(u64::from(DECODE_TICK_MS)))
+        .unwrap_or(1)
+        .max(1);
     let columns = columns_of(text);
     for frame in 1..=frames {
         sleep_ms(DECODE_TICK_MS).await;
@@ -402,10 +412,12 @@ async fn resolve(text: &'static str, mut shown: Signal<String>, give_up: impl Fn
     shown.set(text.to_string());
 }
 
-/// The way out, over `EXIT_MS`: the two waves of [`resolve`] in reverse, a
-/// fast wave turning the art to noise and a slower one clearing the noise.
-async fn evaporate(text: &'static str, mut shown: Signal<String>) {
-    let frames = usize::try_from(EXIT_MS.div_ceil(DECODE_TICK_MS)).unwrap_or(1);
+/// The way out, over `ms`: the two waves of [`resolve`] in reverse, a fast
+/// wave turning the art to noise and a slower one clearing the noise.
+async fn evaporate(text: &'static str, mut shown: Signal<String>, ms: u32) {
+    let frames = usize::try_from(ms.div_ceil(DECODE_TICK_MS))
+        .unwrap_or(1)
+        .max(1);
     let columns = columns_of(text);
     for frame in 1..=frames {
         sleep_ms(DECODE_TICK_MS).await;
