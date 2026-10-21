@@ -301,6 +301,8 @@ const DECODE_MS: u64 = 700;
 const DECODE_TICK_MS: u32 = 40;
 /// Columns the front runs past the end, so the last ones get their wobble.
 const OVERRUN: usize = 4;
+/// Columns of noise ahead of the front; past them the art is not there yet.
+const LEAD: usize = 3;
 /// The shimmer: how many columns the traveling band covers, and how far it
 /// moves each frame.
 const SHIMMER_SPAN: usize = 10;
@@ -308,9 +310,10 @@ const SHIMMER_STEP: usize = 2;
 /// The glyphs a column shows before it resolves.
 const NOISE: [char; 5] = ['░', '▒', '▓', '▎', '▍'];
 
-/// Block-glyph art that resolves left to right from noise. Spaces stay
-/// spaces throughout, so the shape is there from the first frame and only
-/// the texture changes.
+/// Block-glyph art that builds left to right: a front sweeps across it with a
+/// short band of noise ahead, the glyphs behind the front are the art, and
+/// the columns past the band are blank until it reaches them. The blank
+/// columns are spaces, so the art keeps its size while it builds.
 ///
 /// `hover` is a signal the caller sets from the element around this one.
 /// While it is true the art keeps resolving, pass after pass, and settles on
@@ -318,7 +321,7 @@ const NOISE: [char; 5] = ['░', '▒', '▓', '▎', '▍'];
 #[component]
 pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>) -> Element {
     let replay = use_replay();
-    let mut shown = use_signal(|| text.to_string());
+    let mut shown = use_signal(|| blank(text));
     let gate = use_gate();
     use_effect(move || {
         let run = replay();
@@ -404,9 +407,17 @@ fn shimmered(text: &str, center: usize, seed: u64) -> String {
     out
 }
 
-/// `text` with every glyph right of `front` swapped for noise. The noise
-/// changes with `seed` so it flickers between frames; the few columns just
-/// behind the front wobble too, so the edge is ragged rather than ruled.
+/// `text` with every glyph a space, the art before the front reaches it.
+fn blank(text: &str) -> String {
+    text.chars()
+        .map(|c| if c == '\n' { c } else { ' ' })
+        .collect()
+}
+
+/// `text` as of the front at `front`: the glyphs behind it, noise in the
+/// `LEAD` columns ahead of it, and spaces past those. The noise changes with
+/// `seed` so it flickers between frames; the few columns just behind the
+/// front wobble too, so the edge is ragged rather than ruled.
 fn decoded(text: &str, front: usize, seed: u64) -> String {
     let mut out = String::with_capacity(text.len());
     let mut state = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1;
@@ -426,6 +437,8 @@ fn decoded(text: &str, front: usize, seed: u64) -> String {
             let wobble = usize::try_from(next() % 4).unwrap_or(0);
             if column + wobble < front {
                 out.push(glyph);
+            } else if column >= front + LEAD {
+                out.push(' ');
             } else {
                 let pick = usize::try_from(next() % 5).unwrap_or(0);
                 out.push(NOISE.get(pick).copied().unwrap_or('░'));
@@ -524,5 +537,22 @@ mod tests {
                 .chars()
                 .all(|c| c == ' ' || c == '\n' || NOISE.contains(&c))
         );
+    }
+
+    #[test]
+    fn the_art_builds_from_blank_with_noise_only_ahead_of_the_front() {
+        let art = "▉▉▉▉▉▉▉▉▉▉\n";
+        assert_eq!(blank(art), "          \n");
+        for seed in 1..50u64 {
+            let out: Vec<char> = decoded(art, 2, seed).chars().collect();
+            // Everything at or past the front plus the lead is not there yet.
+            for c in out.iter().skip(2 + LEAD).take(10 - 2 - LEAD) {
+                assert_eq!(*c, ' ', "{out:?}");
+            }
+            // Only the art or noise before that.
+            for c in out.iter().take(2 + LEAD) {
+                assert!(*c == '▉' || NOISE.contains(c), "{out:?}");
+            }
+        }
     }
 }
