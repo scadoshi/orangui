@@ -2402,85 +2402,85 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-.theme-visual-studio-dark {
-    --bg-primary: #1e1e1e;
+.theme-flexoki-dark {
+    --bg-primary: #100f0f;
     --bg-overlay: rgba(0, 0, 0, 0.6);
-    --text-primary: #dcdcdc;
-    --text-muted: #9b9b9b;
-    --text-subtle: #c6c6c6;
-    --border-primary: #3f3f46;
-    --border-secondary: #252526;
-    --border-muted: #2d2d30;
-    --color-error: #f14c4c;
-    --color-money: #89d185;
-    --color-success: #89d185;
-    --color-warning: #cca700;
-    --border-error: #c74343;
-    --border-success: #74ad70;
-    --border-warning: #a98c06;
-    --accent-primary: #569cd6;
-    --accent-secondary: #4ec9b0;
-    --accent-tertiary: #d8a0df;
-    /* palette: Visual Studio 2022 Dark and Light editor and shell colors; status derived */
-    --palette-1: #569cd6;
-    --palette-2: #d69d85;
-    --palette-3: #b5cea8;
-    --palette-4: #d8a0df;
-    --palette-5: #dcdcaa;
-    --palette-6: #4ec9b0;
-    /* syntax: Visual Studio 2022 Dark and Light editor colors */
-    --syntax-keyword: #569cd6;
-    --syntax-type: #4ec9b0;
-    --syntax-function: #dcdcaa;
-    --syntax-string: #d69d85;
-    --syntax-constant: #b5cea8;
-    --syntax-comment: #57a64a;
-    --syntax-macro: #bd63c5;
-    --syntax-attribute: #4ec9b0;
-    --syntax-punctuation: var(--text-primary);
-    --syntax-parameter: #9cdcfe;
-    --syntax-member: var(--text-primary);
+    --text-primary: #cecdc3;
+    --text-muted: #878580;
+    --text-subtle: #b7b5ac;
+    --border-primary: #403e3c;
+    --border-secondary: #282726;
+    --border-muted: #343331;
+    --color-error: #d14d41;
+    --color-money: #879a39;
+    --color-success: #879a39;
+    --color-warning: #da702c;
+    --border-error: #af3029;
+    --border-success: #66800b;
+    --border-warning: #bc5215;
+    --accent-primary: #da702c;
+    --accent-secondary: #3aa99f;
+    --accent-tertiary: #d0a215;
+    /* palette: kepano/flexoki flexoki.css, the 400 tones in dark and the 600 tones in light; status follows its mapping table */
+    --palette-1: #4385be;
+    --palette-2: #da702c;
+    --palette-3: #879a39;
+    --palette-4: #8b7ec8;
+    --palette-5: #d0a215;
+    --palette-6: #ce5d97;
+    /* syntax: kepano/flexoki vscode Flexoki-Dark and Flexoki-Light; macro is its language-features magenta */
+    --syntax-keyword: #879a39;
+    --syntax-type: #d0a215;
+    --syntax-function: #da702c;
+    --syntax-string: #3aa99f;
+    --syntax-constant: #8b7ec8;
+    --syntax-comment: #878580;
+    --syntax-macro: #ce5d97;
+    --syntax-attribute: #d0a215;
+    --syntax-punctuation: #878580;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #4385be;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
-.theme-visual-studio-light {
-    --bg-primary: #ffffff;
+.theme-flexoki-light {
+    --bg-primary: #fffcf0;
     --bg-overlay: rgba(0, 0, 0, 0.3);
-    --text-primary: #000000;
-    --text-muted: #808080;
-    --text-subtle: #4d4d4d;
-    --border-primary: #cccedb;
-    --border-secondary: #f3f3f3;
-    --border-muted: #e5e5e5;
-    --color-error: #e51400;
-    --color-money: #008000;
-    --color-success: #008000;
-    --color-warning: #bf8803;
-    --border-error: #bc1000;
-    --border-success: #006900;
-    --border-warning: #9d7002;
-    --accent-primary: #0000ff;
-    --accent-secondary: #2b91af;
-    --accent-tertiary: #8f08c4;
-    /* palette: Visual Studio 2022 Dark and Light editor and shell colors; status derived */
-    --palette-1: #0000ff;
-    --palette-2: #a31515;
-    --palette-3: #008000;
-    --palette-4: #8f08c4;
-    --palette-5: #74531f;
-    --palette-6: #2b91af;
-    /* syntax: Visual Studio 2022 Dark and Light editor colors */
-    --syntax-keyword: #0000ff;
-    --syntax-type: #2b91af;
-    --syntax-function: #74531f;
-    --syntax-string: #a31515;
-    --syntax-constant: #098658;
-    --syntax-comment: #008000;
-    --syntax-macro: #8f08c4;
-    --syntax-attribute: #2b91af;
-    --syntax-punctuation: var(--text-primary);
-    --syntax-parameter: #001080;
-    --syntax-member: var(--text-primary);
+    --text-primary: #100f0f;
+    --text-muted: #6f6e69;
+    --text-subtle: #575653;
+    --border-primary: #cecdc3;
+    --border-secondary: #e6e4d9;
+    --border-muted: #dad8ce;
+    --color-error: #af3029;
+    --color-money: #66800b;
+    --color-success: #66800b;
+    --color-warning: #bc5215;
+    --border-error: #942822;
+    --border-success: #536907;
+    --border-warning: #9d4310;
+    --accent-primary: #bc5215;
+    --accent-secondary: #24837b;
+    --accent-tertiary: #ad8301;
+    /* palette: kepano/flexoki flexoki.css, the 400 tones in dark and the 600 tones in light; status follows its mapping table */
+    --palette-1: #205ea6;
+    --palette-2: #bc5215;
+    --palette-3: #66800b;
+    --palette-4: #5e409d;
+    --palette-5: #ad8301;
+    --palette-6: #a02f6f;
+    /* syntax: kepano/flexoki vscode Flexoki-Dark and Flexoki-Light; macro is its language-features magenta */
+    --syntax-keyword: #66800b;
+    --syntax-type: #ad8301;
+    --syntax-function: #bc5215;
+    --syntax-string: #24837b;
+    --syntax-constant: #5e409d;
+    --syntax-comment: #6f6e69;
+    --syntax-macro: #a02f6f;
+    --syntax-attribute: #ad8301;
+    --syntax-punctuation: #6f6e69;
+    --syntax-parameter: var(--text-primary);
+    --syntax-member: #205ea6;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

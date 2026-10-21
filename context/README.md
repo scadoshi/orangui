@@ -17,6 +17,10 @@ Read [`CLAUDE.md`](CLAUDE.md) first for the rules.
 
 The running log, newest first. Update this when something ships.
 
+## 2026-10-21: Flexoki replaces Visual Studio
+
+`visual-studio` is gone from `ALLOWED_THEMES` and `flexoki` takes its slot, so the set stays at 50. Visual Studio's colors could not be traced to a published file, and its palette mostly repeated VS Code's. Flexoki comes from kepano/flexoki: its CSS palette and mapping table for the base colors and status colors, and its VS Code port for syntax. Synthwave '84's palette now comes from robb0wen's original theme rather than Omarchy's terminal port, and Ristretto's from monokai-pro.nvim. A host that stores a theme slug moves `visual-studio` to `vscode`, the closest match.
+
 ## 2026-10-21: the prerendered splash
 
 On the sites the splash's mark waited on the app: the overlay painted from the prerendered HTML, but the mark only mounted once the wasm (about 1.1 MB compressed for zite) had downloaded and started, so a slow load showed an empty field first. `Splash { prerendered: true }` puts the mark in the HTML, and `SPLASH_JS` runs the whole opening from first paint on the timings the overlay carries as data attributes, driving it through `splash-running`, `splash-fading` and `splash-over` on the root. The app only waits for the fade, opens the gate and unmounts the overlay, so the opening takes its 1.2 s however long the app takes. The apps keep the Rust timeline. The portfolio and zite also draw their backdrop still, so the field rains in once, inside the splash.
