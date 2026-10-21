@@ -3417,14 +3417,14 @@
     --border-warning: #d4bb45;
     --accent-primary: #ff7edb;
     --accent-secondary: #ff8b39;
-    --accent-tertiary: #0080ff;
-    /* palette: omacom/omarchy-synthwave84-theme alacritty.toml; light derived from dark */
-    --palette-1: #0080ff;
-    --palette-2: #fe5442;
-    --palette-3: #03edf9;
-    --palette-4: #9b27ff;
-    --palette-5: #f3e70f;
-    --palette-6: #ff7edb;
+    --accent-tertiary: #36f9f6;
+    /* palette: robb0wen/synthwave-vscode synthwave-color-theme.json; light derived from dark */
+    --palette-1: #36f9f6;
+    --palette-2: #ff8b39;
+    --palette-3: #72f1b8;
+    --palette-4: #ff7edb;
+    --palette-5: #fede5d;
+    --palette-6: #f97e72;
     /* syntax: robb0wen/synthwave-vscode syntax; light derived from dark */
     --syntax-keyword: #fede5d;
     --syntax-type: #fe4450;
@@ -3458,14 +3458,14 @@
     --border-warning: #8e6208;
     --accent-primary: #c31d86;
     --accent-secondary: #d1621a;
-    --accent-tertiary: #0080ff;
-    /* palette: omacom/omarchy-synthwave84-theme alacritty.toml; light derived from dark */
-    --palette-1: #0080ff;
-    --palette-2: #f74d3c;
-    --palette-3: #0098a5;
-    --palette-4: #8f00ff;
+    --accent-tertiary: #0098a5;
+    /* palette: robb0wen/synthwave-vscode synthwave-color-theme.json; light derived from dark */
+    --palette-1: #0098a5;
+    --palette-2: #d06a1c;
+    --palette-3: #1f9a6a;
+    --palette-4: #d557b4;
     --palette-5: #9a8c00;
-    --palette-6: #d557b4;
+    --palette-6: #d6564b;
     /* syntax: robb0wen/synthwave-vscode syntax; light derived from dark */
     --syntax-keyword: #9a8c00;
     --syntax-type: #e0303e;
