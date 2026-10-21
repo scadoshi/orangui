@@ -151,6 +151,26 @@ pub const THEME_GROUPS: &[ThemeGroup] = &[
     },
 ];
 
+/// Slugs [`ALLOWED_THEMES`] no longer lists, each mapped to the theme its
+/// users move to: a renamed theme to its new slug, a removed one to the
+/// closest look. A host that stores slugs applies the same map and checks it
+/// against this one in a test.
+pub const RETIRED_THEMES: &[(&str, &str)] = &[
+    ("ristretto", "monokai-pro-ristretto"),
+    ("visual-studio", "vscode"),
+];
+
+/// The listed slug a stored one stands for: itself when still listed, its
+/// replacement when retired, `None` when it names no theme.
+#[must_use]
+pub fn current_theme(slug: &str) -> Option<&'static str> {
+    let slug = RETIRED_THEMES
+        .iter()
+        .find(|(from, _)| *from == slug)
+        .map_or(slug, |(_, to)| *to);
+    ALLOWED_THEMES.iter().copied().find(|t| *t == slug)
+}
+
 /// The themes with palettes adjusted for color-vision deficiency. Every theme
 /// picker groups these in their own section at the bottom, so the list lives
 /// here once.
@@ -199,6 +219,15 @@ impl ThemeConfig {
         let mode = if self.is_dark { "dark" } else { "light" };
         format!("theme-{}-{}", self.name, mode)
     }
+
+    /// This theme under its listed slug (see [`current_theme`]), or `None`
+    /// when the slug names no theme, so a stored pick never puts a class
+    /// with no palette on the page.
+    #[must_use]
+    pub fn resolve(self) -> Option<Self> {
+        let name = current_theme(&self.name)?.to_string();
+        Some(Self { name, ..self })
+    }
 }
 
 impl Default for ThemeConfig {
@@ -215,6 +244,36 @@ mod tests {
     use super::*;
 
     const CSS: &str = include_str!("../assets/themes.css");
+
+    #[test]
+    fn every_retired_theme_is_unlisted_and_moves_to_a_listed_one() {
+        for (from, to) in RETIRED_THEMES {
+            assert!(
+                !ALLOWED_THEMES.contains(from),
+                "{from} is retired but listed"
+            );
+            assert!(ALLOWED_THEMES.contains(to), "{from} moves to unlisted {to}");
+            assert!(
+                !CSS.contains(&format!(".theme-{from}-dark")),
+                "{from} is retired but still has a palette"
+            );
+        }
+    }
+
+    #[test]
+    fn a_stored_slug_resolves_to_a_listed_theme_or_none() {
+        assert_eq!(current_theme("flexoki"), Some("flexoki"));
+        assert_eq!(current_theme("visual-studio"), Some("vscode"));
+        assert_eq!(current_theme("ristretto"), Some("monokai-pro-ristretto"));
+        assert_eq!(current_theme("no-such-theme"), None);
+
+        let stored = ThemeConfig {
+            name: "visual-studio".to_string(),
+            is_dark: false,
+        };
+        let resolved = stored.resolve().map(|t| t.css_class());
+        assert_eq!(resolved.as_deref(), Some("theme-vscode-light"));
+    }
 
     #[test]
     fn theme_names_title_case_and_keep_brand_spellings() {

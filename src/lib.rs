@@ -19,7 +19,7 @@
 //! base in [`SITE_CSS`]. [`HeatGrid`] draws a year of days for any surface
 //! that shows one.
 //!
-//! The theme model ([`ThemeConfig`], [`ALLOWED_THEMES`], [`THEME_GROUPS`], [`COLORBLIND_THEMES`],
+//! The theme model ([`ThemeConfig`], [`ALLOWED_THEMES`], [`RETIRED_THEMES`], [`THEME_GROUPS`], [`COLORBLIND_THEMES`],
 //! [`display_theme_name`]) lives here beside the palettes it names. A host that
 //! stores a user's theme elsewhere keeps its own list and checks it against
 //! this one in a test.
@@ -111,7 +111,8 @@ pub use password_input::PasswordInput;
 pub use splash::{SPLASH_JS, Splash, SplashGate};
 pub use stats_strip::StatsStrip;
 pub use theme::{
-    ALLOWED_THEMES, COLORBLIND_THEMES, THEME_GROUPS, ThemeConfig, ThemeGroup, display_theme_name,
+    ALLOWED_THEMES, COLORBLIND_THEMES, RETIRED_THEMES, THEME_GROUPS, ThemeConfig, ThemeGroup,
+    current_theme, display_theme_name,
 };
 pub use theme_picker::{DarkModeButton, ModeIcon, ThemePicker};
 pub use theme_sheet::ThemeSheet;

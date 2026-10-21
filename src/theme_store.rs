@@ -18,12 +18,11 @@ mod imp {
 
     pub fn load(key: &str) -> Option<ThemeConfig> {
         let raw = storage()?.get_item(key).ok().flatten()?;
-        // A slug that is no longer in the list (a renamed or removed theme)
-        // falls back to the default rather than putting a class with no
-        // palette on the page.
+        // A retired slug moves to its replacement; one that names no theme
+        // falls back to the default.
         serde_json::from_str::<ThemeConfig>(&raw)
             .ok()
-            .filter(|cfg| crate::theme::ALLOWED_THEMES.contains(&cfg.name.as_str()))
+            .and_then(ThemeConfig::resolve)
     }
 
     pub fn save(key: &str, cfg: &ThemeConfig) {
