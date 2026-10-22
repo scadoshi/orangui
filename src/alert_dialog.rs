@@ -257,11 +257,11 @@ impl ActionButton {
         self
     }
 
-    /// The text and whether the button takes clicks, given whether this
-    /// button's work is running and whether any action's is.
-    fn face(&self, running: bool, any_running: bool) -> (String, bool) {
-        let label = match (&self.run, running) {
-            (Some(Run::Busy { label, .. }), true) => label.clone(),
+    /// The text and whether the button takes clicks, given what the dialog's
+    /// actions are doing.
+    fn face(&self, activity: Activity) -> (String, bool) {
+        let label = match (&self.run, activity) {
+            (Some(Run::Busy { label, .. }), Activity::ThisRunning) => label.clone(),
             _ => self
                 .live_label
                 .and_then(|l| l.try_read().ok().map(|l| l.clone()))
@@ -270,8 +270,19 @@ impl ActionButton {
         let disabled = self
             .disabled
             .is_some_and(|d| d.try_read().is_ok_and(|d| *d));
-        (label, !(disabled || any_running))
+        (label, !(disabled || activity != Activity::Idle))
     }
+}
+
+/// What a dialog's actions are doing, from one button's point of view.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Activity {
+    /// Nothing is running.
+    Idle,
+    /// This button's own busy work is running.
+    ThisRunning,
+    /// Another action's busy work is running.
+    OtherRunning,
 }
 
 /// What a dialog draws: its title, its body, and its actions left to right.
@@ -517,7 +528,12 @@ pub fn DialogHostView() -> Element {
                         },
                         DialogAction::Button(button) => {
                             let this_running = running == Some(index);
-                            let (label, enabled) = button.face(this_running, busy);
+                            let activity = match running {
+                                None => Activity::Idle,
+                                Some(i) if i == index => Activity::ThisRunning,
+                                Some(_) => Activity::OtherRunning,
+                            };
+                            let (label, enabled) = button.face(activity);
                             let class = match (&button.run, button.danger) {
                                 (None, false) => "alert-dialog-cancel",
                                 (_, true) => "alert-dialog-action-danger",
@@ -765,11 +781,17 @@ mod tests {
     #[test]
     fn face_without_signals() {
         let plain = ActionButton::new("Go");
-        assert_eq!(plain.face(false, false), ("Go".to_string(), true));
-        assert_eq!(plain.face(false, true), ("Go".to_string(), false));
+        assert_eq!(plain.face(Activity::Idle), ("Go".to_string(), true));
+        assert_eq!(
+            plain.face(Activity::OtherRunning),
+            ("Go".to_string(), false)
+        );
         let busy = ActionButton::new("Save").busy("Saving...", || async { true });
-        assert_eq!(busy.face(true, true), ("Saving...".to_string(), false));
-        assert_eq!(busy.face(false, false), ("Save".to_string(), true));
+        assert_eq!(
+            busy.face(Activity::ThisRunning),
+            ("Saving...".to_string(), false)
+        );
+        assert_eq!(busy.face(Activity::Idle), ("Save".to_string(), true));
     }
 
     #[test]
