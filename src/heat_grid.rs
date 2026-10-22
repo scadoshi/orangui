@@ -9,8 +9,9 @@ use dioxus::prelude::*;
 
 use crate::entrance::sleep_ms;
 
-/// A cell's side and the gap to the next, in SVG units.
+/// A cell's side, in SVG units.
 pub const HEAT_CELL: f64 = 11.0;
+/// The gap from one cell to the next, in SVG units.
 pub const HEAT_GAP: f64 = 2.0;
 /// From one cell's edge to the next cell's.
 pub const HEAT_STEP: f64 = HEAT_CELL + HEAT_GAP;
@@ -42,8 +43,11 @@ pub struct HeatCell {
 /// top-left corner in SVG units.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct HeatHit {
+    /// The cell's place in the `cells` the host passed to [`HeatGrid`].
     pub index: usize,
+    /// The cell's left edge, in SVG units.
     pub x: f64,
+    /// The cell's top edge, in SVG units.
     pub y: f64,
 }
 

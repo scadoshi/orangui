@@ -41,6 +41,8 @@
 //! @layer reset { * { margin: 0; padding: 0; } }
 //! ```
 
+#![warn(missing_docs)]
+
 mod action_bar;
 mod alert_dialog;
 mod banner;
