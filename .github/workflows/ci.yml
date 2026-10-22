@@ -43,3 +43,8 @@ jobs:
         run: |
           rustup target add wasm32-unknown-unknown
           cargo clippy --target wasm32-unknown-unknown --all-features -- -D warnings
+      # Broken intra-doc links and other rustdoc warnings fail the way clippy's do.
+      - name: Docs
+        run: cargo doc --no-deps --all-features
+        env:
+          RUSTDOCFLAGS: -D warnings
