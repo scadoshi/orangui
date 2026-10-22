@@ -9,7 +9,8 @@ use std::time::Duration;
 use dioxus::prelude::*;
 use dioxus_primitives::toast::{Toast, ToastPropsWithOwner, ToastProvider};
 
-use crate::{TOAST_NORMAL, entrance::sleep_ms};
+use crate::TOAST_NORMAL;
+use crate::entrance::sleep_ms;
 
 /// The toast provider with the collapsing stack. Wrap the router in it; every
 /// `use_toast` below reaches it.

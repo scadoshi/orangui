@@ -15,12 +15,12 @@
 //! over. [`use_theme_follow`] serves a host whose theme is set from many
 //! places, as the app's is: whatever sets it, the displayed theme wipes over.
 
-use std::{cell::Cell, rc::Rc};
+use std::cell::Cell;
+use std::rc::Rc;
 
-use crate::ThemeConfig;
 use dioxus::prelude::*;
 
-use crate::Replay;
+use crate::{Replay, ThemeConfig};
 
 /// Receives the themed element's selector and the new theme class, and swaps
 /// the element onto it inside a view transition. Inside the swap it tells the

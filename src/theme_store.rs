@@ -5,8 +5,9 @@
 //! [`ThemeConfig::default`] and the browser adopts the stored theme after
 //! hydration.
 
-use crate::ThemeConfig;
 use dioxus::prelude::*;
+
+use crate::ThemeConfig;
 
 #[cfg(target_arch = "wasm32")]
 mod imp {

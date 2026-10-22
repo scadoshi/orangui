@@ -23,7 +23,8 @@
 //! On every other target the hook does nothing, so a browser keeps its own
 //! back button.
 
-use std::{ffi::c_void, ptr::NonNull};
+use std::ffi::c_void;
+use std::ptr::NonNull;
 
 use dioxus::prelude::*;
 
@@ -94,14 +95,12 @@ pub fn use_os_back(
 /// whose target sends on a channel.
 #[cfg(target_os = "ios")]
 mod ios {
-    use std::{ffi::c_void, ptr::NonNull};
+    use std::ffi::c_void;
+    use std::ptr::NonNull;
 
-    use objc2::{
-        AnyThread, DefinedClass, MainThreadMarker, class, define_class, msg_send,
-        rc::{Allocated, Retained},
-        runtime::{AnyObject, Bool, NSObject},
-        sel,
-    };
+    use objc2::rc::{Allocated, Retained};
+    use objc2::runtime::{AnyObject, Bool, NSObject};
+    use objc2::{AnyThread, DefinedClass, MainThreadMarker, class, define_class, msg_send, sel};
     use tokio::sync::mpsc::UnboundedSender;
 
     /// `UIGestureRecognizerStateBegan`: the target fires once, as the pan
@@ -186,7 +185,8 @@ mod ios {
 /// Leaving the app from a root screen: finish the Activity through JNI.
 #[cfg(target_os = "android")]
 mod android {
-    use jni::{JavaVM, objects::JObject};
+    use jni::JavaVM;
+    use jni::objects::JObject;
 
     /// Finishes the current Activity, logging a failure.
     pub fn finish_activity() {

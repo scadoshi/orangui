@@ -7,8 +7,9 @@
 //! `title`, `status`, and `actions` are all optional; a rule is only drawn where
 //! the adjacent section exists. Styling is in `assets/components.css`.
 
-use crate::banner::BannerStatus;
 use dioxus::prelude::*;
+
+use crate::banner::BannerStatus;
 
 /// A content panel: `header <hr> body <hr> actions`.
 ///

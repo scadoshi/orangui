@@ -17,13 +17,11 @@
 //! [`ActionButton`], whose label and disabled state are signals the host
 //! owns.
 
-use std::{
-    cell::RefCell,
-    future::Future,
-    pin::Pin,
-    rc::Rc,
-    sync::atomic::{AtomicU64, Ordering},
-};
+use std::cell::RefCell;
+use std::future::Future;
+use std::pin::Pin;
+use std::rc::Rc;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 use dioxus::prelude::*;
 

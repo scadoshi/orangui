@@ -20,7 +20,8 @@
 
 use dioxus::prelude::*;
 
-use crate::{entrance::sleep_ms, grid_cells::GridCells};
+use crate::entrance::sleep_ms;
+use crate::grid_cells::GridCells;
 
 /// Whether the opening is over. A host provides one at its root, closed; the
 /// [`Splash`] opens it as it starts to fade, and the entrances ([`crate::CountUp`],

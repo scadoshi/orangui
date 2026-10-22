@@ -4,10 +4,11 @@
 //! What a save means (an API call, a local store) and what each outcome says
 //! (a toast) stay the host's, through [`ThemeSheet`]'s callbacks.
 
-use crate::{THEME_GROUPS, ThemeConfig, display_theme_name};
 use dioxus::prelude::*;
 
-use crate::{BottomSheet, Button, ButtonVariant, ThemeFollow};
+use crate::{
+    BottomSheet, Button, ButtonVariant, THEME_GROUPS, ThemeConfig, ThemeFollow, display_theme_name,
+};
 
 /// One selectable theme row: name on the left, swatch dots on the right. The
 /// dots take their colors from the theme's own class, so colors stay defined

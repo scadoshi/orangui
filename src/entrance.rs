@@ -10,9 +10,11 @@
 //! script runs, and the motion only ever starts from what is already there.
 //! A viewer who asks for less motion gets the settled value at once.
 
-use crate::splash::{SplashGate, SplashLeave};
-use dioxus::prelude::*;
 use std::sync::atomic::{AtomicU64, Ordering};
+
+use dioxus::prelude::*;
+
+use crate::splash::{SplashGate, SplashLeave};
 
 /// How many times the page has been asked to run its entrance again. The nav
 /// logo bumps it; every `CountUp` and `Decode` under it starts over.
@@ -175,7 +177,7 @@ fn digit_ceiling(value: u64) -> u64 {
 
 /// One xorshift round, enough randomness for digits that flicker.
 fn noise(seed: u64) -> u64 {
-    let mut state = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1;
+    let mut state = seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1;
     state ^= state << 13;
     state ^= state >> 7;
     state ^= state << 17;
@@ -465,7 +467,7 @@ fn columns_of(text: &str) -> usize {
 /// everything else as it is.
 fn shimmered(text: &str, center: usize, seed: u64) -> String {
     let mut out = String::with_capacity(text.len());
-    let mut state = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1;
+    let mut state = seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1;
     for line in text.lines() {
         for (column, glyph) in line.chars().enumerate() {
             let inside = column <= center && column + SHIMMER_SPAN >= center;
@@ -487,7 +489,7 @@ fn shimmered(text: &str, center: usize, seed: u64) -> String {
 /// each front wobble, so the edges are ragged rather than ruled.
 fn encoded(text: &str, noise: usize, clear: usize, seed: u64) -> String {
     let mut out = String::with_capacity(text.len());
-    let mut state = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1;
+    let mut state = seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1;
     let mut next = move || {
         state ^= state << 13;
         state ^= state >> 7;
@@ -528,7 +530,7 @@ fn blank(text: &str) -> String {
 /// each front wobble too, so the edges are ragged rather than ruled.
 fn decoded(text: &str, front: usize, noise: usize, seed: u64) -> String {
     let mut out = String::with_capacity(text.len());
-    let mut state = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1;
+    let mut state = seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1;
     let mut next = move || {
         // xorshift, enough randomness for a flicker.
         state ^= state << 13;

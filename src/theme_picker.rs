@@ -6,10 +6,9 @@
 //! so how the theme is provided (context, prop drilling) and applied (body
 //! class, wrapper div) stays the host's business.
 
-use crate::{THEME_GROUPS, ThemeConfig, display_theme_name};
 use dioxus::prelude::*;
 
-use crate::{Button, ButtonVariant, NavDropdown};
+use crate::{Button, ButtonVariant, NavDropdown, THEME_GROUPS, ThemeConfig, display_theme_name};
 
 /// A mode's icon, solid in the text color: the moon for dark, the sun for
 /// light. Drawn as SVG rather than the ☀/☾ glyphs, which most fonts outline
