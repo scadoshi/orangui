@@ -14,7 +14,11 @@ const SHEETS: [(&str, &str); 4] = [
     ("toast.css", include_str!("../assets/toast.css")),
 ];
 
-const TUNABLE: [(&str, &[&str]); 18] = [
+const TUNABLE: [(&str, &[&str]); 19] = [
+    (
+        ".label",
+        &["color", "font-size", "letter-spacing", "margin-bottom"],
+    ),
     (
         ".tag",
         &["border-radius", "padding", "font-size", "letter-spacing"],

@@ -167,6 +167,60 @@
     margin-bottom: 0;
 }
 
+/* After .input:focus, so an errored field keeps its border while focused. */
+.input-error,
+.input-error:focus {
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 1px var(--color-error);
+}
+
+/* ---- Labels and field errors (orangui::FieldLabel, TextInput) ---- */
+
+/* The label's type, color and gap below are soft defaults. */
+:where(.label) {
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--accent-tertiary);
+    margin-bottom: 0.4rem;
+}
+
+.label {
+    display: block;
+}
+
+/* A label with a "?": the label is centered on its own and the "?" hangs
+   off its right edge, so the text lines up with the labels above and below. */
+.label-hint {
+    display: flex;
+    justify-content: center;
+}
+
+.label-hint-anchor {
+    position: relative;
+}
+
+/* Centered on the label's text, above the label's bottom margin. */
+.label-hint-anchor .info-button {
+    position: absolute;
+    left: 100%;
+    top: calc(50% - 0.125rem);
+    transform: translateY(-50%);
+}
+
+/* The error line under a field. Its type and gap below are soft defaults. */
+:where(.message-error) {
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    padding-bottom: 1rem;
+}
+
+.message-error {
+    text-align: center;
+    color: var(--color-error);
+}
+
 /* ---- Bottom sheet (orangui::BottomSheet) ---- */
 
 .sheet-backdrop {

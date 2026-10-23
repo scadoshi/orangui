@@ -10,7 +10,7 @@
 //!
 //! Three kits sit on the shared base. The app kit ([`BottomSheet`],
 //! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
-//! the hint pieces, the overlay back stack,
+//! [`TextInput`], the hint pieces, the overlay back stack,
 //! the OS back bridge [`use_os_back`], the launch guard ([`BOOT_HEAD`],
 //! [`BOOT_BG`], [`BootReveal`]) and, behind the `toast` feature,
 //! `ToastStack`) is for apps and styled by [`APP_CSS`]. The site kit
@@ -69,6 +69,7 @@ mod panel;
 mod password_input;
 mod splash;
 mod stats_strip;
+mod text_input;
 mod theme;
 mod theme_picker;
 mod theme_sheet;
@@ -112,6 +113,7 @@ pub use panel::Panel;
 pub use password_input::PasswordInput;
 pub use splash::{SPLASH_JS, Splash, SplashGate};
 pub use stats_strip::StatsStrip;
+pub use text_input::{FieldLabel, TextInput};
 pub use theme::{
     ALLOWED_THEMES, COLORBLIND_THEMES, RETIRED_THEMES, THEME_GROUPS, ThemeConfig, ThemeGroup,
     current_theme, display_theme_name,

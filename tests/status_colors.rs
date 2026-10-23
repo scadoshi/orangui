@@ -3,8 +3,10 @@
 
 use orangui::status_uses;
 
-const ALLOWED: [&str; 10] = [
+const ALLOWED: [&str; 12] = [
     ".alert-dialog-action-danger",
+    ".input-error, .input-error:focus",
+    ".message-error",
     ".btn-danger, .btn-action-danger",
     ".tag-error, .stat-chip-error",
     ".tag-success, .stat-chip-success",
