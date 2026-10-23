@@ -119,7 +119,7 @@ The counts come from the hosts' `orangui` worktrees and orangui `main` on 2026-1
 
 **zwiper's screen header and support button, and PageHeader.** `ScreenHeader` is 26 lines that put zwiper's `SupportButton` in PageHeader's `leading` slot; cairn does the same with `AboutButton`. Both buttons use the documented `page-header-support` hook and open host content. Leave.
 
-**Form inputs.** zwiper's `TextInput` carries a copy of PasswordInput's markup in its password branch; it should call `PasswordInput` with `class: "input input-error"` (drop, about 25 lines). The rest of `TextInput` (label, `?` hint, error line) is a labeled field zwiper and cairn both build by hand; the `.label` and label-hint rules move (above). A kit `Field` component is not worth it yet: the hint each host opens is its own.
+**Form inputs.** zwiper's `TextInput` carries a copy of PasswordInput's markup in its password branch; it should call `PasswordInput` with `class: "input input-error"` (drop, about 25 lines). The rest of `TextInput` (label, `?` hint, error line) is a labeled field zwiper and cairn both build by hand; the `.label` and label-hint rules move (above). A kit `Field` component is not worth it yet: the hint each host opens is its own. (2026-10-23: it shipped as `TextInput`, with the hint as an `on_info` handler so it stays the host's.)
 
 **Toasts in cairn and ToastStack.** cairn already renders the kit's `ToastStack` with `TOAST_CSS` and the timing constants, and its sheet has no toast rules. Nothing left.
 

@@ -17,6 +17,10 @@ Read [`CLAUDE.md`](CLAUDE.md) first for the rules.
 
 The running log, newest first. Update this when something ships.
 
+## 2026-10-23: TextInput and the hint dialog
+
+`TextInput` and `FieldLabel` come from zwiper's field: a label with an optional "?" (`on_info` takes the host's handler, so what it opens stays the host's), the input or a `PasswordInput`, and the error line. It adds `inputmode`, `maxlength` and a `filter` for cairn's digits-only goal field. `HintDialog` (title, `hint-body`, the host's actions, then Got it), `HintChip` and the `ScreenHint` slot with `use_screen_hint` come from cairn, which had the same dialog as zwiper. The rules for `.label`, `.label-hint`, `.input-error`, `.message-error`, `.hint-body`, `.hint-chip` and a field's spacing in a dialog body moved into `app.css`. zwiper's hint topics and its one-time hints stay in zwiper, since they know its server and its catalog.
+
 ## 2026-10-21: Flexoki replaces Visual Studio
 
 `visual-studio` is gone from `ALLOWED_THEMES` and `flexoki` takes its slot, so the set stays at 50. Visual Studio's colors could not be traced to a published file, and its palette mostly repeated VS Code's. Flexoki comes from kepano/flexoki: its CSS palette and mapping table for the base colors and status colors, and its VS Code port for syntax. Synthwave '84's palette now comes from robb0wen's original theme rather than Omarchy's terminal port, and Ristretto's from monokai-pro.nvim. A host that stores a theme slug moves `visual-studio` to `vscode`, the closest match.

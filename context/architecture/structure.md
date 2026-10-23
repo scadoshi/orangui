@@ -33,7 +33,8 @@ src/
 ├── alert_dialog.rs      # AlertDialog, DialogAction, ActionButton, DialogSpec, and the app-root DialogHost that draws them
 ├── page_header.rs       # PageHeader
 ├── theme_sheet.rs       # ThemeSheet: every theme as a row, previewed live
-├── hint.rs              # InfoButton, HintLine, HintBullets, HintBullet, HintKey
+├── hint.rs              # HintDialog, InfoButton, HintLine, HintBullets, HintBullet, HintKey, HintChip, and the ScreenHint slot a screen offers its hint through
+├── text_input.rs        # TextInput and FieldLabel: a labeled field with an optional "?" and error line
 ├── overlay_stack.rs     # OverlayBackStack and the use_overlay_back hooks
 ├── os_back.rs           # use_os_back: the iOS edge swipe and Android back, through the overlay stack to the host's go_back
 ├── boot.rs              # BOOT_HEAD, BOOT_BG, BootReveal: the WebView launch hides #main until the styles are in
@@ -51,7 +52,7 @@ assets/
 ├── grid-cells.js        # GridCells' canvas drawing: the rain, then one redraw per theme change
 ├── splash.js            # Splash on a prerendered page: the whole opening from first paint, before the app is up
 ├── boot-reveal.js       # BootReveal: shows #main once the linked stylesheets have loaded
-├── app.css              # the app shell: screen, page header, bottom sheet, alert dialog, settings lists, hints
+├── app.css              # the app shell: screen, page header, bottom sheet, alert dialog, settings lists, hints, labels and fields
 ├── site.css             # the sites: scroll reveal, gallery, footer
 ├── toast.css            # the toast stack
 ├── reveal.js            # elements marked data-reveal fade up as they scroll in
