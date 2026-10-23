@@ -5,9 +5,10 @@ use dioxus::prelude::*;
 
 use crate::{InfoButton, PasswordInput};
 
-/// A form label, with a "?" hanging off its right edge when `on_info` is
-/// given. The label alone stays centered, so it lines up with the labels
-/// above and below that have no "?". `for_id` ties it to its input.
+/// A form label, with a "?" beside it when `on_info` is given. The label
+/// and the "?" are centered together, with a little more room below them
+/// than a bare label gets, since the "?" stands taller than the text.
+/// `for_id` ties it to its input.
 ///
 /// [`TextInput`] draws one; a field the kit has no input for, such as a row
 /// of chips, puts one above it.
@@ -151,7 +152,7 @@ mod tests {
     }
 
     #[test]
-    fn on_info_hangs_a_hint_off_the_label() {
+    fn on_info_puts_a_hint_beside_the_label() {
         fn app() -> Element {
             let value = use_signal(String::new);
             rsx! {
