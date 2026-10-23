@@ -443,6 +443,12 @@
     opacity: 0.8;
 }
 
+/* A field in a dialog's body sits a line below the text above it. */
+.alert-dialog-description > .input,
+.alert-dialog-description > .password-input-wrapper {
+    margin-top: 1rem;
+}
+
 /* A long body (a hint, or anything marked .alert-dialog-long) fades at an
    edge only while more of it sits past that edge, the same scroll-driven
    mask as .scroll-fade-y. A body that fits is never faded, and a scrolled
