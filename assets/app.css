@@ -110,7 +110,12 @@
     right: 1rem;
 }
 
-/* ---- Hints (orangui::HintLine, HintBullets) ---- */
+/* ---- Hints (orangui::HintDialog, HintLine, HintBullets, HintChip) ---- */
+
+/* The body's padding is a soft default. */
+:where(.hint-body) {
+    padding: 1rem 0;
+}
 
 .hint-line {
     margin: 0 0 0.5rem 0;
@@ -125,6 +130,19 @@
 
 .hint-bullets li {
     margin-bottom: 0.4rem;
+}
+
+/* A real chip shown as an example mid-sentence, inert since the hint points
+   at the real one. Its size and weight are soft defaults. */
+:where(.stat-chip.hint-chip) {
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.hint-chip {
+    white-space: nowrap;
+    pointer-events: none;
+    vertical-align: baseline;
 }
 
 /* ---- Inputs ---- */

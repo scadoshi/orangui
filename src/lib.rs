@@ -10,7 +10,7 @@
 //!
 //! Three kits sit on the shared base. The app kit ([`BottomSheet`],
 //! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
-//! [`TextInput`], the hint pieces, the overlay back stack,
+//! [`TextInput`], the hint pieces with [`HintDialog`], the overlay back stack,
 //! the OS back bridge [`use_os_back`], the launch guard ([`BOOT_HEAD`],
 //! [`BOOT_BG`], [`BootReveal`]) and, behind the `toast` feature,
 //! `ToastStack`) is for apps and styled by [`APP_CSS`]. The site kit
@@ -99,7 +99,10 @@ pub use heat_grid::{
     HEAT_CELL, HEAT_GAP, HEAT_ROWS, HEAT_STEP, HeatCell, HeatGrid, HeatHit, heat_span,
     use_scroll_to_end,
 };
-pub use hint::{HintBullet, HintBullets, HintKey, HintLine, InfoButton};
+pub use hint::{
+    HintBullet, HintBullets, HintChip, HintDialog, HintKey, HintLine, InfoButton, ScreenHint,
+    use_screen_hint, use_screen_hint_slot,
+};
 pub use nav_bar::{BRAND_RESET_JS, NavBar};
 pub use nav_dropdown::NavDropdown;
 pub use os_back::use_os_back;
