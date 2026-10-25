@@ -152,8 +152,8 @@ pub const THEME_GROUPS: &[ThemeGroup] = &[
     },
 ];
 
-/// Slugs [`ALLOWED_THEMES`] no longer lists, each mapped to the theme its
-/// users move to: a renamed theme to its new slug, a removed one to the
+/// Retired slugs, ones [`ALLOWED_THEMES`] does not list, each mapped to the
+/// theme its users move to: a renamed theme to its new slug, a removed one to the
 /// closest look. A host that stores slugs applies the same map and checks it
 /// against this one in a test.
 pub const RETIRED_THEMES: &[(&str, &str)] = &[
