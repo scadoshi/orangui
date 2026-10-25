@@ -54,7 +54,11 @@ pub struct HeatHit {
 /// How far `n` columns or rows reach, in SVG units: a grid `columns` wide is
 /// `heat_span(columns)` past its origin, and `heat_span(HEAT_ROWS)` tall.
 #[must_use]
-#[allow(clippy::cast_precision_loss)]
+#[expect(
+    clippy::as_conversions,
+    clippy::cast_precision_loss,
+    reason = "a grid is a few hundred columns, far below 2^53, so the float is exact; std has no From<usize> for f64"
+)]
 pub fn heat_span(n: usize) -> f64 {
     n as f64 * HEAT_STEP
 }

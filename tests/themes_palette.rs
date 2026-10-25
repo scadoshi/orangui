@@ -6,8 +6,10 @@
 //! accessibility themes are the exception: their six are built, not sourced, so
 //! every pair must stay 8 apart under the deficiency they are built for.
 
-// The close-pair report is the point of the test's output.
-#![allow(clippy::print_stdout)]
+#![expect(
+    clippy::print_stdout,
+    reason = "the close-pair report is the point of the test's output"
+)]
 
 const CSS: &str = include_str!("../assets/themes.css");
 

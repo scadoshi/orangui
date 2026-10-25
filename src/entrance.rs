@@ -128,7 +128,14 @@ pub fn CountUp(
                     // It went back to waiting; the next effect run picks it up.
                     return;
                 };
-                shown.set(Some(rolling(value, t, frame as u64)));
+                #[expect(
+                    clippy::as_conversions,
+                    clippy::cast_possible_truncation,
+                    clippy::cast_sign_loss,
+                    reason = "frame steps up from 0.0 by whole numbers, so it is a small non-negative integer"
+                )]
+                let tick = frame as u64;
+                shown.set(Some(rolling(value, t, tick)));
             }
             shown.set(*target.peek());
         });
@@ -155,10 +162,12 @@ static SEEDS: AtomicU64 = AtomicU64::new(1);
 /// `value` with a random offset that shrinks to nothing as `fraction` reaches
 /// 1, held inside the digit count `value` prints at so the row never widens
 /// mid-roll. Counts are far below 2^53, so the float conversion is exact.
-#[allow(
+#[expect(
+    clippy::as_conversions,
     clippy::cast_precision_loss,
     clippy::cast_possible_truncation,
-    clippy::cast_sign_loss
+    clippy::cast_sign_loss,
+    reason = "counts sit far below 2^53 so u64 to f64 is exact, and the roll is clamped at zero and rounded before going back to u64; std has no From between floats and u64"
 )]
 fn rolling(value: u64, fraction: f64, seed: u64) -> u64 {
     let fraction = fraction.clamp(0.0, 1.0);
@@ -268,7 +277,14 @@ pub fn Figure(text: String, #[props(default)] start: Option<Signal<bool>>) -> El
                 }
                 frame += 1.0;
                 let t = (frame / frames).min(1.0);
-                shown.set(scrambled(&goal, t, seed.wrapping_add(frame as u64)));
+                #[expect(
+                    clippy::as_conversions,
+                    clippy::cast_possible_truncation,
+                    clippy::cast_sign_loss,
+                    reason = "frame steps up from 0.0 by whole numbers, so it is a small non-negative integer"
+                )]
+                let tick = frame as u64;
+                shown.set(scrambled(&goal, t, seed.wrapping_add(tick)));
             }
             shown.set(goal);
         });
@@ -279,10 +295,10 @@ pub fn Figure(text: String, #[props(default)] start: Option<Signal<bool>>) -> El
 /// `text` with each digit replaced by a random one with a probability that
 /// falls to zero as `fraction` reaches 1, squared so the figure is wild early
 /// and barely moves at the end. Everything that is not a digit is left alone.
-#[allow(
+#[expect(
+    clippy::as_conversions,
     clippy::cast_precision_loss,
-    clippy::cast_possible_truncation,
-    clippy::cast_sign_loss
+    reason = "every cast is of a value bounded by a modulo (under 1000, or under 10 for the digit), so none loses anything"
 )]
 fn scrambled(text: &str, fraction: f64, seed: u64) -> String {
     let fraction = fraction.clamp(0.0, 1.0);
