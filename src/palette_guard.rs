@@ -5,7 +5,7 @@
 //! instead. See `context/development/styling.md`.
 
 /// One reference to a status variable.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct StatusUse {
     /// The rule's selector, whitespace collapsed, comments removed.
     pub selector: String,

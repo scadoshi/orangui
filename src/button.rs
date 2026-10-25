@@ -8,7 +8,7 @@
 use dioxus::prelude::*;
 
 /// Which button style to render.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum ButtonVariant {
     /// Full-width form/dialog button (`.btn`).
     #[default]

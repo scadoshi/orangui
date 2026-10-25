@@ -7,7 +7,7 @@
 use dioxus::prelude::*;
 
 /// Which accent outlines a box.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum DiagramTone {
     /// The muted text color, for things outside the system.
     #[default]

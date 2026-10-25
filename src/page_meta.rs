@@ -7,7 +7,7 @@ use dioxus::prelude::*;
 
 /// Site-wide constants a host plugs into [`PageMeta`]. Each site defines one
 /// (typically a `const`) and wraps the component so its pages never repeat it.
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Eq, Hash, Debug)]
 pub struct SiteMeta {
     /// Public base URL, no trailing slash (e.g. `https://example.com`).
     pub base_url: &'static str,

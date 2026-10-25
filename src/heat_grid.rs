@@ -24,7 +24,7 @@ const SWEEP_STEP_MS: usize = 12;
 const HALO_REACH: f64 = 2.5;
 
 /// One day on the grid.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct HeatCell {
     /// Week, oldest first.
     pub column: usize,
