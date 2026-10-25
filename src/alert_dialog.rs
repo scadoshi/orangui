@@ -688,7 +688,7 @@ mod tests {
         html[start..end].to_string()
     }
 
-    /// Clicks action `index` as DialogHostView does.
+    /// Clicks action `index` as [`DialogHostView`] does.
     fn click(dom: &VirtualDom, index: usize) {
         let p = probe();
         dom.in_scope(ScopeId::APP, || {
