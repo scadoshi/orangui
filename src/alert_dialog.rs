@@ -18,6 +18,7 @@
 //! owns.
 
 use std::cell::RefCell;
+use std::fmt;
 use std::future::Future;
 use std::pin::Pin;
 use std::rc::Rc;
@@ -30,7 +31,7 @@ use crate::use_overlay_back;
 /// One button in a dialog's action row. `Dismiss`, `Confirm` and `Link`
 /// close the dialog; a [`Button`](DialogAction::Button) closes it or not, as
 /// its [`ActionButton`] says.
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum DialogAction {
     /// Closes the dialog and does nothing else: Cancel, Got it.
     Dismiss(String),
@@ -134,6 +135,18 @@ pub struct ActionButton {
     danger: bool,
     disabled: Option<ReadSignal<bool>>,
     run: Option<Run>,
+}
+
+impl fmt::Debug for ActionButton {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ActionButton")
+            .field("label", &self.label)
+            .field("live_label", &self.live_label.is_some())
+            .field("danger", &self.danger)
+            .field("disabled", &self.disabled.is_some())
+            .field("run", &self.run.is_some())
+            .finish()
+    }
 }
 
 impl ActionButton {
@@ -286,7 +299,7 @@ enum Activity {
 }
 
 /// What a dialog draws: its title, its body, and its actions left to right.
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct DialogSpec {
     /// The heading.
     pub title: String,
@@ -321,6 +334,12 @@ pub struct DialogHost {
 pub fn use_dialog_host() -> DialogHost {
     DialogHost {
         slot: use_signal(|| None),
+    }
+}
+
+impl fmt::Debug for DialogHost {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("DialogHost").finish_non_exhaustive()
     }
 }
 
@@ -797,8 +816,8 @@ mod tests {
     #[test]
     fn a_clone_is_equal_and_a_rebuild_is_not() {
         let a = ActionButton::new("Flip").stay_open(|| {});
-        assert!(a == a.clone());
-        assert!(a != ActionButton::new("Flip").stay_open(|| {}));
-        assert!(ActionButton::new("Ok") == ActionButton::new("Ok"));
+        assert_eq!(a, a.clone());
+        assert_ne!(a, ActionButton::new("Flip").stay_open(|| {}));
+        assert_eq!(ActionButton::new("Ok"), ActionButton::new("Ok"));
     }
 }

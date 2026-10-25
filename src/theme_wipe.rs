@@ -16,6 +16,7 @@
 //! places, as the app's is: whatever sets it, the displayed theme wipes over.
 
 use std::cell::Cell;
+use std::fmt;
 use std::rc::Rc;
 
 use dioxus::prelude::*;
@@ -168,6 +169,12 @@ pub struct ThemeFollow {
     /// The theme the host currently shows.
     pub shown: Signal<ThemeConfig>,
     running: Signal<u32>,
+}
+
+impl fmt::Debug for ThemeFollow {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ThemeFollow").finish_non_exhaustive()
+    }
 }
 
 impl ThemeFollow {

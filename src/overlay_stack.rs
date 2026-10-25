@@ -15,6 +15,7 @@
 //! the overlay's open state, the registration effect then deregisters it: the
 //! stack stays truthful with no manual bookkeeping.
 
+use std::fmt;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use dioxus::prelude::*;
@@ -41,6 +42,12 @@ pub struct OverlayBackStack {
 pub fn use_overlay_back_stack() -> OverlayBackStack {
     OverlayBackStack {
         entries: use_signal(Vec::new),
+    }
+}
+
+impl fmt::Debug for OverlayBackStack {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("OverlayBackStack").finish_non_exhaustive()
     }
 }
 

@@ -10,6 +10,7 @@
 //! script runs, and the motion only ever starts from what is already there.
 //! A viewer who asks for less motion gets the settled value at once.
 
+use std::fmt;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use dioxus::prelude::*;
@@ -20,6 +21,12 @@ use crate::splash::{SplashGate, SplashLeave};
 /// logo bumps it; every `CountUp` and `Decode` under it starts over.
 #[derive(Clone, Copy)]
 pub struct Replay(pub Signal<u32>);
+
+impl fmt::Debug for Replay {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("Replay").finish_non_exhaustive()
+    }
+}
 
 /// The page's replay counter, or a private one that never moves when the page
 /// provides none.

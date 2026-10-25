@@ -65,6 +65,7 @@ pub const ALLOWED_THEMES: &[&str] = &[
 /// alphabetical. The sections sort by look, warm to cool to neutral, so
 /// someone who has never heard of a theme finds one by the color they want;
 /// a family whose variants differ in look stays together under its flagship.
+#[derive(Debug)]
 pub struct ThemeGroup {
     /// The section's heading.
     pub label: &'static str,
@@ -205,7 +206,7 @@ pub fn display_theme_name(slug: &str) -> String {
 
 /// The theme a host displays. Serializable so a host can keep the last pick
 /// in local storage and theme its first paint before anything else loads.
-#[derive(Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct ThemeConfig {
     /// Theme identifier, one of [`ALLOWED_THEMES`].
     pub name: String,

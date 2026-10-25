@@ -5,6 +5,8 @@
 //! A hint is a [`HintDialog`] whose body is these lines; what each hint says,
 //! and when it opens, stays the app's.
 
+use std::fmt;
+
 use dioxus::prelude::*;
 
 use crate::{AlertDialog, DialogAction};
@@ -44,6 +46,12 @@ fn hint_actions(mut actions: Vec<DialogAction>, dismiss: String) -> Vec<DialogAc
 /// [`use_screen_hint`] in each screen that has a hint.
 #[derive(Clone, Copy, PartialEq)]
 pub struct ScreenHint(Signal<Option<Callback<()>>>);
+
+impl fmt::Debug for ScreenHint {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("ScreenHint").finish_non_exhaustive()
+    }
+}
 
 impl ScreenHint {
     /// What opens the current screen's hint, or `None` when the screen has

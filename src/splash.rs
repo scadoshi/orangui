@@ -18,6 +18,8 @@
 //! `splash-over` on the root, and the host's sheet shows the mark under the
 //! first, fades the overlay under the second and hides it under the third.
 
+use std::fmt;
+
 use dioxus::prelude::*;
 
 use crate::entrance::sleep_ms;
@@ -30,6 +32,12 @@ use crate::grid_cells::GridCells;
 /// underneath it. A host with no splash provides nothing and they run on mount.
 #[derive(Clone, Copy)]
 pub struct SplashGate(pub Signal<bool>);
+
+impl fmt::Debug for SplashGate {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("SplashGate").finish_non_exhaustive()
+    }
+}
 
 /// Tells the splash's mark to leave. The [`Splash`] provides it, closed, to its
 /// children and opens it once the mark has resolved; a [`crate::Decode`] under
