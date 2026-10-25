@@ -94,9 +94,9 @@ mod tests {
 
     #[test]
     fn ignores_palette_and_accent_variables() {
-        assert!(
-            status_uses(".x { color: var(--palette-3); background: var(--accent-primary); }")
-                .is_empty()
+        assert_eq!(
+            status_uses(".x { color: var(--palette-3); background: var(--accent-primary); }"),
+            Vec::new()
         );
     }
 }

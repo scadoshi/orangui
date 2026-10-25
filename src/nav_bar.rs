@@ -14,7 +14,7 @@ use dioxus::prelude::*;
 /// JS run on brand-click by convention: smooth-scroll to top and restart the
 /// `.logo` entrance animation. Exported so every surface's brand link shares
 /// one copy (`document::eval(BRAND_RESET_JS)`).
-pub const BRAND_RESET_JS: &str = r#"
+pub const BRAND_RESET_JS: &str = r"
     window.scrollTo({ top: 0, behavior: 'smooth' });
     const el = document.querySelector('.logo');
     if (el) {
@@ -22,7 +22,7 @@ pub const BRAND_RESET_JS: &str = r#"
         void el.offsetHeight;
         el.style.animation = '';
     }
-"#;
+";
 
 /// Nav shell with a hamburger-collapsing link panel.
 #[component]

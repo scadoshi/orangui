@@ -8,7 +8,10 @@
 
 #![expect(
     clippy::print_stdout,
-    reason = "the close-pair report is the point of the test's output"
+    clippy::string_slice,
+    clippy::arithmetic_side_effects,
+    clippy::many_single_char_names,
+    reason = "a test: the close-pair report is its output, a bad slice or overflow fails it, and the color math keeps the standard one-letter channel names"
 )]
 
 const CSS: &str = include_str!("../assets/themes.css");

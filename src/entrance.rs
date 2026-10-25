@@ -217,7 +217,7 @@ pub fn with_separators(n: u64) -> String {
 /// `n` to one decimal with a magnitude letter from ten thousand up: `28.0k`,
 /// `1.2m`, `3.4b`. Under that, [`with_separators`]. Truncated, not rounded,
 /// so a figure never reads past what it is.
-pub fn short(n: u64) -> String {
+pub(crate) fn short(n: u64) -> String {
     const STEPS: [(u64, char); 3] = [(1_000_000_000, 'b'), (1_000_000, 'm'), (1_000, 'k')];
     if n < 10_000 {
         return with_separators(n);

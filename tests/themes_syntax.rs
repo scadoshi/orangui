@@ -5,6 +5,11 @@
 //! editor. A theme with no editor scheme of its own maps them from its palette.
 //! Each value is a hex or one of the block's own palette or text variables.
 
+#![expect(
+    clippy::string_slice,
+    reason = "a test: slicing a hex value that is not ASCII fails it, which is the point"
+)]
+
 const CSS: &str = include_str!("../assets/themes.css");
 
 const SLOTS: [&str; 11] = [

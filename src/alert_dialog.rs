@@ -682,6 +682,10 @@ mod tests {
     }
 
     /// The `<button>` tag whose text is `text`.
+    #[expect(
+        clippy::string_slice,
+        reason = "a test helper over ASCII markup; a bad slice fails the test"
+    )]
     fn button(html: &str, text: &str) -> String {
         let end = html.find(&format!(">{text}</button>")).unwrap();
         let start = html[..end].rfind("<button").unwrap();

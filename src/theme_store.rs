@@ -17,7 +17,7 @@ mod imp {
         web_sys::window()?.local_storage().ok().flatten()
     }
 
-    pub fn load(key: &str) -> Option<ThemeConfig> {
+    pub(super) fn load(key: &str) -> Option<ThemeConfig> {
         let raw = storage()?.get_item(key).ok().flatten()?;
         // A retired slug moves to its replacement; one that names no theme
         // falls back to the default.
@@ -26,7 +26,7 @@ mod imp {
             .and_then(ThemeConfig::resolve)
     }
 
-    pub fn save(key: &str, cfg: &ThemeConfig) {
+    pub(super) fn save(key: &str, cfg: &ThemeConfig) {
         if let Some(storage) = storage()
             && let Ok(json) = serde_json::to_string(cfg)
         {
@@ -39,11 +39,11 @@ mod imp {
 mod imp {
     use super::ThemeConfig;
 
-    pub fn load(_key: &str) -> Option<ThemeConfig> {
+    pub(super) fn load(_key: &str) -> Option<ThemeConfig> {
         None
     }
 
-    pub fn save(_key: &str, _cfg: &ThemeConfig) {}
+    pub(super) fn save(_key: &str, _cfg: &ThemeConfig) {}
 }
 
 /// The site's theme, stored as JSON under `key`. Sites that share a key share
