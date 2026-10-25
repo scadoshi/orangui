@@ -153,7 +153,7 @@ pub fn CountUp(
 /// Digits for a figure that has not arrived: four of them, so the width holds
 /// still while it waits.
 fn waiting(seed: u64) -> u64 {
-    1_000 + seed % 9_000
+    1_000_u64.saturating_add(seed % 9_000)
 }
 
 /// Hands each `CountUp` its own starting seed.
@@ -204,7 +204,7 @@ fn noise(seed: u64) -> u64 {
 #[must_use]
 pub fn with_separators(n: u64) -> String {
     let digits = n.to_string();
-    let mut out = String::with_capacity(digits.len() + digits.len() / 3);
+    let mut out = String::with_capacity(digits.len().saturating_add(digits.len() / 3));
     for (i, ch) in digits.chars().rev().enumerate() {
         if i > 0 && i % 3 == 0 {
             out.push(',');
@@ -217,6 +217,10 @@ pub fn with_separators(n: u64) -> String {
 /// `n` to one decimal with a magnitude letter from ten thousand up: `28.0k`,
 /// `1.2m`, `3.4b`. Under that, [`with_separators`]. Truncated, not rounded,
 /// so a figure never reads past what it is.
+#[expect(
+    clippy::arithmetic_side_effects,
+    reason = "every divisor is one of the three nonzero units in STEPS, or a literal"
+)]
 pub(crate) fn short(n: u64) -> String {
     const STEPS: [(u64, char); 3] = [(1_000_000_000, 'b'), (1_000_000, 'm'), (1_000, 'k')];
     if n < 10_000 {
@@ -224,7 +228,8 @@ pub(crate) fn short(n: u64) -> String {
     }
     for (unit, letter) in STEPS {
         if n >= unit {
-            let tenths = n * 10 / unit;
+            // Every unit is a multiple of ten, so this is n * 10 / unit without the overflow.
+            let tenths = n / (unit / 10);
             return format!("{}.{}{letter}", tenths / 10, tenths % 10);
         }
     }
@@ -312,9 +317,9 @@ fn scrambled(text: &str, fraction: f64, seed: u64) -> String {
             if !c.is_ascii_digit() {
                 return c;
             }
-            let roll = noise(seed.wrapping_add(i as u64 * 7919));
+            let roll = noise(seed.wrapping_add((i as u64).wrapping_mul(7919)));
             if (roll % 1000) as f64 / 1000.0 < spread {
-                char::from(b'0' + (roll / 1000 % 10) as u8)
+                char::from(b'0'.saturating_add((roll / 1000 % 10) as u8))
             } else {
                 c
             }
@@ -393,7 +398,7 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
             if reduced_motion().await {
                 return;
             }
-            evaporate(text, shown, EXIT_MS * pace / 100).await;
+            evaporate(text, shown, EXIT_MS.saturating_mul(pace) / 100).await;
         });
     });
     // Under the pointer a band of noise travels across the art, over and over,
@@ -407,11 +412,14 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
                 return;
             }
             let columns = columns_of(text);
-            let lap = columns + SHIMMER_SPAN;
-            let mut center = 0;
+            let lap = columns.saturating_add(SHIMMER_SPAN);
+            let mut center: usize = 0;
             while hover.is_some_and(|hover| *hover.peek()) {
                 sleep_ms(DECODE_TICK_MS).await;
-                center = (center + SHIMMER_STEP) % lap.max(1);
+                center = center
+                    .saturating_add(SHIMMER_STEP)
+                    .checked_rem(lap)
+                    .unwrap_or(0);
                 shown.set(shimmered(text, center, u64::try_from(center).unwrap_or(0)));
             }
             shown.set(text.to_string());
@@ -471,6 +479,10 @@ async fn evaporate(text: &'static str, mut shown: Signal<String>, ms: u32) {
 /// Where the two waves stand at `frame` of `frames`: the noise front, which
 /// covers the art in the first `NOISE_PCT` of the pass, and the decode front,
 /// which starts at `DECODE_DELAY_PCT` and runs past the end by the finish.
+#[expect(
+    clippy::arithmetic_side_effects,
+    reason = "frame is at most frames, a few dozen, and columns is one line of art, so every product stays far below usize::MAX"
+)]
 fn fronts(columns: usize, frame: usize, frames: usize) -> (usize, usize) {
     let pct = frame * 100;
     let noise = ((columns + 1) * pct / (frames * NOISE_PCT).max(1)).min(columns + 1);
@@ -494,7 +506,7 @@ fn shimmered(text: &str, center: usize, seed: u64) -> String {
     let mut state = seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1;
     for line in text.lines() {
         for (column, glyph) in line.chars().enumerate() {
-            let inside = column <= center && column + SHIMMER_SPAN >= center;
+            let inside = column <= center && column.saturating_add(SHIMMER_SPAN) >= center;
             if glyph == ' ' || !inside {
                 out.push(glyph);
                 continue;
@@ -527,9 +539,10 @@ fn encoded(text: &str, noise: usize, clear: usize, seed: u64) -> String {
                 continue;
             }
             let wobble = usize::try_from(next() % 4).unwrap_or(0);
-            if column + wobble < clear {
+            let reach = column.saturating_add(wobble);
+            if reach < clear {
                 out.push(' ');
-            } else if column + wobble < noise {
+            } else if reach < noise {
                 let pick = usize::try_from(next() % 5).unwrap_or(0);
                 out.push(NOISE.get(pick).copied().unwrap_or('░'));
             } else {
@@ -569,9 +582,10 @@ fn decoded(text: &str, front: usize, noise: usize, seed: u64) -> String {
                 continue;
             }
             let wobble = usize::try_from(next() % 4).unwrap_or(0);
-            if column + wobble < front {
+            let reach = column.saturating_add(wobble);
+            if reach < front {
                 out.push(glyph);
-            } else if column + wobble >= noise {
+            } else if reach >= noise {
                 out.push(' ');
             } else {
                 let pick = usize::try_from(next() % 5).unwrap_or(0);
@@ -622,6 +636,12 @@ mod tests {
         assert_eq!(short(1_234_567), "1.2m");
         assert_eq!(short(123_456_789), "123.4m");
         assert_eq!(short(2_500_000_000), "2.5b");
+    }
+
+    #[test]
+    fn short_reaches_the_largest_counts_without_overflowing() {
+        assert_eq!(short(u64::MAX / 10), "1844674407.3b");
+        assert_eq!(short(u64::MAX), "18446744073.7b");
     }
 
     #[test]

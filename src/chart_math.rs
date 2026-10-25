@@ -46,12 +46,13 @@ pub fn curve(points: &[(f64, f64)]) -> String {
     }
     tangents.push(deltas.last().copied().unwrap_or(0.0));
     for (i, &delta) in deltas.iter().enumerate() {
+        let after = i.saturating_add(1);
         if delta.abs() < f64::EPSILON {
             set(&mut tangents, i, 0.0);
-            set(&mut tangents, i + 1, 0.0);
+            set(&mut tangents, after, 0.0);
             continue;
         }
-        let (Some(&here), Some(&next)) = (tangents.get(i), tangents.get(i + 1)) else {
+        let (Some(&here), Some(&next)) = (tangents.get(i), tangents.get(after)) else {
             continue;
         };
         let alpha = here / delta;
@@ -60,7 +61,7 @@ pub fn curve(points: &[(f64, f64)]) -> String {
         if size > 3.0 {
             let scale = 3.0 / size;
             set(&mut tangents, i, scale * alpha * delta);
-            set(&mut tangents, i + 1, scale * beta * delta);
+            set(&mut tangents, after, scale * beta * delta);
         }
     }
     for (pair, slopes) in points.windows(2).zip(tangents.windows(2)) {

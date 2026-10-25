@@ -7,6 +7,11 @@
 //! sets for its selector. `TUNABLE` lists the values hosts tune today, so moving one back into a
 //! plain rule fails here too.
 
+#![expect(
+    clippy::arithmetic_side_effects,
+    reason = "a test: brace depth and offsets over the kit's own sheets; an overflow fails it"
+)]
+
 const SHEETS: [(&str, &str); 4] = [
     ("components.css", include_str!("../assets/components.css")),
     ("app.css", include_str!("../assets/app.css")),

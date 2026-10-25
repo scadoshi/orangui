@@ -62,7 +62,7 @@ const FADE_MS: u32 = 300;
 
 /// `ms` scaled to `pace`, a percent of the full timeline.
 fn paced(ms: u32, pace: u32) -> u32 {
-    ms * pace / 100
+    ms.saturating_mul(pace) / 100
 }
 
 /// The overlay. `children` is the mark; it mounts once the field is landing.

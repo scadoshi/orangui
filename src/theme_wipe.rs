@@ -125,8 +125,8 @@ pub fn use_theme_wipe_follow(
             return;
         }
         let wiping = Rc::clone(&wiping);
-        wiping.set(wiping.get() + 1);
-        running += 1;
+        wiping.set(wiping.get().saturating_add(1));
+        running.with_mut(|n| *n = n.saturating_add(1));
         spawn(async move {
             let mut js = document::eval(WIPE_JS);
             let _ = js.send((target, next.css_class()));
@@ -136,14 +136,14 @@ pub fn use_theme_wipe_follow(
                 theme.set(next.clone());
                 shown.set(next);
                 if let Some(Replay(mut count)) = replay {
-                    count += 1;
+                    count.with_mut(|n| *n = n.saturating_add(1));
                 }
                 let _ = document::eval(LOGO_JS);
             }
             let _ = js.send(true);
             let _ = js.recv::<bool>().await;
-            wiping.set(wiping.get() - 1);
-            running -= 1;
+            wiping.set(wiping.get().saturating_sub(1));
+            running.with_mut(|n| *n = n.saturating_sub(1));
         });
     });
 
@@ -212,7 +212,7 @@ pub fn use_theme_follow(theme: Signal<ThemeConfig>, target: &'static str) -> The
             return;
         }
         heading.set(next.clone());
-        running += 1;
+        running.with_mut(|n| *n = n.saturating_add(1));
         spawn(async move {
             let mut js = document::eval(WIPE_JS);
             let _ = js.send((target, next.css_class()));
@@ -222,7 +222,7 @@ pub fn use_theme_follow(theme: Signal<ThemeConfig>, target: &'static str) -> The
             }
             let _ = js.send(true);
             let _ = js.recv::<bool>().await;
-            running -= 1;
+            running.with_mut(|n| *n = n.saturating_sub(1));
         });
     });
 

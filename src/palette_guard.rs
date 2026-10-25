@@ -26,6 +26,10 @@ const STATUS_VARS: [&str; 6] = [
 /// the rule it appears in. A reference inside an `@media` block reports the
 /// rule's own selector, not the query.
 #[must_use]
+#[expect(
+    clippy::arithmetic_side_effects,
+    reason = "byte offsets into css, each found inside it, so none passes its length"
+)]
 pub fn status_uses(css: &str) -> Vec<StatusUse> {
     let mut out = Vec::new();
     let mut from = 0;
@@ -47,6 +51,10 @@ pub fn status_uses(css: &str) -> Vec<StatusUse> {
 
 /// The selector of the rule enclosing byte offset `at`: the text between the
 /// rule's `{` and whichever of `{` or `}` precedes it.
+#[expect(
+    clippy::arithmetic_side_effects,
+    reason = "an offset found inside head plus one stays within its length"
+)]
 fn selector_before(css: &str, at: usize) -> String {
     let before = css.get(..at).unwrap_or("");
     let Some(open) = before.rfind('{') else {
@@ -61,6 +69,10 @@ fn selector_before(css: &str, at: usize) -> String {
         .join(" ")
 }
 
+#[expect(
+    clippy::arithmetic_side_effects,
+    reason = "offsets found inside s plus the two-byte comment markers stay within its length"
+)]
 fn strip_comments(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
     let mut rest = s;
