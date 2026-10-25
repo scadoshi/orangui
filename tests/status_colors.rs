@@ -1,8 +1,6 @@
 //! Status colors mean an outcome. Decoration draws from the palette slots. Every
 //! status reference in the crate's own stylesheets must be one of these.
 
-use orangui::status_uses;
-
 const ALLOWED: [&str; 12] = [
     ".alert-dialog-action-danger",
     ".input-error, .input-error:focus",
@@ -27,7 +25,7 @@ fn status_colors_only_where_they_mean_something() {
     ];
     let offenders: Vec<String> = sheets
         .iter()
-        .flat_map(|css| status_uses(css))
+        .flat_map(|css| orangui::status_uses(css))
         .filter(|u| !ALLOWED.contains(&u.selector.as_str()))
         .map(|u| format!("{} uses {}", u.selector, u.variable))
         .collect();

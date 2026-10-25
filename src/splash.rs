@@ -22,7 +22,7 @@ use std::fmt;
 
 use dioxus::prelude::*;
 
-use crate::entrance::sleep_ms;
+use crate::entrance;
 use crate::grid_cells::GridCells;
 
 /// Whether the opening is over. A host provides one at its root, closed; the
@@ -56,7 +56,7 @@ const MARK_AT_MS: u32 = 400;
 /// When the mark starts to leave, just after it has resolved.
 const LEAVE_AT_MS: u32 = 1350;
 /// When the fade starts: once the mark has left.
-const OUT_AT_MS: u32 = LEAVE_AT_MS + crate::entrance::EXIT_MS;
+const OUT_AT_MS: u32 = LEAVE_AT_MS + entrance::EXIT_MS;
 /// The fade itself; matches the transition in `app.css`.
 const FADE_MS: u32 = 300;
 
@@ -92,17 +92,17 @@ pub fn Splash(
                 );
                 let _ = eval.recv::<bool>().await;
             } else {
-                sleep_ms(paced(MARK_AT_MS, pace)).await;
+                entrance::sleep_ms(paced(MARK_AT_MS, pace)).await;
                 mark.set(true);
-                sleep_ms(paced(LEAVE_AT_MS - MARK_AT_MS, pace)).await;
+                entrance::sleep_ms(paced(LEAVE_AT_MS - MARK_AT_MS, pace)).await;
                 leave.set(true);
-                sleep_ms(paced(OUT_AT_MS - LEAVE_AT_MS, pace)).await;
+                entrance::sleep_ms(paced(OUT_AT_MS - LEAVE_AT_MS, pace)).await;
                 out.set(true);
             }
             if let Some(mut gate) = host_gate {
                 gate.0.set(true);
             }
-            sleep_ms(FADE_MS).await;
+            entrance::sleep_ms(FADE_MS).await;
             gone.set(true);
         });
     });
@@ -110,7 +110,7 @@ pub fn Splash(
         return rsx! {};
     }
     if prerendered {
-        let decode_ms = u32::try_from(crate::entrance::DECODE_MS).unwrap_or(u32::MAX);
+        let decode_ms = u32::try_from(entrance::DECODE_MS).unwrap_or(u32::MAX);
         return rsx! {
             document::Script { {SPLASH_JS} }
             div {
@@ -120,10 +120,10 @@ pub fn Splash(
                 "data-mark-at": "{paced(MARK_AT_MS, pace)}",
                 "data-decode": "{paced(decode_ms, pace)}",
                 "data-leave-at": "{paced(LEAVE_AT_MS, pace)}",
-                "data-exit": "{paced(crate::entrance::EXIT_MS, pace)}",
+                "data-exit": "{paced(entrance::EXIT_MS, pace)}",
                 "data-out-at": "{paced(OUT_AT_MS, pace)}",
                 "data-fade": "{FADE_MS}",
-                "data-tick": "{crate::entrance::DECODE_TICK_MS}",
+                "data-tick": "{entrance::DECODE_TICK_MS}",
                 GridCells {}
                 div { class: "splash-mark", {children} }
             }

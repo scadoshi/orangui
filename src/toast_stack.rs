@@ -9,8 +9,7 @@ use std::time::Duration;
 use dioxus::prelude::*;
 use dioxus_primitives::toast::{Toast, ToastPropsWithOwner, ToastProvider};
 
-use crate::TOAST_NORMAL;
-use crate::entrance::sleep_ms;
+use crate::{TOAST_NORMAL, entrance};
 
 /// The toast provider with the collapsing stack. Wrap the router in it; every
 /// `use_toast` below reaches it.
@@ -65,7 +64,7 @@ pub fn ToastStack(
                         animating.set(true);
                         spawn(async move {
                             // Outlasts the 0.2s transition in toast.css.
-                            sleep_ms(250).await;
+                            entrance::sleep_ms(250).await;
                             animating.set(false);
                         });
                     },

@@ -2,10 +2,9 @@
 
 use dioxus::prelude::*;
 
-use crate::entrance::sleep_ms;
 use crate::grid_cells::GridCells;
 use crate::overlay_stack::use_overlay_back_action;
-use crate::{ActionBar, Button, ButtonVariant};
+use crate::{ActionBar, Button, ButtonVariant, entrance};
 
 /// A bottom sheet with backdrop, title, content slot, and footer.
 ///
@@ -50,7 +49,7 @@ pub fn BottomSheet(
     let mut mounted = use_signal(|| false);
     use_effect(move || {
         spawn(async move {
-            sleep_ms(50).await;
+            entrance::sleep_ms(50).await;
             mounted.set(true);
         });
     });

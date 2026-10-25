@@ -7,7 +7,7 @@
 
 use dioxus::prelude::*;
 
-use crate::entrance::sleep_ms;
+use crate::entrance;
 
 /// A cell's side, in SVG units.
 pub const HEAT_CELL: f64 = 11.0;
@@ -129,7 +129,7 @@ pub fn HeatGrid(
 pub fn use_scroll_to_end() {
     use_effect(|| {
         spawn(async {
-            sleep_ms(60).await;
+            entrance::sleep_ms(60).await;
             let _ = document::eval(
                 "for (const el of document.querySelectorAll('.scroll-end')) el.scrollLeft = el.scrollWidth;",
             )

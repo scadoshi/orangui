@@ -3,7 +3,7 @@
 
 use dioxus::prelude::*;
 
-use crate::tip_anchor;
+use crate::chart_math;
 
 /// A chip at `left`% and `top`% of the nearest positioned ancestor (the
 /// chart's plot wrapper, which the host makes `position: relative`), hanging
@@ -23,7 +23,7 @@ pub fn ChartTip(
 ) -> Element {
     rsx! {
         span {
-            class: "chart-tip {class} {tip_anchor(left)}",
+            class: "chart-tip {class} {chart_math::tip_anchor(left)}",
             style: "left: {left}%; top: {top}%;",
             "{text}"
         }
