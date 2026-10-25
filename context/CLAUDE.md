@@ -33,7 +33,7 @@ cargo clippy --target wasm32-unknown-unknown --all-features -- -D warnings   # a
 
 ## Linting
 
-The 22 clippy lints zwipe uses, in `Cargo.toml` `[lints.clippy]`, with the panic family (`unwrap`, `expect`, `panic`, indexing, slicing) warned outside tests. `clippy.toml` sets the thresholds and allows the panic family inside tests. CI treats warnings as errors, on the native target and on wasm.
+The [scadoshi-rust](https://github.com/scadoshi/scadoshi-rust) lint set, in `Cargo.toml` `[lints]`. Pedantic clippy is on, and nothing may panic outside tests: `unwrap`, `expect`, `panic`, indexing and string slicing are denied. A suppression is `#[expect(lint, reason = "...")]`, never `#[allow]`. Arithmetic is overflow-safe, an `as` cast carries an `#[expect]` saying why it is exact, every public type implements `Debug`, anything no host can reach is `pub(crate)`, and pure functions are `#[must_use]` since this is a library. `clippy.toml` sets the thresholds, allows panics inside tests, and lists the product names (`WebView`, `WKWebView`, `OKLab`) docs may leave unquoted. Clippy's test exemptions don't reach the helpers in `tests/`, so each of those files opens with a `#![expect(..)]` naming what a test may do. CI treats warnings as errors, on the native target and on wasm.
 
 ## Commit Guidelines
 
