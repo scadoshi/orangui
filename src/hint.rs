@@ -57,6 +57,7 @@ impl ScreenHint {
     /// What opens the current screen's hint, or `None` when the screen has
     /// none. Reading it subscribes the caller, so the header redraws as
     /// screens change.
+    #[must_use]
     pub fn opener(&self) -> Option<Callback<()>> {
         (self.0)()
     }
@@ -64,6 +65,7 @@ impl ScreenHint {
 
 /// Creates the [`ScreenHint`] slot and provides it to everything below.
 /// Call once at the app root.
+#[must_use]
 pub fn use_screen_hint_slot() -> ScreenHint {
     let slot = ScreenHint(use_signal(|| None));
     use_context_provider(|| slot)

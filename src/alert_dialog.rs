@@ -331,6 +331,7 @@ pub struct DialogHost {
 }
 
 /// Creates the dialog slot.
+#[must_use]
 pub fn use_dialog_host() -> DialogHost {
     DialogHost {
         slot: use_signal(|| None),

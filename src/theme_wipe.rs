@@ -90,6 +90,7 @@ if (logo) {
 /// with the nav already laid out around it; until then the picker keeps
 /// showing the old theme. A change to `theme` from elsewhere, such as the
 /// stored theme adopted after mount, moves both with it and does not wipe.
+#[must_use]
 pub fn use_theme_wipe(
     theme: Signal<ThemeConfig>,
     target: &'static str,
@@ -102,6 +103,7 @@ pub fn use_theme_wipe(
 /// bare `shown`, for a site that also opens a [`ThemeSheet`](crate::ThemeSheet):
 /// the sheet reads the follower to stay up through a discarded pick's wipe
 /// and be gone on the other side of it.
+#[must_use]
 pub fn use_theme_wipe_follow(
     mut theme: Signal<ThemeConfig>,
     target: &'static str,
@@ -179,6 +181,7 @@ impl fmt::Debug for ThemeFollow {
 
 impl ThemeFollow {
     /// True while at least one wipe is still sweeping.
+    #[must_use]
     pub fn wiping(&self) -> bool {
         *self.running.read() > 0
     }
@@ -194,6 +197,7 @@ impl ThemeFollow {
 /// what the latest wipe is already heading for, as a saved preference echoed
 /// back from the server does, starts nothing: a second view transition would
 /// cut the running sweep short.
+#[must_use]
 pub fn use_theme_follow(theme: Signal<ThemeConfig>, target: &'static str) -> ThemeFollow {
     let mut shown = use_signal(|| theme.peek().clone());
     let mut running = use_signal(|| 0u32);

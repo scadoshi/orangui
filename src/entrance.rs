@@ -192,6 +192,7 @@ fn noise(seed: u64) -> u64 {
 }
 
 /// 12345 -> "12,345"
+#[must_use]
 pub fn with_separators(n: u64) -> String {
     let digits = n.to_string();
     let mut out = String::with_capacity(digits.len() + digits.len() / 3);

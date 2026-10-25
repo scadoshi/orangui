@@ -25,6 +25,7 @@ const STATUS_VARS: [&str; 6] = [
 /// Every `var(--status)` reference in `css`, in order, each with the selector of
 /// the rule it appears in. A reference inside an `@media` block reports the
 /// rule's own selector, not the query.
+#[must_use]
 pub fn status_uses(css: &str) -> Vec<StatusUse> {
     let mut out = Vec::new();
     let mut from = 0;

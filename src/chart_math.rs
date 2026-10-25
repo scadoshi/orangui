@@ -8,6 +8,7 @@ use std::fmt::Write as _;
 /// overshoots between two of them: Fritsch-Carlson monotone cubic
 /// interpolation as cubic Bezier segments. A flat run into a spike stays flat
 /// rather than dipping below the data first. Empty for no points.
+#[must_use]
 pub fn curve(points: &[(f64, f64)]) -> String {
     let Some(first) = points.first() else {
         return String::new();
@@ -86,6 +87,7 @@ fn set(values: &mut [f64], i: usize, value: f64) {
 }
 
 /// [`curve`] closed down to `baseline`, for the area under a line.
+#[must_use]
 pub fn area(points: &[(f64, f64)], baseline: f64) -> String {
     match (points.first(), points.last()) {
         (Some(first), Some(last)) => format!(
@@ -102,6 +104,7 @@ pub fn area(points: &[(f64, f64)], baseline: f64) -> String {
 /// as a percentage of the chart's width: centered in the middle, and from
 /// its edge near either side (`tip-start`, `tip-end`) so it never leaves the
 /// chart.
+#[must_use]
 pub fn tip_anchor(left: f64) -> &'static str {
     if left < 15.0 {
         "tip-start"
@@ -116,6 +119,7 @@ pub fn tip_anchor(left: f64) -> &'static str {
 /// `ratio` times the median of the nonzero days, the largest `max` of them,
 /// biggest first (ties in their original order). A steady busy stretch never
 /// qualifies; a spike does. Zero days never count, nor drag the median down.
+#[must_use]
 pub fn peak_indices(counts: &[u32], ratio: u32, max: usize) -> Vec<usize> {
     let mut busy: Vec<u32> = counts.iter().copied().filter(|&n| n > 0).collect();
     if busy.is_empty() {

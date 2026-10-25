@@ -216,6 +216,7 @@ pub struct ThemeConfig {
 
 impl ThemeConfig {
     /// The class to put on the themed element: `theme-{name}-{dark|light}`.
+    #[must_use]
     pub fn css_class(&self) -> String {
         let mode = if self.is_dark { "dark" } else { "light" };
         format!("theme-{}-{}", self.name, mode)
