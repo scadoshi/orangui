@@ -64,8 +64,12 @@ impl ScreenHint {
 }
 
 /// Creates the [`ScreenHint`] slot and provides it to everything below.
-/// Call once at the app root.
-#[must_use]
+/// Call once at the app root. The returned slot is a convenience: the
+/// context is provided either way, so a root that never reads it can drop it.
+#[expect(
+    clippy::must_use_candidate,
+    reason = "the call provides the context; the returned slot is optional"
+)]
 pub fn use_screen_hint_slot() -> ScreenHint {
     let slot = ScreenHint(use_signal(|| None));
     use_context_provider(|| slot)
