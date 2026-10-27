@@ -31,6 +31,12 @@
     --palette-4: #afc17e;
     --palette-5: #cc8738;
     --palette-6: #ff8873;
+    /* mana: black is its brown border, the darkest that reads */
+    --mana-white: #f7bba1;
+    --mana-blue: #61a5b1;
+    --mana-black: #72432f;
+    --mana-red: #c44030;
+    --mana-green: #afc17e;
     /* syntax: own scheme: built from this block's palette */
     --syntax-keyword: var(--palette-3);
     --syntax-type: var(--palette-5);
@@ -72,6 +78,12 @@
     --palette-4: #334101;
     --palette-5: #7c4700;
     --palette-6: #760000;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f0dac5;
+    --mana-blue: #00606e;
+    --mana-black: #3e1f17;
+    --mana-red: #a03018;
+    --mana-green: #5a6a30;
     /* syntax: own scheme: built from this block's palette */
     --syntax-keyword: var(--palette-3);
     --syntax-type: var(--palette-5);
@@ -114,6 +126,12 @@
     --palette-4: #d3869b;
     --palette-5: #fabd2f;
     --palette-6: #8ec07c;
+    /* mana: blue is gruvbox's bright blue; black is its bg3 gray */
+    --mana-white: #ebdbb2;
+    --mana-blue: #83a598;
+    --mana-black: #665c54;
+    --mana-red: #fb4934;
+    --mana-green: #b8bb26;
     /* syntax: ellisonleao/gruvbox.nvim (bright for dark, faded for light) */
     --syntax-keyword: #fb4934;
     --syntax-type: #fabd2f;
@@ -155,6 +173,12 @@
     --palette-4: #8f3f71;
     --palette-5: #b57614;
     --palette-6: #427b58;
+    /* mana: blue is gruvbox's faded blue; white is the background */
+    --mana-white: #fbf1c7;
+    --mana-blue: #076678;
+    --mana-black: #32302f;
+    --mana-red: #9d0006;
+    --mana-green: #79740e;
     /* syntax: ellisonleao/gruvbox.nvim (bright for dark, faded for light) */
     --syntax-keyword: #9d0006;
     --syntax-type: #b57614;
@@ -197,6 +221,12 @@
     --palette-4: #bd93f9;
     --palette-5: #f1fa8c;
     --palette-6: #ff79c6;
+    /* mana: black is its border gray; red and green are dracula's red and green */
+    --mana-white: #f8f8f2;
+    --mana-blue: #8be9fd;
+    --mana-black: #5d6178;
+    --mana-red: #ff5555;
+    --mana-green: #50fa7b;
     /* syntax: dracula/dracula-theme spec (Dracula, Alucard) */
     --syntax-keyword: #ff79c6;
     --syntax-type: #8be9fd;
@@ -238,6 +268,12 @@
     --palette-4: #644ac9;
     --palette-5: #846e15;
     --palette-6: #a3144d;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f8f8f2;
+    --mana-blue: #036a96;
+    --mana-black: #353748;
+    --mana-red: #cc3333;
+    --mana-green: #14710a;
     /* syntax: dracula/dracula-theme spec (Dracula, Alucard) */
     --syntax-keyword: #a3144d;
     --syntax-type: #036a96;
@@ -280,6 +316,12 @@
     --palette-4: #d699b6;
     --palette-5: #dbbc7f;
     --palette-6: #83c092;
+    /* mana: black is everforest's grey1 comment gray */
+    --mana-white: #d3c6aa;
+    --mana-blue: #7fbbb3;
+    --mana-black: #859289;
+    --mana-red: #e67e80;
+    --mana-green: #a7c080;
     /* syntax: sainnhe/everforest (medium) */
     --syntax-keyword: #e67e80;
     --syntax-type: #dbbc7f;
@@ -321,6 +363,12 @@
     --palette-4: #ca56a7;
     --palette-5: #b17400;
     --palette-6: #18946a;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f3ead3;
+    --mana-blue: #338ebe;
+    --mana-black: #2a322d;
+    --mana-red: #f85552;
+    --mana-green: #8da101;
     /* syntax: sainnhe/everforest (medium) */
     --syntax-keyword: #f85552;
     --syntax-type: #dfa000;
@@ -363,6 +411,12 @@
     --palette-4: #cba6f7;
     --palette-5: #f9e2af;
     --palette-6: #94e2d5;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #cdd6f4;
+    --mana-blue: #89b4fa;
+    --mana-black: #585b70;
+    --mana-red: #f38ba8;
+    --mana-green: #a6e3a1;
     /* syntax: catppuccin/nvim (Mocha, Latte) */
     --syntax-keyword: #cba6f7;
     --syntax-type: #f9e2af;
@@ -404,6 +458,12 @@
     --palette-4: #8839ef;
     --palette-5: #c47500;
     --palette-6: #179299;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #eff1f5;
+    --mana-blue: #1e66f5;
+    --mana-black: #313344;
+    --mana-red: #d20f39;
+    --mana-green: #40a02b;
     /* syntax: catppuccin/nvim (Mocha, Latte) */
     --syntax-keyword: #8839ef;
     --syntax-type: #df8e1d;
@@ -445,6 +505,12 @@
     --palette-4: #9876aa;
     --palette-5: #ffc66d;
     --palette-6: #00a3a3;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #a9b7c6;
+    --mana-blue: #6897bb;
+    --mana-black: #555555;
+    --mana-red: #ff6b68;
+    --mana-green: #6a8759;
     /* syntax: JetBrains Darcula and IntelliJ Light editor schemes */
     --syntax-keyword: #cc7832;
     --syntax-type: var(--text-primary);
@@ -486,6 +552,12 @@
     --palette-4: #871094;
     --palette-5: #9e880d;
     --palette-6: #00627a;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #ffffff;
+    --mana-blue: #1750eb;
+    --mana-black: #080808;
+    --mana-red: #ce0505;
+    --mana-green: #067d17;
     /* syntax: JetBrains Darcula and IntelliJ Light editor schemes */
     --syntax-keyword: #0033b3;
     --syntax-type: var(--text-primary);
@@ -528,6 +600,12 @@
     --palette-4: #bb9af7;
     --palette-5: #e0af68;
     --palette-6: #7dcfff;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #c0caf5;
+    --mana-blue: #7aa2f7;
+    --mana-black: #4b5277;
+    --mana-red: #f7768e;
+    --mana-green: #9ece6a;
     /* syntax: folke/tokyonight.nvim (night, day) */
     --syntax-keyword: #bb9af7;
     --syntax-type: #2ac3de;
@@ -569,6 +647,12 @@
     --palette-4: #924dea;
     --palette-5: #8c6c3e;
     --palette-6: #007197;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #d5d6db;
+    --mana-blue: #2777e2;
+    --mana-black: #1d2131;
+    --mana-red: #f52a65;
+    --mana-green: #587539;
     /* syntax: folke/tokyonight.nvim (night, day) */
     --syntax-keyword: #9854f1;
     --syntax-type: #188092;
@@ -611,6 +695,12 @@
     --palette-4: #b48ead;
     --palette-5: #ebcb8b;
     --palette-6: #88c0d0;
+    /* mana: black is nord3 */
+    --mana-white: #eceff4;
+    --mana-blue: #81a1c1;
+    --mana-black: #4c566a;
+    --mana-red: #bf616a;
+    --mana-green: #a3be8c;
     /* syntax: nordtheme/vim; light derived from dark */
     --syntax-keyword: #81a1c1;
     --syntax-type: #8fbcbb;
@@ -652,6 +742,12 @@
     --palette-4: #a17c9a;
     --palette-5: #9e8041;
     --palette-6: #578e9d;
+    /* mana: blue is nord10; white is the background */
+    --mana-white: #eceff4;
+    --mana-blue: #5e81ac;
+    --mana-black: #2e3440;
+    --mana-red: #bf616a;
+    --mana-green: #738c5c;
     /* syntax: nordtheme/vim; light derived from dark */
     --syntax-keyword: #5e81ac;
     --syntax-type: #4c8a89;
@@ -694,6 +790,12 @@
     --palette-4: #c4a7e7;
     --palette-5: #ebbcba;
     --palette-6: #eb6f92;
+    /* mana: blue is foam, green is pine, black is rose pine's highlight high */
+    --mana-white: #e0def4;
+    --mana-blue: #9ccfd8;
+    --mana-black: #524f67;
+    --mana-red: #eb6f92;
+    --mana-green: #31748f;
     /* syntax: rose-pine/neovim (main, dawn) */
     --syntax-keyword: #31748f;
     --syntax-type: #9ccfd8;
@@ -735,6 +837,12 @@
     --palette-4: #907aa9;
     --palette-5: #ca7672;
     --palette-6: #b4637a;
+    /* mana: blue is foam, green is pine; white is the background */
+    --mana-white: #faf4ed;
+    --mana-blue: #56949f;
+    --mana-black: #544e76;
+    --mana-red: #b4637a;
+    --mana-green: #286983;
     /* syntax: rose-pine/neovim (main, dawn) */
     --syntax-keyword: #286983;
     --syntax-type: #56949f;
@@ -777,6 +885,12 @@
     --palette-4: #ae81ff;
     --palette-5: #e6db74;
     --palette-6: #f92672;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #f8f8f2;
+    --mana-blue: #66d9ef;
+    --mana-black: #605e4f;
+    --mana-red: #f92672;
+    --mana-green: #a6e22e;
     /* syntax: microsoft/vscode theme-monokai; light derived from dark */
     --syntax-keyword: #f92672;
     --syntax-type: #66d9ef;
@@ -818,6 +932,12 @@
     --palette-4: #a274f1;
     --palette-5: #9a8e1e;
     --palette-6: #f92672;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #fdf9f3;
+    --mana-blue: #1a9fb4;
+    --mana-black: #3b3930;
+    --mana-red: #c4105a;
+    --mana-green: #649a00;
     /* syntax: microsoft/vscode theme-monokai; light derived from dark */
     --syntax-keyword: #f92672;
     --syntax-type: #1a9fb4;
@@ -859,6 +979,12 @@
     --palette-4: #ab9df2;
     --palette-5: #ffd866;
     --palette-6: #ff6188;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #fcfcfa;
+    --mana-blue: #78dce8;
+    --mana-black: #5b595c;
+    --mana-red: #ff6188;
+    --mana-green: #a9dc76;
     /* syntax: Monokai Pro syntax; light is Monokai Pro (Filter Light) */
     --syntax-keyword: #ff6188;
     --syntax-type: #78dce8;
@@ -900,6 +1026,12 @@
     --palette-4: #7058be;
     --palette-5: #cc7a0a;
     --palette-6: #e14775;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #faf4f2;
+    --mana-blue: #1c8ca8;
+    --mana-black: #29242a;
+    --mana-red: #e14775;
+    --mana-green: #269d69;
     /* syntax: Monokai Pro syntax; light is Monokai Pro (Filter Light) */
     --syntax-keyword: #e14775;
     --syntax-type: #1c8ca8;
@@ -941,6 +1073,12 @@
     --palette-4: #baa0f8;
     --palette-5: #ffed72;
     --palette-6: #ff6d7e;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #f2fffc;
+    --mana-blue: #7cd5f1;
+    --mana-black: #545f62;
+    --mana-red: #ff6d7e;
+    --mana-green: #a2e57b;
     /* syntax: Monokai Pro (Filter Machine) syntax; light derived from dark */
     --syntax-keyword: #ff6d7e;
     --syntax-type: #7cd5f1;
@@ -982,6 +1120,12 @@
     --palette-4: #8b75bc;
     --palette-5: #8f8108;
     --palette-6: #d05966;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #eaf2f5;
+    --mana-blue: #418ba1;
+    --mana-black: #2c3438;
+    --mana-red: #d05966;
+    --mana-green: #5a8f39;
     /* syntax: Monokai Pro (Filter Machine) syntax; light derived from dark */
     --syntax-keyword: #d05966;
     --syntax-type: #418ba1;
@@ -1023,6 +1167,12 @@
     --palette-4: #c39ac9;
     --palette-5: #ffd76d;
     --palette-6: #ff657a;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #eaf2f1;
+    --mana-blue: #9cd1bb;
+    --mana-black: #535763;
+    --mana-red: #ff657a;
+    --mana-green: #bad761;
     /* syntax: Monokai Pro (Filter Octagon) syntax; light derived from dark */
     --syntax-keyword: #ff657a;
     --syntax-type: #9cd1bb;
@@ -1064,6 +1214,12 @@
     --palette-4: #8a63a8;
     --palette-5: #a97d00;
     --palette-6: #d43f55;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #eff0f6;
+    --mana-blue: #2f8f7a;
+    --mana-black: #2f3140;
+    --mana-red: #d43f55;
+    --mana-green: #6f8f1f;
     /* syntax: Monokai Pro (Filter Octagon) syntax; light derived from dark */
     --syntax-keyword: #d43f55;
     --syntax-type: #2f8f7a;
@@ -1105,6 +1261,12 @@
     --palette-4: #a8a9eb;
     --palette-5: #f9cc6c;
     --palette-6: #fd6883;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #fff1f3;
+    --mana-blue: #85dacc;
+    --mana-black: #5b5152;
+    --mana-red: #fd6883;
+    --mana-green: #adda78;
     /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
     --syntax-keyword: #fd6883;
     --syntax-type: #85dacc;
@@ -1146,6 +1308,12 @@
     --palette-4: #7e7ebd;
     --palette-5: #ab800e;
     --palette-6: #c33f5a;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f5ece9;
+    --mana-blue: #3d9488;
+    --mana-black: #43383a;
+    --mana-red: #c33f5a;
+    --mana-green: #6a9431;
     /* syntax: Monokai Pro (Filter Ristretto) syntax; light derived from dark */
     --syntax-keyword: #c94a63;
     --syntax-type: #3d9488;
@@ -1187,6 +1355,12 @@
     --palette-4: #948ae3;
     --palette-5: #fce566;
     --palette-6: #fc618d;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #f7f1ff;
+    --mana-blue: #5ad4e6;
+    --mana-black: #525053;
+    --mana-red: #fc618d;
+    --mana-green: #7bd88f;
     /* syntax: Monokai Pro (Filter Spectrum) syntax; light derived from dark */
     --syntax-keyword: #fc618d;
     --syntax-type: #5ad4e6;
@@ -1228,6 +1402,12 @@
     --palette-4: #7f78c1;
     --palette-5: #928000;
     --palette-6: #d45578;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f0f0f0;
+    --mana-blue: #1f8c9a;
+    --mana-black: #333333;
+    --mana-red: #d45578;
+    --mana-green: #438f55;
     /* syntax: Monokai Pro (Filter Spectrum) syntax; light derived from dark */
     --syntax-keyword: #d45578;
     --syntax-type: #1f8c9a;
@@ -1269,6 +1449,12 @@
     --palette-4: #ffcaff;
     --palette-5: #ffc0b9;
     --palette-6: #8cf8f7;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #e0e2ea;
+    --mana-blue: #a6dbff;
+    --mana-black: #4f5258;
+    --mana-red: #ffc0b9;
+    --mana-green: #b3f6c0;
     /* syntax: neovim 0.10 default highlight groups, dark and light backgrounds */
     --syntax-keyword: var(--text-primary);
     --syntax-type: var(--text-primary);
@@ -1310,6 +1496,12 @@
     --palette-4: #470045;
     --palette-5: #590008;
     --palette-6: #007373;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #e0e2ea;
+    --mana-blue: #004c73;
+    --mana-black: #14161b;
+    --mana-red: #590008;
+    --mana-green: #005523;
     /* syntax: neovim 0.10 default highlight groups, dark and light backgrounds */
     --syntax-keyword: var(--text-primary);
     --syntax-type: var(--text-primary);
@@ -1352,6 +1544,12 @@
     --palette-4: #c678dd;
     --palette-5: #e5c07b;
     --palette-6: #56b6c2;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #abb2bf;
+    --mana-blue: #61afef;
+    --mana-black: #5a616f;
+    --mana-red: #e06c75;
+    --mana-green: #98c379;
     /* syntax: atom one-dark-syntax and one-light-syntax */
     --syntax-keyword: #c678dd;
     --syntax-type: #e5c07b;
@@ -1393,6 +1591,12 @@
     --palette-4: #a626a4;
     --palette-5: #cb7701;
     --palette-6: #0184bc;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #fafafa;
+    --mana-blue: #4078f2;
+    --mana-black: #383a42;
+    --mana-red: #e45649;
+    --mana-green: #50a14f;
     /* syntax: atom one-dark-syntax and one-light-syntax */
     --syntax-keyword: #a626a4;
     --syntax-type: #c18401;
@@ -1434,6 +1638,12 @@
     --palette-4: #fcc5e9;
     --palette-5: #fffac2;
     --palette-6: #5fb3a1;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #e4f0fb;
+    --mana-blue: #89ddff;
+    --mana-black: #506477;
+    --mana-red: #d0679d;
+    --mana-green: #5de4c7;
     /* syntax: drcmda/poimandres-theme tokenColors; light derived from dark */
     --syntax-keyword: #91b4d5;
     --syntax-type: #a6accd;
@@ -1475,6 +1685,12 @@
     --palette-4: #4a6fa5;
     --palette-5: #8f7f12;
     --palette-6: #3f8a7a;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #eef2f9;
+    --mana-blue: #2b7fb3;
+    --mana-black: #2a2f45;
+    --mana-red: #b8407a;
+    --mana-green: #1f8f78;
     /* syntax: drcmda/poimandres-theme tokenColors; light derived from dark */
     --syntax-keyword: #4a6fa5;
     --syntax-type: #525877;
@@ -1517,6 +1733,12 @@
     --palette-4: #6c71c4;
     --palette-5: #b58900;
     --palette-6: #2aa198;
+    /* mana: white is solarized base3, black is base01 */
+    --mana-white: #fdf6e3;
+    --mana-blue: #268bd2;
+    --mana-black: #586e75;
+    --mana-red: #dc322f;
+    --mana-green: #859900;
     /* syntax: altercation/solarized vim syntax groups */
     --syntax-keyword: #859900;
     --syntax-type: #b58900;
@@ -1558,6 +1780,12 @@
     --palette-4: #6c71c4;
     --palette-5: #af8300;
     --palette-6: #209b92;
+    /* mana: white is the background (base3), black is solarized base03 */
+    --mana-white: #fdf6e3;
+    --mana-blue: #268bd2;
+    --mana-black: #002b36;
+    --mana-red: #dc322f;
+    --mana-green: #859900;
     /* syntax: altercation/solarized vim syntax groups */
     --syntax-keyword: #859900;
     --syntax-type: #b58900;
@@ -1604,6 +1832,12 @@
     --palette-4: #d2a6ff;
     --palette-5: #ffb454;
     --palette-6: #95e6cb;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #bfbdb6;
+    --mana-blue: #59c2ff;
+    --mana-black: #3d4149;
+    --mana-red: #f07178;
+    --mana-green: #aad94c;
     /* syntax: ayu-theme/ayu-colors syntax (dark, light) */
     --syntax-keyword: #ff8f40;
     --syntax-type: #59c2ff;
@@ -1645,6 +1879,12 @@
     --palette-4: #a37acc;
     --palette-5: #ca8400;
     --palette-6: #229f7b;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #fcfcfc;
+    --mana-blue: #0097d9;
+    --mana-black: #5c6166;
+    --mana-red: #e65050;
+    --mana-green: #74a000;
     /* syntax: ayu-theme/ayu-colors syntax (dark, light) */
     --syntax-keyword: #fa8d3e;
     --syntax-type: #399ee6;
@@ -1686,6 +1926,12 @@
     --palette-4: #9f7efe;
     --palette-5: #f9c859;
     --palette-6: #10b1fe;
+    /* mana: black is its muted gray */
+    --mana-white: #abb2bf;
+    --mana-blue: #3375fe;
+    --mana-black: #636d83;
+    --mana-red: #ff2e3f;
+    --mana-green: #3fc56b;
     /* syntax: uloco/theme-bluloco tokenColors */
     --syntax-keyword: #10b1fe;
     --syntax-type: #ff6480;
@@ -1727,6 +1973,12 @@
     --palette-4: #823ff1;
     --palette-5: #df631c;
     --palette-6: #26608c;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f9f9f9;
+    --mana-blue: #275fe4;
+    --mana-black: #383a42;
+    --mana-red: #ff0000;
+    --mana-green: #23974a;
     /* syntax: uloco/theme-bluloco tokenColors */
     --syntax-keyword: #0098dd;
     --syntax-type: #d52753;
@@ -1769,6 +2021,12 @@
     --palette-4: #ab7df8;
     --palette-5: #d29922;
     --palette-6: #07ace4;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #c9d1d9;
+    --mana-blue: #4493f8;
+    --mana-black: #30363d;
+    --mana-red: #f85149;
+    --mana-green: #3fb950;
     /* syntax: primer/github-vscode-theme (dark default, light default) */
     --syntax-keyword: #ff7b72;
     --syntax-type: #ffa657;
@@ -1810,6 +2068,12 @@
     --palette-4: #8250df;
     --palette-5: #9a6700;
     --palette-6: #006a80;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #ffffff;
+    --mana-blue: #0969da;
+    --mana-black: #24292f;
+    --mana-red: #cf222e;
+    --mana-green: #1a7f37;
     /* syntax: primer/github-vscode-theme (dark default, light default) */
     --syntax-keyword: #cf222e;
     --syntax-type: #953800;
@@ -1851,6 +2115,12 @@
     --palette-4: #b780ff;
     --palette-5: #f0b72f;
     --palette-6: #ef6eb1;
+    /* mana: black is its muted border gray */
+    --mana-white: #f0f3f6;
+    --mana-blue: #71b7ff;
+    --mana-black: #525964;
+    --mana-red: #ff6a69;
+    --mana-green: #26cd4d;
     /* syntax: @primer/primitives 7.15.1 prettylights.syntax tokens, high contrast */
     --syntax-keyword: #ff9492;
     --syntax-type: #ffb757;
@@ -1892,6 +2162,12 @@
     --palette-4: #622cbc;
     --palette-5: #744500;
     --palette-6: #971368;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #ffffff;
+    --mana-blue: #0349b4;
+    --mana-black: #0e1116;
+    --mana-red: #d1242f;
+    --mana-green: #055d20;
     /* syntax: @primer/primitives 7.15.1 prettylights.syntax tokens, high contrast */
     --syntax-keyword: #a0111f;
     --syntax-type: #702c00;
@@ -1934,6 +2210,12 @@
     --palette-4: #957fb8;
     --palette-5: #e6c384;
     --palette-6: #7aa89f;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #dcd7ba;
+    --mana-blue: #7e9cd8;
+    --mana-black: #54546d;
+    --mana-red: #e82424;
+    --mana-green: #98bb6c;
     /* syntax: rebelot/kanagawa.nvim (Wave, Lotus) */
     --syntax-keyword: #957fb8;
     --syntax-type: #7aa89f;
@@ -1975,6 +2257,12 @@
     --palette-4: #624c83;
     --palette-5: #77713f;
     --palette-6: #597b75;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f2ecbc;
+    --mana-blue: #4d699b;
+    --mana-black: #545464;
+    --mana-red: #c84053;
+    --mana-green: #6f894e;
     /* syntax: rebelot/kanagawa.nvim (Wave, Lotus) */
     --syntax-keyword: #624c83;
     --syntax-type: #597b75;
@@ -2016,6 +2304,12 @@
     --palette-4: #a292a3;
     --palette-5: #c4b28a;
     --palette-6: #c4746e;
+    /* mana: blue is kanagawa's dragonBlue, red its dragonRed; black is its border gray */
+    --mana-white: #c5c9c5;
+    --mana-blue: #658594;
+    --mana-black: #625e5a;
+    --mana-red: #c4746e;
+    --mana-green: #87a987;
     /* syntax: rebelot/kanagawa.nvim themes.lua (Dragon, Lotus) */
     --syntax-keyword: #8992a7;
     --syntax-type: #8ea4a2;
@@ -2057,6 +2351,12 @@
     --palette-4: #624c83;
     --palette-5: #77713f;
     --palette-6: #597b75;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f2ecbc;
+    --mana-blue: #4d699b;
+    --mana-black: #545464;
+    --mana-red: #c84053;
+    --mana-green: #6f894e;
     /* syntax: rebelot/kanagawa.nvim (Dragon, Lotus) */
     --syntax-keyword: #624c83;
     --syntax-type: #597b75;
@@ -2098,6 +2398,12 @@
     --palette-4: #c792ea;
     --palette-5: #ffcb6b;
     --palette-6: #89ddff;
+    /* mana: black is its muted gray */
+    --mana-white: #eeffff;
+    --mana-blue: #82aaff;
+    --mana-black: #616161;
+    --mana-red: #f07178;
+    --mana-green: #c3e88d;
     /* syntax: material-theme/vsc-material-theme Darker and Lighter tokenColors, keywords from the storage rule */
     --syntax-keyword: #c792ea;
     --syntax-type: #ffcb6b;
@@ -2139,6 +2445,12 @@
     --palette-4: #9c3eda;
     --palette-5: #827717;
     --palette-6: #0097a7;
+    /* mana: black is its blue-gray text; white is the background */
+    --mana-white: #fafafa;
+    --mana-blue: #6182b8;
+    --mana-black: #546e7a;
+    --mana-red: #e53935;
+    --mana-green: #388e3c;
     /* syntax: material-theme/vsc-material-theme Darker and Lighter tokenColors, keywords from the storage rule */
     --syntax-keyword: #9c3eda;
     --syntax-type: #e2931d;
@@ -2181,6 +2493,12 @@
     --palette-4: #c792ea;
     --palette-5: #ecc48d;
     --palette-6: #7fdbca;
+    /* mana: black is night owl's comment gray */
+    --mana-white: #d6deeb;
+    --mana-blue: #82aaff;
+    --mana-black: #637777;
+    --mana-red: #ef5350;
+    --mana-green: #addb67;
     /* syntax: sdras/night-owl-vscode-theme (Night Owl, Light Owl) */
     --syntax-keyword: #c792ea;
     --syntax-type: #ffcb8b;
@@ -2222,6 +2540,12 @@
     --palette-4: #994cc3;
     --palette-5: #b98900;
     --palette-6: #2aa298;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #fbfbfb;
+    --mana-blue: #4876d6;
+    --mana-black: #403f53;
+    --mana-red: #d3423e;
+    --mana-green: #08916a;
     /* syntax: sdras/night-owl-vscode-theme (Night Owl, Light Owl) */
     --syntax-keyword: #994cc3;
     --syntax-type: #0c969b;
@@ -2263,6 +2587,12 @@
     --palette-4: #9d79d6;
     --palette-5: #dbc074;
     --palette-6: #63cdcf;
+    /* mana: black is its deep blue border */
+    --mana-white: #cdcecf;
+    --mana-blue: #719cd6;
+    --mana-black: #39506d;
+    --mana-red: #c94f6d;
+    --mana-green: #81b29a;
     /* syntax: nightfox.nvim spec (Nightfox, Dayfox) */
     --syntax-keyword: #9d79d6;
     --syntax-type: #dbc074;
@@ -2304,6 +2634,12 @@
     --palette-4: #6e33ce;
     --palette-5: #ac5402;
     --palette-6: #287980;
+    /* mana: black is dayfox's purple-black text; white is the background */
+    --mana-white: #f6f2ee;
+    --mana-blue: #2848a9;
+    --mana-black: #3d2b5a;
+    --mana-red: #a5222f;
+    --mana-green: #396847;
     /* syntax: nightfox.nvim spec (Nightfox, Dayfox) */
     --syntax-keyword: #6e33ce;
     --syntax-type: #ac5402;
@@ -2346,6 +2682,12 @@
     --palette-4: #cecece;
     --palette-5: #9b9b9b;
     --palette-6: #b0b0b0;
+    /* mana: no hues: blue is its gray blue slot; black is its darkest border that reads on #000 */
+    --mana-white: #f5f5f5;
+    --mana-blue: #8d8d8d;
+    --mana-black: #3a3a3a;
+    --mana-red: #c05a5a;
+    --mana-green: #6a9a6a;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -2387,6 +2729,12 @@
     --palette-4: #8f8f8f;
     --palette-5: #8f8f8f;
     --palette-6: #919191;
+    /* mana: no hues: blue is its gray blue slot; black is vantablack's own #000000 */
+    --mana-white: #ffffff;
+    --mana-blue: #8d8d8d;
+    --mana-black: #000000;
+    --mana-red: #a83232;
+    --mana-green: #3a6a3a;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -2428,6 +2776,12 @@
     --palette-4: #8b7ec8;
     --palette-5: #d0a215;
     --palette-6: #ce5d97;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #cecdc3;
+    --mana-blue: #4385be;
+    --mana-black: #403e3c;
+    --mana-red: #d14d41;
+    --mana-green: #879a39;
     /* syntax: kepano/flexoki vscode Flexoki-Dark and Flexoki-Light; macro is its language-features magenta */
     --syntax-keyword: #879a39;
     --syntax-type: #d0a215;
@@ -2469,6 +2823,12 @@
     --palette-4: #5e409d;
     --palette-5: #ad8301;
     --palette-6: #a02f6f;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #fffcf0;
+    --mana-blue: #205ea6;
+    --mana-black: #100f0f;
+    --mana-red: #af3029;
+    --mana-green: #66800b;
     /* syntax: kepano/flexoki vscode Flexoki-Dark and Flexoki-Light; macro is its language-features magenta */
     --syntax-keyword: #66800b;
     --syntax-type: #ad8301;
@@ -2511,6 +2871,12 @@
     --palette-4: #c586c0;
     --palette-5: #dcdcaa;
     --palette-6: #4ec9b0;
+    /* mana: green is its comment green; black is its muted gray */
+    --mana-white: #d4d4d4;
+    --mana-blue: #569cd6;
+    --mana-black: #888888;
+    --mana-red: #f14c4c;
+    --mana-green: #6a9955;
     /* syntax: microsoft/vscode theme-defaults (dark_plus, light_plus) */
     --syntax-keyword: #569cd6;
     --syntax-type: #4ec9b0;
@@ -2552,6 +2918,12 @@
     --palette-4: #af00db;
     --palette-5: #a31515;
     --palette-6: #267f99;
+    /* mana: green is its comment green; white is the background */
+    --mana-white: #ffffff;
+    --mana-blue: #0070c1;
+    --mana-black: #1e1e1e;
+    --mana-red: #cd3131;
+    --mana-green: #008000;
     /* syntax: microsoft/vscode theme-defaults (dark_plus, light_plus) */
     --syntax-keyword: #0000ff;
     --syntax-type: #267f99;
@@ -2593,6 +2965,12 @@
     --palette-4: #d0a8ff;
     --palette-5: #d0bf69;
     --palette-6: #fc5fa3;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #ffffff;
+    --mana-blue: #5dd8ff;
+    --mana-black: #515b70;
+    --mana-red: #fc6a5d;
+    --mana-green: #67b7a4;
     /* syntax: Xcode Default (Dark) and Default (Light) syntax colors */
     --syntax-keyword: #fc5fa3;
     --syntax-type: #d0a8ff;
@@ -2634,6 +3012,12 @@
     --palette-4: #3900a0;
     --palette-5: #815f03;
     --palette-6: #9b2393;
+    /* mana: no green: green is its teal project color; white is the background */
+    --mana-white: #ffffff;
+    --mana-blue: #0b4f79;
+    --mana-black: #000000;
+    --mana-red: #c41a16;
+    --mana-green: #326d74;
     /* syntax: Xcode Default (Dark) and Default (Light) syntax colors */
     --syntax-keyword: #9b2393;
     --syntax-type: #3900a0;
@@ -2676,6 +3060,12 @@
     --palette-4: #dc8cc3;
     --palette-5: #f0dfaf;
     --palette-6: #93e0e3;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #dcdccc;
+    --mana-blue: #8cd0d3;
+    --mana-black: #6f6f6f;
+    --mana-red: #cc9393;
+    --mana-green: #7f9f7f;
     /* syntax: bbatsov/zenburn-emacs font-lock faces; light derived from dark */
     --syntax-keyword: #f0dfaf;
     --syntax-type: #7cb8bb;
@@ -2717,6 +3107,12 @@
     --palette-4: #b4689d;
     --palette-5: #908154;
     --palette-6: #408d91;
+    /* mana: blue is its constant blue; white is the background */
+    --mana-white: #e8e6d8;
+    --mana-blue: #4a7e9e;
+    --mana-black: #3f3f38;
+    --mana-red: #9a5a5a;
+    --mana-green: #5a7a5a;
     /* syntax: bbatsov/zenburn-emacs font-lock faces; light derived from dark */
     --syntax-keyword: #908154;
     --syntax-type: #488b8e;
@@ -2763,6 +3159,12 @@
     --palette-4: #c89dc1;
     --palette-5: #e9bb4f;
     --palette-6: #a3bfd1;
+    /* mana: red is ethereal's red, green its sage (omarchy colors.toml) */
+    --mana-white: #d8dbf0;
+    --mana-blue: #7d82d9;
+    --mana-black: #3a3e58;
+    --mana-red: #ed5b5a;
+    --mana-green: #92a593;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -2804,6 +3206,12 @@
     --palette-4: #a87fa1;
     --palette-5: #af8200;
     --palette-6: #738d9e;
+    /* mana: red is ethereal's red, green its sage (omarchy colors.toml); white is the background */
+    --mana-white: #f4f5fb;
+    --mana-blue: #7d82d9;
+    --mana-black: #3a3d55;
+    --mana-red: #ed5b5a;
+    --mana-green: #809381;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -2846,6 +3254,12 @@
     --palette-4: #86a7df;
     --palette-5: #50f7d4;
     --palette-6: #7cf8f7;
+    /* mana: white is hackerman's foreground, black its muted blue-black (omarchy colors.toml) */
+    --mana-white: #ddf7ff;
+    --mana-blue: #829dd4;
+    --mana-black: #2d3450;
+    --mana-red: #ff5555;
+    --mana-green: #33ff33;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -2887,6 +3301,12 @@
     --palette-4: #6888be;
     --palette-5: #009b7d;
     --palette-6: #009797;
+    /* mana: black is hackerman's background (omarchy colors.toml); white is the background */
+    --mana-white: #e6f2e6;
+    --mana-blue: #6a84ba;
+    --mana-black: #0b0c16;
+    --mana-red: #b03030;
+    --mana-green: #009b00;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -2929,6 +3349,12 @@
     --palette-4: #c63d3d;
     --palette-5: #d35f5f;
     --palette-6: #c02523;
+    /* mana: no blue: blue is its gray cyan slot, green its olive; black is its dark foreground (omarchy colors.toml) */
+    --mana-white: #e8e8e8;
+    --mana-blue: #bebebe;
+    --mana-black: #555555;
+    --mana-red: #d35f5f;
+    --mana-green: #7e8f5a;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -2970,6 +3396,12 @@
     --palette-4: #c63d3d;
     --palette-5: #d35f5f;
     --palette-6: #b91c1c;
+    /* mana: no blue: blue is its gray cyan slot, green its olive; white is the background */
+    --mana-white: #efefef;
+    --mana-blue: #868686;
+    --mana-black: #161616;
+    --mana-red: #b91c1c;
+    --mana-green: #5f6d42;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -3011,6 +3443,12 @@
     --palette-4: #b380b0;
     --palette-5: #ebc06d;
     --palette-6: #89b3b6;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #ece1d7;
+    --mana-blue: #7f91b2;
+    --mana-black: #5a4f45;
+    --mana-red: #bd8183;
+    --mana-green: #85b695;
     /* syntax: savq/melange-nvim colors/melange.lua */
     --syntax-keyword: #e49b5d;
     --syntax-type: #7b9695;
@@ -3052,6 +3490,12 @@
     --palette-4: #904180;
     --palette-5: #a06d00;
     --palette-6: #3d6568;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f1f1f1;
+    --mana-blue: #465aa4;
+    --mana-black: #54433a;
+    --mana-red: #c77b8b;
+    --mana-green: #3a684a;
     /* syntax: savq/melange-nvim colors/melange.lua */
     --syntax-keyword: #bc5c00;
     --syntax-type: #739797;
@@ -3094,6 +3538,12 @@
     --palette-4: #bb7744;
     --palette-5: #c9a554;
     --palette-6: #7f6e58;
+    /* mana: no blue: blue is miasma's olive blue slot, so blue and green sit close */
+    --mana-white: #c2c2b0;
+    --mana-blue: #78824b;
+    --mana-black: #4a4a40;
+    --mana-red: #c98a6a;
+    --mana-green: #5f875f;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -3135,6 +3585,12 @@
     --palette-4: #b4713e;
     --palette-5: #9d7a24;
     --palette-6: #685742;
+    /* mana: no blue: blue is miasma's olive blue slot, so blue and green sit close; white is the background */
+    --mana-white: #e6e2d4;
+    --mana-blue: #78824b;
+    --mana-black: #33332a;
+    --mana-red: #9a5a3a;
+    --mana-green: #5f875f;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -3176,6 +3632,12 @@
     --palette-4: #b6a0ff;
     --palette-5: #d0bc00;
     --palette-6: #00d3d0;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #ffffff;
+    --mana-blue: #79a8ff;
+    --mana-black: #646464;
+    --mana-red: #ff5f59;
+    --mana-green: #44bc44;
     /* syntax: modus-themes semantic mappings: keyword magenta-cooler, string blue-warmer, fnname magenta, type cyan-cooler */
     --syntax-keyword: #b6a0ff;
     --syntax-type: #6ae4b9;
@@ -3217,6 +3679,12 @@
     --palette-4: #531ab6;
     --palette-5: #6f5500;
     --palette-6: #005f5f;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #ffffff;
+    --mana-blue: #3548cf;
+    --mana-black: #000000;
+    --mana-red: #a60000;
+    --mana-green: #006800;
     /* syntax: modus-themes semantic mappings: keyword magenta-cooler, string blue-warmer, fnname magenta, type cyan-cooler */
     --syntax-keyword: #531ab6;
     --syntax-type: #005f5f;
@@ -3259,6 +3727,12 @@
     --palette-4: #d2689c;
     --palette-5: #e5c736;
     --palette-6: #2dd5b7;
+    /* mana: blue is its jade aqua; black is its muted gray */
+    --mana-white: #c1cec4;
+    --mana-blue: #2dd5b7;
+    --mana-black: #76897f;
+    --mana-red: #cf5a5a;
+    --mana-green: #549e6a;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -3300,6 +3774,12 @@
     --palette-4: #cb6296;
     --palette-5: #9f8100;
     --palette-6: #00957a;
+    /* mana: blue is its jade aqua; white is the background */
+    --mana-white: #e8efe8;
+    --mana-blue: #00957a;
+    --mana-black: #24332c;
+    --mana-red: #a84545;
+    --mana-green: #3a7a54;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -3341,6 +3821,12 @@
     --palette-4: #be95ff;
     --palette-5: #82cfff;
     --palette-6: #08bdba;
+    /* mana: red is oxocarbon's pink-red */
+    --mana-white: #dde1e6;
+    --mana-blue: #78a9ff;
+    --mana-black: #525252;
+    --mana-red: #ee5396;
+    --mana-green: #42be65;
     /* syntax: nyoom-engineering/oxocarbon.nvim; light stepped to IBM Carbon 60 tones where it does not read on white */
     --syntax-keyword: #78a9ff;
     --syntax-type: #78a9ff;
@@ -3382,6 +3868,12 @@
     --palette-4: #673ab7;
     --palette-5: #ba4e00;
     --palette-6: #007d79;
+    /* mana: red is oxocarbon's pink-red; white is the background */
+    --mana-white: #ffffff;
+    --mana-blue: #0f62fe;
+    --mana-black: #161616;
+    --mana-red: #ee5396;
+    --mana-green: #198038;
     /* syntax: nyoom-engineering/oxocarbon.nvim; light stepped to IBM Carbon 60 tones where it does not read on white */
     --syntax-keyword: #ee5396;
     --syntax-type: #ee5396;
@@ -3425,6 +3917,12 @@
     --palette-4: #ff7edb;
     --palette-5: #fede5d;
     --palette-6: #f97e72;
+    /* mana: blue is its cyan; black is its purple border */
+    --mana-white: #f5eeff;
+    --mana-blue: #36f9f6;
+    --mana-black: #453a63;
+    --mana-red: #fe4450;
+    --mana-green: #4fc793;
     /* syntax: robb0wen/synthwave-vscode syntax; light derived from dark */
     --syntax-keyword: #fede5d;
     --syntax-type: #fe4450;
@@ -3466,6 +3964,12 @@
     --palette-4: #d557b4;
     --palette-5: #9a8c00;
     --palette-6: #d6564b;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f5eefb;
+    --mana-blue: #0098a5;
+    --mana-black: #2d2340;
+    --mana-red: #d1204a;
+    --mana-green: #1f9a6a;
     /* syntax: robb0wen/synthwave-vscode syntax; light derived from dark */
     --syntax-keyword: #9a8c00;
     --syntax-type: #e0303e;
@@ -3507,6 +4011,12 @@
     --palette-4: #ad5c7c;
     --palette-5: #fda47f;
     --palette-6: #a1cdd8;
+    /* mana: blue is terafox's cyan; black is its deep teal border */
+    --mana-white: #e6eaea;
+    --mana-blue: #a1cdd8;
+    --mana-black: #2d4f56;
+    --mana-red: #e85c51;
+    --mana-green: #7aa4a1;
     /* syntax: nightfox.nvim spec (Terafox, Dayfox) */
     --syntax-keyword: #ad5c7c;
     --syntax-type: #fda47f;
@@ -3548,6 +4058,12 @@
     --palette-4: #6e33ce;
     --palette-5: #ac5402;
     --palette-6: #287980;
+    /* mana: black is dayfox's purple-black text; white is the background */
+    --mana-white: #f6f2ee;
+    --mana-blue: #2848a9;
+    --mana-black: #3d2b5a;
+    --mana-red: #a5222f;
+    --mana-green: #396847;
     /* syntax: nightfox.nvim spec (Terafox, Dayfox) */
     --syntax-keyword: #6e33ce;
     --syntax-type: #ac5402;
@@ -3590,6 +4106,12 @@
     --palette-4: #ff00ff;
     --palette-5: #ffff00;
     --palette-6: #00ffff;
+    /* mana: black is the Vintage scheme's black */
+    --mana-white: #eeedf0;
+    --mana-blue: #1761ff;
+    --mana-black: #000000;
+    --mana-red: #ff6b6b;
+    --mana-green: #4ec94e;
     /* syntax: PSReadLine default colors on the Vintage scheme (dark), PowerShell ISE script pane (light) */
     --syntax-keyword: #00ff00;
     --syntax-type: #c0c0c0;
@@ -3631,6 +4153,12 @@
     --palette-4: #800080;
     --palette-5: #808000;
     --palette-6: #008080;
+    /* mana: blue and black are the Vintage scheme's bright blue and black; white is the background */
+    --mana-white: #f2f4f8;
+    --mana-blue: #0000ff;
+    --mana-black: #000000;
+    --mana-red: #c42b1c;
+    --mana-green: #008000;
     /* syntax: PSReadLine default colors on the Vintage scheme (dark), PowerShell ISE script pane (light) */
     --syntax-keyword: #00008b;
     --syntax-type: #008080;
@@ -3673,6 +4201,12 @@
     --palette-4: #ab8ac1;
     --palette-5: #d2991d;
     --palette-6: #3e999f;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #dddddd;
+    --mana-blue: #769acb;
+    --mana-black: #5a5a5a;
+    --mana-red: #e05d44;
+    --mana-green: #97b84f;
     /* syntax: rust-lang/rust rustdoc dark and light syntax colors; types take its
        prelude-type blue, functions its function-link color, and constants
        its prelude-value red so they stand apart from strings */
@@ -3716,6 +4250,12 @@
     --palette-4: #8959a8;
     --palette-5: #de6d00;
     --palette-6: #3e999f;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #f9f7ec;
+    --mana-blue: #4271ae;
+    --mana-black: #2a2a2a;
+    --mana-red: #c0392b;
+    --mana-green: #718c00;
     /* syntax: rust-lang/rust rustdoc dark and light syntax colors; types take its
        prelude-type blue, functions its function-link color, and constants
        its prelude-value red so they stand apart from strings */
@@ -3759,6 +4299,12 @@
     --palette-4: #b166da;
     --palette-5: #f3ec79;
     --palette-6: #17c6a3;
+    /* mana: this block's colors; black is its border gray */
+    --mana-white: #d9e8f7;
+    --mana-blue: #1290c3;
+    --mana-black: #515658;
+    --mana-red: #eb4b64;
+    --mana-green: #a7ec21;
     /* syntax: Eclipse Dark (JDT dark semantic colors) and JDT classic light */
     --syntax-keyword: #cc6c1d;
     --syntax-type: #1290c3;
@@ -3800,6 +4346,12 @@
     --palette-4: #7f0055;
     --palette-5: #646464;
     --palette-6: #3f5fbf;
+    /* mana: this block's colors; white is the background */
+    --mana-white: #ffffff;
+    --mana-blue: #2a00ff;
+    --mana-black: #000000;
+    --mana-red: #ff0000;
+    --mana-green: #3f7f5f;
     /* syntax: Eclipse Dark (JDT dark semantic colors) and JDT classic light */
     --syntax-keyword: #7f0055;
     --syntax-type: var(--text-primary);
@@ -3846,6 +4398,12 @@
     --palette-4: #81b2fd;
     --palette-5: #a58118;
     --palette-6: #5886ce;
+    /* mana: no red or green: red is its orange warning, green its olive gold */
+    --mana-white: #d6d1d1;
+    --mana-blue: #81b2fd;
+    --mana-black: #5c5454;
+    --mana-red: #e8973a;
+    --mana-green: #a58118;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -3887,6 +4445,12 @@
     --palette-4: #215193;
     --palette-5: #947700;
     --palette-6: #497bc0;
+    /* mana: no red or green: red is its orange warning, green its olive brown; white is the background */
+    --mana-white: #f2f0ed;
+    --mana-blue: #497bc0;
+    --mana-black: #383232;
+    --mana-red: #b06a10;
+    --mana-green: #6b4e00;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -3929,6 +4493,12 @@
     --palette-4: #c8b04f;
     --palette-5: #488acb;
     --palette-6: #9c851a;
+    /* mana: no green: green is its olive gold */
+    --mana-white: #d1d4d8;
+    --mana-blue: #74b6fa;
+    --mana-black: #525760;
+    --mana-red: #e07040;
+    --mana-green: #9c851a;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -3970,6 +4540,12 @@
     --palette-4: #675000;
     --palette-5: #447cbf;
     --palette-6: #907900;
+    /* mana: no green: green is its olive gold; white is the background */
+    --mana-white: #f0f0f4;
+    --mana-blue: #195392;
+    --mana-black: #313339;
+    --mana-red: #b04820;
+    --mana-green: #907900;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -4012,6 +4588,12 @@
     --palette-4: #f39097;
     --palette-5: #009d8c;
     --palette-6: #c4656d;
+    /* mana: no green: blue and green are its light and deep teals */
+    --mana-white: #d8d3d2;
+    --mana-blue: #75f8e4;
+    --mana-black: #5f5551;
+    --mana-red: #d45060;
+    --mana-green: #009d8c;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -4053,6 +4635,12 @@
     --palette-4: #883136;
     --palette-5: #009178;
     --palette-6: #b65a5c;
+    /* mana: no green: blue and green are its light and deep teals; white is the background */
+    --mana-white: #f2efe8;
+    --mana-blue: #009178;
+    --mana-black: #38312f;
+    --mana-red: #a02030;
+    --mana-green: #006751;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -4095,6 +4683,12 @@
     --palette-4: #696969;
     --palette-5: #bababa;
     --palette-6: #9e9e9e;
+    /* mana: five gray steps, darkest black, lightest white */
+    --mana-white: #f0f0f0;
+    --mana-blue: #909090;
+    --mana-black: #4a4a4a;
+    --mana-red: #b0b0b0;
+    --mana-green: #6a6a6a;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -4136,6 +4730,12 @@
     --palette-4: #5d5d5d;
     --palette-5: #2e2e2e;
     --palette-6: #777777;
+    /* mana: five gray steps, darkest black, lightest white (the background) */
+    --mana-white: #f2f2f2;
+    --mana-blue: #b8b8b8;
+    --mana-black: #141414;
+    --mana-red: #404040;
+    --mana-green: #888888;
     /* syntax: no editor syntax of its own: mapped from this block's palette */
     --syntax-keyword: var(--palette-4);
     --syntax-type: var(--palette-5);
@@ -4185,6 +4785,13 @@
     --accent-primary: #689d6a;
     --accent-secondary: #cc241d;
     --accent-tertiary: #d79921;
+
+    /* Mana (gruvbox dark: blue is its bright blue, black its bg3 gray) */
+    --mana-white: #ebdbb2;
+    --mana-blue: #83a598;
+    --mana-black: #665c54;
+    --mana-red: #fb4934;
+    --mana-green: #b8bb26;
 
     /* Shadows */
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
