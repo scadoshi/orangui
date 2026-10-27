@@ -17,7 +17,7 @@
 //! ([`use_persisted_theme`], [`StatsStrip`], [`GalleryFrame`], [`REVEAL_JS`],
 //! [`NAV_GLIDE_JS`], [`SCROLL_FADE_JS`]) is for websites, with the gallery
 //! base in [`SITE_CSS`]. [`HeatGrid`] draws a year of days for any surface
-//! that shows one.
+//! that shows one, and [`HeatReadout`] names its totals and a picked day.
 //!
 //! The theme model ([`ThemeConfig`], [`ALLOWED_THEMES`], [`RETIRED_THEMES`], [`THEME_GROUPS`], [`COLORBLIND_THEMES`],
 //! [`display_theme_name`]) lives here beside the palettes it names. A host that
@@ -55,6 +55,7 @@ mod entrance;
 mod gallery;
 mod grid_cells;
 mod heat_grid;
+mod heat_readout;
 mod hint;
 mod nav_bar;
 mod nav_dropdown;
@@ -97,6 +98,7 @@ pub use heat_grid::{
     HEAT_CELL, HEAT_GAP, HEAT_ROWS, HEAT_STEP, HeatCell, HeatGrid, HeatHit, heat_span,
     use_scroll_to_end,
 };
+pub use heat_readout::{HEAT_PICK_MS, HeatPick, HeatReadout, use_heat_pick};
 pub use hint::{
     HintBullet, HintBullets, HintChip, HintDialog, HintKey, HintLine, InfoButton, ScreenHint,
     use_screen_hint, use_screen_hint_slot,

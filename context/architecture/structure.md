@@ -25,6 +25,7 @@ src/
 ├── chart_math.rs        # curve, area, tip_anchor, peak_indices
 ├── chart_tip.rs         # ChartTip: the chip over a chart's point
 ├── heat_grid.rs         # HeatGrid: a year of days, a column per week
+├── heat_readout.rs      # HeatReadout, use_heat_pick: the tags under a heatmap, a picked day's for a few seconds on touch
 ├── grid_cells.rs        # GridCells: the backdrop as shaded squares that rain in
 ├── splash.rs            # Splash: the opening overlay, the backdrop raining in under the host's mark
 │

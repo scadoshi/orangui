@@ -19,7 +19,7 @@ const SHEETS: [(&str, &str); 4] = [
     ("toast.css", include_str!("../assets/toast.css")),
 ];
 
-const TUNABLE: [(&str, &[&str]); 19] = [
+const TUNABLE: [(&str, &[&str]); 22] = [
     (
         ".label",
         &["color", "font-size", "letter-spacing", "margin-bottom"],
@@ -68,6 +68,9 @@ const TUNABLE: [(&str, &[&str]); 19] = [
     (".settings-sections", &["width"]),
     (".pref-note", &["font-size", "margin"]),
     (".site-footer", &["margin-top"]),
+    (".heat-readout", &["margin-top"]),
+    (".heat-readout-row", &["gap"]),
+    (".heat-readout-tag", &["--tone"]),
 ];
 
 struct Rule {

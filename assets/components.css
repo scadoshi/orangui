@@ -1695,6 +1695,53 @@ a.nav-dropdown-item.active:visited {
     }
 }
 
+/* The tags under a heatmap. At rest they name what the grid adds up to. On a
+   touch or narrow screen a picked cell's tags take their place for a few
+   seconds; a hover device with room keeps them at rest and names the cell
+   under the pointer in a floating .chart-tip.heat-float instead. One muted
+   tone, so the grid stays the colorful part. */
+.heat-readout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heat-readout-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+:where(.heat-readout) {
+    margin-top: 0.5rem;
+}
+
+:where(.heat-readout-row) {
+    gap: 0.4rem;
+}
+
+:where(.heat-readout-tag) {
+    --tone: var(--text-muted);
+}
+
+.heat-readout-pick {
+    display: none;
+}
+
+@media (hover: none), (max-width: 40rem) {
+    .heat-readout.picking .heat-readout-pick {
+        display: flex;
+    }
+
+    .heat-readout.picking .heat-readout-rest {
+        display: none;
+    }
+
+    .chart-tip.heat-float {
+        display: none;
+    }
+}
+
 /* ---- Entrance (.content-enter, .content-enter-delayed, .chip-in) ----
    A block fades up into place as it mounts; the delayed one follows the
    first. A chip fades up a shorter way, for a chip that swaps its text.
