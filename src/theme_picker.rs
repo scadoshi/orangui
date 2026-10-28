@@ -45,13 +45,13 @@ pub fn ModeIcon(dark: bool) -> Element {
     }
 }
 
-/// A mode's icon followed by its name, "dark" or "light".
+/// A mode's icon followed by its name, "Dark" or "Light".
 #[component]
 fn ModeLabel(dark: bool) -> Element {
     rsx! {
         span { class: "mode-label",
             ModeIcon { dark }
-            if dark { "dark" } else { "light" }
+            if dark { "Dark" } else { "Light" }
         }
     }
 }
