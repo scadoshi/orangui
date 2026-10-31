@@ -1,11 +1,10 @@
 # Structure
 
-One crate, flat. Every module is one component or one hook family, and `lib.rs` is the whole public surface.
+One crate, flat, plus its pure half. Every module is one component or one hook family, and `lib.rs` is the whole public surface. The workspace's default members are both crates, so plain `cargo test` and `cargo clippy` cover both.
 
 ```
 src/
 ├── lib.rs               # the exports, the CSS and JS string constants, the kit docs
-├── theme.rs             # ThemeConfig, ALLOWED_THEMES, THEME_GROUPS, COLORBLIND_THEMES, display_theme_name
 ├── palette_guard.rs     # status_uses: finds status-color references in a stylesheet, for the gates
 │
 │   # for every host
@@ -22,7 +21,6 @@ src/
 ├── theme_wipe.rs        # use_theme_wipe, use_theme_follow: a theme change sweeps across the page
 ├── diagram.rs           # DiagramNode, DiagramArrow, DiagramDefs: boxes and arrows in an inline svg
 ├── entrance.rs          # CountUp, Decode, Figure, Replay: the figures that resolve on arrival
-├── chart_math.rs        # curve, area, tip_anchor, peak_indices
 ├── chart_tip.rs         # ChartTip: the chip over a chart's point
 ├── heat_grid.rs         # HeatGrid: a year of days, a column per week
 ├── heat_readout.rs      # HeatReadout, use_heat_pick: the tags under a heatmap, a picked day's for a few seconds on touch
@@ -39,13 +37,26 @@ src/
 ├── overlay_stack.rs     # OverlayBackStack and the use_overlay_back hooks
 ├── os_back.rs           # use_os_back: the iOS edge swipe and Android back, through the overlay stack to the host's go_back
 ├── boot.rs              # BOOT_HEAD, BOOT_BG, BootReveal: the WebView launch hides #main until the styles are in
-├── toast_timing.rs      # TOAST_QUICK, TOAST_NORMAL, TOAST_LONG
 ├── toast_stack.rs       # ToastStack, behind the toast feature
 │
 │   # the site kit, with the gallery base in SITE_CSS
 ├── theme_store.rs       # use_persisted_theme: the pick kept in localStorage
 ├── stats_strip.rs       # StatsStrip: three boxed figures with their source chips
 └── gallery.rs           # GalleryFrame, GalleryFooter
+
+orangui-core/src/        # no Dioxus, no web-sys; orangui re-exports what it already exported
+├── lib.rs               # the module list
+├── number.rs            # with_separators, short
+├── chart_math.rs        # curve, area, tip_anchor, peak_indices
+├── count_up.rs          # the rolling counter's frames and timing, for CountUp and Figure
+├── decode.rs            # the decode's frames, wave fronts and shimmer, for Decode and the splash mark
+├── rng.rs               # noise, Xorshift and Lcg: the seeded draws behind the motion
+├── grid_rain.rs         # the backdrop's cells and rain, the same arithmetic as grid-cells.js
+├── splash.rs            # the opening's timeline and paced
+├── heat.rs              # the heatmap grid's measurements and PICK_MS
+├── diagram.rs           # NODE_HEIGHT
+├── toast.rs             # QUICK, NORMAL, LONG
+└── theme.rs             # ThemeConfig, ALLOWED_THEMES, THEME_GROUPS, COLORBLIND_THEMES, display_theme_name
 
 assets/
 ├── themes.css           # 50 themes, a dark and a light block each, gruvbox dark in :root, and the sink and grid mixed from them
@@ -62,6 +73,7 @@ assets/
 
 tests/
 ├── themes_palette.rs    # the palette gate on themes.css
+├── themes_list.rs       # themes.css defines exactly the listed themes
 └── status_colors.rs     # status colors only where they mean an outcome
 ```
 
@@ -72,7 +84,7 @@ Anything that knows a host. The crate names no product, no domain model and no r
 ## Dependencies
 
 - `dioxus` with no platform feature, so any Dioxus target can consume the crate and cargo unifies the host's feature with it.
-- `serde` for `ThemeConfig`.
+- `serde` for `ThemeConfig`, in orangui-core, which depends on nothing else.
 - On the web, `gloo-timers`, `web-sys` and `serde_json` for the entrance timer and local storage; elsewhere `tokio`'s timer.
 - On iOS, `objc2` and `tokio`'s channel for the edge-swipe recognizer; on Android, `jni` and `ndk-context` to finish the Activity. Those two are the only target-OS dependencies, for `use_os_back`.
 - `dioxus-primitives`, pinned to one commit, only behind the `toast` feature.

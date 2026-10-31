@@ -7,6 +7,7 @@ Guidance for Claude Code and any other AI assistant working in this repository. 
 orangui is a Dioxus UI kit: themes, panels, nav, charts and the entrance effects that my apps and sites share. One crate renders and styles the pieces so the hosts never drift. The name is orangutan, a call sign of mine, plus GUI.
 
 - One Rust crate, flat: every module is one component or one hook family, and `src/lib.rs` is the whole public surface. `architecture/structure.md` walks it.
+- Its pure half is `orangui-core/`, a workspace member with no Dioxus, no `web-sys` and only `serde`: the number formats, chart math, theme list, toast bands and the arithmetic behind the entrance and the backdrop. A Dioxus-free client such as a terminal app depends on it alone. orangui re-exports what it already exported, under the same names, so a host sees no change. Anything a component computes without touching a Dioxus type belongs there.
 - Hosts: [zwipe](https://github.com/scadoshi/zwipe) (the app and zwipe.net), [portfolio](https://github.com/scadoshi/portfolio) and [cairn](https://github.com/scadoshi/cairn). Each takes the crate as a git dependency and pins a commit in its lockfile. `plans/host_migration.md` is where each one stands.
 - Styling ships as string constants a host inlines: `THEMES_CSS`, `COMPONENTS_CSS`, then `APP_CSS` or `SITE_CSS`. The host's own sheet may land before or after them, and the kit works either way. `development/styling.md` has the cascade and the color contract.
 
@@ -14,6 +15,7 @@ orangui is a Dioxus UI kit: themes, panels, nav, charts and the entrance effects
 
 The crate knows no host. These are non-negotiable:
 
+- orangui-core takes no Dioxus, no `web-sys` and no target-specific code, and builds for native and `wasm32-unknown-unknown`.
 - No platform feature. `dioxus` with its defaults only. A host enables web, mobile, desktop or fullstack and cargo unifies. Platform-bound code takes `#[cfg(target_arch = "wasm32")]` with a branch for everywhere else, as `theme_store` and the entrance timer do.
 - One native exception. The OS back gesture (`os_back.rs`) branches on `#[cfg(target_os = "ios")]` and `#[cfg(target_os = "android")]`, does nothing elsewhere, and takes its native crates (`objc2`, `jni`, `ndk-context`) under the matching target tables in `Cargo.toml`. That is the only target-OS code allowed, and it still pulls no Dioxus platform feature: what only a host has, such as the WKWebView from `dioxus/mobile` or the patched Android activity, comes in as an argument.
 - No host knowledge. Nothing in here names a product, a domain model, a route or a URL. A component that needs to know about the host takes it as a prop or a callback. If a piece only makes sense for one host, it belongs in that host, built from the pieces here.
@@ -21,7 +23,7 @@ The crate knows no host. These are non-negotiable:
 - No color literals in component rules. A rule names a theme variable. Status colors mean an outcome; decoration takes a `--palette-N` slot. The two stylesheet gates in `tests/` hold this.
 - Defaults are soft; structure is not; load order is not relied on. A value a host tunes goes in a `:where(...)` rule, so a host rule of class specificity or higher wins whether the host's sheet loads before or after the kit's; display, position and the keyframes stay in the class rule. A host's universal or element reset that touches a soft property goes in `@layer reset { ... }`. `tests/soft_defaults.rs` holds the kit side, and `development/styling.md` has the rule.
 - Class names are public. A host styles against them, so renaming one is a breaking change and gets called out in the commit.
-- **The theme list lives here** (`src/theme.rs`) beside the palettes it names. A host that stores a user's theme elsewhere keeps its own list and checks it against this one in a test.
+- **The theme list lives here** (`orangui-core/src/theme.rs`, re-exported by orangui) beside the palettes it names; `tests/themes_list.rs` holds the two together. A host that stores a user's theme elsewhere keeps its own list and checks it against this one in a test.
 
 ## Common Commands
 
@@ -30,11 +32,12 @@ cargo test --all-features                                          # unit tests 
 cargo +nightly fmt                                                 # rustfmt.toml uses an unstable option
 cargo clippy --all-targets --all-features -- -D warnings           # what CI runs
 cargo clippy --target wasm32-unknown-unknown --all-features -- -D warnings   # and for the browser
+cargo clippy -p orangui-core --target wasm32-unknown-unknown -- -D warnings  # the core on its own, with no orangui features unifying in
 ```
 
 ## Linting
 
-The [scadoshi-rust](https://github.com/scadoshi/scadoshi-rust) lint set, in `Cargo.toml` `[lints]`. Pedantic clippy is on, and nothing may panic outside tests: `unwrap`, `expect`, `panic`, indexing and string slicing are denied. A suppression is `#[expect(lint, reason = "...")]`, never `#[allow]`. Arithmetic is overflow-safe, an `as` cast carries an `#[expect]` saying why it is exact, every public type implements `Debug`, anything no host can reach is `pub(crate)`, and pure functions are `#[must_use]` since this is a library. `clippy.toml` sets the thresholds, allows panics inside tests, and lists the product names (`WebView`, `WKWebView`, `OKLab`) docs may leave unquoted. Clippy's test exemptions don't reach the helpers in `tests/`, so each of those files opens with a `#![expect(..)]` naming what a test may do. CI treats warnings as errors, on the native target and on wasm.
+The [scadoshi-rust](https://github.com/scadoshi/scadoshi-rust) lint set, in the root `Cargo.toml` `[workspace.lints]`, which both crates take. Pedantic clippy is on, and nothing may panic outside tests: `unwrap`, `expect`, `panic`, indexing and string slicing are denied. A suppression is `#[expect(lint, reason = "...")]`, never `#[allow]`. Arithmetic is overflow-safe, an `as` cast carries an `#[expect]` saying why it is exact, every public type implements `Debug`, anything no host can reach is `pub(crate)`, and pure functions are `#[must_use]` since this is a library. `clippy.toml` sets the thresholds, allows panics inside tests, and lists the product names (`WebView`, `WKWebView`, `OKLab`) docs may leave unquoted. Clippy's test exemptions don't reach the helpers in `tests/`, so each of those files opens with a `#![expect(..)]` naming what a test may do. CI treats warnings as errors, on the native target and on wasm.
 
 ## Commit Guidelines
 

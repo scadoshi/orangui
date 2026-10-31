@@ -27,10 +27,11 @@ cargo +nightly fmt        # not `cargo fmt`; stable can't apply the unstable opt
 ```bash
 cargo clippy --all-targets --all-features -- -D warnings
 cargo clippy --target wasm32-unknown-unknown --all-features -- -D warnings
+cargo clippy -p orangui-core --target wasm32-unknown-unknown -- -D warnings
 RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --all-features   # rustdoc warnings fail CI's lint job the way clippy's do
 ```
 
-Lint levels live in `Cargo.toml` `[lints]`: the scadoshi-rust set, with the panic family (`unwrap`, `expect`, `panic`, indexing, slicing) denied outside tests. `clippy.toml` allows it inside them. The wasm pass matters because the sites build the crate for the browser, where `theme_store` and the entrance timer take their other branch.
+Lint levels live in the root `Cargo.toml` `[workspace.lints]`, shared by both crates: the scadoshi-rust set, with the panic family (`unwrap`, `expect`, `panic`, indexing, slicing) denied outside tests. `clippy.toml` allows it inside them. The wasm pass matters because the sites build the crate for the browser, where `theme_store` and the entrance timer take their other branch.
 
 ### 3. Tests
 

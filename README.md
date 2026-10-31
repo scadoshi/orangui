@@ -26,4 +26,11 @@ Turn on `features = ["toast"]` if you want toasts. Then inline the stylesheets i
 2. `COMPONENTS_CSS`
 3. `APP_CSS` for an app, `SITE_CSS` for a site
 
+A client without Dioxus, such as a terminal app, can take the pure half on its own: the number formats, chart math, theme list and the count-up, decode and rain frames, with no Dioxus or browser dependency.
+
+```toml
+[dependencies]
+orangui-core = { git = "https://github.com/scadoshi/orangui", package = "orangui-core" }
+```
+
 Your own sheet can load before or after them. The rules the kit sticks to, and the tests that check them, are in [context/](context/).
