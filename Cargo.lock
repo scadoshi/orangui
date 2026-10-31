@@ -1216,10 +1216,18 @@ dependencies = [
  "jni",
  "ndk-context",
  "objc2",
+ "orangui-core",
  "serde",
  "serde_json",
  "tokio",
  "web-sys",
+]
+
+[[package]]
+name = "orangui-core"
+version = "0.0.0"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

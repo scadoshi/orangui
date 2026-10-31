@@ -6,22 +6,23 @@
 //! the `.heat-*` rules in `assets/components.css`.
 
 use dioxus::prelude::*;
+use orangui_core::heat;
 
 use crate::entrance;
 
 /// A cell's side, in SVG units.
-pub const HEAT_CELL: f64 = 11.0;
+pub const HEAT_CELL: f64 = heat::CELL;
 /// The gap from one cell to the next, in SVG units.
-pub const HEAT_GAP: f64 = 2.0;
+pub const HEAT_GAP: f64 = heat::GAP;
 /// From one cell's edge to the next cell's.
-pub const HEAT_STEP: f64 = HEAT_CELL + HEAT_GAP;
+pub const HEAT_STEP: f64 = heat::STEP;
 /// Rows in the grid, one per weekday.
-pub const HEAT_ROWS: usize = 7;
+pub const HEAT_ROWS: usize = heat::ROWS;
 /// How far apart the columns arrive in the sweep. The sweep itself is in the
 /// stylesheet.
-const SWEEP_STEP_MS: usize = 12;
+const SWEEP_STEP_MS: usize = heat::SWEEP_STEP_MS;
 /// How far the halo reaches past its cell on each side.
-const HALO_REACH: f64 = 2.5;
+const HALO_REACH: f64 = heat::HALO_REACH;
 
 /// One day on the grid.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -54,13 +55,8 @@ pub struct HeatHit {
 /// How far `n` columns or rows reach, in SVG units: a grid `columns` wide is
 /// `heat_span(columns)` past its origin, and `heat_span(HEAT_ROWS)` tall.
 #[must_use]
-#[expect(
-    clippy::as_conversions,
-    clippy::cast_precision_loss,
-    reason = "a grid is a few hundred columns, far below 2^53, so the float is exact; std has no From<usize> for f64"
-)]
 pub fn heat_span(n: usize) -> f64 {
-    n as f64 * HEAT_STEP
+    heat::span(n)
 }
 
 /// The grid's cells, inside the host's `svg`, with their top-left corner at

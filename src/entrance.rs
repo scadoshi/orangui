@@ -14,6 +14,7 @@ use std::fmt;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use dioxus::prelude::*;
+use orangui_core::{count_up, decode, number};
 
 use crate::splash::{SplashGate, SplashLeave};
 
@@ -63,10 +64,6 @@ pub(crate) async fn sleep_ms(ms: u32) {
     tokio::time::sleep(std::time::Duration::from_millis(u64::from(ms))).await;
 }
 
-/// How long a number takes to reach its value, and the tick between frames.
-const COUNT_MS: f64 = 1000.0;
-const COUNT_TICK_MS: u32 = 16;
-
 /// A number that rolls to its value: random digits inside a window that
 /// narrows to nothing, printed with thousands separators. It never shows a
 /// blank or a climb from zero.
@@ -85,11 +82,7 @@ pub fn CountUp(
     let replay = use_replay();
     // Its own seed, so three figures waiting side by side do not roll the
     // same digits in step.
-    let seed = use_hook(|| {
-        SEEDS
-            .fetch_add(1, Ordering::Relaxed)
-            .wrapping_mul(2_654_435_761)
-    });
+    let seed = use_hook(|| count_up::seed_for(SEEDS.fetch_add(1, Ordering::Relaxed)));
     let mut target = use_signal(|| value);
     let mut shown = use_signal(|| value);
     // Set once the viewer turns out to want less motion: from then on the
@@ -116,138 +109,48 @@ pub fn CountUp(
             // Nothing to land on yet: roll at a fixed width until there is.
             let mut tick = 0u64;
             while target.peek().is_none() {
-                sleep_ms(COUNT_TICK_MS).await;
+                sleep_ms(count_up::TICK_MS).await;
                 if replay.peek().ne(&run) {
                     return;
                 }
                 tick = tick.wrapping_add(1);
-                shown.set(Some(waiting(noise(seed.wrapping_add(tick)))));
+                shown.set(Some(count_up::waiting(seed, tick)));
             }
-            let frames = (COUNT_MS / f64::from(COUNT_TICK_MS)).ceil();
-            let mut frame = 0.0;
-            while frame < frames {
-                sleep_ms(COUNT_TICK_MS).await;
+            for frame in 1..=count_up::FRAMES {
+                sleep_ms(count_up::TICK_MS).await;
                 // A later replay owns the number now.
                 if replay.peek().ne(&run) {
                     return;
                 }
-                frame += 1.0;
-                let t = (frame / frames).min(1.0);
                 let Some(value) = *target.peek() else {
                     // It went back to waiting; the next effect run picks it up.
                     return;
                 };
-                #[expect(
-                    clippy::as_conversions,
-                    clippy::cast_possible_truncation,
-                    clippy::cast_sign_loss,
-                    reason = "frame steps up from 0.0 by whole numbers, so it is a small non-negative integer"
-                )]
-                let tick = frame as u64;
-                shown.set(Some(rolling(value, t, tick)));
+                shown.set(Some(count_up::count_frame(value, frame)));
             }
             shown.set(*target.peek());
         });
     });
-    let print = if compact { short } else { with_separators };
+    let print = if compact {
+        number::short
+    } else {
+        number::with_separators
+    };
     rsx! {
         match shown() {
             Some(number) => rsx! { "{print(number)}" },
             // Before any frame runs there is nothing honest to print.
-            None => rsx! { "\u{2007}\u{2007}\u{2007}\u{2007}" },
+            None => rsx! { "{count_up::PLACEHOLDER}" },
         }
     }
-}
-
-/// Digits for a figure that has not arrived: four of them, so the width holds
-/// still while it waits.
-fn waiting(seed: u64) -> u64 {
-    1_000_u64.saturating_add(seed % 9_000)
 }
 
 /// Hands each `CountUp` its own starting seed.
 static SEEDS: AtomicU64 = AtomicU64::new(1);
 
-/// `value` with a random offset that shrinks to nothing as `fraction` reaches
-/// 1, held inside the digit count `value` prints at so the row never widens
-/// mid-roll. Counts are far below 2^53, so the float conversion is exact.
-#[expect(
-    clippy::as_conversions,
-    clippy::cast_precision_loss,
-    clippy::cast_possible_truncation,
-    clippy::cast_sign_loss,
-    reason = "counts sit far below 2^53 so u64 to f64 is exact, and the roll is clamped at zero and rounded before going back to u64; std has no From between floats and u64"
-)]
-fn rolling(value: u64, fraction: f64, seed: u64) -> u64 {
-    let fraction = fraction.clamp(0.0, 1.0);
-    if fraction >= 1.0 || value == 0 {
-        return value;
-    }
-    // Squared, so the digits are wild early and barely move at the end.
-    let spread = (1.0 - fraction).powi(2);
-    // -1.0 to 1.0 from the same xorshift the decode uses.
-    let swing = (noise(seed) % 2001) as f64 / 1000.0 - 1.0;
-    let rolled = (value as f64) + (value as f64) * spread * swing;
-    (rolled.max(0.0).round() as u64).min(digit_ceiling(value))
-}
-
-/// The largest number of the same digit count: 72 gives 99, 3,960 gives 9,999.
-fn digit_ceiling(value: u64) -> u64 {
-    let mut ceiling = 9;
-    while ceiling < value {
-        ceiling = ceiling.saturating_mul(10).saturating_add(9);
-    }
-    ceiling
-}
-
-/// One xorshift round, enough randomness for digits that flicker.
-fn noise(seed: u64) -> u64 {
-    let mut state = seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1;
-    state ^= state << 13;
-    state ^= state >> 7;
-    state ^= state << 17;
-    state
-}
-
-/// 12345 -> "12,345"
-#[must_use]
-pub fn with_separators(n: u64) -> String {
-    let digits = n.to_string();
-    let mut out = String::with_capacity(digits.len().saturating_add(digits.len() / 3));
-    for (i, ch) in digits.chars().rev().enumerate() {
-        if i > 0 && i % 3 == 0 {
-            out.push(',');
-        }
-        out.push(ch);
-    }
-    out.chars().rev().collect()
-}
-
-/// `n` to one decimal with a magnitude letter from ten thousand up: `28.0k`,
-/// `1.2m`, `3.4b`. Under that, [`with_separators`]. Truncated, not rounded,
-/// so a figure never reads past what it is.
-#[expect(
-    clippy::arithmetic_side_effects,
-    reason = "every divisor is one of the three nonzero units in STEPS, or a literal"
-)]
-pub(crate) fn short(n: u64) -> String {
-    const STEPS: [(u64, char); 3] = [(1_000_000_000, 'b'), (1_000_000, 'm'), (1_000, 'k')];
-    if n < 10_000 {
-        return with_separators(n);
-    }
-    for (unit, letter) in STEPS {
-        if n >= unit {
-            // Every unit is a multiple of ten, so this is n * 10 / unit without the overflow.
-            let tenths = n / (unit / 10);
-            return format!("{}.{}{letter}", tenths / 10, tenths % 10);
-        }
-    }
-    with_separators(n)
-}
-
 /// A figure the caller has already formatted (`12.3k`, `1,234.6`, `87%`,
 /// `+606`) whose digits roll into place: every digit flickers through random
-/// ones and settles over `COUNT_MS`, while the separators, the sign, the unit
+/// ones and settles over a second, while the separators, the sign, the unit
 /// and anything else stay put, so the width never moves. Rolls on mount, on
 /// every replay, and again whenever `text` changes, which is what makes a tap
 /// on a counter visibly move its figure.
@@ -259,11 +162,7 @@ pub(crate) fn short(n: u64) -> String {
 #[component]
 pub fn Figure(text: String, #[props(default)] start: Option<Signal<bool>>) -> Element {
     let replay = use_replay();
-    let seed = use_hook(|| {
-        SEEDS
-            .fetch_add(1, Ordering::Relaxed)
-            .wrapping_mul(2_654_435_761)
-    });
+    let seed = use_hook(|| count_up::seed_for(SEEDS.fetch_add(1, Ordering::Relaxed)));
     let mut target = use_signal(|| text.clone());
     let mut shown = use_signal(|| text.clone());
     let gate = use_gate();
@@ -281,78 +180,19 @@ pub fn Figure(text: String, #[props(default)] start: Option<Signal<bool>>) -> El
                 shown.set(goal);
                 return;
             }
-            let frames = (COUNT_MS / f64::from(COUNT_TICK_MS)).ceil();
-            let mut frame = 0.0;
-            while frame < frames {
-                sleep_ms(COUNT_TICK_MS).await;
+            for frame in 1..=count_up::FRAMES {
+                sleep_ms(count_up::TICK_MS).await;
                 if replay.peek().ne(&run) || target.peek().ne(&goal) {
                     // A newer roll owns the figure now.
                     return;
                 }
-                frame += 1.0;
-                let t = (frame / frames).min(1.0);
-                #[expect(
-                    clippy::as_conversions,
-                    clippy::cast_possible_truncation,
-                    clippy::cast_sign_loss,
-                    reason = "frame steps up from 0.0 by whole numbers, so it is a small non-negative integer"
-                )]
-                let tick = frame as u64;
-                shown.set(scrambled(&goal, t, seed.wrapping_add(tick)));
+                shown.set(count_up::figure_frame(&goal, frame, seed));
             }
             shown.set(goal);
         });
     });
     rsx! { "{shown()}" }
 }
-
-/// `text` with each digit replaced by a random one with a probability that
-/// falls to zero as `fraction` reaches 1, squared so the figure is wild early
-/// and barely moves at the end. Everything that is not a digit is left alone.
-#[expect(
-    clippy::as_conversions,
-    clippy::cast_precision_loss,
-    reason = "every cast is of a value bounded by a modulo (under 1000, or under 10 for the digit), so none loses anything"
-)]
-fn scrambled(text: &str, fraction: f64, seed: u64) -> String {
-    let fraction = fraction.clamp(0.0, 1.0);
-    if fraction >= 1.0 {
-        return text.to_string();
-    }
-    let spread = (1.0 - fraction).powi(2);
-    text.chars()
-        .enumerate()
-        .map(|(i, c)| {
-            if !c.is_ascii_digit() {
-                return c;
-            }
-            let roll = noise(seed.wrapping_add((i as u64).wrapping_mul(7919)));
-            if (roll % 1000) as f64 / 1000.0 < spread {
-                char::from(b'0'.saturating_add((roll / 1000 % 10) as u8))
-            } else {
-                c
-            }
-        })
-        .collect()
-}
-
-/// How long the glyphs take to settle, and the tick between frames.
-pub(crate) const DECODE_MS: u64 = 850;
-/// How long the art takes to leave a splash.
-pub(crate) const EXIT_MS: u32 = 450;
-pub(crate) const DECODE_TICK_MS: u32 = 40;
-/// Columns the decode front runs past the end, so the last ones get their wobble.
-const OVERRUN: usize = 4;
-/// The share of the pass, in percent, the noise wave takes to cover the art.
-const NOISE_PCT: usize = 45;
-/// How far into the pass, in percent, the decode wave starts after it.
-const DECODE_DELAY_PCT: usize = 35;
-/// The shimmer: how many columns the traveling band covers, and how far it
-/// moves each frame.
-const SHIMMER_SPAN: usize = 10;
-const SHIMMER_STEP: usize = 2;
-/// The glyphs a column shows before it resolves.
-const NOISE: [char; 5] = ['░', '▒', '▓', '▎', '▍'];
 
 /// Block-glyph art that builds left to right in two waves: a fast wave of
 /// noise draws the shape out of blank, and a slower decode wave follows it,
@@ -379,7 +219,7 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
         if scripted {
             text.to_string()
         } else {
-            blank(text)
+            decode::blank(text)
         }
     });
     let leaving = move || leave.is_some_and(|leave| *leave.0.peek());
@@ -395,7 +235,7 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
                 shown.set(text.to_string());
                 return;
             }
-            let ms = DECODE_MS * u64::from(pace) / 100;
+            let ms = u64::from(decode::DURATION_MS).saturating_mul(u64::from(pace)) / 100;
             resolve(text, shown, ms, || replay.peek().ne(&run) || leaving()).await;
         });
     });
@@ -407,7 +247,7 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
             if reduced_motion().await {
                 return;
             }
-            evaporate(text, shown, EXIT_MS.saturating_mul(pace) / 100).await;
+            evaporate(text, shown, decode::EXIT_MS.saturating_mul(pace) / 100).await;
         });
     });
     // Under the pointer a band of noise travels across the art, over and over,
@@ -420,16 +260,12 @@ pub fn Decode(text: &'static str, #[props(default)] hover: Option<Signal<bool>>)
             if reduced_motion().await {
                 return;
             }
-            let columns = columns_of(text);
-            let lap = columns.saturating_add(SHIMMER_SPAN);
+            let columns = decode::columns(text);
             let mut center: usize = 0;
             while hover.is_some_and(|hover| *hover.peek()) {
-                sleep_ms(DECODE_TICK_MS).await;
-                center = center
-                    .saturating_add(SHIMMER_STEP)
-                    .checked_rem(lap)
-                    .unwrap_or(0);
-                shown.set(shimmered(text, center, u64::try_from(center).unwrap_or(0)));
+                sleep_ms(decode::TICK_MS).await;
+                center = decode::next_shimmer_center(center, columns);
+                shown.set(decode::shimmer_frame(text, center));
             }
             shown.set(text.to_string());
         });
@@ -445,22 +281,13 @@ async fn resolve(
     ms: u64,
     give_up: impl Fn() -> bool,
 ) {
-    let frames = usize::try_from(ms.div_ceil(u64::from(DECODE_TICK_MS)))
-        .unwrap_or(1)
-        .max(1);
-    let columns = columns_of(text);
+    let frames = decode::frames(ms);
     for frame in 1..=frames {
-        sleep_ms(DECODE_TICK_MS).await;
+        sleep_ms(decode::TICK_MS).await;
         if give_up() {
             return;
         }
-        let (noise, decode) = fronts(columns, frame, frames);
-        shown.set(decoded(
-            text,
-            decode,
-            noise,
-            u64::try_from(frame).unwrap_or(0),
-        ));
+        shown.set(decode::entry_frame(text, frame, frames));
     }
     shown.set(text.to_string());
 }
@@ -468,290 +295,10 @@ async fn resolve(
 /// The way out, over `ms`: the two waves of [`resolve`] in reverse, a fast
 /// wave turning the art to noise and a slower one clearing the noise.
 async fn evaporate(text: &'static str, mut shown: Signal<String>, ms: u32) {
-    let frames = usize::try_from(ms.div_ceil(DECODE_TICK_MS))
-        .unwrap_or(1)
-        .max(1);
-    let columns = columns_of(text);
+    let frames = decode::frames(u64::from(ms));
     for frame in 1..=frames {
-        sleep_ms(DECODE_TICK_MS).await;
-        let (noise, clear) = fronts(columns, frame, frames);
-        shown.set(encoded(
-            text,
-            noise,
-            clear,
-            u64::try_from(frame).unwrap_or(0),
-        ));
+        sleep_ms(decode::TICK_MS).await;
+        shown.set(decode::exit_frame(text, frame, frames));
     }
-    shown.set(blank(text));
-}
-
-/// Where the two waves stand at `frame` of `frames`: the noise front, which
-/// covers the art in the first `NOISE_PCT` of the pass, and the decode front,
-/// which starts at `DECODE_DELAY_PCT` and runs past the end by the finish.
-#[expect(
-    clippy::arithmetic_side_effects,
-    reason = "frame is at most frames, a few dozen, and columns is one line of art, so every product stays far below usize::MAX"
-)]
-fn fronts(columns: usize, frame: usize, frames: usize) -> (usize, usize) {
-    let pct = frame * 100;
-    let noise = ((columns + 1) * pct / (frames * NOISE_PCT).max(1)).min(columns + 1);
-    let decode = (columns + OVERRUN) * pct.saturating_sub(frames * DECODE_DELAY_PCT)
-        / (frames * (100 - DECODE_DELAY_PCT)).max(1);
-    (noise, decode)
-}
-
-/// The widest line in `text`, in characters.
-fn columns_of(text: &str) -> usize {
-    text.lines()
-        .map(|line| line.chars().count())
-        .max()
-        .unwrap_or(0)
-}
-
-/// `text` with the band of columns ending at `center` swapped for noise, and
-/// everything else as it is.
-fn shimmered(text: &str, center: usize, seed: u64) -> String {
-    let mut out = String::with_capacity(text.len());
-    let mut state = seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1;
-    for line in text.lines() {
-        for (column, glyph) in line.chars().enumerate() {
-            let inside = column <= center && column.saturating_add(SHIMMER_SPAN) >= center;
-            if glyph == ' ' || !inside {
-                out.push(glyph);
-                continue;
-            }
-            state = noise(state);
-            let pick = usize::try_from(state % 5).unwrap_or(0);
-            out.push(NOISE.get(pick).copied().unwrap_or('░'));
-        }
-        out.push('\n');
-    }
-    out
-}
-
-/// `text` on its way out: spaces behind the `clear` front, noise from there
-/// to the `noise` front, and the art past that. The few columns just behind
-/// each front wobble, so the edges are ragged rather than ruled.
-fn encoded(text: &str, noise: usize, clear: usize, seed: u64) -> String {
-    let mut out = String::with_capacity(text.len());
-    let mut state = seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1;
-    let mut next = move || {
-        state ^= state << 13;
-        state ^= state >> 7;
-        state ^= state << 17;
-        state
-    };
-    for line in text.lines() {
-        for (column, glyph) in line.chars().enumerate() {
-            if glyph == ' ' {
-                out.push(' ');
-                continue;
-            }
-            let wobble = usize::try_from(next() % 4).unwrap_or(0);
-            let reach = column.saturating_add(wobble);
-            if reach < clear {
-                out.push(' ');
-            } else if reach < noise {
-                let pick = usize::try_from(next() % 5).unwrap_or(0);
-                out.push(NOISE.get(pick).copied().unwrap_or('░'));
-            } else {
-                out.push(glyph);
-            }
-        }
-        out.push('\n');
-    }
-    out
-}
-
-/// `text` with every glyph a space, the art before the front reaches it.
-fn blank(text: &str) -> String {
-    text.chars()
-        .map(|c| if c == '\n' { c } else { ' ' })
-        .collect()
-}
-
-/// `text` as of the two waves: the glyphs behind the decode `front`, noise
-/// from there to the `noise` front, and spaces past that. The noise changes
-/// with `seed` so it flickers between frames; the few columns just behind
-/// each front wobble too, so the edges are ragged rather than ruled.
-fn decoded(text: &str, front: usize, noise: usize, seed: u64) -> String {
-    let mut out = String::with_capacity(text.len());
-    let mut state = seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1;
-    let mut next = move || {
-        // xorshift, enough randomness for a flicker.
-        state ^= state << 13;
-        state ^= state >> 7;
-        state ^= state << 17;
-        state
-    };
-    for line in text.lines() {
-        for (column, glyph) in line.chars().enumerate() {
-            if glyph == ' ' {
-                out.push(' ');
-                continue;
-            }
-            let wobble = usize::try_from(next() % 4).unwrap_or(0);
-            let reach = column.saturating_add(wobble);
-            if reach < front {
-                out.push(glyph);
-            } else if reach >= noise {
-                out.push(' ');
-            } else {
-                let pick = usize::try_from(next() % 5).unwrap_or(0);
-                out.push(NOISE.get(pick).copied().unwrap_or('░'));
-            }
-        }
-        out.push('\n');
-    }
-    out
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn scrambled_keeps_everything_but_the_digits_and_lands_on_the_text() {
-        assert_eq!(scrambled("12.3k", 1.0, 7), "12.3k");
-        for frame in 1..60u64 {
-            let out = scrambled(
-                "1,234.6/day",
-                f64::from(u32::try_from(frame).unwrap()) / 60.0,
-                frame,
-            );
-            assert_eq!(out.len(), "1,234.6/day".len());
-            for (a, b) in out.chars().zip("1,234.6/day".chars()) {
-                if b.is_ascii_digit() {
-                    assert!(a.is_ascii_digit(), "{out}");
-                } else {
-                    assert_eq!(a, b, "{out}");
-                }
-            }
-        }
-        assert_eq!(scrambled("goal met", 0.1, 3), "goal met");
-        // Early on, something moves.
-        assert_ne!(scrambled("123,456,789", 0.05, 11), "123,456,789");
-    }
-
-    #[test]
-    fn short_keeps_small_numbers_whole_and_shortens_the_rest() {
-        assert_eq!(short(2_065), "2,065");
-        assert_eq!(short(9_999), "9,999");
-        assert_eq!(short(10_000), "10.0k");
-        assert_eq!(short(28_018), "28.0k");
-        assert_eq!(short(123_456), "123.4k");
-        assert_eq!(short(244_855), "244.8k");
-        assert_eq!(short(999_999), "999.9k");
-        assert_eq!(short(1_234_567), "1.2m");
-        assert_eq!(short(123_456_789), "123.4m");
-        assert_eq!(short(2_500_000_000), "2.5b");
-    }
-
-    #[test]
-    fn short_reaches_the_largest_counts_without_overflowing() {
-        assert_eq!(short(u64::MAX / 10), "1844674407.3b");
-        assert_eq!(short(u64::MAX), "18446744073.7b");
-    }
-
-    #[test]
-    fn the_roll_lands_on_its_value_and_stays_the_same_width() {
-        assert_eq!(rolling(3_657, 1.0, 7), 3_657, "the end is the value");
-        assert_eq!(rolling(3_657, 1.5, 7), 3_657);
-        assert_eq!(rolling(0, 0.0, 7), 0, "nothing to roll");
-        for frame in 1..200u64 {
-            let shown = rolling(
-                3_657,
-                f64::from(u32::try_from(frame).unwrap()) / 200.0,
-                frame,
-            );
-            assert!(shown <= 9_999, "{shown} keeps four digits");
-        }
-    }
-
-    #[test]
-    fn the_ceiling_is_the_largest_number_of_the_same_width() {
-        assert_eq!(digit_ceiling(7), 9);
-        assert_eq!(digit_ceiling(72), 99);
-        assert_eq!(digit_ceiling(3_960), 9_999);
-        assert_eq!(digit_ceiling(0), 9);
-    }
-
-    #[test]
-    fn separators_every_three_digits() {
-        assert_eq!(with_separators(0), "0");
-        assert_eq!(with_separators(999), "999");
-        assert_eq!(with_separators(1_000), "1,000");
-        assert_eq!(with_separators(1_234_567), "1,234,567");
-    }
-
-    #[test]
-    fn a_front_past_the_end_is_the_text_and_at_the_start_is_noise() {
-        let art = "▎▉▉\n ▉ \n";
-        assert_eq!(decoded(art, 100, 100, 1), art);
-        let noisy = decoded(art, 0, 100, 1);
-        assert_eq!(
-            noisy.chars().count(),
-            art.chars().count(),
-            "same glyph count"
-        );
-        assert_eq!(noisy.chars().nth(4), Some(' '), "spaces stay spaces");
-        assert!(
-            noisy
-                .chars()
-                .all(|c| c == ' ' || c == '\n' || NOISE.contains(&c))
-        );
-    }
-
-    #[test]
-    fn the_art_builds_from_blank_with_noise_ahead_of_the_decode() {
-        let art = "▉▉▉▉▉▉▉▉▉▉\n";
-        assert_eq!(blank(art), "          \n");
-        for seed in 1..50u64 {
-            let out: Vec<char> = decoded(art, 2, 7, seed).chars().collect();
-            // Past the noise front the art is not there yet.
-            for c in out.iter().skip(7).take(3) {
-                assert_eq!(*c, ' ', "{out:?}");
-            }
-            // Well behind it, only the art or noise.
-            for c in out.iter().take(4) {
-                assert!(*c == '▉' || NOISE.contains(c), "{out:?}");
-            }
-        }
-    }
-
-    #[test]
-    fn the_way_out_turns_the_art_to_noise_then_clears_it() {
-        let art = "▎▉▉▉▉▉▉▉▉▉\n ▉ ▉ ▉ ▉ ▉\n";
-        assert_eq!(encoded(art, 0, 0, 1), art, "before the waves, the art");
-        assert_eq!(encoded(art, 100, 100, 1), blank(art), "after them, blank");
-        for seed in 1..50u64 {
-            let out: Vec<char> = encoded(art, 100, 0, seed).chars().collect();
-            for (c, a) in out.iter().zip(art.chars()) {
-                if a == ' ' || a == '\n' {
-                    assert_eq!(*c, a, "spaces stay spaces");
-                } else {
-                    assert!(NOISE.contains(c), "{out:?}");
-                }
-            }
-        }
-    }
-
-    #[test]
-    fn the_noise_wave_leads_and_both_land_by_the_last_frame() {
-        let (columns, frames) = (40, 22);
-        let mut last = (0, 0);
-        for frame in 1..=frames {
-            let (noise, decode) = fronts(columns, frame, frames);
-            assert!(
-                noise >= last.0 && decode >= last.1,
-                "fronts only move forward"
-            );
-            if decode > 0 && decode <= columns {
-                assert!(noise > decode, "noise leads at frame {frame}");
-            }
-            last = (noise, decode);
-        }
-        assert!(last.0 > columns && last.1 >= columns + OVERRUN);
-        assert_eq!(fronts(columns, 1, frames).1, 0, "decode waits");
-    }
+    shown.set(decode::blank(text));
 }

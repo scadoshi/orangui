@@ -10,6 +10,8 @@ publish = false
 path = "src/lib.rs"
 
 [dependencies]
+# The pure logic the components compute with, shared with non-Dioxus clients.
+orangui-core = { path = "orangui-core" }
 # Dioxus with its default features (macro/html/signals/hooks) but NO platform
 # feature: each host enables its own web/mobile/desktop/fullstack and cargo
 # unifies. A shared kit must not force a platform.
@@ -49,14 +51,24 @@ tokio = { version = "1.47", features = ["sync"] }
 jni = "0.21"
 ndk-context = "0.1"
 
-[lints.rust]
+[workspace]
+# orangui stays the root package, so a host's `orangui = { git = ... }` finds
+# it where it always has; orangui-core is the Dioxus-free half beside it.
+members = [".", "orangui-core"]
+default-members = [".", "orangui-core"]
+resolver = "3"
+
+[lints]
+workspace = true
+
+[workspace.lints.rust]
 unsafe_op_in_unsafe_fn = "deny"
 missing_docs = "warn"
 missing_debug_implementations = "warn"
 unreachable_pub = "warn"
 rust_2018_idioms = { level = "warn", priority = -1 }
 
-[lints.clippy]
+[workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
 

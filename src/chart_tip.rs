@@ -2,8 +2,7 @@
 //! `assets/components.css`.
 
 use dioxus::prelude::*;
-
-use crate::chart_math;
+use orangui_core::chart_math;
 
 /// A chip at `left`% and `top`% of the nearest positioned ancestor (the
 /// chart's plot wrapper, which the host makes `position: relative`), hanging

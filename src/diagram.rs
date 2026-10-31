@@ -5,6 +5,7 @@
 //! first inside the `svg`: it defines the arrowhead the arrows reference.
 
 use dioxus::prelude::*;
+use orangui_core::diagram;
 
 /// Which accent outlines a box.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -35,7 +36,7 @@ impl DiagramTone {
 }
 
 /// Height of every box, so rows line up.
-pub const DIAGRAM_NODE_HEIGHT: f64 = 52.0;
+pub const DIAGRAM_NODE_HEIGHT: f64 = diagram::NODE_HEIGHT;
 
 /// The arrowhead marker. Place it first inside the `svg`.
 #[component]

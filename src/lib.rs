@@ -47,7 +47,6 @@ mod banner;
 mod boot;
 mod bottom_sheet;
 mod button;
-mod chart_math;
 mod chart_tip;
 mod chip;
 mod diagram;
@@ -69,14 +68,12 @@ mod password_input;
 mod splash;
 mod stats_strip;
 mod text_input;
-mod theme;
 mod theme_picker;
 mod theme_sheet;
 mod theme_store;
 mod theme_wipe;
 #[cfg(feature = "toast")]
 mod toast_stack;
-mod toast_timing;
 
 pub use action_bar::ActionBar;
 pub use alert_dialog::{
@@ -87,11 +84,10 @@ pub use banner::{Banner, BannerStatus};
 pub use boot::{BOOT_BG, BOOT_HEAD, BootReveal};
 pub use bottom_sheet::BottomSheet;
 pub use button::{Button, ButtonVariant};
-pub use chart_math::{area, curve, peak_indices, tip_anchor};
 pub use chart_tip::ChartTip;
 pub use chip::Chip;
 pub use diagram::{DIAGRAM_NODE_HEIGHT, DiagramArrow, DiagramDefs, DiagramNode, DiagramTone};
-pub use entrance::{CountUp, Decode, Figure, Replay, with_separators};
+pub use entrance::{CountUp, Decode, Figure, Replay};
 pub use gallery::{GalleryFooter, GalleryFrame};
 pub use grid_cells::{GRID_CELLS_JS, GridCells};
 pub use heat_grid::{
@@ -105,6 +101,17 @@ pub use hint::{
 };
 pub use nav_bar::{BRAND_RESET_JS, NavBar};
 pub use nav_dropdown::NavDropdown;
+#[doc(inline)]
+pub use orangui_core::chart_math::{area, curve, peak_indices, tip_anchor};
+#[doc(inline)]
+pub use orangui_core::number::with_separators;
+#[doc(inline)]
+pub use orangui_core::theme::{
+    ALLOWED_THEMES, COLORBLIND_THEMES, RETIRED_THEMES, THEME_GROUPS, ThemeConfig, ThemeGroup,
+    current_theme, display_theme_name,
+};
+#[doc(inline)]
+pub use orangui_core::toast::{LONG as TOAST_LONG, NORMAL as TOAST_NORMAL, QUICK as TOAST_QUICK};
 pub use os_back::use_os_back;
 pub use overlay_stack::{
     OverlayBackStack, use_overlay_back, use_overlay_back_action, use_overlay_back_stack,
@@ -117,17 +124,12 @@ pub use password_input::PasswordInput;
 pub use splash::{SPLASH_JS, Splash, SplashGate};
 pub use stats_strip::StatsStrip;
 pub use text_input::{FieldLabel, TextInput};
-pub use theme::{
-    ALLOWED_THEMES, COLORBLIND_THEMES, RETIRED_THEMES, THEME_GROUPS, ThemeConfig, ThemeGroup,
-    current_theme, display_theme_name,
-};
 pub use theme_picker::{DarkModeButton, ModeIcon, ThemePicker};
 pub use theme_sheet::ThemeSheet;
 pub use theme_store::use_persisted_theme;
 pub use theme_wipe::{ThemeFollow, use_theme_follow, use_theme_wipe, use_theme_wipe_follow};
 #[cfg(feature = "toast")]
 pub use toast_stack::ToastStack;
-pub use toast_timing::{TOAST_LONG, TOAST_NORMAL, TOAST_QUICK};
 
 /// The shared component rules.
 pub const COMPONENTS_CSS: &str = include_str!("../assets/components.css");

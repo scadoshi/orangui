@@ -12,11 +12,12 @@
 use std::fmt;
 
 use dioxus::prelude::*;
+use orangui_core::heat;
 
 use crate::entrance::sleep_ms;
 
 /// How long a picked cell's tags hold before the resting tags come back.
-pub const HEAT_PICK_MS: u32 = 4000;
+pub const HEAT_PICK_MS: u32 = heat::PICK_MS;
 
 /// The cell a heatmap's readout names, held for [`HEAT_PICK_MS`] after each
 /// pick. Copy it into every handler that picks; [`HeatReadout`] reads it.

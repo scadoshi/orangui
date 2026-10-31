@@ -21,6 +21,8 @@
 use std::fmt;
 
 use dioxus::prelude::*;
+use orangui_core::decode;
+use orangui_core::splash::{FADE_MS, LEAVE_AT_MS, MARK_AT_MS, OUT_AT_MS, paced};
 
 use crate::entrance;
 use crate::grid_cells::GridCells;
@@ -50,20 +52,6 @@ pub(crate) struct SplashLeave(pub(crate) Signal<bool>, pub(crate) u32, pub(crate
 /// The opening on a prerendered page, run before the app is up. Inlined once;
 /// it guards itself.
 pub const SPLASH_JS: &str = include_str!("../assets/splash.js");
-
-/// When the mark mounts, so it resolves as the field is landing.
-const MARK_AT_MS: u32 = 400;
-/// When the mark starts to leave, just after it has resolved.
-const LEAVE_AT_MS: u32 = 1350;
-/// When the fade starts: once the mark has left.
-const OUT_AT_MS: u32 = LEAVE_AT_MS + entrance::EXIT_MS;
-/// The fade itself; matches the transition in `app.css`.
-const FADE_MS: u32 = 300;
-
-/// `ms` scaled to `pace`, a percent of the full timeline.
-fn paced(ms: u32, pace: u32) -> u32 {
-    ms.saturating_mul(pace) / 100
-}
 
 /// The overlay. `children` is the mark; it mounts once the field is landing.
 /// `pace` runs the timeline, the mark's passes included, at that percent of
@@ -110,7 +98,6 @@ pub fn Splash(
         return rsx! {};
     }
     if prerendered {
-        let decode_ms = u32::try_from(entrance::DECODE_MS).unwrap_or(u32::MAX);
         return rsx! {
             document::Script { {SPLASH_JS} }
             div {
@@ -118,12 +105,12 @@ pub fn Splash(
                 aria_hidden: "true",
                 "data-prerendered": "true",
                 "data-mark-at": "{paced(MARK_AT_MS, pace)}",
-                "data-decode": "{paced(decode_ms, pace)}",
+                "data-decode": "{paced(decode::DURATION_MS, pace)}",
                 "data-leave-at": "{paced(LEAVE_AT_MS, pace)}",
-                "data-exit": "{paced(entrance::EXIT_MS, pace)}",
+                "data-exit": "{paced(decode::EXIT_MS, pace)}",
                 "data-out-at": "{paced(OUT_AT_MS, pace)}",
                 "data-fade": "{FADE_MS}",
-                "data-tick": "{entrance::DECODE_TICK_MS}",
+                "data-tick": "{decode::TICK_MS}",
                 GridCells {}
                 div { class: "splash-mark", {children} }
             }
@@ -161,6 +148,15 @@ mod tests {
             assert!(SPLASH_JS.contains(&format!("at('{key}')")), "{key}");
         }
         assert!(SPLASH_JS.contains(".splash[data-prerendered]"));
+    }
+
+    #[test]
+    fn the_script_draws_the_waves_on_the_cores_numbers() {
+        assert!(SPLASH_JS.contains(&format!("NOISE_PCT = {};", decode::NOISE_PCT)));
+        assert!(SPLASH_JS.contains(&format!("DECODE_DELAY_PCT = {};", decode::DECODE_DELAY_PCT)));
+        assert!(SPLASH_JS.contains(&format!("OVERRUN = {};", decode::OVERRUN)));
+        let glyphs: String = decode::NOISE_GLYPHS.iter().collect();
+        assert!(SPLASH_JS.contains(&format!("NOISE = '{glyphs}'")));
         assert!(SPLASH_JS.contains("__oranguiSplash"));
     }
 }

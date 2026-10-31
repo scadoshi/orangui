@@ -47,11 +47,35 @@ pub fn GridCells(#[props(default)] still: bool, #[props(default)] delay_ms: u32)
 
 #[cfg(test)]
 mod tests {
+    use orangui_core::grid_rain;
+    use orangui_core::rng::Lcg;
+
     use super::*;
 
     #[test]
     fn the_drawing_finds_its_canvases_and_runs_once() {
         assert!(GRID_CELLS_JS.contains(".grid-cells-canvas"));
         assert!(GRID_CELLS_JS.contains("__oranguiGridCells"));
+    }
+
+    #[test]
+    fn the_drawing_rains_on_the_cores_numbers() {
+        for (name, value) in [
+            ("RAIN_STEP_MS", grid_rain::RAIN_STEP_MS),
+            ("JITTER_MS", grid_rain::JITTER_MS),
+            ("DROP_MS", grid_rain::DROP_MS),
+            ("DROP_CELLS", grid_rain::DROP_CELLS),
+        ] {
+            assert!(
+                GRID_CELLS_JS.contains(&format!("const {name} = {value};")),
+                "{name}"
+            );
+        }
+        let shades: Vec<String> = grid_rain::SHADES.iter().map(f64::to_string).collect();
+        assert!(GRID_CELLS_JS.contains(&format!("const SHADES = [{}];", shades.join(", "))));
+        assert!(GRID_CELLS_JS.contains(&format!("lcg({:#x})", grid_rain::SEED)));
+        assert!(GRID_CELLS_JS.contains(&format!("Math.imul(seed, {})", Lcg::MULTIPLIER)));
+        assert!(GRID_CELLS_JS.contains(&format!("+ {}) >>> 0", Lcg::INCREMENT)));
+        assert!(GRID_CELLS_JS.contains(&format!("|| {}", grid_rain::CELL_PX)));
     }
 }

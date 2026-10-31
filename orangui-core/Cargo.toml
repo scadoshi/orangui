@@ -1,0 +1,14 @@
+[package]
+name = "orangui-core"
+version = "0.0.0"
+edition = "2024"
+description = "The pure half of orangui: number formats, chart math, theme list and the entrance frames, with no Dioxus and no browser"
+repository = "https://github.com/scadoshi/orangui"
+publish = false
+
+[dependencies]
+# ThemeConfig serializes so a host can keep the last pick wherever it stores settings.
+serde = { version = "1", features = ["derive"] }
+
+[lints]
+workspace = true

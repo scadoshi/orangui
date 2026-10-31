@@ -16,10 +16,22 @@
 use std::time::Duration;
 
 /// Routine confirmations: saved, copied, added.
-pub const TOAST_QUICK: Duration = Duration::from_secs(3);
+pub const QUICK: Duration = Duration::from_secs(3);
 
 /// Worth actually reading before it leaves.
-pub const TOAST_NORMAL: Duration = Duration::from_secs(5);
+pub const NORMAL: Duration = Duration::from_secs(5);
 
 /// Failures, and anything naming a next step.
-pub const TOAST_LONG: Duration = Duration::from_secs(8);
+pub const LONG: Duration = Duration::from_secs(8);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_bands_rise_from_quick_to_long() {
+        assert!(QUICK < NORMAL && NORMAL < LONG);
+        assert_eq!(QUICK.as_secs(), 3);
+        assert_eq!(LONG.as_secs(), 8);
+    }
+}

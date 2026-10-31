@@ -1,12 +1,12 @@
 //! A theme: a name from [`ALLOWED_THEMES`] and a light or dark mode, mapped to
 //! the class the host puts on its themed element. The palettes themselves are
-//! in `assets/themes.css`; a host that persists a user's theme elsewhere (a
+//! in orangui's `assets/themes.css`, which a test there holds to this list; a host that persists a user's theme elsewhere (a
 //! server, a settings store) keeps its own copy of this list and checks it
 //! against this one in a test.
 
 use serde::{Deserialize, Serialize};
 
-/// The theme slugs `assets/themes.css` defines, alphabetical, each with a
+/// The theme slugs orangui's `assets/themes.css` defines, alphabetical, each with a
 /// `-dark` and a `-light` block.
 pub const ALLOWED_THEMES: &[&str] = &[
     "achromatopsia",
@@ -245,8 +245,6 @@ impl Default for ThemeConfig {
 mod tests {
     use super::*;
 
-    const CSS: &str = include_str!("../assets/themes.css");
-
     #[test]
     fn every_retired_theme_is_unlisted_and_moves_to_a_listed_one() {
         for (from, to) in RETIRED_THEMES {
@@ -255,10 +253,6 @@ mod tests {
                 "{from} is retired but listed"
             );
             assert!(ALLOWED_THEMES.contains(to), "{from} moves to unlisted {to}");
-            assert!(
-                !CSS.contains(&format!(".theme-{from}-dark")),
-                "{from} is retired but still has a palette"
-            );
         }
     }
 
@@ -349,35 +343,6 @@ mod tests {
         let mut sorted = ALLOWED_THEMES.to_vec();
         sorted.sort_unstable();
         assert_eq!(sorted, ALLOWED_THEMES);
-    }
-
-    #[test]
-    fn every_allowed_theme_has_both_blocks_in_the_stylesheet() {
-        for slug in ALLOWED_THEMES {
-            for mode in ["dark", "light"] {
-                let class = format!(".theme-{slug}-{mode} {{");
-                assert!(CSS.contains(&class), "{class} missing from themes.css");
-            }
-        }
-    }
-
-    #[test]
-    fn every_stylesheet_theme_is_allowed() {
-        for line in CSS.lines() {
-            let Some(rest) = line.trim().strip_prefix(".theme-") else {
-                continue;
-            };
-            let Some(slug) = rest
-                .strip_suffix("-dark {")
-                .or_else(|| rest.strip_suffix("-light {"))
-            else {
-                continue;
-            };
-            assert!(
-                ALLOWED_THEMES.contains(&slug),
-                "{slug} is in themes.css but not ALLOWED_THEMES"
-            );
-        }
     }
 
     #[test]
