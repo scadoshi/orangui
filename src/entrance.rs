@@ -92,8 +92,17 @@ pub fn CountUp(
     });
     let mut target = use_signal(|| value);
     let mut shown = use_signal(|| value);
+    // Set once the viewer turns out to want less motion: from then on the
+    // number shows each value as it arrives, with no roll.
+    let mut still = use_signal(|| false);
     let gate = use_gate();
     use_effect(use_reactive!(|value| target.set(value)));
+    use_effect(move || {
+        let value = target();
+        if still() {
+            shown.set(value);
+        }
+    });
     use_effect(move || {
         let run = replay();
         if !open(gate) {
@@ -101,7 +110,7 @@ pub fn CountUp(
         }
         spawn(async move {
             if reduced_motion().await {
-                shown.set(*target.peek());
+                still.set(true);
                 return;
             }
             // Nothing to land on yet: roll at a fixed width until there is.
