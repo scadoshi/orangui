@@ -44,6 +44,14 @@ jobs:
           rustup target add wasm32-unknown-unknown
           cargo clippy --target wasm32-unknown-unknown --all-features -- -D warnings
           cargo clippy -p orangui-core --target wasm32-unknown-unknown -- -D warnings
+      # os_back and links carry iOS and Android code that only compiles for those
+      # targets. iOS takes `links` alone: --all-features pulls `time` through
+      # dioxus-primitives, whose num_threads dependency does not build for iOS here.
+      - name: Clippy for iOS and Android
+        run: |
+          rustup target add aarch64-apple-ios aarch64-linux-android
+          cargo clippy --lib --features links --target aarch64-apple-ios -- -D warnings
+          cargo clippy --lib --all-features --target aarch64-linux-android -- -D warnings
       # Broken intra-doc links and other rustdoc warnings fail the way clippy's do.
       - name: Docs
         run: cargo doc --no-deps --all-features
