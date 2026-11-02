@@ -2,8 +2,9 @@
 //!
 //! The components depend only on base `dioxus` (no platform features) so any
 //! Dioxus target can consume them; a host enables its own web, mobile or
-//! desktop feature and cargo unifies. The one native piece, [`use_os_back`],
-//! branches on the target OS rather than on a Dioxus feature. Styling ships alongside as string
+//! desktop feature and cargo unifies. The native pieces, [`use_os_back`] and,
+//! behind the `links` feature, `open_url`, branch on the target OS rather
+//! than on a Dioxus feature. Styling ships alongside as string
 //! constants to inline through `document::Style`: [`THEMES_CSS`] (the 50
 //! palettes, each dark and light) and [`COMPONENTS_CSS`] (the components'
 //! rules), then one opt-in sheet per kind of host.
@@ -12,8 +13,9 @@
 //! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
 //! [`TextInput`], the hint pieces with [`HintDialog`], the overlay back stack,
 //! the OS back bridge [`use_os_back`], the launch guard ([`BOOT_HEAD`],
-//! [`BOOT_BG`], [`BootReveal`]) and, behind the `toast` feature,
-//! `ToastStack`) is for apps and styled by [`APP_CSS`]. The site kit
+//! [`BOOT_BG`], [`BootReveal`]), behind the `toast` feature `ToastStack`, and
+//! behind the `links` feature `open_url` and `use_in_app_links`, which open
+//! links in the in-app browser) is for apps and styled by [`APP_CSS`]. The site kit
 //! ([`use_persisted_theme`], [`StatsStrip`], [`GalleryFrame`], [`REVEAL_JS`],
 //! [`NAV_GLIDE_JS`], [`SCROLL_FADE_JS`]) is for websites, with the gallery
 //! base in [`SITE_CSS`]. [`HeatGrid`] draws a year of days for any surface
@@ -56,6 +58,8 @@ mod grid_cells;
 mod heat_grid;
 mod heat_readout;
 mod hint;
+#[cfg(feature = "links")]
+mod links;
 mod nav_bar;
 mod nav_dropdown;
 mod os_back;
@@ -99,6 +103,8 @@ pub use hint::{
     HintBullet, HintBullets, HintChip, HintDialog, HintKey, HintLine, InfoButton, ScreenHint,
     use_screen_hint, use_screen_hint_slot,
 };
+#[cfg(feature = "links")]
+pub use links::{OpenUrlError, open_url, use_in_app_links};
 pub use nav_bar::{BRAND_RESET_JS, NavBar};
 pub use nav_dropdown::NavDropdown;
 #[doc(inline)]

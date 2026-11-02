@@ -28,6 +28,9 @@ dioxus-ssr = "0.7"
 [features]
 # ToastStack and TOAST_CSS, for the apps.
 toast = ["dep:dioxus-primitives"]
+# open_url and use_in_app_links, for the apps: links open in the in-app
+# browser. The sites never build it.
+links = ["dep:objc2-foundation", "dep:webbrowser"]
 
 # The entrance module waits between frames: the browser's timer on the web,
 # tokio's everywhere else (an app's WebView runs on tokio already).
@@ -45,11 +48,17 @@ tokio = { version = "1.47", features = ["time"] }
 [target.'cfg(target_os = "ios")'.dependencies]
 objc2 = "0.6"
 tokio = { version = "1.47", features = ["sync"] }
+# links: the NSURL and the empty options NSDictionary that openURL takes.
+objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSString", "NSURL", "NSDictionary"], optional = true }
 
 # use_os_back: back at a root screen finishes the Activity through JNI.
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.21"
 ndk-context = "0.1"
+
+# links: the desktop build opens every URL in the default browser.
+[target.'cfg(not(any(target_arch = "wasm32", target_os = "ios", target_os = "android")))'.dependencies]
+webbrowser = { version = "1", optional = true }
 
 [workspace]
 # orangui stays the root package, so a host's `orangui = { git = ... }` finds
