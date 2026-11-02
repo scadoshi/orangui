@@ -225,29 +225,48 @@ mod platform {
 
     /// Local references `open` creates: the URL string, the `Uri`, the action
     /// string, the `Intent`, and for web pages the `Bundle`, its key and the
-    /// `Intent` that `putExtras` returns. A hint to the VM, not a cap.
-    const LOCAL_FRAME_CAPACITY: i32 = 12;
+    /// `Intent` that `putExtras` returns, plus the `Activity` class and the
+    /// `Intent` that `addFlags` returns. A hint to the VM, not a cap.
+    const LOCAL_FRAME_CAPACITY: i32 = 14;
 
     /// Intent extra that marks an `ACTION_VIEW` as a Custom Tabs request. The
     /// value is a `Bundle` holding a session binder, which may be null.
     const CUSTOM_TABS_SESSION: &str = "android.support.customtabs.extra.SESSION";
 
+    /// `Intent.FLAG_ACTIVITY_NEW_TASK`, which `startActivity` requires when the
+    /// context is not an `Activity`.
+    const FLAG_ACTIVITY_NEW_TASK: i32 = 0x1000_0000;
+
     /// Fires the intent from its own local reference frame, so the references
     /// it creates are freed on return even on an already attached thread.
     pub(super) fn open(url: &str) -> Result<(), OpenUrlError> {
-        fire(url).map_err(|e| OpenUrlError::Platform(e.to_string()))
-    }
-
-    fn fire(url: &str) -> jni::errors::Result<()> {
         let ctx = ndk_context::android_context();
-        // SAFETY: ndk-context guarantees a valid JavaVM and Activity jobject
+        // SAFETY: ndk-context guarantees a valid JavaVM and Context jobject
         // for the running app.
-        let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) }?;
-        let mut env = vm.attach_current_thread()?;
-        // SAFETY: the same ndk-context guarantee covers the Activity jobject,
-        // which stays alive for the running app.
+        let vm =
+            unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) }.map_err(|e| platform_error(&e))?;
+        let mut env = vm.attach_current_thread().map_err(|e| platform_error(&e))?;
+        // SAFETY: the same ndk-context guarantee covers the Context jobject,
+        // which stays alive for the running app. It may be the Application
+        // rather than an Activity.
         let context = unsafe { JObject::from_raw(ctx.context().cast()) };
 
+        let result = fire(&mut env, &context, url);
+        // A failed call leaves its Java exception pending, and the next JNI
+        // call anywhere in the process aborts on it.
+        if result.is_err()
+            && let Err(e) = env.exception_clear()
+        {
+            dioxus::logger::tracing::error!("could not clear a java exception: {e}");
+        }
+        result.map_err(|e| platform_error(&e))
+    }
+
+    fn platform_error(e: &jni::errors::Error) -> OpenUrlError {
+        OpenUrlError::Platform(e.to_string())
+    }
+
+    fn fire(env: &mut JNIEnv<'_>, context: &JObject<'_>, url: &str) -> jni::errors::Result<()> {
         env.with_local_frame(LOCAL_FRAME_CAPACITY, |env| -> jni::errors::Result<()> {
             // Uri uri = Uri.parse(url);
             let url_jstring = env.new_string(url)?;
@@ -285,9 +304,19 @@ mod platform {
                 env.exception_clear()?;
             }
 
+            // An Application context can start an activity only into a new task.
+            if !env.is_instance_of(context, "android/app/Activity")? {
+                env.call_method(
+                    &intent,
+                    "addFlags",
+                    "(I)Landroid/content/Intent;",
+                    &[FLAG_ACTIVITY_NEW_TASK.into()],
+                )?;
+            }
+
             // context.startActivity(intent);
             env.call_method(
-                &context,
+                context,
                 "startActivity",
                 "(Landroid/content/Intent;)V",
                 &[(&intent).into()],
