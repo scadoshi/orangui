@@ -154,7 +154,7 @@ mod ios {
 
     /// Attaches the edge-back recognizer to `webview`, the app's WKWebView.
     /// Runs on the main thread, as UI effects do.
-    pub fn install_edge_back(webview: NonNull<c_void>, tx: UnboundedSender<()>) {
+    pub(super) fn install_edge_back(webview: NonNull<c_void>, tx: UnboundedSender<()>) {
         if MainThreadMarker::new().is_none() {
             dioxus::logger::tracing::error!(
                 "os back: the edge swipe installs on the main thread only; skipped"
@@ -165,17 +165,18 @@ mod ios {
         // hierarchy keeps alive for the app's lifetime.
         let webview: &AnyObject = unsafe { webview.cast::<AnyObject>().as_ref() };
         let target = EdgeBackTarget::new(tx);
-        // SAFETY: UIKit gesture setup with valid selectors and argument types,
-        // on the main thread.
-        unsafe {
-            let alloc: Allocated<AnyObject> =
-                msg_send![class!(UIScreenEdgePanGestureRecognizer), alloc];
-            let recognizer: Retained<AnyObject> =
-                msg_send![alloc, initWithTarget: &*target, action: sel!(handleEdgePan:)];
-            let _: () = msg_send![&*recognizer, setEdges: EDGE_LEFT];
-            let _: () = msg_send![&*recognizer, setDelegate: &*target];
-            let _: () = msg_send![webview, addGestureRecognizer: &*recognizer];
-        }
+        // SAFETY: `alloc` is valid on the UIScreenEdgePanGestureRecognizer class.
+        let alloc: Allocated<AnyObject> =
+            unsafe { msg_send![class!(UIScreenEdgePanGestureRecognizer), alloc] };
+        // SAFETY: the designated initializer, with a live target and a selector it implements.
+        let recognizer: Retained<AnyObject> =
+            unsafe { msg_send![alloc, initWithTarget: &*target, action: sel!(handleEdgePan:)] };
+        // SAFETY: `setEdges:` takes a UIRectEdge, an NSUInteger, on the main thread.
+        let (): () = unsafe { msg_send![&*recognizer, setEdges: EDGE_LEFT] };
+        // SAFETY: the target implements the delegate method this recognizer calls.
+        let (): () = unsafe { msg_send![&*recognizer, setDelegate: &*target] };
+        // SAFETY: `addGestureRecognizer:` on the live WKWebView, on the main thread.
+        let (): () = unsafe { msg_send![webview, addGestureRecognizer: &*recognizer] };
         // A recognizer holds its target weakly, so the target is leaked to
         // outlive this call: one per app launch.
         std::mem::forget(target);
@@ -189,7 +190,7 @@ mod android {
     use jni::objects::JObject;
 
     /// Finishes the current Activity, logging a failure.
-    pub fn finish_activity() {
+    pub(super) fn finish_activity() {
         if let Err(e) = try_finish() {
             dioxus::logger::tracing::error!("os back: could not finish the activity: {e}");
         }
