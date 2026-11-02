@@ -13,8 +13,9 @@
 //! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
 //! [`TextInput`], the hint pieces with [`HintDialog`], the overlay back stack,
 //! the OS back bridge [`use_os_back`], the launch guard ([`BOOT_HEAD`],
-//! [`BOOT_BG`], [`BootReveal`]), behind the `toast` feature `ToastStack`, and
-//! behind the `links` feature `open_url` and `use_in_app_links`, which open
+//! [`BOOT_BG`], [`BootReveal`]), behind the `toast` feature `ToastStack`
+//! with `use_toast`, `Toasts` and `ToastOptions`, and behind the `links`
+//! feature `open_url` and `use_in_app_links`, which open
 //! links in the in-app browser) is for apps and styled by [`APP_CSS`]. The site kit
 //! ([`use_persisted_theme`], [`StatsStrip`], [`GalleryFrame`], [`REVEAL_JS`],
 //! [`NAV_GLIDE_JS`], [`SCROLL_FADE_JS`]) is for websites, with the gallery
@@ -91,6 +92,11 @@ pub use button::{Button, ButtonVariant};
 pub use chart_tip::ChartTip;
 pub use chip::Chip;
 pub use diagram::{DIAGRAM_NODE_HEIGHT, DiagramArrow, DiagramDefs, DiagramNode, DiagramTone};
+/// The toast handle and its types from `dioxus-primitives`, so a host calls
+/// `use_toast` below [`ToastStack`] with no dependency of its own on that crate.
+#[cfg(feature = "toast")]
+#[doc(no_inline)]
+pub use dioxus_primitives::toast::{ToastOptions, Toasts, use_toast};
 pub use entrance::{CountUp, Decode, Figure, Replay};
 pub use gallery::{GalleryFooter, GalleryFrame};
 pub use grid_cells::{GRID_CELLS_JS, GridCells};
