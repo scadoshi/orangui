@@ -24,6 +24,8 @@ dioxus-primitives = { git = "https://github.com/DioxusLabs/components", rev = "0
 [dev-dependencies]
 # Renders a component tree to HTML in the dialog tests.
 dioxus-ssr = "0.7"
+# A runtime for the timers the bottom sheet starts in the HTML tests.
+tokio = { version = "1.47", features = ["rt", "time"] }
 
 [features]
 # ToastStack and TOAST_CSS, for the apps.
