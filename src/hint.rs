@@ -13,8 +13,8 @@ use crate::{AlertDialog, DialogAction};
 
 /// A hint's dialog: the title, the body in a `hint-body` block, and a single
 /// dismiss button, "Got it" unless `dismiss` names another. `actions` go
-/// before the dismiss button, so a call to action sits in the footer rather
-/// than in the body.
+/// after the dismiss button, so a call to action sits in the footer rather
+/// than in the body, with the dismiss button first as in every dialog.
 ///
 /// Compose the body from [`HintLine`], [`HintBullets`], [`HintKey`] and
 /// [`HintChip`].
@@ -33,10 +33,12 @@ pub fn HintDialog(
     }
 }
 
-/// The host's actions, then the dismiss button.
-fn hint_actions(mut actions: Vec<DialogAction>, dismiss: String) -> Vec<DialogAction> {
-    actions.push(DialogAction::Dismiss(dismiss));
-    actions
+/// The dismiss button, then the host's actions.
+fn hint_actions(actions: Vec<DialogAction>, dismiss: String) -> Vec<DialogAction> {
+    let mut all = Vec::with_capacity(actions.len().saturating_add(1));
+    all.push(DialogAction::Dismiss(dismiss));
+    all.extend(actions);
+    all
 }
 
 /// The slot a screen offers its hint through, for an app whose header is
@@ -174,7 +176,7 @@ mod tests {
     use crate::{DialogHostView, use_dialog_host, use_overlay_back_stack};
 
     #[test]
-    fn hint_actions_end_with_the_dismiss() {
+    fn hint_actions_start_with_the_dismiss() {
         let actions = hint_actions(
             vec![DialogAction::Dismiss("Dictionary".into())],
             "Got it".into(),
@@ -186,7 +188,7 @@ mod tests {
                 _ => "",
             })
             .collect();
-        assert_eq!(labels, ["Dictionary", "Got it"]);
+        assert_eq!(labels, ["Got it", "Dictionary"]);
     }
 
     #[test]
