@@ -4,8 +4,9 @@
 //! status pill), a rule, the body, and an optional actions row under a second
 //! rule: `header <hr> body <hr> actions`. Used for content cards on the site,
 //! in the app, and on the portfolio so they all read as one system. `eyebrow`,
-//! `title`, `status`, and `actions` are all optional; a rule is only drawn where
-//! the adjacent section exists. Styling is in `assets/components.css`.
+//! `title`, `status`, `title_bar` and `actions` are all optional; a rule is
+//! only drawn where the adjacent section exists. Styling is in
+//! `assets/components.css`.
 
 use dioxus::prelude::*;
 
@@ -45,20 +46,40 @@ pub fn Panel(
     /// Overrides the status pill's default label.
     #[props(default)]
     status_label: Option<String>,
+    /// A title bar the host builds, drawn in the head over its rule in place
+    /// of the eyebrow row and the title, which it overrides. For a head that
+    /// carries a control beside its heading, such as a "?" button.
+    #[props(default)]
+    title_bar: Option<Element>,
     /// Footer button row. Omit for a panel with no actions.
     #[props(default)]
     actions: Option<Element>,
+    /// Extra classes on the card, after `panel-card`, for a host that styles
+    /// one kind of panel its own way.
+    #[props(default)]
+    class: Option<String>,
     /// Body content.
     children: Element,
 ) -> Element {
-    let has_header = eyebrow.is_some() || title.is_some() || status.is_some();
+    let has_header =
+        title_bar.is_some() || eyebrow.is_some() || title.is_some() || status.is_some();
+    let mut card_class = String::from(if centered {
+        "panel-card panel-centered"
+    } else {
+        "panel-card"
+    });
+    if let Some(extra) = class {
+        card_class.push(' ');
+        card_class.push_str(&extra);
+    }
 
     rsx! {
         // Marked for the sites' scroll reveal (REVEAL_JS); inert elsewhere.
-        div {
-            class: if centered { "panel-card panel-centered" } else { "panel-card" },
-            "data-reveal": "true",
-            if has_header {
+        div { class: card_class, "data-reveal": "true",
+            if let Some(bar) = title_bar {
+                div { class: "panel-head", {bar} }
+                hr { class: "panel-rule" }
+            } else if has_header {
                 div { class: "panel-head",
                     if eyebrow.is_some() || status.is_some() {
                         div { class: "panel-eyebrow-row",

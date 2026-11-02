@@ -1,12 +1,12 @@
 //! The HTML gate: the components a host renders today keep their exact markup.
 //! Each case renders a component with props a host passes and compares the
 //! result to a saved copy in `tests/html/`. Run with `BLESS_HTML=1` to rewrite
-//! the copies after a deliberate markup change.
+//! the copies after a deliberate markup change; the theme sheet's copies list
+//! every theme, so a theme added or renamed rewrites them too.
 
 #![expect(
     clippy::unwrap_used,
     clippy::panic,
-    missing_docs,
     reason = "test helpers: a failed read or render fails the test"
 )]
 
@@ -107,6 +107,27 @@ fn panel_hero_centered_with_trailing() {
                 status_label: "Live",
                 title_trailing: rsx! {
                     span { class: "chip", "Rust" }
+                },
+                p { "Body" }
+            }
+        }),
+    );
+}
+
+#[test]
+fn panel_title_bar_and_class() {
+    golden(
+        "panel_title_bar",
+        &dioxus_ssr::render_element(rsx! {
+            Panel {
+                class: "form-panel",
+                title: "Ignored",
+                title_bar: rsx! {
+                    h2 { class: "panel-title", "Login" }
+                    button { class: "btn-action", "?" }
+                },
+                actions: rsx! {
+                    button { class: "btn-action", "Log in" }
                 },
                 p { "Body" }
             }
