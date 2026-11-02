@@ -15,7 +15,7 @@ src/
 ├── nav_bar.rs           # NavBar and BRAND_RESET_JS
 ├── nav_dropdown.rs      # NavDropdown
 ├── page_meta.rs         # PageMeta, SiteMeta: title, description, Open Graph and Twitter tags
-├── panel.rs             # Panel: eyebrow, title, rule, body, actions
+├── panel.rs             # Panel: eyebrow, title or a host title bar, rule, body, actions
 ├── password_input.rs    # PasswordInput with its Show/Hide toggle
 ├── theme_picker.rs      # ThemePicker, DarkModeButton, ModeIcon
 ├── theme_wipe.rs        # use_theme_wipe, use_theme_follow: a theme change sweeps across the page
@@ -29,15 +29,15 @@ src/
 │
 │   # the app kit, styled by APP_CSS
 ├── bottom_sheet.rs      # BottomSheet
-├── alert_dialog.rs      # AlertDialog, DialogAction, ActionButton, DialogSpec, and the app-root DialogHost that draws them
+├── alert_dialog.rs      # AlertDialog, DialogAction, ActionButton, DialogSpec, and the app-root DialogHost that draws them and answers Escape and Enter
 ├── page_header.rs       # PageHeader
-├── theme_sheet.rs       # ThemeSheet: every theme as a row, previewed live
+├── theme_sheet.rs       # ThemeSheet: every theme as a row, previewed live; arrows walk the rows, Enter saves
 ├── hint.rs              # HintDialog, InfoButton, HintLine, HintBullets, HintBullet, HintKey, HintChip, and the ScreenHint slot a screen offers its hint through
 ├── text_input.rs        # TextInput and FieldLabel: a labeled field with an optional "?" and error line
 ├── overlay_stack.rs     # OverlayBackStack and the use_overlay_back hooks
 ├── os_back.rs           # use_os_back: the iOS edge swipe and Android back, through the overlay stack to the host's go_back
 ├── boot.rs              # BOOT_HEAD, BOOT_BG, BootReveal: the WebView launch hides #main until the styles are in
-├── toast_stack.rs       # ToastStack, behind the toast feature
+├── toast_stack.rs       # ToastStack, behind the toast feature; lib.rs re-exports use_toast, Toasts and ToastOptions beside it
 │
 │   # the site kit, with the gallery base in SITE_CSS
 ├── theme_store.rs       # use_persisted_theme: the pick kept in localStorage
