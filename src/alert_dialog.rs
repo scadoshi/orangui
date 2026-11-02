@@ -11,6 +11,11 @@
 //! Closing fades the dim and the dialog out before they leave the DOM. Every
 //! label is the host's: the kit draws the buttons it is given.
 //!
+//! On a keyboard, Escape closes the open dialog the way a click on its dim
+//! does, and Enter runs its first enabled non-danger primary action, if it
+//! has one, unless a button or link inside the dialog has focus and answers
+//! Enter itself. Enter never reaches the page under an open dialog.
+//!
 //! The spec is built once, when the dialog opens. An action that has to
 //! change while it shows (a countdown, a field that must not be empty, a
 //! request in flight) is a [`DialogAction::Button`] built from an
@@ -402,6 +407,36 @@ impl DialogHost {
 
 static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
 
+/// The page-wide keys for an open dialog, installed once per page by
+/// [`DialogHostView`]. Escape clicks the open dim, so it closes the dialog as
+/// a tap there does and holds while busy work runs. Enter clicks the first
+/// enabled `.alert-dialog-action`, which is a non-danger `Confirm` or a
+/// non-danger [`ActionButton`] with a handler, and stops there, so the page
+/// under the dialog never sees it; a focused button or link inside the
+/// dialog keeps its own Enter. With no dialog open both keys pass through.
+const DIALOG_KEYS_JS: &str = r#"
+if (!window.__oranguiDialogKeys) {
+    window.__oranguiDialogKeys = true;
+    document.addEventListener('keydown', (e) => {
+        const dialog = document.querySelector('.alert-dialog[data-state="open"]');
+        if (!dialog) return;
+        if (e.key === 'Escape') {
+            const overlay = document.querySelector('.alert-dialog-overlay[data-state="open"]');
+            if (overlay) overlay.click();
+            return;
+        }
+        if (e.key !== 'Enter' || e.isComposing) return;
+        const focus = document.activeElement;
+        const onControl = focus && (focus.tagName === 'BUTTON' || focus.tagName === 'A');
+        if (onControl && dialog.contains(focus)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const primary = dialog.querySelector('.alert-dialog-actions .alert-dialog-action:not([disabled])');
+        if (primary) primary.click();
+    }, true);
+}
+"#;
+
 /// Keeps the host's slot in step with `open`: when it turns true the dialog
 /// `build` returns is shown, when it turns false the dialog fades out, and
 /// another owner's dialog is never touched. Registers `open` with the
@@ -460,10 +495,14 @@ pub fn AlertDialog(
     rsx! {}
 }
 
-/// Draws the dialog in the [`DialogHost`], if any, above everything.
+/// Draws the dialog in the [`DialogHost`], if any, above everything, and
+/// listens for Escape and Enter while one is open.
 #[component]
 pub fn DialogHostView() -> Element {
     let host = use_context::<DialogHost>();
+    use_effect(|| {
+        let _ = document::eval(DIALOG_KEYS_JS);
+    });
     let Some(shown) = host.slot.read().clone() else {
         return rsx! {};
     };

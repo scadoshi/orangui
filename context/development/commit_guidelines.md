@@ -39,7 +39,7 @@ Lint levels live in the root `Cargo.toml` `[workspace.lints]`, shared by both cr
 cargo test --all-features
 ```
 
-Unit tests, plus the stylesheet gates in `tests/` (`context/development/styling.md`). No environment, no network.
+Unit tests, plus the stylesheet gates in `tests/` (`context/development/styling.md`) and the HTML gate (`tests/html_golden.rs`), which compares rendered components to saved copies in `tests/html/`. After a deliberate markup change, or a theme added or renamed, rewrite the copies with `BLESS_HTML=1 cargo test --all-features --test html_golden` and review the diff. No environment, no network.
 
 ## Hosts pin a commit
 

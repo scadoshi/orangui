@@ -3,12 +3,50 @@
 //!
 //! What a save means (an API call, a local store) and what each outcome says
 //! (a toast) stay the host's, through [`ThemeSheet`]'s callbacks.
+//!
+//! On a keyboard, while the sheet is open and no dialog is over it, the up
+//! and down arrows preview the row above or below the selected one, and
+//! Enter is Save unless a button or link inside the sheet has focus.
 
 use dioxus::prelude::*;
 
 use crate::{
     BottomSheet, Button, ButtonVariant, THEME_GROUPS, ThemeConfig, ThemeFollow, display_theme_name,
 };
+
+/// The sheet's keys, installed once per page by [`ThemeSheet`]. The open
+/// sheet is the shown `.bottom-sheet` holding theme swatches. An arrow clicks
+/// the row above or below the selected one and scrolls it into view, staying
+/// put at either end; Enter clicks the last button in the sheet's action bar,
+/// Save, when it is enabled. Nothing happens while a dialog is open.
+const THEME_KEYS_JS: &str = r#"
+if (!window.__oranguiThemeKeys) {
+    window.__oranguiThemeKeys = true;
+    document.addEventListener('keydown', (e) => {
+        if (e.isComposing || document.querySelector('.alert-dialog[data-state="open"]')) return;
+        const sheet = Array.from(document.querySelectorAll('.bottom-sheet.show'))
+            .find((s) => s.querySelector('.theme-swatches'));
+        if (!sheet) return;
+        const focus = document.activeElement;
+        const onControl = focus && (focus.tagName === 'BUTTON' || focus.tagName === 'A');
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            const rows = Array.from(sheet.querySelectorAll('.pref-row'));
+            const at = rows.findIndex((row) => row.classList.contains('selected'));
+            const next = rows[e.key === 'ArrowDown' ? Math.min(at + 1, rows.length - 1) : Math.max(at - 1, 0)];
+            e.preventDefault();
+            if (next && next !== rows[at]) {
+                next.click();
+                next.scrollIntoView({ block: 'nearest' });
+            }
+        } else if (e.key === 'Enter' && !(onControl && sheet.contains(focus))) {
+            const buttons = sheet.querySelectorAll('.action-bar button');
+            const save = buttons[buttons.length - 1];
+            e.preventDefault();
+            if (save && !save.disabled) save.click();
+        }
+    }, true);
+}
+"#;
 
 /// One selectable theme row: name on the left, swatch dots on the right. The
 /// dots take their colors from the theme's own class, so colors stay defined
@@ -55,6 +93,9 @@ fn ThemeRow(
 /// opened: the sheet holds still while that theme wipes back in, leaves
 /// inside the wipe, and calls `on_unchanged` once the sweep is done.
 ///
+/// On a keyboard the arrows walk the rows and Enter saves (see the module
+/// docs).
+///
 /// Reads the [`ThemeFollow`] the host provides from
 /// [`use_theme_follow`](crate::use_theme_follow), and registers with the
 /// [`OverlayBackStack`](crate::OverlayBackStack) through [`BottomSheet`].
@@ -72,6 +113,9 @@ pub fn ThemeSheet(
     hint: Option<Signal<bool>>,
 ) -> Element {
     let follow: ThemeFollow = use_context();
+    use_effect(|| {
+        let _ = document::eval(THEME_KEYS_JS);
+    });
     let mut original = use_signal(|| theme.peek().clone());
     let mut selected = use_signal(|| theme.peek().name.clone());
     let mut dark = use_signal(|| theme.peek().is_dark);
