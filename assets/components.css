@@ -51,6 +51,16 @@
     box-shadow: none;
 }
 
+/* A disabled control on a light theme keeps its border and dims its text
+   to the muted color instead of fading out: at half opacity a cream button
+   vanishes into a cream panel. Dark themes keep the fade. */
+[class*="theme-"][class*="-light"] :is(.btn, .btn-xs, .btn-action):disabled,
+[class*="theme-"][class*="-light"] .chip.disabled {
+    opacity: 1;
+    color: var(--text-muted);
+    border-color: var(--border-primary);
+}
+
 /* ---- Tinted tags (.tag, .stat-chip) ----
    Colored text on a faint tint of the same color with a soft outline of it.
    One tone drives all three: --tone is the color, a modifier sets it, and the
