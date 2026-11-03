@@ -18,7 +18,10 @@
 .screen-content {
     flex: 1;
     overflow-x: hidden;
-    overflow-y: auto;
+    /* Always a scroller, so a page that fits still rubber-bands and its
+       trailing padding can lift the last panel clear of the home indicator. */
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
     align-items: center;
