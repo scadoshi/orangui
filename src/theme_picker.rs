@@ -2,13 +2,19 @@
 //! (sectioned by look, the color-blind themes last) plus a dark/light
 //! mode toggle.
 //!
+//! Below the 60rem hamburger breakpoint the same open state shows the themes
+//! in a [`BottomSheet`] instead of the drop-down; the stylesheet picks which
+//! one a width shows, so both stay mounted and share one signal.
+//!
 //! This is the canonical copy for every site; the host passes its `Signal<ThemeConfig>` in,
 //! so how the theme is provided (context, prop drilling) and applied (body
 //! class, wrapper div) stays the host's business.
 
 use dioxus::prelude::*;
 
-use crate::{Button, ButtonVariant, NavDropdown, THEME_GROUPS, ThemeConfig, display_theme_name};
+use crate::{
+    BottomSheet, Button, ButtonVariant, NavDropdown, THEME_GROUPS, ThemeConfig, display_theme_name,
+};
 
 /// A mode's icon, solid in the text color: the moon for dark, the sun for
 /// light. Drawn as SVG rather than the ☀/☾ glyphs, which most fonts outline
@@ -71,7 +77,9 @@ pub fn DarkModeButton(is_dark: bool, onclick: EventHandler<MouseEvent>) -> Eleme
 }
 
 /// Theme dropdown + dark/light toggle. Every theme has both modes, so the
-/// toggle is always shown.
+/// toggle is always shown. At hamburger widths the themes open in a bottom
+/// sheet (`div.theme-picker-sheet`, after `div.theme-picker`) rather than
+/// the drop-down.
 #[component]
 pub fn ThemePicker(
     theme: Signal<ThemeConfig>,
@@ -89,7 +97,7 @@ pub fn ThemePicker(
     let mut theme = theme;
     // Always taken, so the hook order holds whether or not the host passes one.
     let own_open = use_signal(|| false);
-    let mut open = open.unwrap_or(own_open);
+    let open = open.unwrap_or(own_open);
     let shown = shown.unwrap_or(theme);
     let current = shown.read().name.clone();
     let is_dark = shown.read().is_dark;
@@ -101,24 +109,7 @@ pub fn ThemePicker(
             NavDropdown {
                 open,
                 label: display_theme_name(&current),
-                for group in THEME_GROUPS {
-                    div { class: "nav-dropdown-label", "{group.label}" }
-                    for name in group.themes.iter().copied() {
-                        button {
-                            class: if current == *name { "nav-dropdown-item active" } else { "nav-dropdown-item" },
-                            onclick: move |_| {
-                                let dark = theme.read().is_dark;
-                                theme.set(ThemeConfig {
-                                    name: name.to_string(),
-                                    is_dark: dark,
-                                });
-                                open.set(false);
-                            },
-                            span { "{display_theme_name(name)}" }
-                            ThemeDots { name, mode }
-                        }
-                    }
-                }
+                ThemeRows { theme, open, current: current.clone(), mode }
             }
             button {
                 class: "mode-toggle",
@@ -133,6 +124,45 @@ pub fn ThemePicker(
                     });
                 },
                 ModeLabel { dark: is_dark }
+            }
+        }
+        // The phone-width chooser, hidden by the stylesheet above 60rem.
+        div { class: "theme-picker-sheet",
+            BottomSheet { open, title: "Themes".to_string(),
+                ThemeRows { theme, open, current, mode }
+            }
+        }
+    }
+}
+
+/// Every allowed theme as a row under its group's subtitle, for the
+/// drop-down and the sheet alike. A pick keeps the mode and closes the menu.
+#[component]
+fn ThemeRows(
+    theme: Signal<ThemeConfig>,
+    open: Signal<bool>,
+    current: String,
+    mode: &'static str,
+) -> Element {
+    let mut theme = theme;
+    let mut open = open;
+    rsx! {
+        for group in THEME_GROUPS {
+            div { class: "nav-dropdown-label", "{group.label}" }
+            for name in group.themes.iter().copied() {
+                button {
+                    class: if current == *name { "nav-dropdown-item active" } else { "nav-dropdown-item" },
+                    onclick: move |_| {
+                        let dark = theme.read().is_dark;
+                        theme.set(ThemeConfig {
+                            name: name.to_string(),
+                            is_dark: dark,
+                        });
+                        open.set(false);
+                    },
+                    span { "{display_theme_name(name)}" }
+                    ThemeDots { name, mode }
+                }
             }
         }
     }

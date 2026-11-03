@@ -64,7 +64,7 @@ assets/
 ├── grid-cells.js        # GridCells' canvas drawing: the rain, then one redraw per theme change
 ├── splash.js            # Splash on a prerendered page: the whole opening from first paint, before the app is up
 ├── boot-reveal.js       # BootReveal: shows #main once the linked stylesheets have loaded
-├── app.css              # the app shell: screen, page header, bottom sheet, alert dialog, settings lists, hints, labels and fields
+├── app.css              # the app shell: screen, page header, alert dialog, settings lists, hints, labels and fields
 ├── site.css             # the sites: scroll reveal, gallery, footer
 ├── toast.css            # the toast stack
 ├── reveal.js            # elements marked data-reveal fade up as they scroll in

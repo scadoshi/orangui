@@ -167,8 +167,8 @@ pub const SCROLL_FADE_JS: &str = include_str!("../assets/scroll-fade.js");
 /// ([`GalleryFrame`], [`GalleryFooter`]) and the footer (`.site-footer`),
 /// for the websites only. Load it after [`COMPONENTS_CSS`].
 pub const SITE_CSS: &str = include_str!("../assets/site.css");
-/// The app shell's rules (screen, page header, bottom sheet, alert dialog,
-/// settings lists, hints), for the apps only. Load it after
+/// The app shell's rules (screen, page header, alert dialog, settings lists,
+/// hints), for the apps only. Load it after
 /// [`COMPONENTS_CSS`]. Sites leave it out: they style these class names their
 /// own way.
 pub const APP_CSS: &str = include_str!("../assets/app.css");

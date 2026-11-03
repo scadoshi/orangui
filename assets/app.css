@@ -5,7 +5,7 @@
  * differently.
  *
  * Holds the rules both apps had word for word, plus the base the shared app
- * components need (BottomSheet, PageHeader, ThemeSheet, the hint pieces).
+ * components need (PageHeader, ThemeSheet, the hint pieces).
  * Where the apps differ, the base here is what they share and each app keeps
  * its own difference in its own stylesheet. The values an app tunes sit in
  * :where() rules, so an app rule of class specificity or higher wins over
@@ -237,120 +237,6 @@
 .message-error {
     text-align: center;
     color: var(--color-error);
-}
-
-/* ---- Bottom sheet (orangui::BottomSheet) ---- */
-
-.sheet-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0);
-    pointer-events: none;
-    transition: background 0.3s ease;
-    z-index: 200;
-}
-
-.sheet-backdrop.show {
-    background: var(--bg-overlay);
-    pointer-events: auto;
-}
-
-.bottom-sheet {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-height: 85vh;
-    background: var(--bg-primary);
-    border-radius: 1rem 1rem 0 0;
-    box-shadow: var(--shadow-md);
-    transform: translateY(100%);
-    visibility: hidden;
-    transition: transform 0.3s ease, visibility 0s linear 0.3s;
-    display: flex;
-    flex-direction: column;
-    z-index: 201;
-    /* Clips the GridCells copy to the rounded corners. */
-    overflow: hidden;
-}
-
-/* The sheet's own GridCells sits under its header, content and action bar,
-   a step dimmer than the screen's; the header and the bar keep the sheet's
-   fill, the content shows the field. */
-.bottom-sheet > .grid-cells {
-    position: absolute;
-    z-index: 0;
-}
-
-.bottom-sheet > .grid-cells .grid-cells-canvas {
-    opacity: 0.8;
-}
-
-.bottom-sheet > :not(.grid-cells) {
-    position: relative;
-    z-index: 1;
-}
-
-.bottom-sheet > .sheet-header,
-.bottom-sheet > .action-bar {
-    background-color: var(--bg-primary);
-}
-
-.bottom-sheet.show {
-    transform: translateY(0);
-    visibility: visible;
-    transition: transform 0.3s ease;
-}
-
-/* The first render, before the slide is allowed to animate. */
-.bottom-sheet.bottom-sheet-premount {
-    transition: none;
-}
-
-/* Pulled off screen with no slide, so a theme wipe's new snapshot is taken
-   without the sheet. */
-.bottom-sheet.snap,
-.sheet-backdrop.snap {
-    transition: none;
-}
-
-.bottom-sheet .action-bar {
-    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-}
-
-.sheet-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--border-secondary);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-}
-
-/* Relative so the corner "?" parks inside the header rather than against
-   the sheet. */
-.bottom-sheet .sheet-header {
-    position: relative;
-}
-
-.sheet-title {
-    font-size: 1rem;
-    color: var(--accent-tertiary);
-}
-
-.sheet-content {
-    padding: 1.5rem;
-    overflow-y: auto;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-}
-
-/* A sheet's body shows the sheet's own GridCells; the layer paints the sink,
-   so the screen under the sheet stays hidden. */
-:where(.sheet-content) {
-    background-color: transparent;
 }
 
 /* ---- Alert dialog (orangui::AlertDialog, DialogHostView) ---- */

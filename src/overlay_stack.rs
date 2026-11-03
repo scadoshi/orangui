@@ -81,13 +81,16 @@ impl OverlayBackStack {
 
 /// Keeps `close` on the stack while `is_open` is true. For an overlay that
 /// closes through a callback rather than a settable signal, such as a dialog
-/// whose open state its consumer drives.
+/// whose open state its consumer drives. With no stack provided above it, as
+/// on a site with no OS back to bridge, it does nothing.
 pub fn use_overlay_back_action(is_open: ReadSignal<bool>, close: Callback<()>) {
-    let stack: OverlayBackStack = use_context();
+    let stack = try_use_context::<OverlayBackStack>();
     let id = use_hook(next_overlay_id);
 
     use_effect(move || {
-        let mut stack = stack;
+        let Some(mut stack) = stack else {
+            return;
+        };
         if is_open() {
             stack.push(id, close);
         } else {
@@ -96,8 +99,9 @@ pub fn use_overlay_back_action(is_open: ReadSignal<bool>, close: Callback<()>) {
     });
 
     use_drop(move || {
-        let mut stack = stack;
-        stack.remove(id);
+        if let Some(mut stack) = stack {
+            stack.remove(id);
+        }
     });
 }
 

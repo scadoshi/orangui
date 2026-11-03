@@ -1,4 +1,5 @@
-//! Slide-up bottom sheet, for the apps. Styled by `assets/app.css`.
+//! Slide-up bottom sheet, for the apps and the sites' theme picker. Styled
+//! by `assets/components.css`.
 
 use dioxus::prelude::*;
 
@@ -15,8 +16,8 @@ use crate::{ActionBar, Button, ButtonVariant, entrance};
 /// discarded pick. `hidden` drops the sheet and backdrop with no slide, for a
 /// sheet that leaves inside that wipe so the new snapshot is taken without it.
 ///
-/// Registers with the [`OverlayBackStack`](crate::OverlayBackStack), so the
-/// host must provide one above it.
+/// Registers with the [`OverlayBackStack`](crate::OverlayBackStack) when the
+/// host provides one above it, so the OS back gesture closes it.
 #[component]
 pub fn BottomSheet(
     mut open: Signal<bool>,

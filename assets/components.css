@@ -1043,7 +1043,8 @@ a.nav-dropdown-item.active:visited {
 
 /* A miniature of the theme: its background as the chip, its muted text as the
    border, and the six palette slots inside. */
-.theme-picker .theme-swatches {
+.theme-picker .theme-swatches,
+.theme-picker-sheet .theme-swatches {
     display: flex;
     align-items: center;
     gap: 0.2rem;
@@ -1054,11 +1055,45 @@ a.nav-dropdown-item.active:visited {
     border: 1px solid var(--text-muted);
 }
 
-.theme-picker .theme-dot {
+.theme-picker .theme-dot,
+.theme-picker-sheet .theme-dot {
     width: 0.6rem;
     height: 0.6rem;
     border-radius: 0.2rem;
     flex-shrink: 0;
+}
+
+/* ThemePicker's phone-width sheet: hidden above the hamburger breakpoint,
+   where the drop-down shows the themes. Below it the sheet shows them and
+   the drop-down's menu and click-away layer stay hidden. */
+.theme-picker-sheet {
+    display: none;
+}
+
+@media (max-width: 60rem) {
+    .theme-picker-sheet {
+        display: contents;
+    }
+    .theme-picker > .nav-dropdown-backdrop,
+    .theme-picker .nav-dropdown-open .nav-dropdown-content {
+        display: none;
+    }
+}
+
+/* The sheet's rows: the drop-down's, roomier for a thumb. */
+.theme-picker-sheet .nav-dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.65rem 1rem;
+    border-radius: 0.4rem;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.theme-picker-sheet .nav-dropdown-label {
+    text-align: center;
 }
 
 /* Section subtitles ("Themes" / "Color blind") that group the picker. The
@@ -1075,6 +1110,128 @@ a.nav-dropdown-item.active:visited {
 .nav-dropdown-rows > .nav-dropdown-label:first-child {
     margin-top: 0;
     padding-top: 0;
+}
+
+/* ---- Bottom sheet (orangui::BottomSheet) ----
+   Shared by the apps and the sites: the sites' ThemePicker opens one at
+   hamburger widths. */
+
+.sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    pointer-events: none;
+    transition: background 0.3s ease;
+    z-index: 200;
+}
+
+.sheet-backdrop.show {
+    background: var(--bg-overlay);
+    pointer-events: auto;
+}
+
+.bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 85vh;
+    background: var(--bg-primary);
+    border-radius: 1rem 1rem 0 0;
+    box-shadow: var(--shadow-md);
+    transform: translateY(100%);
+    visibility: hidden;
+    transition: transform 0.3s ease, visibility 0s linear 0.3s;
+    display: flex;
+    flex-direction: column;
+    z-index: 201;
+    /* Clips the GridCells copy to the rounded corners. */
+    overflow: hidden;
+}
+
+/* The sheet's own GridCells sits under its header, content and action bar,
+   a step dimmer than the screen's; the header and the bar keep the sheet's
+   fill, the content shows the field. */
+.bottom-sheet > .grid-cells {
+    position: absolute;
+    z-index: 0;
+}
+
+.bottom-sheet > .grid-cells .grid-cells-canvas {
+    opacity: 0.8;
+}
+
+.bottom-sheet > :not(.grid-cells) {
+    position: relative;
+    z-index: 1;
+}
+
+.bottom-sheet > .sheet-header,
+.bottom-sheet > .action-bar {
+    background-color: var(--bg-primary);
+}
+
+.bottom-sheet.show {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform 0.3s ease;
+}
+
+/* The first render, before the slide is allowed to animate. */
+.bottom-sheet.bottom-sheet-premount {
+    transition: none;
+}
+
+/* Pulled off screen with no slide, so a theme wipe's new snapshot is taken
+   without the sheet. */
+.bottom-sheet.snap,
+.sheet-backdrop.snap {
+    transition: none;
+}
+
+.bottom-sheet .action-bar {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+}
+
+.sheet-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Relative so the corner "?" parks inside the header rather than against
+   the sheet. */
+.bottom-sheet .sheet-header {
+    position: relative;
+}
+
+.sheet-title {
+    font-size: 1rem;
+    color: var(--accent-tertiary);
+}
+
+.sheet-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* A sheet's body shows the sheet's own GridCells; the layer paints the sink,
+   so the screen under the sheet stays hidden. */
+:where(.sheet-content) {
+    background-color: transparent;
+}
+
+/* The content column, for a host that loads no app sheet. */
+.sheet-content > .flex-col {
+    display: flex;
+    flex-direction: column;
 }
 
 /* ---- Banner (orangui::Banner) ---- */
