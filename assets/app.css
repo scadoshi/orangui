@@ -22,6 +22,9 @@
        trailing padding can lift the last panel clear of the home indicator. */
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
+    /* WebKit bounces only a scroller whose content outgrows it, so the content
+       always does, by one pixel, through the pseudo-element below. */
+    overscroll-behavior-y: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,6 +33,17 @@
     padding-top: 1rem;
     /* No fill: the host's GridCells layer under the screen is the backdrop. */
     background-color: transparent;
+}
+
+/* One pixel past the content box, so a page that fits the screen still
+   rubber-bands at both ends on iOS. */
+.screen-content::after {
+    content: "";
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
+    height: 1px;
+    pointer-events: none;
 }
 
 /* The screen's safe-area padding sits outside the header and the action
