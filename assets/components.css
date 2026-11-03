@@ -1133,6 +1133,121 @@ a.nav-dropdown-item.active:visited {
     padding-top: 0;
 }
 
+/* ---- Action dock (.action-dock) ----
+   A screen's icon actions as one floating squircle bar just above the bottom
+   edge, with no bar behind it: icons only, a thin divider between groups that
+   runs the bar's full height. It sits on the raised surface with the medium
+   shadow, so it stays a bar over a same-color panel, and the content scrolls
+   under it. --keyboard-inset, set by KEYBOARD_INSET_JS, lifts it over the
+   keyboard. Inside a BottomSheet the sheet's transform is its containing
+   block, so it floats at the sheet's bottom; .sheet-dock marks that one. */
+
+.action-dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 0.4rem + var(--keyboard-inset, 0px));
+    z-index: 50;
+    width: fit-content;
+    margin: 0 auto;
+    display: flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    padding: 0 0.4rem;
+    border: 1px solid var(--border-primary);
+    border-radius: 0.9rem;
+    background-color: var(--bg-raised);
+    box-shadow: var(--shadow-md);
+    transition: bottom 0.25s ease;
+}
+
+/* Pinned to the bottom right instead of centered. */
+.action-dock.action-dock-right {
+    margin-right: 0.6rem;
+}
+
+.action-dock-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    margin: 0.3rem 0;
+    padding: 0;
+    border: none;
+    border-radius: 0.6rem;
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.action-dock-btn:active {
+    background-color: var(--bg-primary);
+}
+
+/* A dock toggle while it is on: the icon in the accent color. */
+.action-dock-btn.action-dock-on {
+    color: var(--accent-primary);
+}
+
+.action-dock-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+/* On a light theme a disabled dock button keeps its place and dims its
+   glyph to the muted text, as the buttons and chips do. */
+[class*="theme-"][class*="-light"] .action-dock-btn:disabled {
+    opacity: 1;
+    color: var(--text-muted);
+}
+
+.action-dock-icon {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.action-dock-divider {
+    flex: 0 0 1px;
+    align-self: stretch;
+    margin: 0 0.25rem;
+    background-color: var(--border-primary);
+}
+
+/* A button with a badge on its corner, such as a filter with its reset. */
+.action-dock-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* The group's reset: a small x on the button's top right corner, shown
+   while there is something to reset. */
+.action-dock-reset {
+    position: absolute;
+    top: -0.35rem;
+    right: -0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    padding: 0;
+    border: 1px solid var(--border-primary);
+    border-radius: 0.35rem;
+    background-color: var(--bg-raised);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
 /* ---- Bottom sheet (orangui::BottomSheet) ----
    Shared by the apps and the sites: the sites' ThemePicker opens one at
    hamburger widths. */
@@ -1301,6 +1416,17 @@ a.nav-dropdown-item.active:visited {
    the home indicator itself. */
 .bottom-sheet > .sheet-content:last-child {
     padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* A sheet's dock (.action-dock.sheet-dock) floats over the sheet's content,
+   which ends with room to scroll its last row clear of it. */
+.bottom-sheet .sheet-dock {
+    position: fixed;
+    z-index: 2;
+}
+
+.bottom-sheet:has(.sheet-dock) > .sheet-content {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
 }
 
 /* A sheet's body shows the sheet's own GridCells; the layer paints the sink,

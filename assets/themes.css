@@ -4802,9 +4802,10 @@
    derived: the sink and the grid
  ==================== */
 
-/* The recessed background under the panels, and the faint grid drawn on it,
-   mixed from the active theme's own colors. Declared on the element that
-   carries the theme class, so color-mix() resolves against that theme
+/* The recessed background under the panels, the faint grid drawn on it, and
+   the raised surface of a control that floats over a panel (the action
+   dock), mixed from the active theme's own colors. Declared on the element
+   that carries the theme class, so color-mix() resolves against that theme
    rather than the root's. */
 :root,
 [class*="theme-"][class*="-dark"],
@@ -4812,10 +4813,13 @@
     --grid-line: color-mix(in srgb, var(--text-primary) 4%, transparent);
     --grid-size: 28px;
     --bg-sink: color-mix(in srgb, var(--bg-primary), #000 15%);
+    --bg-raised: color-mix(in srgb, var(--bg-primary), #fff 6%);
 }
 
-/* A light theme lifts the sink toward white: darkening a cream palette reads
-   muddy. */
+/* A light theme lifts the sink toward white, since darkening a cream palette
+   reads muddy, and sets the raised surface a shade darker than the panel,
+   since a cream panel has nowhere lighter to go. */
 [class*="theme-"][class*="-light"] {
     --bg-sink: color-mix(in srgb, var(--bg-primary), #fff 35%);
+    --bg-raised: color-mix(in srgb, var(--bg-primary), #000 5%);
 }

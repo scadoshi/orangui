@@ -147,6 +147,12 @@ pub use toast_stack::ToastStack;
 pub const COMPONENTS_CSS: &str = include_str!("../assets/components.css");
 /// The 50 theme palettes, each dark and light.
 pub const THEMES_CSS: &str = include_str!("../assets/themes.css");
+/// The apps' keyboard inset: the strip of the page the on-screen keyboard
+/// hides, in pixels, kept in `--keyboard-inset` on the root, which the
+/// `.action-dock` rules in [`COMPONENTS_CSS`] add to the dock's bottom so it
+/// rises above the keyboard. Inline it once with `document::Script`; it does
+/// nothing where the visual viewport API is missing.
+pub const KEYBOARD_INSET_JS: &str = include_str!("../assets/keyboard-inset.js");
 /// The sites' scroll reveal: elements marked `data-reveal` (every [`Panel`])
 /// that start below the fold fade up as they scroll in. Inline it with
 /// `document::Script`; [`SITE_CSS`] styles the `.reveal-pending` and
