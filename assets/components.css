@@ -922,7 +922,8 @@ a.stat-chip {
 
 /* Click-away layer for the open hamburger panel: under the nav (101), over the
    page. The pointer cursor is what makes iOS Safari send taps on a plain div
-   to the delegated click handler. */
+   to the delegated click handler. A host transform on an ancestor shrinks it
+   to that ancestor; NavBar's document listener closes the panel past it. */
 .nav-backdrop {
     position: fixed;
     inset: 0;

@@ -5,7 +5,18 @@
 //! CSS; the host owns the content via slots: its brand link, its `li` link
 //! items, and an optional trailing panel item (typically [`ThemePicker`]).
 //! The host also owns the `open` signal so link `onclick`s can close the
-//! panel after navigating. A click outside the nav closes it too.
+//! panel after navigating. A tap outside the nav closes it too.
+//!
+//! The outside tap lands two ways. The open panel renders a transparent
+//! `div.nav-backdrop` (`position: fixed`) before `.nav-wrapper`, which eats
+//! the tap so the page under it doesn't take it as well. A host that
+//! transforms an ancestor of the nav (or gives it a filter, `contain` or
+//! `will-change: transform`) makes that ancestor the backdrop's containing
+//! block, so the backdrop covers the ancestor rather than the viewport. A
+//! document listener covers the rest: a tap that ends outside every
+//! `.nav-wrapper` and off the backdrop closes the panel too, whatever the
+//! backdrop covers. The kit itself never transforms the wrapper or its
+//! ancestors.
 //!
 //! [`ThemePicker`]: crate::ThemePicker
 
@@ -22,6 +33,25 @@ pub const BRAND_RESET_JS: &str = r"
         void el.offsetHeight;
         el.style.animation = '';
     }
+";
+
+/// Sends once for each tap that ends outside every `.nav-wrapper` and off the
+/// `.nav-backdrop` (which closes the panel itself) while a panel is open.
+/// Capture phase, so a host handler that stops the event can't hide it, and
+/// `pointerup` rather than `click`, which iOS Safari only sends for elements
+/// it thinks are clickable. A tap that finds no nav on the page removes the
+/// listener.
+const NAV_AWAY_JS: &str = r"
+const away = (e) => {
+    if (!document.querySelector('.nav-wrapper')) {
+        document.removeEventListener('pointerup', away, true);
+        return;
+    }
+    const target = e.target;
+    if (!(target instanceof Element) || target.closest('.nav-wrapper, .nav-backdrop')) return;
+    if (document.querySelector('.nav-panel-open')) dioxus.send(true);
+};
+document.addEventListener('pointerup', away, true);
 ";
 
 /// Nav shell with a hamburger-collapsing link panel.
@@ -43,6 +73,12 @@ pub fn NavBar(
     trailing: Option<Element>,
 ) -> Element {
     let mut open = open;
+    use_future(move || async move {
+        let mut away = document::eval(NAV_AWAY_JS);
+        while away.recv::<bool>().await.is_ok() {
+            open.set(false);
+        }
+    });
     let panel_class = if open() {
         "nav-panel nav-panel-open"
     } else {
@@ -88,5 +124,17 @@ pub fn NavBar(
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_away_listener_skips_the_nav_and_its_backdrop() {
+        assert!(NAV_AWAY_JS.contains(".nav-wrapper, .nav-backdrop"));
+        assert!(NAV_AWAY_JS.contains(".nav-panel-open"));
+        assert!(NAV_AWAY_JS.contains("removeEventListener"));
     }
 }
