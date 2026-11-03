@@ -75,7 +75,9 @@ pub fn NavBar(
     persistent: Option<Element>,
     /// Link items (`li` elements) rendered inside the panel's `ul.nav-links`.
     links: Element,
-    /// Optional trailing panel item after the links (e.g. the theme picker).
+    /// Optional trailing panel item after the links (e.g. the theme picker),
+    /// wrapped in `div.nav-trailing`, which at hamburger widths is the
+    /// folded menu's solid footer band.
     trailing: Option<Element>,
 ) -> Element {
     let mut open = open;
@@ -126,7 +128,7 @@ pub fn NavBar(
                     div { class: "nav-panel-inner",
                         ul { class: "nav-links scroll-fade-y", "data-nav-glide": "true", {links} }
                         if let Some(t) = trailing {
-                            {t}
+                            div { class: "nav-trailing", {t} }
                         }
                     }
                 }

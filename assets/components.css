@@ -643,20 +643,23 @@ a.stat-chip {
         padding-top: var(--nav-row-pad);
         padding-bottom: var(--nav-row-pad);
     }
+    /* The trailing slot is the folded menu's footer band: a solid fill over
+       the grid, under a rule, bleeding to the panel edges (inside the inner's
+       padding box, so overflow won't clip it; matches the inner's padding). */
+    .nav-panel .nav-trailing {
+        margin-left: calc(-1 * var(--nav-pad));
+        margin-right: calc(-1 * var(--nav-pad));
+        padding: 0.75rem var(--nav-pad) 0;
+        border-top: 1px solid var(--border-primary);
+        background-color: var(--bg-primary);
+    }
     /* ThemePicker as the panel's trailing item. */
     .nav-panel .theme-picker {
         flex-direction: row;
         align-items: center;
         justify-content: center;
         gap: 0.75rem;
-        padding-top: 0.75rem;
-        border-top: 1px solid var(--border-primary);
         height: auto;
-        /* bleed to the panel edges so this divider also runs edge to edge
-           (stays inside the inner's padding box, so overflow won't clip it).
-           Matches the inner's padding. */
-        margin-left: calc(-1 * var(--nav-pad));
-        margin-right: calc(-1 * var(--nav-pad));
     }
     .nav-panel .nav-dropdown-trigger,
     .nav-panel .mode-toggle {
