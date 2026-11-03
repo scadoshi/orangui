@@ -1087,6 +1087,48 @@ a.nav-dropdown-item.active:visited {
 /* A miniature of the theme: its background as the chip, its muted text as the
    border, and the six palette slots inside. */
 .theme-picker .theme-swatches,
+/* A preference row, as the theme sheet lists its themes: a filled, bordered
+   button that lights its border when selected. Here rather than app.css so
+   the sites' theme sheet gets it too. */
+.pref-row {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 0.4rem;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 400;
+    font-size: 0.85rem;
+    text-align: left;
+    cursor: pointer;
+    transition:
+        border-color 0.15s,
+        color 0.15s;
+}
+
+.pref-row.selected {
+    border-color: var(--accent-secondary);
+    color: var(--text-primary);
+}
+
+.pref-row-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.pref-section-label {
+    font-size: 1rem;
+    color: var(--accent-primary);
+    letter-spacing: 0.1em;
+    text-align: center;
+    margin: 0.75rem 0 0.4rem;
+}
+
 .theme-picker-sheet .theme-swatches {
     display: flex;
     align-items: center;
