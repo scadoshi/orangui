@@ -96,8 +96,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-gruvbox-dark {
@@ -191,8 +191,8 @@
     --syntax-punctuation: #af3a03;
     --syntax-parameter: #076678;
     --syntax-member: #076678;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-dracula-dark {
@@ -286,8 +286,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: #a34d14;
     --syntax-member: #a34d14;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-everforest-dark {
@@ -381,8 +381,8 @@
     --syntax-punctuation: #829181;
     --syntax-parameter: var(--text-primary);
     --syntax-member: #3a94c5;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-catppuccin-dark {
@@ -476,8 +476,8 @@
     --syntax-punctuation: #7c7f93;
     --syntax-parameter: #e64553;
     --syntax-member: #7287fd;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-darcula-dark {
     --bg-primary: #2b2b2b;
@@ -570,8 +570,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: #871094;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-tokyo-night-dark {
@@ -665,8 +665,8 @@
     --syntax-punctuation: #006a83;
     --syntax-parameter: #8c6c3e;
     --syntax-member: #387068;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-nord-dark {
@@ -760,8 +760,8 @@
     --syntax-punctuation: #4c566a;
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-rose-pine-dark {
@@ -855,8 +855,8 @@
     --syntax-punctuation: #797593;
     --syntax-parameter: #907aa9;
     --syntax-member: #56949f;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-monokai-dark {
@@ -950,8 +950,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--palette-2);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-monokai-pro-dark {
     --bg-primary: #2d2a2e;
@@ -1044,8 +1044,8 @@
     --syntax-punctuation: #918c8e;
     --syntax-parameter: var(--palette-2);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-monokai-pro-machine-dark {
     --bg-primary: #273136;
@@ -1138,8 +1138,8 @@
     --syntax-punctuation: #646a6d;
     --syntax-parameter: var(--palette-2);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-monokai-pro-octagon-dark {
     --bg-primary: #282a3a;
@@ -1232,8 +1232,8 @@
     --syntax-punctuation: #737887;
     --syntax-parameter: var(--palette-2);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-monokai-pro-ristretto-dark {
     --bg-primary: #2c2525;
@@ -1326,8 +1326,8 @@
     --syntax-punctuation: #7b7072;
     --syntax-parameter: var(--palette-2);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-monokai-pro-spectrum-dark {
     --bg-primary: #222222;
@@ -1420,8 +1420,8 @@
     --syntax-punctuation: #696969;
     --syntax-parameter: var(--palette-2);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-neovim-dark {
     --bg-primary: #14161b;
@@ -1514,8 +1514,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: #004c73;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-one-dark-dark {
@@ -1609,8 +1609,8 @@
     --syntax-punctuation: #383a42;
     --syntax-parameter: #e45649;
     --syntax-member: #e45649;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-poimandres-dark {
     --bg-primary: #1b1e28;
@@ -1703,8 +1703,8 @@
     --syntax-punctuation: #6b7191;
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-solarized-dark {
@@ -1798,8 +1798,8 @@
     --syntax-punctuation: #657b83;
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 /* ==================
@@ -1897,8 +1897,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: #55b4d4;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-bluloco-dark {
     --bg-primary: #282c34;
@@ -1991,8 +1991,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: #40b8c5;
     --syntax-member: #a05a48;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-github-dark {
@@ -2086,8 +2086,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: #0550ae;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-github-high-contrast-dark {
     --bg-primary: #0a0c10;
@@ -2180,8 +2180,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: #023b95;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-kanagawa-dark {
@@ -2275,8 +2275,8 @@
     --syntax-punctuation: #4e8ca2;
     --syntax-parameter: #5d57a3;
     --syntax-member: #77713f;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-kanagawa-dragon-dark {
     --bg-primary: #181616;
@@ -2369,8 +2369,8 @@
     --syntax-punctuation: #4e8ca2;
     --syntax-parameter: #5d57a3;
     --syntax-member: #77713f;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-material-dark {
     --bg-primary: #212121;
@@ -2463,8 +2463,8 @@
     --syntax-punctuation: #39adb5;
     --syntax-parameter: var(--text-primary);
     --syntax-member: #e53935;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-night-owl-dark {
@@ -2558,8 +2558,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-nightfox-dark {
     --bg-primary: #192330;
@@ -2652,8 +2652,8 @@
     --syntax-punctuation: #643f61;
     --syntax-parameter: var(--text-primary);
     --syntax-member: #2848a9;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-vantablack-dark {
@@ -2747,8 +2747,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-flexoki-dark {
     --bg-primary: #100f0f;
@@ -2841,8 +2841,8 @@
     --syntax-punctuation: #6f6e69;
     --syntax-parameter: var(--text-primary);
     --syntax-member: #205ea6;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-vscode-dark {
@@ -2936,8 +2936,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: #001080;
     --syntax-member: #001080;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-xcode-dark {
     --bg-primary: #1f1f24;
@@ -3030,8 +3030,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-zenburn-dark {
@@ -3125,8 +3125,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 /* ==================
@@ -3224,8 +3224,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-hackerman-dark {
@@ -3319,8 +3319,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-matte-black-dark {
@@ -3414,8 +3414,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-melange-dark {
     --bg-primary: #292522;
@@ -3508,8 +3508,8 @@
     --syntax-punctuation: #cca478;
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-miasma-dark {
@@ -3603,8 +3603,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-modus-dark {
     --bg-primary: #000000;
@@ -3697,8 +3697,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: #005e8b;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-osaka-jade-dark {
@@ -3792,8 +3792,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-oxocarbon-dark {
     --bg-primary: #161616;
@@ -3886,8 +3886,8 @@
     --syntax-punctuation: #d02670;
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 
@@ -3982,8 +3982,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-terafox-dark {
     --bg-primary: #152528;
@@ -4076,8 +4076,8 @@
     --syntax-punctuation: #643f61;
     --syntax-parameter: var(--text-primary);
     --syntax-member: #2848a9;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-powershell-dark {
@@ -4171,8 +4171,8 @@
     --syntax-punctuation: #a9a9a9;
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-docs-rs-dark {
@@ -4270,8 +4270,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .theme-eclipse-dark {
     --bg-primary: #1e1f22;
@@ -4364,8 +4364,8 @@
     --syntax-punctuation: var(--text-primary);
     --syntax-parameter: #6a3e3e;
     --syntax-member: #0000c0;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 /* ==================
@@ -4463,8 +4463,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-deuteranopia-dark {
@@ -4558,8 +4558,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-tritanopia-dark {
@@ -4653,8 +4653,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .theme-achromatopsia-dark {
@@ -4748,8 +4748,8 @@
     --syntax-punctuation: var(--text-muted);
     --syntax-parameter: var(--text-primary);
     --syntax-member: var(--text-primary);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 /* ==================
