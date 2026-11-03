@@ -18,9 +18,15 @@
 //! backdrop covers. The kit itself never transforms the wrapper or its
 //! ancestors.
 //!
+//! The folded panel carries its own still [`GridCells`] copy, the same
+//! backdrop the app screens and the bottom sheet draw, under the links and
+//! the trailing slot. At bar widths it hides.
+//!
 //! [`ThemePicker`]: crate::ThemePicker
 
 use dioxus::prelude::*;
+
+use crate::grid_cells::GridCells;
 
 /// JS run on brand-click by convention: smooth-scroll to top and restart the
 /// `.logo` entrance animation. Exported so every surface's brand link shares
@@ -115,6 +121,8 @@ pub fn NavBar(
                     span { class: "nav-toggle-bar" }
                 }
                 div { class: "{panel_class}",
+                    // The same backdrop as the screen, pinned to the folded panel.
+                    GridCells { still: true }
                     div { class: "nav-panel-inner",
                         ul { class: "nav-links scroll-fade-y", "data-nav-glide": "true", {links} }
                         if let Some(t) = trailing {

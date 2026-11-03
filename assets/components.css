@@ -326,6 +326,11 @@ a.stat-chip {
     justify-content: flex-end;
 }
 
+/* The panel's GridCells copy paints only behind the folded menu. */
+.nav-panel > .grid-cells {
+    display: none;
+}
+
 .nav-panel-inner {
     display: flex;
     align-items: center;
@@ -516,6 +521,12 @@ a.stat-chip {
         grid-column: 1 / -1;
         grid-row: 2;
         justify-self: stretch;
+        /* Its own stacking context, so the GridCells copy at z-index -1 paints
+           over the panel's sink and under the links, and not under the sticky
+           wrapper's fill. */
+        position: relative;
+        z-index: 0;
+        background-color: var(--bg-sink);
         /* fill the row (the bar's align-items: center would let the panel
            overflow it) and shrink to it instead of the content minimum */
         align-self: stretch;
@@ -560,6 +571,14 @@ a.stat-chip {
             padding-top 0.25s ease,
             border-top-color 0.2s ease,
             visibility 0s;
+    }
+    /* The grid backdrop under the menu, as under a bottom sheet: the panel's
+       own still copy, pinned to the panel and under its rows. Absolute, so
+       it takes no grid row of its own. */
+    .nav-panel > .grid-cells {
+        display: block;
+        position: absolute;
+        z-index: -1;
     }
     /* nowrap + flex-start undo the desktop bar's flex-wrap/justify-end so the
        collapsing column can't wrap into narrow columns while the open animation
