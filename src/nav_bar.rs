@@ -60,6 +60,14 @@ const away = (e) => {
 document.addEventListener('pointerup', away, true);
 ";
 
+/// The folded panel's open state, which [`NavBar`] provides as context so an
+/// item inside the panel can fold the menu when it raises an overlay of its
+/// own, as [`ThemePicker`] does for its phone-width sheet.
+///
+/// [`ThemePicker`]: crate::ThemePicker
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct NavPanelOpen(pub Signal<bool>);
+
 /// Nav shell with a hamburger-collapsing link panel.
 #[component]
 pub fn NavBar(
@@ -81,6 +89,7 @@ pub fn NavBar(
     trailing: Option<Element>,
 ) -> Element {
     let mut open = open;
+    use_context_provider(|| NavPanelOpen(open));
     use_future(move || async move {
         let mut away = document::eval(NAV_AWAY_JS);
         while away.recv::<bool>().await.is_ok() {

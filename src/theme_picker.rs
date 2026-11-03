@@ -4,7 +4,8 @@
 //!
 //! Below the 60rem hamburger breakpoint the same open state shows the themes
 //! in a [`BottomSheet`] instead of the drop-down; the stylesheet picks which
-//! one a width shows, so both stay mounted and share one signal.
+//! one a width shows, so both stay mounted and share one signal. In a
+//! [`NavBar`](crate::NavBar)'s folded menu, opening the sheet folds the menu.
 //!
 //! This is the canonical copy for every site; the host passes its `Signal<ThemeConfig>` in,
 //! so how the theme is provided (context, prop drilling) and applied (body
@@ -13,7 +14,8 @@
 use dioxus::prelude::*;
 
 use crate::{
-    BottomSheet, Button, ButtonVariant, NavDropdown, THEME_GROUPS, ThemeConfig, display_theme_name,
+    BottomSheet, Button, ButtonVariant, NavDropdown, NavPanelOpen, THEME_GROUPS, ThemeConfig,
+    display_theme_name,
 };
 
 /// A mode's icon, solid in the text color: the moon for dark, the sun for
@@ -99,6 +101,17 @@ pub fn ThemePicker(
     let own_open = use_signal(|| false);
     let open = open.unwrap_or(own_open);
     let shown = shown.unwrap_or(theme);
+    // Inside a NavBar's folded menu the sheet rises as the menu folds, so the
+    // two never stack; at bar widths the panel is already closed, and the
+    // drop-down opens as before.
+    let nav = try_use_context::<NavPanelOpen>();
+    use_effect(move || {
+        if open()
+            && let Some(mut nav) = nav
+        {
+            nav.0.set(false);
+        }
+    });
     let current = shown.read().name.clone();
     let is_dark = shown.read().is_dark;
     let mode = if is_dark { "dark" } else { "light" };

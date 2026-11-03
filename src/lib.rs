@@ -111,7 +111,7 @@ pub use hint::{
 };
 #[cfg(feature = "links")]
 pub use links::{OpenUrlError, open_url, use_in_app_links};
-pub use nav_bar::{BRAND_RESET_JS, NavBar};
+pub use nav_bar::{BRAND_RESET_JS, NavBar, NavPanelOpen};
 pub use nav_dropdown::NavDropdown;
 #[doc(inline)]
 pub use orangui_core::chart_math::{area, curve, peak_indices, tip_anchor};

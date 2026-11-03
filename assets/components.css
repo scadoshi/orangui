@@ -1173,6 +1173,12 @@ a.nav-dropdown-item.active:visited {
     .theme-picker .nav-dropdown-caret {
         display: none;
     }
+    /* The sheet is the folded menu's descendant, so the menu stays painted
+       while the sheet is up and folds in plain sight as the sheet rises. */
+    .nav-panel:has(.theme-picker-sheet .bottom-sheet.show) {
+        opacity: 1;
+        visibility: visible;
+    }
     .theme-picker .nav-dropdown-trigger::before {
         content: "";
         width: 0.6em;
