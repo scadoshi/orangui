@@ -11,16 +11,21 @@
 
 /* ---- Chip (orangui::Chip) ---- */
 
-/* The ASCII logo's color: the text color on a dark theme, the primary accent
-   on a light one, where the block letters in plain text look like a smudge.
-   Set on the themed element so every logo under it follows. */
+/* Set on the themed element so everything under it follows. The ASCII
+   logo's color: the text color on a dark theme, the primary accent on a
+   light one, where the block letters in plain text look like a smudge. The
+   corner controls' resting fade (the hamburger, a sheet's ×, a page
+   header's corner buttons): half strength on a dark theme, where that still
+   reads, firmer on a light one, where it washes out. */
 :root,
 [class*="theme-"][class*="-dark"] {
     --logo: var(--text-primary);
+    --fade-corner: 0.55;
 }
 
 [class*="theme-"][class*="-light"] {
     --logo: var(--accent-primary);
+    --fade-corner: 0.75;
 }
 
 .chip {
@@ -339,7 +344,7 @@ a.stat-chip {
     background: var(--bg-primary);
     border: 1px solid var(--border-primary);
     border-radius: 0.4rem;
-    opacity: 0.55;
+    opacity: var(--fade-corner);
     cursor: pointer;
     transition: border-color 0.15s;
 }
@@ -1244,7 +1249,7 @@ a.nav-dropdown-item.active:visited {
     font-family: inherit;
     font-size: 1.1rem;
     line-height: 1;
-    opacity: 0.55;
+    opacity: var(--fade-corner);
     cursor: pointer;
     transition: border-color 0.15s;
 }

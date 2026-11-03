@@ -98,7 +98,7 @@
     align-items: center;
     justify-content: center;
     height: 1.7rem;
-    opacity: 0.55;
+    opacity: var(--fade-corner);
     padding: 0.2rem 0.6rem;
 }
 
