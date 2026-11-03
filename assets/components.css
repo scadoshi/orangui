@@ -1168,11 +1168,12 @@ a.nav-dropdown-item.active:visited {
     position: fixed;
     left: 0;
     right: 0;
-    /* Half the home indicator's safe area plus the side gap, so the bar sits
-       as far from the bottom edge as from the side: on a 45 degree line from
-       the corner, over the indicator's strip rather than stacked above it. The
-       gap clears the phone's rounded corner. */
-    bottom: calc(env(safe-area-inset-bottom, 0px) / 2 + 0.9rem + var(--keyboard-inset, 0px));
+    /* One gap from the bottom edge and from the side, so the bar sits on a
+       45 degree line from the corner: half the home indicator's safe area
+       plus a margin, which puts it over the indicator's strip rather than
+       stacked above it and clears the phone's rounded corner. */
+    --dock-gap: calc(env(safe-area-inset-bottom, 0px) / 2 + 0.6rem);
+    bottom: calc(var(--dock-gap) + var(--keyboard-inset, 0px));
     z-index: 50;
     width: fit-content;
     margin: 0 auto;
@@ -1189,7 +1190,7 @@ a.nav-dropdown-item.active:visited {
 
 /* Pinned to the bottom right instead of centered. */
 .action-dock.action-dock-right {
-    margin-right: 0.9rem;
+    margin-right: var(--dock-gap);
 }
 
 .action-dock-btn {
