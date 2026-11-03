@@ -128,7 +128,7 @@ pub fn ThemePicker(
         }
         // The phone-width chooser, hidden by the stylesheet above 60rem.
         div { class: "theme-picker-sheet",
-            BottomSheet { open, title: "Themes".to_string(),
+            BottomSheet { open, title: "Themes".to_string(), closable: true,
                 ThemeRows { theme, open, current, mode }
             }
         }

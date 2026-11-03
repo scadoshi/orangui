@@ -16,8 +16,8 @@ use std::path::PathBuf;
 use dioxus::dioxus_core::NoOpMutations;
 use dioxus::prelude::*;
 use orangui::{
-    ActionButton, AlertDialog, BannerStatus, DialogAction, DialogHostView, Panel, ThemeConfig,
-    ThemeSheet, use_dialog_host, use_overlay_back_stack, use_theme_follow,
+    ActionButton, AlertDialog, BannerStatus, BottomSheet, DialogAction, DialogHostView, Panel,
+    ThemeConfig, ThemeSheet, use_dialog_host, use_overlay_back_stack, use_theme_follow,
 };
 
 /// Compares `html` with the saved copy `name`, or saves it under `BLESS_HTML`.
@@ -212,4 +212,26 @@ fn theme_sheet_open() {
 #[test]
 fn theme_sheet_closed() {
     golden("theme_sheet_closed", &render(|| theme_sheet_app(false)));
+}
+
+#[test]
+fn a_closable_sheet_trades_the_close_bar_for_a_corner_button() {
+    fn closable() -> Element {
+        let open = use_signal(|| true);
+        rsx! {
+            BottomSheet { open, title: "Themes".to_string(), closable: true, "rows" }
+        }
+    }
+    fn plain() -> Element {
+        let open = use_signal(|| true);
+        rsx! {
+            BottomSheet { open, title: "Themes".to_string(), "rows" }
+        }
+    }
+    let html = render(closable);
+    assert!(html.contains("class=\"sheet-close\""), "{html}");
+    assert!(!html.contains("action-bar"), "{html}");
+    let html = render(plain);
+    assert!(!html.contains("sheet-close"), "{html}");
+    assert!(html.contains("action-bar"), "{html}");
 }

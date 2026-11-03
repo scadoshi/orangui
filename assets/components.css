@@ -1203,9 +1203,50 @@ a.nav-dropdown-item.active:visited {
 }
 
 /* Relative so the corner "?" parks inside the header rather than against
-   the sheet. */
+   the sheet. The header is the drag handle: the pointer moves it rather
+   than scrolling the page or selecting the title. */
 .bottom-sheet .sheet-header {
     position: relative;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* The closable sheet's × in the header's left corner, as gentle as the
+   nav's hamburger: a small faded box at full strength while pressed. */
+.sheet-close {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 2.1rem;
+    height: 1.7rem;
+    padding: 0;
+    margin: 0;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 0.4rem;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1.1rem;
+    line-height: 1;
+    opacity: 0.55;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+@media (hover: hover) {
+    .sheet-close:hover {
+        border-color: var(--accent-primary);
+    }
+}
+
+.sheet-close:active {
+    opacity: 1;
 }
 
 .sheet-title {
@@ -1220,6 +1261,12 @@ a.nav-dropdown-item.active:visited {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+}
+
+/* A sheet with no action bar ends on its content, which keeps clear of
+   the home indicator itself. */
+.bottom-sheet > .sheet-content:last-child {
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 /* A sheet's body shows the sheet's own GridCells; the layer paints the sink,

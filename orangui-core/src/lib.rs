@@ -14,6 +14,7 @@
 //! - [`splash`]: the opening's timeline.
 //! - [`heat`]: the heatmap grid's measurements.
 //! - [`diagram`]: the diagram boxes' measurements.
+//! - [`sheet_drag`]: when a dragged bottom sheet closes or springs back.
 //! - [`toast`]: how long a toast stays up.
 //! - [`theme`]: the theme list, its picker groups and the stored pick.
 //!
@@ -28,6 +29,7 @@ pub mod grid_rain;
 pub mod heat;
 pub mod number;
 pub mod rng;
+pub mod sheet_drag;
 pub mod splash;
 pub mod theme;
 pub mod toast;
