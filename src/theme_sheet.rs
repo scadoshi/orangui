@@ -6,19 +6,18 @@
 //!
 //! On a keyboard, while the sheet is open and no dialog is over it, the up
 //! and down arrows preview the row above or below the selected one, and
-//! Enter is Save unless a button or link inside the sheet has focus.
+//! Enter is the save check unless a button or link inside the sheet has
+//! focus.
 
 use dioxus::prelude::*;
 
-use crate::{
-    BottomSheet, Button, ButtonVariant, THEME_GROUPS, ThemeConfig, ThemeFollow, display_theme_name,
-};
+use crate::{BottomSheet, THEME_GROUPS, ThemeConfig, ThemeFollow, display_theme_name};
 
 /// The sheet's keys, installed once per page by [`ThemeSheet`]. The open
 /// sheet is the shown `.bottom-sheet` holding theme swatches. An arrow clicks
 /// the row above or below the selected one and scrolls it into view, staying
-/// put at either end; Enter clicks the last button in the sheet's action bar,
-/// Save, when it is enabled. Nothing happens while a dialog is open.
+/// put at either end; Enter clicks the save check in the sheet's dock when it
+/// is enabled. Nothing happens while a dialog is open.
 const THEME_KEYS_JS: &str = r#"
 if (!window.__oranguiThemeKeys) {
     window.__oranguiThemeKeys = true;
@@ -39,8 +38,7 @@ if (!window.__oranguiThemeKeys) {
                 next.scrollIntoView({ block: 'nearest' });
             }
         } else if (e.key === 'Enter' && !(onControl && sheet.contains(focus))) {
-            const buttons = sheet.querySelectorAll('.action-bar button');
-            const save = buttons[buttons.length - 1];
+            const save = sheet.querySelector('.sheet-dock .action-dock-btn');
             e.preventDefault();
             if (save && !save.disabled) save.click();
         }
@@ -87,11 +85,12 @@ fn ThemeRow(
 }
 
 /// Bottom sheet for picking a theme. A pick previews at once by setting
-/// `theme`, the app's live theme. Save closes the sheet and hands the pick to
-/// `on_save`, and is grayed until the pick differs from what the sheet opened
-/// on. Back and the backdrop restore the theme that was active when the sheet
-/// opened: the sheet holds still while that theme wipes back in, leaves
-/// inside the wipe, and calls `on_unchanged` once the sweep is done.
+/// `theme`, the app's live theme. The check in the sheet's dock closes the
+/// sheet and hands the pick to `on_save`, and is grayed until the pick differs
+/// from what the sheet opened on. The ×, a drag down and the backdrop restore
+/// the theme that was active when the sheet opened: the sheet holds still
+/// while that theme wipes back in, leaves inside the wipe, and calls
+/// `on_unchanged` once the sweep is done.
 ///
 /// On a keyboard the arrows walk the rows and Enter saves (see the module
 /// docs).
@@ -104,7 +103,7 @@ pub fn ThemeSheet(
     mut open: Signal<bool>,
     /// The app's live theme. Each pick is written here.
     mut theme: Signal<ThemeConfig>,
-    /// Called with the kept theme after Save closes the sheet.
+    /// Called with the kept theme after the save check closes the sheet.
     on_save: EventHandler<ThemeConfig>,
     /// Called once a discarded pick has wiped back out and the sheet is gone.
     on_unchanged: EventHandler<()>,
@@ -167,27 +166,9 @@ pub fn ThemeSheet(
             open,
             title: "Themes".to_string(),
             hint,
+            closable: true,
             on_dismiss: move |()| discard.call(()),
             hidden: hidden(),
-            footer: rsx! {
-                Button {
-                    variant: ButtonVariant::Action,
-                    onclick: move |_| discard.call(()),
-                    "Back"
-                }
-                Button {
-                    variant: ButtonVariant::Action,
-                    disabled: unchanged,
-                    onclick: move |_| {
-                        open.set(false);
-                        on_save.call(ThemeConfig {
-                            name: selected(),
-                            is_dark: dark(),
-                        });
-                    },
-                    "Save"
-                }
-            },
             for group in THEME_GROUPS {
                 div { class: "pref-section-label", "{group.label}" }
                 for t in group.themes.iter().copied() {
@@ -197,6 +178,25 @@ pub fn ThemeSheet(
                         selected,
                         live: theme,
                         dark,
+                    }
+                }
+            }
+            div { class: "action-dock action-dock-right sheet-dock",
+                button {
+                    class: "action-dock-btn",
+                    aria_label: "Save",
+                    disabled: unchanged,
+                    onclick: move |_| {
+                        open.set(false);
+                        on_save.call(ThemeConfig {
+                            name: selected(),
+                            is_dark: dark(),
+                        });
+                    },
+                    svg {
+                        class: "action-dock-icon",
+                        view_box: "0 0 24 24",
+                        polyline { points: "20 6 9 17 4 12" }
                     }
                 }
             }
