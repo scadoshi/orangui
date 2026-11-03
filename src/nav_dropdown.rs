@@ -22,7 +22,8 @@ use dioxus::prelude::*;
 pub fn NavDropdown(
     /// Open state, host-owned: close it from your item `onclick`s.
     open: Signal<bool>,
-    /// Trigger text; the dropdown appends the `▾` indicator.
+    /// Trigger text; the dropdown appends the `▾` indicator in a
+    /// `span.nav-dropdown-caret`, so a stylesheet can swap it out.
     label: String,
     /// Menu contents (`.nav-dropdown-item` rows, `.nav-dropdown-label` groups).
     children: Element,
@@ -50,7 +51,8 @@ pub fn NavDropdown(
                     let next = !open();
                     open.set(next);
                 },
-                "{label} ▾"
+                "{label}"
+                span { class: "nav-dropdown-caret", " ▾" }
             }
             // The rows sit in their own box so the collapsed panel can grow
             // and shrink the menu (a grid row from 0fr to 1fr) around them.
