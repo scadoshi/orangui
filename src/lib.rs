@@ -12,7 +12,7 @@
 //! Three kits sit on the shared base. The app kit ([`BottomSheet`],
 //! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
 //! [`TextInput`], the hint pieces with [`HintDialog`], the overlay back stack,
-//! the OS back bridge [`use_os_back`], the launch guard ([`BOOT_HEAD`],
+//! the OS back bridge [`use_os_back`] with [`fill_window`], the launch guard ([`BOOT_HEAD`],
 //! [`BOOT_BG`], [`BootReveal`]), behind the `toast` feature `ToastStack`
 //! with `use_toast`, `Toasts` and `ToastOptions`, and behind the `links`
 //! feature `open_url` and `use_in_app_links`, which open
@@ -124,7 +124,7 @@ pub use orangui_core::theme::{
 };
 #[doc(inline)]
 pub use orangui_core::toast::{LONG as TOAST_LONG, NORMAL as TOAST_NORMAL, QUICK as TOAST_QUICK};
-pub use os_back::use_os_back;
+pub use os_back::{fill_window, use_os_back};
 pub use overlay_stack::{
     OverlayBackStack, use_overlay_back, use_overlay_back_action, use_overlay_back_stack,
 };

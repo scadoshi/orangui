@@ -20,11 +20,18 @@
 //! listens for that event. The patch stays in the host's build scripts,
 //! beside its package name.
 //!
+//! **iOS layout.** The same hook also calls [`fill_window`] once with the
+//! WKWebView it receives, so the page covers the whole window on iOS 18,
+//! where UIKit otherwise insets the page by the safe area. A host that does
+//! not use the hook calls [`fill_window`] itself.
+//!
 //! On every other target the hook does nothing, so a browser keeps its own
 //! back button.
 
 use std::ffi::c_void;
 use std::ptr::NonNull;
+#[cfg(target_os = "ios")]
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use dioxus::prelude::*;
 
@@ -65,6 +72,9 @@ pub fn use_os_back(
             });
             if let Some(webview) = ios_webview() {
                 ios::install_edge_back(webview, tx);
+                if !FILLED_WINDOW.swap(true, Ordering::AcqRel) {
+                    ios::fill_window(webview);
+                }
             }
         });
     }
@@ -91,8 +101,39 @@ pub fn use_os_back(
     }
 }
 
+/// Whether [`use_os_back`] has already laid the page out over the window:
+/// the hook mounts once per layout, and the layout call runs once per app
+/// life.
+#[cfg(target_os = "ios")]
+static FILLED_WINDOW: AtomicBool = AtomicBool::new(false);
+
+/// Lays the page out over the whole window instead of the safe area, on iOS.
+///
+/// On iOS 18, UIKit adds the safe-area insets to the WKWebView's scroll view
+/// as content insets, so WebKit lays the page out in the window less the
+/// status bar strip and the home indicator strip, and the webview's own
+/// background shows in the band left under the page. This sets the scroll
+/// view's `contentInsetAdjustmentBehavior` to never and forces a layout pass,
+/// so the page covers the whole window. iOS 26 lays the page out that way on
+/// its own, and the call is harmless there.
+///
+/// `env(safe-area-inset-*)` keeps reporting the insets afterward, so the
+/// bands that want them still get them, and the host's viewport meta needs
+/// `viewport-fit=cover` for the page to extend under them at all.
+///
+/// [`use_os_back`] calls this once with the WKWebView it receives, so a host
+/// on the hook needs nothing more. A host that does not use the hook calls it
+/// once at mount, on the main thread, with the pointer `dioxus/mobile` hands
+/// out through wry's `WebViewExtIOS`. On every other target it does nothing.
+pub fn fill_window(webview: NonNull<c_void>) {
+    #[cfg(target_os = "ios")]
+    ios::fill_window(webview);
+    #[cfg(not(target_os = "ios"))]
+    let _ = webview;
+}
+
 /// The left-edge swipe: a `UIScreenEdgePanGestureRecognizer` on the WKWebView
-/// whose target sends on a channel.
+/// whose target sends on a channel, and the whole-window layout.
 #[cfg(target_os = "ios")]
 mod ios {
     use std::ffi::c_void;
@@ -108,6 +149,9 @@ mod ios {
     const STATE_BEGAN: isize = 1;
     /// `UIRectEdgeLeft` (1 << 1): only pans from the left screen edge.
     const EDGE_LEFT: usize = 2;
+    /// `UIScrollViewContentInsetAdjustmentNever`, from UIKit's
+    /// `UIScrollViewContentInsetAdjustmentBehavior`.
+    const ADJUSTMENT_NEVER: isize = 2;
 
     /// The Rust state the Objective-C target carries.
     struct Ivars {
@@ -180,6 +224,31 @@ mod ios {
         // A recognizer holds its target weakly, so the target is leaked to
         // outlive this call: one per app launch.
         std::mem::forget(target);
+    }
+
+    /// Turns the scroll view's safe-area inset adjustment off on `webview`,
+    /// the app's WKWebView, and forces a layout pass so WebKit reads the
+    /// insets back. Runs on the main thread, as UI effects do.
+    pub(super) fn fill_window(webview: NonNull<c_void>) {
+        if MainThreadMarker::new().is_none() {
+            dioxus::logger::tracing::error!(
+                "os back: the window layout runs on the main thread only; skipped"
+            );
+            return;
+        }
+        // SAFETY: the pointer is the app's live WKWebView, which outlives
+        // every call made from the page it hosts.
+        let webview: &AnyObject = unsafe { webview.cast::<AnyObject>().as_ref() };
+        // SAFETY: `scrollView` is a WKWebView getter returning its UIScrollView.
+        let scroll: Retained<AnyObject> = unsafe { msg_send![webview, scrollView] };
+        // SAFETY: the setter takes the enum as an NSInteger, on the main thread.
+        let (): () =
+            unsafe { msg_send![&*scroll, setContentInsetAdjustmentBehavior: ADJUSTMENT_NEVER] };
+        // SAFETY: `setNeedsLayout` takes nothing, on the main thread.
+        let (): () = unsafe { msg_send![webview, setNeedsLayout] };
+        // SAFETY: `layoutIfNeeded` takes nothing, on the main thread; WebKit
+        // reads the insets back on this layout pass.
+        let (): () = unsafe { msg_send![webview, layoutIfNeeded] };
     }
 }
 
