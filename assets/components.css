@@ -460,21 +460,30 @@ a.stat-chip {
         box-sizing: border-box;
         max-height: 100vh;
         max-height: 100dvh;
-        padding: 1rem 0.75rem;
+        /* The header row's inset, the same on every side. */
+        --nav-pad: 0.75rem;
+        padding: var(--nav-pad);
         /* no row-gap: the collapsed panel is a zero-height row, and a gap
            would add phantom space below the toggle row */
         gap: 0 0.5rem;
     }
+    /* The header row's three items share one center line. */
     .nav-wrapper nav > .nav-brand {
         grid-column: 1;
         grid-row: 1;
         justify-self: start;
+        align-self: center;
+    }
+    .nav-wrapper nav > .nav-persistent {
+        grid-row: 1;
+        align-self: center;
     }
     .nav-toggle {
         display: flex;
         grid-column: 3;
         grid-row: 1;
         justify-self: end;
+        align-self: center;
     }
     .nav-panel {
         /* One link row's vertical padding and the gap between rows; the
@@ -497,14 +506,15 @@ a.stat-chip {
         grid-template-columns: minmax(0, 1fr);
         flex-basis: 100%;
         /* bleed through the nav's side padding so the divider rules run
-           edge to edge; the inner re-adds the inset for content. Must match the
-           mobile nav padding (0.75rem above) exactly: -1.5rem overhung the edge
-           and forced a horizontal scroll on narrow viewports. */
-        margin-left: -0.75rem;
-        margin-right: -0.75rem;
+           edge to edge; the inner re-adds the inset for content. Exactly the
+           nav's padding, so the panel never overhangs the screen. */
+        margin-left: calc(-1 * var(--nav-pad));
+        margin-right: calc(-1 * var(--nav-pad));
         opacity: 0;
         visibility: hidden;
-        margin-top: 0;
+        /* The closed panel's 1px border hides under the header row, so the
+           row's inset below matches the one above. */
+        margin-top: -1px;
         padding-top: 0;
         border-top: 1px solid transparent;
         transition:
@@ -541,8 +551,8 @@ a.stat-chip {
         gap: 1rem;
         overflow: hidden;
         min-height: 0;
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
+        padding-left: var(--nav-pad);
+        padding-right: var(--nav-pad);
     }
     /* The links show three and a half rows and scroll the rest, so the open
        menu stays short on any phone and the trailing item (the theme picker)
@@ -604,9 +614,9 @@ a.stat-chip {
         height: auto;
         /* bleed to the panel edges so this divider also runs edge to edge
            (stays inside the inner's padding box, so overflow won't clip it).
-           Matches the inner's 0.75rem mobile padding. */
-        margin-left: -0.75rem;
-        margin-right: -0.75rem;
+           Matches the inner's padding. */
+        margin-left: calc(-1 * var(--nav-pad));
+        margin-right: calc(-1 * var(--nav-pad));
     }
     .nav-panel .nav-dropdown-trigger,
     .nav-panel .mode-toggle {
@@ -728,12 +738,12 @@ a.stat-chip {
         display: none;
     }
     /* The theme row is the bottom of the menu, so its list opens upward:
-       its bottom sits 0.5rem above the trigger (the nav's 1rem bottom
+       its bottom sits 0.5rem above the trigger (the nav's bottom
        padding plus the trigger's height), and it is no taller than the nav
        above that, so it never leaves the screen. */
     .nav-panel .theme-picker .nav-dropdown-content {
         top: auto;
-        bottom: calc(1rem + 2 * var(--nav-trigger-pad) + 0.95rem + 2px + 0.5rem);
+        bottom: calc(var(--nav-pad) + 2 * var(--nav-trigger-pad) + 0.95rem + 2px + 0.5rem);
         margin-top: 0;
         max-height: min(50vh, calc(100% - 7rem));
         /* Centered in the nav, not hung from the trigger: the row is
@@ -828,7 +838,8 @@ a.stat-chip {
     }
 
     .nav-persistent .nav-cta {
-        height: 1.65rem;
+        /* The toggle's height, so the pills and the toggle line up. */
+        height: 1.7rem;
         padding: 0 0.55rem;
         font-size: 0.7rem;
     }
