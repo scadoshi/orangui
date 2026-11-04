@@ -73,7 +73,9 @@ pub fn BottomSheet(
     children: Element,
     footer: Option<Element>,
     on_dismiss: Option<EventHandler<()>>,
-    #[props(default)] hidden: bool,
+    /// Drops the sheet with no slide away and no `bottom-sheet-leaving` mark.
+    #[props(default)]
+    hidden: bool,
     /// A hint's open signal. Given one, the sheet's header carries the same
     /// "?" the page headers do; without one, the corner stays empty.
     hint: Option<Signal<bool>>,
@@ -251,7 +253,7 @@ pub fn BottomSheet(
                 ActionBar {
                     Button {
                         variant: ButtonVariant::Action,
-                        onclick: move |_| open.set(false),
+                        onclick: move |_| dismiss.call(()),
                         "Close"
                     }
                 }
