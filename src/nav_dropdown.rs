@@ -55,9 +55,7 @@ pub fn NavDropdown(
                     let next = !open();
                     open.set(next);
                 },
-                if let Some(leading) = leading {
-                    {leading}
-                }
+                {leading}
                 "{label}"
                 span { class: "nav-dropdown-caret", " ▾" }
             }
