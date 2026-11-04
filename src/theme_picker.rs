@@ -21,6 +21,28 @@ use crate::{
     display_theme_name,
 };
 
+/// The palette, the sign for the theme wherever it is named: a stroked
+/// painter's palette in the current color. The theme picker's trigger and a
+/// settings row's theme name lead with it in the theme's own accent.
+#[component]
+pub fn PaletteIcon() -> Element {
+    rsx! {
+        svg {
+            class: "palette-icon",
+            view_box: "0 0 24 24",
+            "aria-hidden": "true",
+            fill: "none",
+            stroke: "currentColor",
+            stroke_width: "2",
+            stroke_linecap: "round",
+            stroke_linejoin: "round",
+            path {
+                d: "M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.12a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2ZM13.5 6.5v.01M17.5 10.5v.01M8.5 7.5v.01M6.5 12.5v.01",
+            }
+        }
+    }
+}
+
 /// A mode's icon, solid in the text color: the moon for dark, the sun for
 /// light. Drawn as SVG rather than the ☀/☾ glyphs, which most fonts outline
 /// and iOS turns into a color emoji.
@@ -125,6 +147,7 @@ pub fn ThemePicker(
             NavDropdown {
                 open,
                 label: display_theme_name(&current),
+                leading: rsx! { PaletteIcon {} },
                 ThemeRows { theme, current: current.clone(), mode }
             }
             button {

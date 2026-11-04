@@ -25,6 +25,10 @@ pub fn NavDropdown(
     /// Trigger text; the dropdown appends the `▾` indicator in a
     /// `span.nav-dropdown-caret`, so a stylesheet can swap it out.
     label: String,
+    /// An icon before the trigger text, if any, such as the theme picker's
+    /// palette.
+    #[props(default)]
+    leading: Option<Element>,
     /// Menu contents (`.nav-dropdown-item` rows, `.nav-dropdown-label` groups).
     children: Element,
 ) -> Element {
@@ -51,6 +55,9 @@ pub fn NavDropdown(
                     let next = !open();
                     open.set(next);
                 },
+                if let Some(leading) = leading {
+                    {leading}
+                }
                 "{label}"
                 span { class: "nav-dropdown-caret", " ▾" }
             }

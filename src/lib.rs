@@ -136,7 +136,7 @@ pub use password_input::PasswordInput;
 pub use splash::{SPLASH_JS, Splash, SplashGate};
 pub use stats_strip::StatsStrip;
 pub use text_input::{FieldLabel, TextInput};
-pub use theme_picker::{DarkModeButton, ModeIcon, ThemePicker};
+pub use theme_picker::{DarkModeButton, ModeIcon, PaletteIcon, ThemePicker};
 pub use theme_sheet::ThemeSheet;
 pub use theme_store::use_persisted_theme;
 pub use theme_wipe::{ThemeFollow, use_theme_follow, use_theme_wipe, use_theme_wipe_follow};

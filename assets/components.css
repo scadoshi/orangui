@@ -963,6 +963,22 @@ a.stat-chip {
     vertical-align: -0.2em;
 }
 
+/* The palette (orangui::PaletteIcon): the mode icon's size, and the current
+   theme's accent wherever it leads the theme's name, in the picker's trigger
+   and a settings row's value. */
+.palette-icon {
+    width: 1.1em;
+    height: 1.1em;
+    flex-shrink: 0;
+    vertical-align: -0.2em;
+}
+
+.theme-picker .nav-dropdown-trigger > .palette-icon,
+.settings-row-value > .palette-icon {
+    color: var(--accent-primary);
+    margin-right: 0.45em;
+}
+
 .mode-label {
     display: inline-flex;
     align-items: center;
@@ -1208,8 +1224,8 @@ a.nav-dropdown-item.active:visited {
     .theme-picker .nav-dropdown-open .nav-dropdown-content {
         display: none;
     }
-    /* The trigger opens a sheet here, not a drop-down, so it loses the caret
-       and leads with a dot in the current theme's accent instead. */
+    /* The trigger opens a sheet here, not a drop-down, so it loses the caret;
+       the palette before the name stays. */
     .theme-picker .nav-dropdown-caret {
         display: none;
     }
@@ -1220,15 +1236,6 @@ a.nav-dropdown-item.active:visited {
     .nav-panel:has(.theme-picker-sheet .bottom-sheet:is(.show, .bottom-sheet-leaving)) {
         opacity: 1;
         visibility: visible;
-    }
-    .theme-picker .nav-dropdown-trigger::before {
-        content: "";
-        width: 0.6em;
-        height: 0.6em;
-        margin-right: 0.5em;
-        border-radius: 50%;
-        background-color: var(--accent-primary);
-        flex-shrink: 0;
     }
 }
 
