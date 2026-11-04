@@ -61,6 +61,10 @@ pub const BRAND_RESET_JS: &str = r"
 /// stack) is not an outside tap, and no tap counts while a dialog or sheet is
 /// open: that layer is the top of the stack and its own dismissal closes it,
 /// leaving the panel under it in place.
+///
+/// One listener per document: the remover of the listener in place sits on
+/// `window.__oranguiNavAway`, and each mount calls it before adding its own,
+/// so a remounted `NavBar` replaces the listener rather than stacking one.
 const NAV_AWAY_JS: &str = r#"
 const layers = '.alert-dialog-overlay, .alert-dialog, .sheet-backdrop, .bottom-sheet, .toast-container';
 const shown = '.alert-dialog[data-state="open"], .sheet-backdrop.show, .bottom-sheet.show';
@@ -75,7 +79,9 @@ const away = (e) => {
     if (!(target instanceof Element) || target.closest('.nav-wrapper, .nav-backdrop, ' + layers)) return;
     dioxus.send(true);
 };
+if (typeof window.__oranguiNavAway === 'function') window.__oranguiNavAway();
 document.addEventListener('pointerup', away, true);
+window.__oranguiNavAway = () => document.removeEventListener('pointerup', away, true);
 "#;
 
 /// The folded panel's open state, which [`NavBar`] provides as context so an
@@ -173,6 +179,27 @@ mod tests {
         assert!(NAV_AWAY_JS.contains(".nav-wrapper, .nav-backdrop"));
         assert!(NAV_AWAY_JS.contains(".nav-panel-open"));
         assert!(NAV_AWAY_JS.contains("removeEventListener"));
+    }
+
+    /// A text check on the script: it keeps one listener per document by
+    /// calling the stored remover before adding its own and storing the new one.
+    #[test]
+    fn the_away_listener_replaces_the_one_before_it() {
+        let remover = "window.__oranguiNavAway";
+        let calls = NAV_AWAY_JS.find(&format!("{remover}()"));
+        let adds = NAV_AWAY_JS.find("document.addEventListener('pointerup', away, true)");
+        let stores = NAV_AWAY_JS.find(&format!(
+            "{remover} = () => document.removeEventListener('pointerup', away, true)"
+        ));
+        assert!(
+            calls < adds,
+            "the previous remover runs before the new listener is added"
+        );
+        assert!(
+            adds < stores,
+            "the new remover is stored after the listener is added"
+        );
+        assert!(stores.is_some(), "the remover is stored on the window");
     }
 
     #[test]
