@@ -141,7 +141,9 @@ pub fn HintBullet(children: Element) -> Element {
 /// An inert reference to an on-screen button, styled like one so the reader
 /// recognizes what to press, and deliberately not tappable since the hint
 /// points at the real button rather than replacing it. `color` is a CSS
-/// variable name.
+/// variable name. A button that is an icon alone is named by its icon: a
+/// dock icon SVG (class `action-dock-icon`) as the only child draws the
+/// button's own squircle at text height, never the icon's name in words.
 #[component]
 pub fn HintKey(
     #[props(default = "--palette-2".to_string())] color: String,
