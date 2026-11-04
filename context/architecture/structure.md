@@ -9,10 +9,11 @@ src/
 │
 │   # for every host
 ├── action_bar.rs        # ActionBar: the button row along a screen's bottom
+├── action_dock.rs       # ActionDock, DockAction, DockFilter and DockPlace: the floating squircle bar of icon actions
 ├── banner.rs            # Banner, BannerStatus
 ├── button.rs            # Button, ButtonVariant
 ├── chip.rs              # Chip
-├── nav_bar.rs           # NavBar and BRAND_RESET_JS
+├── nav_bar.rs           # NavBar, NavCtaIcon and BRAND_RESET_JS
 ├── nav_dropdown.rs      # NavDropdown
 ├── page_meta.rs         # PageMeta, SiteMeta: title, description, Open Graph and Twitter tags
 ├── panel.rs             # Panel: eyebrow, title or a host title bar, rule, body, actions
@@ -32,6 +33,7 @@ src/
 ├── alert_dialog.rs      # AlertDialog, DialogAction, ActionButton, DialogSpec, and the app-root DialogHost that draws them and answers Escape and Enter
 ├── page_header.rs       # PageHeader
 ├── theme_sheet.rs       # ThemeSheet: every theme as a row, previewed live; arrows walk the rows, Enter saves
+├── icons.rs             # the stroke icons and their paths: DockIcon, EyeIcon, EditIcon, CloneIcon, ShareIcon, PLUS, CHECK and the rest
 ├── hint.rs              # HintDialog, InfoButton, HintLine, HintBullets, HintBullet, HintKey, HintChip, and the ScreenHint slot a screen offers its hint through
 ├── text_input.rs        # TextInput and FieldLabel: a labeled field with an optional "?" and error line
 ├── overlay_stack.rs     # OverlayBackStack and the use_overlay_back hooks

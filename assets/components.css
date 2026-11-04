@@ -2706,18 +2706,20 @@ html[data-wipe="left"]::view-transition-new(root) {
     pointer-events: none;
 }
 
-/* A button's icon inside a key: a dock or mode icon at the key's text
+/* A button's icon inside a key: a dock, mode or palette icon at the key's text
    height, centered on the line. A key that is only the icon pads evenly,
    so it reads as the button's own squircle. */
 .hint-key > .action-dock-icon,
-.hint-key > .mode-icon {
+.hint-key > .mode-icon,
+.hint-key > .palette-icon {
     width: 1.1em;
     height: 1.1em;
     vertical-align: -0.2em;
 }
 
 .hint-key:has(> .action-dock-icon:only-child),
-.hint-key:has(> .mode-icon:only-child) {
+.hint-key:has(> .mode-icon:only-child),
+.hint-key:has(> .palette-icon:only-child) {
     display: inline-flex;
     align-items: center;
     justify-content: center;

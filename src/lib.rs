@@ -11,6 +11,7 @@
 //!
 //! Three kits sit on the shared base. The app kit ([`BottomSheet`],
 //! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
+//! [`ActionDock`] with [`DockAction`] and [`DockFilter`] on the [`icons`],
 //! [`TextInput`], the hint pieces with [`HintDialog`], the overlay back stack,
 //! the OS back bridge [`use_os_back`] with [`fill_window`], the launch guard ([`BOOT_HEAD`],
 //! [`BOOT_BG`], [`BootReveal`]), behind the `toast` feature `ToastStack`
@@ -45,6 +46,7 @@
 //! ```
 
 mod action_bar;
+mod action_dock;
 mod alert_dialog;
 mod banner;
 mod boot;
@@ -59,6 +61,7 @@ mod grid_cells;
 mod heat_grid;
 mod heat_readout;
 mod hint;
+pub mod icons;
 #[cfg(feature = "links")]
 mod links;
 mod nav_bar;
@@ -81,6 +84,7 @@ mod theme_wipe;
 mod toast_stack;
 
 pub use action_bar::ActionBar;
+pub use action_dock::{ActionDock, DockAction, DockFilter, DockPlace};
 pub use alert_dialog::{
     ActionButton, AlertDialog, DialogAction, DialogHost, DialogHostView, DialogSpec,
     use_dialog_host, use_hosted_dialog,
@@ -111,7 +115,7 @@ pub use hint::{
 };
 #[cfg(feature = "links")]
 pub use links::{OpenUrlError, open_url, use_in_app_links};
-pub use nav_bar::{BRAND_RESET_JS, NavBar, NavPanelOpen};
+pub use nav_bar::{BRAND_RESET_JS, NavBar, NavCtaIcon, NavPanelOpen};
 pub use nav_dropdown::NavDropdown;
 #[doc(inline)]
 pub use orangui_core::chart_math::{area, curve, peak_indices, tip_anchor};

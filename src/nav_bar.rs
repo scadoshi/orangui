@@ -103,8 +103,8 @@ pub fn NavBar(
     /// Optional content pinned outside the collapsing panel, between the
     /// brand and the toggle, shown only at hamburger widths: typically the
     /// site's `a.nav-cta` pills, whose panel copies sit in `li.nav-cta-item`
-    /// and hide there. A pill that is one SVG and no text adds
-    /// `.nav-cta-icon` and names itself with `aria-label` and `title`.
+    /// and hide there. A pill that is one SVG and no text is a
+    /// [`NavCtaIcon`].
     /// Wrapped in `div.nav-persistent`, whose children glide.
     persistent: Option<Element>,
     /// Link items (`li` elements) rendered inside the panel's `ul.nav-links`.
@@ -167,6 +167,37 @@ pub fn NavBar(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+/// An icon-only `a.nav-cta` pill: one filled 24-unit `path` inside, `label`
+/// as the link's accessible name and tooltip. Sits in [`NavBar`]'s
+/// `persistent` slot and in a panel `li.nav-cta-item` alike; the host closes
+/// the panel from `onclick`.
+#[component]
+pub fn NavCtaIcon(
+    href: &'static str,
+    label: &'static str,
+    path: &'static str,
+    #[props(default)] onclick: Option<EventHandler<MouseEvent>>,
+) -> Element {
+    rsx! {
+        a {
+            class: "nav-cta nav-cta-icon",
+            href,
+            "aria-label": label,
+            title: label,
+            onclick: move |event| {
+                if let Some(handler) = &onclick {
+                    handler.call(event);
+                }
+            },
+            svg {
+                view_box: "0 0 24 24",
+                "aria-hidden": "true",
+                path { d: path }
             }
         }
     }
