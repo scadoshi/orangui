@@ -103,7 +103,9 @@ pub fn NavBar(
     /// Optional content pinned outside the collapsing panel, between the
     /// brand and the toggle, shown only at hamburger widths: typically the
     /// site's `a.nav-cta` pills, whose panel copies sit in `li.nav-cta-item`
-    /// and hide there. Wrapped in `div.nav-persistent`, whose children glide.
+    /// and hide there. A pill that is one SVG and no text adds
+    /// `.nav-cta-icon` and names itself with `aria-label` and `title`.
+    /// Wrapped in `div.nav-persistent`, whose children glide.
     persistent: Option<Element>,
     /// Link items (`li` elements) rendered inside the panel's `ul.nav-links`.
     links: Element,

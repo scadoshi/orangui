@@ -892,6 +892,29 @@ a.stat-chip {
     }
 }
 
+/* An icon-only call to action (a.nav-cta.nav-cta-icon): a square of the
+   pill's height holding one SVG, drawn in the pill's color. Nothing names
+   the icon in the markup, so the link carries aria-label and title. The
+   persistent copies are the toggle's height, like the text pills there. */
+.nav-cta-icon {
+    width: 1.85rem;
+    padding: 0;
+    justify-content: center;
+}
+
+.nav-cta-icon svg {
+    width: 1.25em;
+    height: 1.25em;
+    fill: currentColor;
+}
+
+@media (max-width: 60rem) {
+    .nav-persistent .nav-cta-icon {
+        width: 1.7rem;
+        padding: 0;
+    }
+}
+
 /* ---- NavDropdown (orangui::NavDropdown) +
         ThemePicker (orangui::ThemePicker) ----
    The dropdown (trigger pill, floating menu, backdrop, hover bridge) is the
