@@ -18,6 +18,15 @@
 //! backdrop covers. The kit itself never transforms the wrapper or its
 //! ancestors.
 //!
+//! Overlays stack on the panel. A dialog, bottom sheet or toast an item in
+//! the panel opens renders at the app root, outside the nav's DOM, so a tap
+//! inside it (its close button, its own dim) would count as outside. The
+//! listener ignores a tap that lands in any overlay layer, and while a
+//! dialog or sheet is open it does nothing at all: the top layer closes on
+//! its own dismissal and the panel under it stays. A sheet that wants the
+//! panel folded does that itself through [`NavPanelOpen`], as the
+//! [`ThemePicker`] does.
+//!
 //! The folded panel carries its own still [`GridCells`] copy, the same
 //! backdrop the app screens and the bottom sheet draw, under the links and
 //! the trailing slot. At bar widths it hides.
@@ -47,18 +56,27 @@ pub const BRAND_RESET_JS: &str = r"
 /// `pointerup` rather than `click`, which iOS Safari only sends for elements
 /// it thinks are clickable. A tap that finds no nav on the page removes the
 /// listener.
-const NAV_AWAY_JS: &str = r"
+///
+/// A tap inside an overlay layer (`AlertDialog`, `BottomSheet`, the toast
+/// stack) is not an outside tap, and no tap counts while a dialog or sheet is
+/// open: that layer is the top of the stack and its own dismissal closes it,
+/// leaving the panel under it in place.
+const NAV_AWAY_JS: &str = r#"
+const layers = '.alert-dialog-overlay, .alert-dialog, .sheet-backdrop, .bottom-sheet, .toast-container';
+const shown = '.alert-dialog[data-state="open"], .sheet-backdrop.show, .bottom-sheet.show';
 const away = (e) => {
     if (!document.querySelector('.nav-wrapper')) {
         document.removeEventListener('pointerup', away, true);
         return;
     }
+    if (!document.querySelector('.nav-panel-open')) return;
+    if (document.querySelector(shown)) return;
     const target = e.target;
-    if (!(target instanceof Element) || target.closest('.nav-wrapper, .nav-backdrop')) return;
-    if (document.querySelector('.nav-panel-open')) dioxus.send(true);
+    if (!(target instanceof Element) || target.closest('.nav-wrapper, .nav-backdrop, ' + layers)) return;
+    dioxus.send(true);
 };
 document.addEventListener('pointerup', away, true);
-";
+"#;
 
 /// The folded panel's open state, which [`NavBar`] provides as context so an
 /// item inside the panel can fold the menu when it raises an overlay of its
@@ -155,5 +173,23 @@ mod tests {
         assert!(NAV_AWAY_JS.contains(".nav-wrapper, .nav-backdrop"));
         assert!(NAV_AWAY_JS.contains(".nav-panel-open"));
         assert!(NAV_AWAY_JS.contains("removeEventListener"));
+    }
+
+    #[test]
+    fn the_away_listener_leaves_the_panel_under_an_open_overlay() {
+        for layer in [
+            ".alert-dialog-overlay",
+            ".alert-dialog",
+            ".sheet-backdrop",
+            ".bottom-sheet",
+            ".toast-container",
+        ] {
+            assert!(
+                NAV_AWAY_JS.contains(layer),
+                "{layer} is not an ignored layer"
+            );
+        }
+        assert!(NAV_AWAY_JS.contains(r#".alert-dialog[data-state="open"]"#));
+        assert!(NAV_AWAY_JS.contains(".bottom-sheet.show"));
     }
 }
