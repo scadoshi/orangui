@@ -51,28 +51,44 @@
     pointer-events: none;
 }
 
-/* The screen's safe-area padding sits outside the header and the action
-   bar, so the layer would show in the status bar and home indicator strips.
-   Two fixed bands in the primary color fill them. */
-.screen::before,
-.screen::after {
+/* The screen's safe-area padding sits outside the header, so the layer
+   would show in the status bar strip. A fixed band in the primary color
+   fills it. Nothing sits over the home indicator: the content scrolls
+   under it. */
+.screen::before {
     content: "";
     position: fixed;
+    top: 0;
     left: 0;
     right: 0;
+    height: env(safe-area-inset-top, 0px);
     z-index: 1;
     pointer-events: none;
     background-color: var(--bg-primary);
 }
 
-.screen::before {
-    top: 0;
-    height: env(safe-area-inset-top, 0px);
+/* A screen with a dock ends its content with room to scroll the last row
+   clear of it, as .bottom-sheet:has(.sheet-dock) does for a sheet's content
+   in components.css. Soft: an app that adds its own trailing padding sets
+   it on .screen-content. */
+:where(.screen:has(> .action-dock) > .screen-content) {
+    padding-bottom: 5rem;
 }
 
-.screen::after {
-    bottom: 0;
-    height: env(safe-area-inset-bottom, 0px);
+/* An app's header (.app-nav) sits over the top of the screen, so each
+   screen's scroll area opens with a spacer the header's height and nothing
+   moves at rest. Soft: the height is the bar's 0.5rem padding around a
+   1.7rem row and its 1px rule; an app with a taller bar sets --app-nav-h on
+   .screen. */
+:where(.screen) {
+    --app-nav-h: calc(2.7rem + 1px);
+}
+
+.screen > .app-nav ~ .screen-content::before {
+    content: "";
+    display: block;
+    flex: 0 0 var(--app-nav-h);
+    width: 100%;
 }
 
 .screen-content.centered {
@@ -130,6 +146,11 @@
 
 .page-header-corner {
     right: 1rem;
+}
+
+/* A pressed corner lights up. */
+.page-header-corner:active {
+    opacity: 1;
 }
 
 /* ---- Hints (orangui::HintDialog, HintLine, HintBullets, HintChip) ---- */

@@ -1106,22 +1106,38 @@ a.nav-dropdown-item.active:visited {
 /* A preference row, as the app's theme sheet lists its themes: a filled,
    bordered button that lights its border when selected. Here rather than
    app.css so a site's settings sheet gets it too. */
-.pref-row {
-    display: block;
-    width: 100%;
+/* Soft: the padding, radius and font. */
+:where(.pref-row) {
     padding: 0.6rem 1rem;
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border-primary);
     border-radius: 0.4rem;
-    color: var(--text-muted);
     font-family: "JetBrains Mono", monospace;
     font-weight: 400;
     font-size: 0.85rem;
+}
+
+.pref-row {
+    display: block;
+    width: 100%;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-muted);
     text-align: left;
     cursor: pointer;
     transition:
         border-color 0.15s,
         color 0.15s;
+}
+
+/* A row that cannot be picked fades; on a light theme it keeps its place
+   and its muted text, as the disabled buttons and chips do. */
+.pref-row:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+[class*="theme-"][class*="-light"] .pref-row:disabled {
+    opacity: 1;
+    color: var(--text-muted);
 }
 
 .pref-row.selected {
@@ -1201,16 +1217,20 @@ a.nav-dropdown-item.active:visited {
     gap: 0.5rem;
 }
 
+/* Soft: the row's gap, padding, radius and font size. */
+:where(.theme-picker-sheet .nav-dropdown-item) {
+    gap: 1rem;
+    padding: 0.65rem 1rem;
+    border-radius: 0.4rem;
+    font-size: 0.95rem;
+}
+
 .theme-picker-sheet .nav-dropdown-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 0.65rem 1rem;
     background-color: var(--bg-primary);
     border: 1px solid var(--border-primary);
-    border-radius: 0.4rem;
-    font-size: 0.95rem;
     white-space: nowrap;
     transition:
         border-color 0.15s,
@@ -1254,6 +1274,61 @@ a.nav-dropdown-item.active:visited {
     padding-top: 0;
 }
 
+/* ---- Nav trailing row (.nav-trailing-row) ----
+   An app's menu footer in the NavBar's trailing slot: one row of small icon
+   buttons (each a .btn-action.nav-icon) grouped at the left end, with room
+   at the right for a text button. The icon for the screen on view is lit
+   like the list's own entry; the kit's lit nav-link rule reaches only the
+   list, so the row carries its own. */
+
+/* Soft: the row's bottom padding. */
+:where(.nav-trailing-row) {
+    padding-bottom: 0.6rem;
+}
+
+.nav-trailing-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Soft: the gap between the group's icons. */
+:where(.nav-trailing-group) {
+    gap: 0.4rem;
+}
+
+.nav-trailing-group {
+    display: flex;
+    align-items: center;
+}
+
+/* Plain, after .btn-action, so the icon's box wins over the text button's
+   padding and font at equal specificity. */
+.nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 1.7rem;
+    padding: 0;
+    font-size: 0.85rem;
+    opacity: var(--fade-corner);
+}
+
+/* Plain, so it beats .mode-icon's own text-line size and baseline shift. */
+.nav-icon .action-dock-icon,
+.nav-icon .mode-icon {
+    width: 1.1em;
+    height: 1.1em;
+    vertical-align: 0;
+}
+
+.nav-icon.active {
+    opacity: 1;
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
 /* ---- Action dock (.action-dock) ----
    A screen's icon actions as one floating squircle bar just above the bottom
    edge, with no bar behind it: icons only, a thin divider between groups that
@@ -1262,6 +1337,13 @@ a.nav-dropdown-item.active:visited {
    under it. --keyboard-inset, set by KEYBOARD_INSET_JS, lifts it over the
    keyboard. Inside a BottomSheet the sheet's transform is its containing
    block, so it floats at the sheet's bottom; .sheet-dock marks that one. */
+
+/* Soft: the bar's gap, padding and radius. */
+:where(.action-dock) {
+    gap: 0.25rem;
+    padding: 0 0.4rem;
+    border-radius: 0.9rem;
+}
 
 .action-dock {
     position: fixed;
@@ -1278,10 +1360,7 @@ a.nav-dropdown-item.active:visited {
     margin: 0 auto;
     display: flex;
     align-items: stretch;
-    gap: 0.25rem;
-    padding: 0 0.4rem;
     border: 1px solid var(--border-primary);
-    border-radius: 0.9rem;
     background-color: var(--bg-raised);
     box-shadow: var(--shadow-md);
     transition: bottom 0.25s ease;
@@ -1292,17 +1371,21 @@ a.nav-dropdown-item.active:visited {
     margin-right: var(--dock-gap);
 }
 
+/* Soft: a button's size, margin and radius. */
+:where(.action-dock-btn) {
+    width: 2.4rem;
+    height: 2.4rem;
+    margin: 0.3rem 0;
+    border-radius: 0.6rem;
+}
+
 .action-dock-btn {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.4rem;
-    height: 2.4rem;
-    margin: 0.3rem 0;
     padding: 0;
     border: none;
-    border-radius: 0.6rem;
     background: transparent;
     color: var(--text-primary);
     cursor: pointer;
@@ -1317,8 +1400,12 @@ a.nav-dropdown-item.active:visited {
     color: var(--accent-primary);
 }
 
-.action-dock-btn:disabled {
+/* Soft: the disabled fade. */
+:where(.action-dock-btn:disabled) {
     opacity: 0.35;
+}
+
+.action-dock-btn:disabled {
     cursor: default;
 }
 
@@ -1329,20 +1416,43 @@ a.nav-dropdown-item.active:visited {
     color: var(--text-muted);
 }
 
-.action-dock-icon {
+/* Soft: the icon's size and stroke. */
+:where(.action-dock-icon) {
     width: 1.3rem;
     height: 1.3rem;
+    stroke-width: 2;
+}
+
+.action-dock-icon {
     fill: none;
     stroke: currentColor;
-    stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+}
+
+/* An icon in a button the height of its text siblings, such as a panel
+   header's edit pencil beside text buttons: the dock icon sized to the
+   button's text. */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Soft: the icon's size in a text-height button. */
+:where(.btn-icon .action-dock-icon) {
+    width: 1.1em;
+    height: 1.1em;
+}
+
+/* Soft: the divider's side margin. */
+:where(.action-dock-divider) {
+    margin: 0 0.25rem;
 }
 
 .action-dock-divider {
     flex: 0 0 1px;
     align-self: stretch;
-    margin: 0 0.25rem;
     background-color: var(--border-primary);
 }
 
@@ -1355,21 +1465,25 @@ a.nav-dropdown-item.active:visited {
 
 /* The group's reset: a small x on the button's top right corner, shown
    while there is something to reset. */
-.action-dock-reset {
-    position: absolute;
+/* Soft: the badge's offset, size, radius and font size. */
+:where(.action-dock-reset) {
     top: -0.35rem;
     right: -0.35rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 0.35rem;
+    font-size: 0.8rem;
+}
+
+.action-dock-reset {
+    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 1.2rem;
-    height: 1.2rem;
     padding: 0;
     border: 1px solid var(--border-primary);
-    border-radius: 0.35rem;
     background-color: var(--bg-raised);
     color: var(--text-primary);
-    font-size: 0.8rem;
     line-height: 1;
     cursor: pointer;
 }
@@ -1489,27 +1603,31 @@ a.nav-dropdown-item.active:visited {
 
 /* The closable sheet's × in the header's left corner, as gentle as the
    nav's hamburger: a small faded box at full strength while pressed. */
+/* Soft: the box's inset, size, radius, font size and resting fade. */
+:where(.sheet-close) {
+    left: 1rem;
+    width: 2.1rem;
+    height: 1.7rem;
+    border-radius: 0.4rem;
+    font-size: 1.1rem;
+    opacity: var(--fade-corner);
+}
+
 .sheet-close {
     position: absolute;
     top: 50%;
-    left: 1rem;
     transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    width: 2.1rem;
-    height: 1.7rem;
     padding: 0;
     margin: 0;
     background: var(--bg-primary);
     border: 1px solid var(--border-primary);
-    border-radius: 0.4rem;
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 1.1rem;
     line-height: 1;
-    opacity: var(--fade-corner);
     cursor: pointer;
     transition: border-color 0.15s;
 }

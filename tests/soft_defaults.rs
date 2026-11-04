@@ -19,7 +19,7 @@ const SHEETS: [(&str, &str); 4] = [
     ("toast.css", include_str!("../assets/toast.css")),
 ];
 
-const TUNABLE: [(&str, &[&str]); 22] = [
+const TUNABLE: [(&str, &[&str]); 36] = [
     (
         ".label",
         &["color", "font-size", "letter-spacing", "margin-bottom"],
@@ -71,6 +71,58 @@ const TUNABLE: [(&str, &[&str]); 22] = [
     (".heat-readout", &["margin-top"]),
     (".heat-readout-row", &["gap"]),
     (".heat-readout-tag", &["--tone"]),
+    (".action-dock", &["gap", "padding", "border-radius"]),
+    (
+        ".action-dock-btn",
+        &["width", "height", "margin", "border-radius"],
+    ),
+    (".action-dock-btn:disabled", &["opacity"]),
+    (".action-dock-icon", &["width", "height", "stroke-width"]),
+    (".btn-icon .action-dock-icon", &["width", "height"]),
+    (".action-dock-divider", &["margin"]),
+    (
+        ".action-dock-reset",
+        &[
+            "top",
+            "right",
+            "width",
+            "height",
+            "border-radius",
+            "font-size",
+        ],
+    ),
+    (
+        ".sheet-close",
+        &[
+            "left",
+            "width",
+            "height",
+            "border-radius",
+            "font-size",
+            "opacity",
+        ],
+    ),
+    (
+        ".pref-row",
+        &[
+            "padding",
+            "border-radius",
+            "font-family",
+            "font-weight",
+            "font-size",
+        ],
+    ),
+    (
+        ".theme-picker-sheet .nav-dropdown-item",
+        &["gap", "padding", "border-radius", "font-size"],
+    ),
+    (".nav-trailing-row", &["padding-bottom"]),
+    (".nav-trailing-group", &["gap"]),
+    (
+        ".screen:has(> .action-dock) > .screen-content",
+        &["padding-bottom"],
+    ),
+    (".screen", &["--app-nav-h"]),
 ];
 
 struct Rule {
