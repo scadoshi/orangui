@@ -4,8 +4,11 @@
 //!
 //! Below the 60rem hamburger breakpoint the same open state shows the themes
 //! in a [`BottomSheet`] instead of the drop-down; the stylesheet picks which
-//! one a width shows, so both stay mounted and share one signal. In a
-//! [`NavBar`](crate::NavBar)'s folded menu, opening the sheet folds the menu.
+//! one a width shows, so both stay mounted and share one signal. A pick
+//! leaves either one up through its wipe, so the next theme is one click
+//! away; the drop-down closes from a click away or Escape, the sheet from its
+//! × or a drag down. In a [`NavBar`](crate::NavBar)'s folded menu, opening
+//! the sheet folds the menu.
 //!
 //! This is the canonical copy for every site; the host passes its `Signal<ThemeConfig>` in,
 //! so how the theme is provided (context, prop drilling) and applied (body
@@ -122,7 +125,7 @@ pub fn ThemePicker(
             NavDropdown {
                 open,
                 label: display_theme_name(&current),
-                ThemeRows { theme, open, current: current.clone(), mode }
+                ThemeRows { theme, current: current.clone(), mode }
             }
             button {
                 class: "mode-toggle",
@@ -142,23 +145,18 @@ pub fn ThemePicker(
         // The phone-width chooser, hidden by the stylesheet above 60rem.
         div { class: "theme-picker-sheet",
             BottomSheet { open, title: "Themes".to_string(), closable: true,
-                ThemeRows { theme, open, current, mode }
+                ThemeRows { theme, current, mode }
             }
         }
     }
 }
 
 /// Every allowed theme as a row under its group's subtitle, for the
-/// drop-down and the sheet alike. A pick keeps the mode and closes the menu.
+/// drop-down and the sheet alike. A pick keeps the mode and leaves the menu
+/// where it is.
 #[component]
-fn ThemeRows(
-    theme: Signal<ThemeConfig>,
-    open: Signal<bool>,
-    current: String,
-    mode: &'static str,
-) -> Element {
+fn ThemeRows(theme: Signal<ThemeConfig>, current: String, mode: &'static str) -> Element {
     let mut theme = theme;
-    let mut open = open;
     rsx! {
         for group in THEME_GROUPS {
             div { class: "nav-dropdown-label", "{group.label}" }
@@ -171,7 +169,6 @@ fn ThemeRows(
                             name: name.to_string(),
                             is_dark: dark,
                         });
-                        open.set(false);
                     },
                     span { "{display_theme_name(name)}" }
                     ThemeDots { name, mode }
