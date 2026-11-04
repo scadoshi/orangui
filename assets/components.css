@@ -963,9 +963,9 @@ a.stat-chip {
     vertical-align: -0.2em;
 }
 
-/* The palette (orangui::PaletteIcon): the mode icon's size, and the current
-   theme's accent wherever it leads the theme's name, in the picker's trigger
-   and a settings row's value. */
+/* The palette (orangui::PaletteIcon): the mode icon's size, in the text
+   color like the apps' menu footer, wherever it leads the theme's name, in
+   the picker's trigger and a settings row's value. */
 .palette-icon {
     width: 1.1em;
     height: 1.1em;
@@ -975,7 +975,6 @@ a.stat-chip {
 
 .theme-picker .nav-dropdown-trigger > .palette-icon,
 .settings-row-value > .palette-icon {
-    color: var(--accent-primary);
     margin-right: 0.45em;
 }
 

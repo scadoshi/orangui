@@ -22,8 +22,9 @@ use crate::{
 };
 
 /// The palette, the sign for the theme wherever it is named: a stroked
-/// painter's palette in the current color. The theme picker's trigger and a
-/// settings row's theme name lead with it in the theme's own accent.
+/// painter's palette in the current color, the text color as a rule, the
+/// way the apps' menu footer draws it. The theme picker's trigger and a
+/// settings row's theme name lead with it.
 #[component]
 pub fn PaletteIcon() -> Element {
     rsx! {
