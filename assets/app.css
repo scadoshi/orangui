@@ -25,6 +25,8 @@
     /* WebKit bounces only a scroller whose content outgrows it, so the content
        always does, by one pixel, through the pseudo-element below. */
     overscroll-behavior-y: auto;
+    /* The containing block of the pixel below. */
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,13 +37,16 @@
     background-color: transparent;
 }
 
-/* One pixel past the content box, so a page that fits the screen still
-   rubber-bands at both ends on iOS. */
+/* One pixel past the scroller's own box, so a page that fits the screen
+   still rubber-bands at both ends on iOS. Out of the flex flow, where
+   justify-content: center or a child's auto margins absorb a flex item's
+   pixel as free space and the content fits exactly. */
 .screen-content::after {
     content: "";
-    display: block;
-    flex: 0 0 auto;
-    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 1px;
     height: 1px;
     pointer-events: none;
 }
