@@ -33,6 +33,9 @@
     padding: 0.3rem 0.6rem;
     border: 1px solid var(--border-primary);
     border-radius: 0.6rem;
+    /* A chip is a button, which takes the browser's face unless told
+       otherwise; it reads in the host's face like the text around it. */
+    font-family: inherit;
     font-size: 0.75rem;
     color: var(--text-primary);
     cursor: pointer;
