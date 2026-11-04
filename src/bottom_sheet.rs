@@ -24,6 +24,10 @@ struct Drag {
     velocity: f64,
 }
 
+/// How long the sheet takes to slide away, matching the `.bottom-sheet`
+/// transform transition in components.css.
+const SLIDE_MS: u32 = 300;
+
 /// Milliseconds on a monotonic clock: the page's on the web, the process's
 /// elsewhere.
 fn now_ms() -> f64 {
@@ -54,6 +58,11 @@ fn now_ms() -> f64 {
 /// hold still through the wipe that restores a discarded pick. `hidden`
 /// drops the sheet and backdrop with no slide, for a sheet that leaves
 /// inside that wipe so the new snapshot is taken without it.
+///
+/// While the sheet slides away it carries `bottom-sheet-leaving`, so a rule
+/// that keeps something painted only for a shown sheet, such as the folded
+/// nav panel around a [`ThemePicker`](crate::ThemePicker)'s sheet, can hold
+/// it through the slide.
 ///
 /// Registers with the [`OverlayBackStack`](crate::OverlayBackStack) when the
 /// host provides one above it, so the OS back gesture closes it.
@@ -97,6 +106,28 @@ pub fn BottomSheet(
             mounted.set(true);
         });
     });
+
+    // The slide away, numbered so a close that follows another within the
+    // slide is not cut short by the first one's timer. A sheet dropped with
+    // `hidden` leaves with no slide and marks nothing.
+    let mut leaving = use_signal(|| 0u32);
+    let mut was_open = use_signal(|| false);
+    use_effect(use_reactive!(|hidden| {
+        let is_open = open();
+        let closing = *was_open.peek() && !is_open;
+        was_open.set(is_open);
+        if !closing || hidden {
+            return;
+        }
+        let slide = leaving.peek().wrapping_add(1).max(1);
+        leaving.set(slide);
+        spawn(async move {
+            entrance::sleep_ms(SLIDE_MS).await;
+            if *leaving.peek() == slide {
+                leaving.set(0);
+            }
+        });
+    }));
 
     // The drag in progress, and the sheet's height, measured as one starts.
     let mut drag = use_signal(|| None::<Drag>);
@@ -177,6 +208,8 @@ pub fn BottomSheet(
                 "bottom-sheet snap"
             } else if open() {
                 "bottom-sheet show"
+            } else if leaving() > 0 {
+                "bottom-sheet bottom-sheet-leaving"
             } else if mounted() {
                 "bottom-sheet"
             } else {

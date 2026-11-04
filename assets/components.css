@@ -1174,8 +1174,10 @@ a.nav-dropdown-item.active:visited {
         display: none;
     }
     /* The sheet is the folded menu's descendant, so the menu stays painted
-       while the sheet is up and folds in plain sight as the sheet rises. */
-    .nav-panel:has(.theme-picker-sheet .bottom-sheet.show) {
+       while the sheet is up and folds in plain sight as the sheet rises. It
+       stays painted through the slide away too: its own fade would ghost
+       the sliding sheet and its visibility would cut the slide short. */
+    .nav-panel:has(.theme-picker-sheet .bottom-sheet:is(.show, .bottom-sheet-leaving)) {
         opacity: 1;
         visibility: visible;
     }
