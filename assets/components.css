@@ -896,7 +896,8 @@ a.stat-chip {
    pill's height holding one SVG, drawn in the pill's color. Nothing names
    the icon in the markup, so the link carries aria-label and title. The
    persistent copies are the toggle's height, like the text pills there. */
-.nav-cta-icon {
+.nav-cta-icon,
+.nav-links > li > a.nav-cta-icon {
     width: 1.85rem;
     padding: 0;
     justify-content: center;
