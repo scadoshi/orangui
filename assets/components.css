@@ -2091,13 +2091,17 @@ a.nav-dropdown-item.active:visited {
     font-family: "JetBrains Mono", monospace;
     font-size: 0.85rem;
     line-height: 1;
-    color: var(--color-error);
+    color: var(--text-muted);
     background-color: var(--bg-primary);
-    border: 1px solid var(--color-error);
+    border: 1px solid var(--border-primary);
     border-radius: 0.4rem;
     transition:
         opacity 0.2s ease,
         transform 0.2s ease;
+}
+
+.input-clear-btn:hover {
+    color: var(--palette-1);
 }
 
 .input-clear-wrap.has-text > .input-clear-btn {
