@@ -2063,7 +2063,7 @@ a.nav-dropdown-item.active:visited {
    centers on the box, not the box and its margin. */
 .input-clear-wrap {
     display: flex;
-    align-items: stretch;
+    align-items: center;
     width: 100%;
     margin-bottom: 1rem;
 }
@@ -2074,7 +2074,8 @@ a.nav-dropdown-item.active:visited {
     margin: 0;
 }
 
-/* The button stands as tall as the field, its × centered in it. */
+/* The button is the icon button's box, centered on the field, the × at
+   text size in it. */
 .input-clear-btn {
     flex: 0 0 auto;
     display: flex;
@@ -2082,6 +2083,7 @@ a.nav-dropdown-item.active:visited {
     justify-content: center;
     box-sizing: border-box;
     width: 0;
+    height: 1.7rem;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -2090,12 +2092,12 @@ a.nav-dropdown-item.active:visited {
     cursor: pointer;
     text-align: center;
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.85rem;
+    font-size: 1.1rem;
     line-height: 1;
     color: var(--text-muted);
     background-color: var(--bg-primary);
     border: 1px solid var(--border-primary);
-    border-radius: 0.4rem;
+    border-radius: 0.5rem;
     transition:
         width 0.2s ease,
         margin-left 0.2s ease,
@@ -2103,7 +2105,7 @@ a.nav-dropdown-item.active:visited {
 }
 
 .input-clear-wrap.has-text > .input-clear-btn {
-    width: 1.8rem;
+    width: 2.2rem;
     margin-left: 0.5rem;
     opacity: 1;
     pointer-events: auto;
