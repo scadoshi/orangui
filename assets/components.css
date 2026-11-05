@@ -1282,7 +1282,9 @@ a.nav-dropdown-item.active:visited {
     padding: 0;
 }
 
-.theme-picker-sheet .nav-dropdown-rows > .nav-dropdown-label:first-child {
+/* The first chip sits the body's own padding under the title bar, the
+   same distance a later chip sits under the row before it. */
+.theme-picker-sheet .nav-dropdown-label:first-child {
     margin-top: 0;
 }
 
