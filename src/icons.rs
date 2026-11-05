@@ -44,6 +44,11 @@ pub const FOLD: &str = "M7 11l5-5 5 5M7 18l5-5 5 5";
 /// The unfold icon: two chevrons pointing down, for opening every group at
 /// once.
 pub const UNFOLD: &str = "M7 6l5 5 5-5M7 13l5 5 5-5";
+/// The printings icon: three sheets stacked, for a card's other printings.
+pub const LAYERS: &str = "M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5M3 17l9 5 9-5";
+/// The flip icon: two arrows turning over each other, for a card's other
+/// face.
+pub const FLIP: &str = "M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3";
 /// The Home icon: a house.
 pub const HOUSE: &str = "M3 11.5l9-8 9 8M5 10v10h5v-6h4v6h5V10";
 /// The Account icon: a person.
