@@ -46,8 +46,6 @@ pub const PERSON: &str = "M20 21a8 8 0 0 0-16 0M12 4a4 4 0 1 0 0 8 4 4 0 1 0 0-8
 pub const COG: &str = "M19.4 10.3L21.9 10.7L21.9 13.3L19.4 13.7L18.4 16.1L19.9 18.1L18.1 19.9L16.1 18.4L13.7 19.4L13.3 21.9L10.7 21.9L10.3 19.4L7.9 18.4L5.9 19.9L4.1 18.1L5.6 16.1L4.6 13.7L2.1 13.3L2.1 10.7L4.6 10.3L5.6 7.9L4.1 5.9L5.9 4.1L7.9 5.6L10.3 4.6L10.7 2.1L13.3 2.1L13.7 4.6L16.1 5.6L18.1 4.1L19.9 5.9L18.4 7.9zM12 8.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 1 0 0-6.4";
 /// The About icon: a circled i.
 pub const INFO: &str = "M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18M12 11v5M12 8v0.01";
-/// The synergy icon: a lightning bolt.
-pub const BOLT: &str = "M13 2L4 14h7l-1 8 9-12h-7z";
 /// Two chain links.
 pub const LINK: &str = "M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1";
 
@@ -122,6 +120,22 @@ pub fn ShareIcon() -> Element {
             path { d: "M12 3v12" }
             path { d: "M8 7l4-4 4 4" }
             path { d: "M8 11H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2" }
+        }
+    }
+}
+
+/// The synergy icon: a solid lightning bolt, filled in the current color
+/// where the other icons are stroked.
+#[component]
+pub fn BoltIcon() -> Element {
+    rsx! {
+        svg {
+            class: "action-dock-icon",
+            style: "fill: currentColor; stroke: none;",
+            view_box: "0 0 24 24",
+            xmlns: "http://www.w3.org/2000/svg",
+            "aria-hidden": "true",
+            path { d: "M13 2L4 14h7l-1 8 9-12h-7z" }
         }
     }
 }
