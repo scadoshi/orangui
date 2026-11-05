@@ -79,6 +79,10 @@ pub fn BottomSheet(
     /// A hint's open signal. Given one, the sheet's header carries the same
     /// "?" the page headers do; without one, the corner stays empty.
     hint: Option<Signal<bool>>,
+    /// An action in the title bar's right corner, before the "?": a chip
+    /// that opens a sibling flow, such as a sheet's Forgot password.
+    #[props(default)]
+    trailing: Option<Element>,
     /// A × in the title bar that dismisses the sheet. Without a `footer`, it
     /// replaces the default "Close" bar.
     #[props(default)]
@@ -235,6 +239,7 @@ pub fn BottomSheet(
                     }
                 }
                 span { class: "sheet-title", "{title}" }
+                {trailing}
                 if let Some(mut hint) = hint {
                     Button {
                         variant: ButtonVariant::Action,
