@@ -1188,6 +1188,18 @@ a.nav-dropdown-item.active:visited {
     margin: 0.75rem 0 0.4rem;
 }
 
+/* A theme group's name, a chip centered over its rows; the first sits
+   right under the title bar. */
+.theme-group-label {
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem 0 0.1rem;
+}
+
+.theme-group-label:first-child {
+    margin-top: 0;
+}
+
 .theme-picker .theme-dot,
 .theme-picker-sheet .theme-dot {
     width: 0.6rem;

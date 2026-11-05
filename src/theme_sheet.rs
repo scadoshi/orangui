@@ -170,7 +170,10 @@ pub fn ThemeSheet(
             on_dismiss: move |()| discard.call(()),
             hidden: hidden(),
             for group in THEME_GROUPS {
-                div { class: "pref-section-label", "{group.label}" }
+                // The group's name as a chip, centered over its rows.
+                div { class: "theme-group-label",
+                    span { class: "stat-chip stat-chip-p1", "{group.label}" }
+                }
                 for t in group.themes.iter().copied() {
                     ThemeRow {
                         theme: t.to_string(),
