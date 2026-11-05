@@ -1276,12 +1276,10 @@ a.nav-dropdown-item.active:visited {
     color: var(--text-primary);
 }
 
-/* The group label sits centered above its rows, as the app's sheet has it. */
+/* The group chip sits centered above its rows, as the app's sheet has it. */
 .theme-picker-sheet .nav-dropdown-label {
-    margin: 0.75rem 0 0;
+    margin: 0.5rem 0 0.1rem;
     padding: 0;
-    font-size: 1rem;
-    text-align: center;
 }
 
 .theme-picker-sheet .nav-dropdown-rows > .nav-dropdown-label:first-child {

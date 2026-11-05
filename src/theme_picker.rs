@@ -175,7 +175,7 @@ pub fn ThemePicker(
     }
 }
 
-/// Every allowed theme as a row under its group's subtitle, for the
+/// Every allowed theme as a row under its group's name as a chip, for the
 /// drop-down and the sheet alike. A pick keeps the mode and leaves the menu
 /// where it is.
 #[component]
@@ -183,7 +183,9 @@ fn ThemeRows(theme: Signal<ThemeConfig>, current: String, mode: &'static str) ->
     let mut theme = theme;
     rsx! {
         for group in THEME_GROUPS {
-            div { class: "nav-dropdown-label", "{group.label}" }
+            div { class: "nav-dropdown-label theme-group-label",
+                span { class: "stat-chip stat-chip-p1", "{group.label}" }
+            }
             for name in group.themes.iter().copied() {
                 button {
                     class: if current == *name { "nav-dropdown-item active" } else { "nav-dropdown-item" },
