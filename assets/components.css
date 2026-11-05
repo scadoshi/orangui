@@ -2056,6 +2056,56 @@ a.nav-dropdown-item.active:visited {
     color: var(--palette-1);
 }
 
+/* ---- ClearWrap (orangui::ClearWrap) ----
+   The × inside a field's right end while it holds something. The field's
+   right padding eases out for it and back when the field empties; the
+   button fades and grows in with it. The wrap carries the field's bottom
+   margin so the × centers on the box, not the box and its margin. */
+.input-clear-wrap {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.input-clear-wrap > :first-child {
+    margin-bottom: 0;
+    transition:
+        padding-right 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.input-clear-wrap.has-text > :first-child {
+    padding-right: 2.8rem;
+}
+
+.input-clear-btn {
+    position: absolute;
+    top: 50%;
+    right: 0.55rem;
+    transform: translateY(-50%) scale(0.7);
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    padding: 0.2rem 0.45rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85rem;
+    line-height: 1;
+    color: var(--color-error);
+    background-color: var(--bg-primary);
+    border: 1px solid var(--color-error);
+    border-radius: 0.4rem;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.input-clear-wrap.has-text > .input-clear-btn {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+    pointer-events: auto;
+}
+
 /* ==============================
    diagram: boxes and arrows in an inline svg
    ============================== */

@@ -3,7 +3,7 @@
 
 use dioxus::prelude::*;
 
-use crate::{InfoButton, PasswordInput};
+use crate::{ClearWrap, InfoButton, PasswordInput};
 
 /// A form label, with a "?" beside it when `on_info` is given. The label
 /// and the "?" are centered together, with a little more room below them
@@ -43,6 +43,8 @@ pub fn FieldLabel(
 ///   it in a `message-error` line.
 /// - `filter` maps each typed value before it is stored, such as keeping
 ///   only the digits of an amount.
+/// - `on_clear` puts a `×` inside the input's right end while it holds
+///   text ([`ClearWrap`]); the tap empties `value` and then calls it.
 ///
 /// Autocapitalize, autocorrect and spellcheck are off: a field here holds a
 /// name, an email or an amount, which the keyboard's fixes only get wrong.
@@ -62,14 +64,13 @@ pub fn TextInput(
     #[props(default)] maxlength: Option<usize>,
     #[props(default)] filter: Option<Callback<String, String>>,
     #[props(default = false)] disabled: bool,
+    #[props(default)] on_clear: Option<EventHandler<()>>,
 ) -> Element {
     let input_type = input_type.unwrap_or_else(|| "text".to_string());
     let class = input_class(error.is_some());
+    let for_id = id.clone();
 
-    rsx! {
-        if let Some(label) = label {
-            FieldLabel { label, for_id: id.clone(), on_info }
-        }
+    let field = rsx! {
         if input_type == "password" {
             PasswordInput {
                 value,
@@ -99,6 +100,23 @@ pub fn TextInput(
                     });
                 },
             }
+        }
+    };
+    rsx! {
+        if let Some(label) = label {
+            FieldLabel { label, for_id, on_info }
+        }
+        if let Some(on_clear) = on_clear {
+            ClearWrap {
+                filled: !value.read().is_empty(),
+                on_clear: move |()| {
+                    value.set(String::new());
+                    on_clear.call(());
+                },
+                {field}
+            }
+        } else {
+            {field}
         }
         if let Some(error) = error {
             div { class: "message-error", "{error}" }
