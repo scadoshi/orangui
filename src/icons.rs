@@ -38,6 +38,12 @@ pub const ARROW: &str = "M5 12h14M13 6l6 6-6 6";
 pub const SEND: &str = "M22 2L11 13M22 2l-7 20-4-9-9-4z";
 /// The play icon: a triangle pointing right.
 pub const PLAY: &str = "M7 5v14l11-7z";
+/// The fold icon: two chevrons closing on the middle, for shutting every
+/// group at once.
+pub const FOLD: &str = "M7 4l5 5 5-5M7 20l5-5 5 5";
+/// The unfold icon: two chevrons opening from the middle, for opening every
+/// group at once.
+pub const UNFOLD: &str = "M7 9l5-5 5 5M7 15l5 5 5-5";
 /// The Home icon: a house.
 pub const HOUSE: &str = "M3 11.5l9-8 9 8M5 10v10h5v-6h4v6h5V10";
 /// The Account icon: a person.
