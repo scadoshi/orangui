@@ -9,7 +9,6 @@
 use dioxus::prelude::*;
 use orangui_core::sheet_drag;
 
-use crate::grid_cells::GridCells;
 use crate::overlay_stack::use_overlay_back_action;
 use crate::{ActionBar, Button, ButtonVariant, entrance};
 
@@ -226,8 +225,6 @@ pub fn BottomSheet(
             onpointermove: move_drag,
             onpointerup: move |evt| end_drag(evt, false),
             onpointercancel: move |evt| end_drag(evt, true),
-            // The same backdrop as the screen, in place and a step dimmer.
-            GridCells { still: true }
             div { class: "sheet-header", onpointerdown: start_drag,
                 if closable {
                     button {

@@ -328,11 +328,6 @@ a.stat-chip {
     justify-content: flex-end;
 }
 
-/* The panel's GridCells copy paints only behind the folded menu. */
-.nav-panel > .grid-cells {
-    display: none;
-}
-
 .nav-panel-inner {
     display: flex;
     align-items: center;
@@ -523,9 +518,8 @@ a.stat-chip {
         grid-column: 1 / -1;
         grid-row: 2;
         justify-self: stretch;
-        /* Its own stacking context, so the GridCells copy at z-index -1 paints
-           over the panel's sink and under the links, and not under the sticky
-           wrapper's fill. */
+        /* Its own stacking context, so the panel's sink paints over the
+           page and not under the sticky wrapper's fill. */
         position: relative;
         z-index: 0;
         background-color: var(--bg-sink);
@@ -573,14 +567,6 @@ a.stat-chip {
             padding-top 0.25s ease,
             border-top-color 0.2s ease,
             visibility 0s;
-    }
-    /* The grid backdrop under the menu, as under a bottom sheet: the panel's
-       own still copy, pinned to the panel and under its rows. Absolute, so
-       it takes no grid row of its own. */
-    .nav-panel > .grid-cells {
-        display: block;
-        position: absolute;
-        z-index: -1;
     }
     /* nowrap + flex-start undo the desktop bar's flex-wrap/justify-end so the
        collapsing column can't wrap into narrow columns while the open animation
@@ -1553,38 +1539,14 @@ a.nav-dropdown-item.active:visited {
     display: flex;
     flex-direction: column;
     z-index: 201;
-    /* Clips the GridCells copy to the rounded corners. */
+    /* Clips the fill to the rounded corners. */
     overflow: hidden;
 }
 
-/* The sheet's own GridCells sits under its header, content and action bar,
-   a step dimmer than the screen's; the header and the bar keep the sheet's
-   fill, the content shows the field. */
-.bottom-sheet > .grid-cells {
-    position: absolute;
-    z-index: 0;
-}
-
-.bottom-sheet > .grid-cells .grid-cells-canvas {
-    opacity: 0.8;
-}
-
-/* On a light theme the sheet and the open menu lift off the page: the
-   sheet's shadow doubles up, since a light shadow alone barely marks a
-   cream edge on a cream page, and the field each draws on its own copy of
-   GridCells dims to half, so the overlay reads as its own surface. */
+/* On a light theme the sheet lifts off the page: its shadow doubles up,
+   since a light shadow alone barely marks a cream edge on a cream page. */
 [class*="theme-"][class*="-light"] .bottom-sheet {
     box-shadow: var(--shadow-md), var(--shadow-md);
-}
-
-[class*="theme-"][class*="-light"] .nav-panel .grid-cells-canvas,
-[class*="theme-"][class*="-light"] .bottom-sheet > .grid-cells .grid-cells-canvas {
-    opacity: 0.5;
-}
-
-.bottom-sheet > :not(.grid-cells) {
-    position: relative;
-    z-index: 1;
 }
 
 .bottom-sheet > .sheet-header,
@@ -1705,8 +1667,7 @@ a.nav-dropdown-item.active:visited {
     padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
 }
 
-/* A sheet's body shows the sheet's own GridCells; the layer paints the sink,
-   so the screen under the sheet stays hidden. */
+/* A sheet's body shows the sheet's own fill. */
 :where(.sheet-content) {
     background-color: transparent;
 }
