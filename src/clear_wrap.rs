@@ -1,12 +1,12 @@
-//! A clear button inside an input's box, at its right end, for any field
+//! A clear button beside an input's box, at its right end, for any field
 //! that can be emptied: a text input, a tappable picker box, a box of
 //! chips. Styled by `assets/components.css`.
 
 use dioxus::prelude::*;
 
-/// Wraps one input-like child and draws a `×` inside its right end while
-/// `filled`. The child's right padding eases out to make room as the
-/// button fades in, and back when the field empties. The tap clears
+/// Wraps one input-like child and draws a `×` beside its right end while
+/// `filled`. The child gives up the button's width as it slides in, and
+/// takes it back when the field empties. The tap clears
 /// through `on_clear` and never reaches the child, so a tappable box does
 /// not open on it. `label` is the button's accessible name, `Clear` by
 /// default.

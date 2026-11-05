@@ -43,7 +43,7 @@ pub fn FieldLabel(
 ///   it in a `message-error` line.
 /// - `filter` maps each typed value before it is stored, such as keeping
 ///   only the digits of an amount.
-/// - `on_clear` puts a `×` inside the input's right end while it holds
+/// - `on_clear` puts a `×` beside the input's right end while it holds
 ///   text ([`ClearWrap`]); the tap empties `value` and then calls it.
 ///
 /// Autocapitalize, autocorrect and spellcheck are off: a field here holds a
