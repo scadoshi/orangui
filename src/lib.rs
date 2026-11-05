@@ -169,7 +169,7 @@ pub const REVEAL_JS: &str = include_str!("../assets/reveal.js");
 pub const NAV_GLIDE_JS: &str = include_str!("../assets/nav-glide.js");
 /// The sites' scroll fade for browsers without scroll timelines (Firefox,
 /// older Safari): sets the edge fades on every `.scroll-fade-x`,
-/// `.diagram-scroll` and `.scroll-fade-y` (the [`NavBar`] link list) from the
+/// `.diagram-scroll` and `.scroll-fade-y` from the
 /// scroll position, which [`COMPONENTS_CSS`] animates where it can, and does
 /// nothing elsewhere. Inline it with `document::Script`.
 pub const SCROLL_FADE_JS: &str = include_str!("../assets/scroll-fade.js");

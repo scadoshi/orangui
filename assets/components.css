@@ -2193,8 +2193,8 @@ a.nav-dropdown-item.active:visited {
     }
 }
 
-/* The same for a box that scrolls up and down (the hamburger's link list):
-   the rows dissolve into the edge they are leaving instead of being cut. */
+/* The same for a box that scrolls up and down: the rows dissolve into the
+   edge they are leaving instead of being cut. */
 @property --fade-top {
     syntax: "<length>";
     inherits: false;
@@ -2236,18 +2236,6 @@ a.nav-dropdown-item.active:visited {
     to {
         --fade-top: 1.5rem;
         --fade-bottom: 0px;
-    }
-}
-
-/* The nav's link list scrolls only in the collapsed panel. As a row it never
-   does, and a mask on it would clip the dropdowns that open below it and,
-   where the row's content overruns its box by a pixel or two, dim the row
-   itself through the fallback script's bottom fade. */
-@media (width > 60rem) {
-    .nav-links.scroll-fade-y {
-        -webkit-mask-image: none;
-        mask-image: none;
-        animation: none;
     }
 }
 
