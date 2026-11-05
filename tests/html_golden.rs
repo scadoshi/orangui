@@ -198,7 +198,6 @@ fn theme_sheet_app(open: bool) -> Element {
             open,
             theme,
             on_save: |_| {},
-            on_unchanged: |()| {},
             hint,
         }
     }

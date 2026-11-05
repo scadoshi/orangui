@@ -5,13 +5,12 @@
 //! (a toast) stay the host's, through [`ThemeSheet`]'s callbacks.
 //!
 //! On a keyboard, while the sheet is open and no dialog is over it, the up
-//! and down arrows preview the row above or below the selected one, and
-//! Enter is the save check unless a button or link inside the sheet has
-//! focus.
+//! and down arrows pick the row above or below the selected one, and Enter
+//! closes the sheet unless a button or link inside the sheet has focus.
 
 use dioxus::prelude::*;
 
-use crate::{BottomSheet, THEME_GROUPS, ThemeConfig, ThemeFollow, display_theme_name};
+use crate::{BottomSheet, THEME_GROUPS, ThemeConfig, display_theme_name};
 
 /// The sheet's keys, installed once per page by [`ThemeSheet`]. The open
 /// sheet is the shown `.bottom-sheet` holding theme swatches. An arrow clicks
@@ -38,9 +37,9 @@ if (!window.__oranguiThemeKeys) {
                 next.scrollIntoView({ block: 'nearest' });
             }
         } else if (e.key === 'Enter' && !(onControl && sheet.contains(focus))) {
-            const save = sheet.querySelector('.sheet-dock .action-dock-btn');
+            const close = sheet.querySelector('.sheet-close');
             e.preventDefault();
-            if (save && !save.disabled) save.click();
+            if (close) close.click();
         }
     }, true);
 }
@@ -56,6 +55,7 @@ fn ThemeRow(
     mut selected: Signal<String>,
     mut live: Signal<ThemeConfig>,
     dark: Signal<bool>,
+    on_pick: EventHandler<ThemeConfig>,
 ) -> Element {
     let is_selected = selected() == theme;
     let click_theme = theme.clone();
@@ -63,11 +63,16 @@ fn ThemeRow(
         button {
             class: if is_selected { "pref-row selected" } else { "pref-row" },
             onclick: move |_| {
+                if *selected.peek() == click_theme {
+                    return;
+                }
                 selected.set(click_theme.clone());
-                live.set(ThemeConfig {
+                let picked = ThemeConfig {
                     name: click_theme.clone(),
                     is_dark: dark(),
-                });
+                };
+                live.set(picked.clone());
+                on_pick.call(picked);
             },
             div { class: "pref-row-inner",
                 span { "{display_theme_name(&theme)}" }
@@ -84,81 +89,40 @@ fn ThemeRow(
     }
 }
 
-/// Bottom sheet for picking a theme. A pick previews at once by setting
-/// `theme`, the app's live theme. The check in the sheet's dock closes the
-/// sheet and hands the pick to `on_save`, and is grayed until the pick differs
-/// from what the sheet opened on. The ×, a drag down and the backdrop restore
-/// the theme that was active when the sheet opened: the sheet holds still
-/// while that theme wipes back in, leaves inside the wipe, and calls
-/// `on_unchanged` once the sweep is done.
+/// Bottom sheet for picking a theme. A tap draws the app in the pick by
+/// setting `theme`, the app's live theme, and hands it to `on_save` at
+/// once; the sheet stays open to keep browsing, and the ×, a drag down and
+/// the backdrop only close it. Undoing a pick is a tap on the row before.
 ///
-/// On a keyboard the arrows walk the rows and Enter saves (see the module
-/// docs).
-///
-/// Reads the [`ThemeFollow`] the host provides from
-/// [`use_theme_follow`](crate::use_theme_follow), and registers with the
-/// [`OverlayBackStack`](crate::OverlayBackStack) through [`BottomSheet`].
+/// On a keyboard the arrows walk the rows and Enter closes (see the module
+/// docs). Registers with the [`OverlayBackStack`](crate::OverlayBackStack)
+/// through [`BottomSheet`].
 #[component]
 pub fn ThemeSheet(
     mut open: Signal<bool>,
     /// The app's live theme. Each pick is written here.
     mut theme: Signal<ThemeConfig>,
-    /// Called with the kept theme after the save check closes the sheet.
+    /// Called with each pick as it is made.
     on_save: EventHandler<ThemeConfig>,
-    /// Called once a discarded pick has wiped back out and the sheet is gone.
-    on_unchanged: EventHandler<()>,
     /// A hint's open signal, for the sheet header's "?".
     #[props(default)]
     hint: Option<Signal<bool>>,
 ) -> Element {
-    let follow: ThemeFollow = use_context();
     use_effect(|| {
         let _ = document::eval(THEME_KEYS_JS);
     });
-    let mut original = use_signal(|| theme.peek().clone());
     let mut selected = use_signal(|| theme.peek().name.clone());
     let mut dark = use_signal(|| theme.peek().is_dark);
 
-    // Snapshot the active theme each time the sheet opens and sync the
-    // selection to it, so every open starts from the live theme.
+    // Opening reads the live theme, so the sheet marks what the app draws.
     use_effect(move || {
         if open() {
             let current = theme.peek().clone();
-            original.set(current.clone());
             selected.set(current.name.clone());
             dark.set(current.is_dark);
         }
     });
 
-    // Back and the backdrop are the same act. With nothing to throw away the
-    // sheet just slides off. With a pick on screen, the original wipes back
-    // in and the sheet waits for it: sliding down under a wipe stutters, and
-    // the old theme would otherwise look like it took.
-    let mut restoring = use_signal(|| false);
-    let discard = use_callback(move |()| {
-        let original = original.peek().clone();
-        let changed = *selected.peek() != original.name || *dark.peek() != original.is_dark;
-        if changed {
-            restoring.set(true);
-            theme.set(original);
-        } else {
-            open.set(false);
-        }
-    });
-
-    // Once the shell shows the original again the wipe has taken its new
-    // snapshot's contents, so the sheet is pulled from the page here and the
-    // sweep reveals the screen without it. The callback waits for the sweep.
-    let hidden = use_memo(move || restoring() && *follow.shown.read() == *original.read());
-    use_effect(move || {
-        if restoring() && hidden() && !follow.wiping() {
-            open.set(false);
-            restoring.set(false);
-            on_unchanged.call(());
-        }
-    });
-
-    let unchanged = selected() == original().name && dark() == original().is_dark;
     let mode = (if dark() { "dark" } else { "light" }).to_string();
 
     rsx! {
@@ -167,10 +131,8 @@ pub fn ThemeSheet(
             title: "Themes".to_string(),
             hint,
             closable: true,
-            on_dismiss: move |()| discard.call(()),
-            hidden: hidden(),
+            on_dismiss: move |()| open.set(false),
             for group in THEME_GROUPS {
-                // The group's name as a chip, centered over its rows.
                 div { class: "theme-group-label",
                     span { class: "stat-chip stat-chip-p1", "{group.label}" }
                 }
@@ -181,25 +143,7 @@ pub fn ThemeSheet(
                         selected,
                         live: theme,
                         dark,
-                    }
-                }
-            }
-            div { class: "action-dock action-dock-right sheet-dock",
-                button {
-                    class: "action-dock-btn",
-                    aria_label: "Save",
-                    disabled: unchanged,
-                    onclick: move |_| {
-                        open.set(false);
-                        on_save.call(ThemeConfig {
-                            name: selected(),
-                            is_dark: dark(),
-                        });
-                    },
-                    svg {
-                        class: "action-dock-icon",
-                        view_box: "0 0 24 24",
-                        polyline { points: "20 6 9 17 4 12" }
+                        on_pick: on_save,
                     }
                 }
             }
