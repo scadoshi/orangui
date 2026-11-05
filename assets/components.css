@@ -1667,9 +1667,10 @@ a.nav-dropdown-item.active:visited {
     padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
 }
 
-/* A sheet's body shows the sheet's own fill. */
+/* A sheet's body sits a step into the sink under its title bar and its
+   dock, the way the folded menu's rows sit under the menu's bands. */
 :where(.sheet-content) {
-    background-color: transparent;
+    background-color: var(--bg-sink);
 }
 
 /* The content column, for a host that loads no app sheet. */
