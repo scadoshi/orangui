@@ -1,14 +1,13 @@
-//! Site-style theme picker: a [`NavDropdown`] of every allowed theme
-//! (sectioned by look, the color-blind themes last) plus a dark/light
-//! mode toggle.
+//! Site-style theme picker: a trigger pill naming the theme, which opens
+//! every allowed theme (sectioned by look, the color-blind themes last) in a
+//! [`BottomSheet`], plus a dark/light mode toggle.
 //!
-//! Below the 60rem hamburger breakpoint the same open state shows the themes
-//! in a [`BottomSheet`] instead of the drop-down; the stylesheet picks which
-//! one a width shows, so both stay mounted and share one signal. A pick
-//! leaves either one up through its wipe, so the next theme is one click
-//! away; the drop-down closes from a click away or Escape, the sheet from its
-//! × or a drag down. In a [`NavBar`](crate::NavBar)'s folded menu, opening
-//! the sheet folds the menu.
+//! On a wide window the sheet is a [`SheetWide::Drawer`] under the bar, so
+//! the page stays in view beside it as the themes change; below the bar
+//! breakpoint it is the plain bottom sheet. A pick leaves it up through its
+//! wipe, so the next theme is one click away; it closes from its ×, a click
+//! on the backdrop, Escape or a drag down. In a [`NavBar`](crate::NavBar)'s
+//! folded menu, opening the sheet folds the menu.
 //!
 //! This is the canonical copy for every site; the host passes its `Signal<ThemeConfig>` in,
 //! so how the theme is provided (context, prop drilling) and applied (body
@@ -17,8 +16,8 @@
 use dioxus::prelude::*;
 
 use crate::{
-    BottomSheet, Button, ButtonVariant, NavDropdown, NavPanelOpen, THEME_GROUPS, ThemeConfig,
-    display_theme_name,
+    BottomSheet, Button, ButtonVariant, NavPanelOpen, SheetFrame, SheetWide, THEME_GROUPS,
+    ThemeConfig, display_theme_name,
 };
 
 /// The palette, the sign for the theme wherever it is named: a stroked
@@ -104,10 +103,10 @@ pub fn DarkModeButton(is_dark: bool, onclick: EventHandler<MouseEvent>) -> Eleme
     }
 }
 
-/// Theme dropdown + dark/light toggle. Every theme has both modes, so the
-/// toggle is always shown. At hamburger widths the themes open in a bottom
-/// sheet (`div.theme-picker-sheet`, after `div.theme-picker`) rather than
-/// the drop-down.
+/// Theme trigger + dark/light toggle. Every theme has both modes, so the
+/// toggle is always shown. The trigger opens the themes in a sheet
+/// (`div.theme-picker-sheet`, after `div.theme-picker`), a drawer on a wide
+/// window.
 #[component]
 pub fn ThemePicker(
     theme: Signal<ThemeConfig>,
@@ -125,11 +124,10 @@ pub fn ThemePicker(
     let mut theme = theme;
     // Always taken, so the hook order holds whether or not the host passes one.
     let own_open = use_signal(|| false);
-    let open = open.unwrap_or(own_open);
+    let mut open = open.unwrap_or(own_open);
     let shown = shown.unwrap_or(theme);
     // Inside a NavBar's folded menu the sheet rises as the menu folds, so the
-    // two never stack; at bar widths the panel is already closed, and the
-    // drop-down opens as before.
+    // two never stack; at bar widths the panel is already closed.
     let nav = try_use_context::<NavPanelOpen>();
     use_effect(move || {
         if open()
@@ -145,11 +143,15 @@ pub fn ThemePicker(
     rsx! {
         // Its children glide aside when the label changes width (NAV_GLIDE_JS).
         div { class: "theme-picker", "data-nav-glide": "true",
-            NavDropdown {
-                open,
-                label: display_theme_name(&current),
-                leading: rsx! { PaletteIcon {} },
-                ThemeRows { theme, current: current.clone(), mode }
+            button {
+                class: "nav-dropdown-trigger",
+                aria_expanded: "{open()}",
+                onclick: move |_| {
+                    let next = !open();
+                    open.set(next);
+                },
+                PaletteIcon {}
+                {display_theme_name(&current)}
             }
             button {
                 class: "mode-toggle",
@@ -166,18 +168,18 @@ pub fn ThemePicker(
                 ModeLabel { dark: is_dark }
             }
         }
-        // The phone-width chooser, hidden by the stylesheet above 60rem.
         div { class: "theme-picker-sheet",
-            BottomSheet { open, title: "Themes".to_string(), closable: true,
-                ThemeRows { theme, current, mode }
+            SheetFrame { wide: SheetWide::Drawer,
+                BottomSheet { open, title: "Themes".to_string(), closable: true,
+                    ThemeRows { theme, current, mode }
+                }
             }
         }
     }
 }
 
-/// Every allowed theme as a row under its group's name as a chip, for the
-/// drop-down and the sheet alike. A pick keeps the mode and leaves the menu
-/// where it is.
+/// Every allowed theme as a row under its group's name as a chip. A pick
+/// keeps the mode and leaves the sheet where it is.
 #[component]
 fn ThemeRows(theme: Signal<ThemeConfig>, current: String, mode: &'static str) -> Element {
     let mut theme = theme;

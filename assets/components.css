@@ -768,25 +768,6 @@ a.stat-chip {
     .nav-panel .nav-links .nav-dropdown::after {
         display: none;
     }
-    /* The theme row is the bottom of the menu, so its list opens upward:
-       its bottom sits 0.5rem above the trigger (the nav's bottom
-       padding plus the trigger's height), and it is no taller than the nav
-       above that, so it never leaves the screen. */
-    .nav-panel .theme-picker .nav-dropdown-content {
-        top: auto;
-        bottom: calc(var(--nav-pad) + 2 * var(--nav-trigger-pad) + 0.95rem + 2px + 0.5rem);
-        margin-top: 0;
-        max-height: min(50vh, calc(100% - 7rem));
-        /* Centered in the nav, not hung from the trigger: the row is
-           centered, so a short theme name moves the trigger right and a
-           menu hung from it ran off the screen and scrolled the page
-           sideways. The menu is as wide as its rows, so auto margins
-           between the nav's edges center it. */
-        left: 0;
-        right: 0;
-        margin-left: auto;
-        margin-right: auto;
-    }
 }
 
 /* Short viewports (landscape phones): tighter rows so more of the menu fits
@@ -914,8 +895,8 @@ a.stat-chip {
 /* ---- NavDropdown (orangui::NavDropdown) +
         ThemePicker (orangui::ThemePicker) ----
    The dropdown (trigger pill, floating menu, backdrop, hover bridge) is the
-   generic component; .theme-picker and .mode-toggle are the picker's own
-   additions on top of it. */
+   generic component. The picker borrows its trigger pill and opens a sheet;
+   .theme-picker and .mode-toggle are its own. */
 
 .theme-picker {
     display: flex;
@@ -1098,27 +1079,8 @@ a.nav-dropdown-item.active:visited {
     color: var(--accent-secondary);
 }
 
-/* The theme menu is as wide as its widest row, so names stay on one line and
-   nothing scrolls sideways, but never wider than the screen. */
-.theme-picker .nav-dropdown-content {
-    width: max-content;
-    max-width: calc(100vw - 2rem);
-    overflow-x: hidden;
-}
-
-/* Theme picker rows: the name on the left, the theme's color dots on the
-   right. Scoped to the picker so the app's own .theme-dot rules stay apart. */
-.theme-picker .nav-dropdown-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    white-space: nowrap;
-}
-
 /* A miniature of the theme: its background as the chip, its muted text as the
    border, and the six palette slots inside. */
-.theme-picker .theme-swatches,
 .theme-picker-sheet .theme-swatches {
     display: flex;
     align-items: center;
@@ -1200,7 +1162,6 @@ a.nav-dropdown-item.active:visited {
     margin-top: 0;
 }
 
-.theme-picker .theme-dot,
 .theme-picker-sheet .theme-dot {
     width: 0.6rem;
     height: 0.6rem;
@@ -1208,26 +1169,13 @@ a.nav-dropdown-item.active:visited {
     flex-shrink: 0;
 }
 
-/* ThemePicker's phone-width sheet: hidden above the hamburger breakpoint,
-   where the drop-down shows the themes. Below it the sheet shows them and
-   the drop-down's menu and click-away layer stay hidden. */
+/* ThemePicker's sheet, a drawer under the bar on a wide window
+   (orangui::SheetWide::Drawer). */
 .theme-picker-sheet {
-    display: none;
+    display: contents;
 }
 
 @media (max-width: 60rem) {
-    .theme-picker-sheet {
-        display: contents;
-    }
-    .theme-picker > .nav-dropdown-backdrop,
-    .theme-picker .nav-dropdown-open .nav-dropdown-content {
-        display: none;
-    }
-    /* The trigger opens a sheet here, not a drop-down, so it loses the caret;
-       the palette before the name stays. */
-    .theme-picker .nav-dropdown-caret {
-        display: none;
-    }
     /* The sheet is the folded menu's descendant, so the menu stays painted
        while the sheet is up and folds in plain sight as the sheet rises. It
        stays painted through the slide away too: its own fade would ghost
@@ -1239,14 +1187,8 @@ a.nav-dropdown-item.active:visited {
 }
 
 /* The sheet's rows: filled, bordered pills like the app's settings rows,
-   roomier than the drop-down's for a thumb, the picked one outlined in the
-   accent. The sheet's content is a column, so the gap spaces the rows. */
-.theme-picker-sheet .nav-dropdown-rows {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
+   roomier than a drop-down's for a thumb, the picked one outlined in the
+   accent. */
 /* Soft: the row's gap, padding, radius and font size. */
 :where(.theme-picker-sheet .nav-dropdown-item) {
     gap: 1rem;
