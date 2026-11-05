@@ -1651,8 +1651,10 @@ a.nav-dropdown-item.active:visited {
     color: var(--accent-tertiary);
 }
 
+/* The body starts as close under the title bar as a panel's body under
+   its header. */
 .sheet-content {
-    padding: 1.5rem;
+    padding: 1rem 1.5rem 1.5rem;
     overflow-y: auto;
     flex: 1;
     display: flex;
