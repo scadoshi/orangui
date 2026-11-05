@@ -263,3 +263,40 @@ pub fn BottomSheet(
         }
     }
 }
+
+/// Where a [`BottomSheet`] sits on a wide window. Below the kit's bar
+/// breakpoint every form is the bottom sheet.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum SheetWide {
+    /// The bottom sheet at every width.
+    #[default]
+    Sheet,
+    /// A centered modal, for a short form or list.
+    Modal,
+    /// A drawer: an inset panel along the right edge under the bar, for a
+    /// sheet that edits what stays in view beside it. The page dims only a
+    /// little. `--sheet-drawer-top` on the root sets where it starts.
+    Drawer,
+}
+
+impl SheetWide {
+    /// The frame's classes for this form.
+    #[must_use]
+    pub fn class(self) -> &'static str {
+        match self {
+            Self::Sheet => "sheet-form",
+            Self::Modal => "sheet-form sheet-form-modal",
+            Self::Drawer => "sheet-form sheet-form-drawer",
+        }
+    }
+}
+
+/// Wraps one [`BottomSheet`] (or a component that renders one) so a wide
+/// window draws it as `wide`. The frame has no box of its own; the sheet and
+/// its backdrop stay fixed to the window.
+#[component]
+pub fn SheetFrame(#[props(default)] wide: SheetWide, children: Element) -> Element {
+    rsx! {
+        div { class: wide.class(), {children} }
+    }
+}

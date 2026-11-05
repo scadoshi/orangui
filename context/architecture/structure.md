@@ -29,7 +29,7 @@ src/
 ├── splash.rs            # Splash: the opening overlay, the backdrop raining in under the host's mark
 │
 │   # the app kit, styled by APP_CSS
-├── bottom_sheet.rs      # BottomSheet
+├── bottom_sheet.rs      # BottomSheet, and SheetFrame with SheetWide: the modal and drawer forms a wide window draws it as
 ├── alert_dialog.rs      # AlertDialog, DialogAction, ActionButton, DialogSpec, and the app-root DialogHost that draws them and answers Escape and Enter
 ├── page_header.rs       # PageHeader
 ├── theme_sheet.rs       # ThemeSheet: every theme as a row, previewed live; arrows walk the rows, Enter saves

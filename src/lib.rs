@@ -91,7 +91,7 @@ pub use alert_dialog::{
 };
 pub use banner::{Banner, BannerStatus};
 pub use boot::{BOOT_BG, BOOT_HEAD, BootReveal};
-pub use bottom_sheet::BottomSheet;
+pub use bottom_sheet::{BottomSheet, SheetFrame, SheetWide};
 pub use button::{Button, ButtonVariant};
 pub use chart_tip::ChartTip;
 pub use chip::Chip;

@@ -1668,6 +1668,76 @@ a.nav-dropdown-item.active:visited {
     padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
 }
 
+/* ---- Sheet forms on a wide window (orangui::SheetFrame) ----
+   The frame has no box; above the bar breakpoint it moves the sheet it
+   wraps. A modal centers and settles in. A drawer is an inset panel along
+   the right edge under the bar, --sheet-drawer-top from the top (a host
+   sets it to its bar's height plus the page gutter), the page gutter from
+   the right and the bottom, the panel's corners and border, sliding in
+   from the right; the page dims only a little so the sheet's changes show
+   on it. Its dock floats inside its bottom right corner. */
+.sheet-form {
+    display: contents;
+}
+
+@media (min-width: 60rem) {
+    .sheet-form-modal > .bottom-sheet {
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+        width: min(32rem, calc(100vw - 4rem));
+        max-height: 85vh;
+        border-radius: 1rem;
+        border: 1px solid var(--border-secondary);
+        opacity: 0;
+        transform: translate(-50%, calc(-50% + 0.75rem)) scale(0.98);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+    }
+
+    .sheet-form-modal > .bottom-sheet.show {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .sheet-form-drawer > .bottom-sheet {
+        top: var(--sheet-drawer-top, 5.5rem);
+        bottom: 1rem;
+        left: auto;
+        right: 1rem;
+        width: min(24rem, calc(100vw - 2rem));
+        max-height: none;
+        border-radius: 1rem;
+        border: 1px solid var(--border-secondary);
+        box-shadow: var(--shadow-md), var(--shadow-md);
+        transform: translateX(calc(100% + 1rem));
+    }
+
+    .sheet-form-drawer > .bottom-sheet.show {
+        transform: translateX(0);
+    }
+
+    .sheet-form-drawer > .sheet-backdrop.show {
+        opacity: 0.4;
+    }
+
+    .sheet-form-drawer > .bottom-sheet .sheet-dock {
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+    }
+}
+
+@media (min-width: 60rem) and (prefers-reduced-motion: reduce) {
+    .sheet-form-modal > .bottom-sheet,
+    .sheet-form-modal > .bottom-sheet.show,
+    .sheet-form-drawer > .bottom-sheet,
+    .sheet-form-drawer > .bottom-sheet.show {
+        transition: none;
+    }
+}
+
 /* A sheet's dock (.action-dock.sheet-dock) floats over the sheet's content,
    which ends with room to scroll its last row clear of it. */
 .bottom-sheet .sheet-dock {
