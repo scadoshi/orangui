@@ -584,12 +584,12 @@ a.stat-chip {
         padding-left: var(--nav-pad);
         padding-right: var(--nav-pad);
     }
-    /* The links show three and a half rows and scroll the rest, so the open
-       menu stays short on any phone and the trailing item (the theme picker)
-       sits right under them as the panel's base. The half row shows there is
-       more, cut at the trailing item's rule: the space above that rule is the
-       list's own bottom padding, which scrolls with the rows. A row is its
-       padding, the 0.95rem line and a 1px border each side. */
+    /* The links show four whole rows and scroll the rest a row at a time,
+       so no row is ever left cut at an edge; the trailing item (the theme
+       picker) sits right under them as the panel's base. The space above
+       its rule is the list's own bottom padding, which scrolls with the
+       rows. A row is its padding, the 0.95rem line and a 1px border each
+       side. */
     .nav-panel .nav-links {
         flex-direction: column;
         flex-wrap: nowrap;
@@ -599,7 +599,8 @@ a.stat-chip {
         height: auto;
         box-sizing: border-box;
         padding-bottom: var(--nav-list-end);
-        max-height: calc(3.5 * (2 * var(--nav-row-pad) + 0.95rem + 2px) + 3 * var(--nav-row-gap) + var(--nav-list-end));
+        max-height: calc(4 * (2 * var(--nav-row-pad) + 0.95rem + 2px) + 3 * var(--nav-row-gap) + var(--nav-list-end));
+        scroll-snap-type: y mandatory;
         /* The list keeps its own height while the panel grows around it
            and the inner clips it: a scroller that grew from nothing came
            up scrolled to its end in Safari, the first row cut off. */
@@ -616,6 +617,7 @@ a.stat-chip {
     .nav-panel .nav-links li {
         width: 100%;
         height: auto;
+        scroll-snap-align: start;
     }
     /* Every direct panel link item stretches — including composed widgets
        (e.g. a NavDropdown wrapper div) that tag enumeration would miss. */
