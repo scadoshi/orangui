@@ -86,11 +86,11 @@ window.__oranguiNavAway = () => document.removeEventListener('pointerup', away, 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct NavPanelOpen(pub Signal<bool>);
 
-/// Nav shell with a hamburger-collapsing link panel.
-/// Scrolls the open panel's link list back to its top.
-const LIST_TOP_JS: &str =
-    "const l = document.querySelector('.nav-panel-open .nav-links'); if (l) l.scrollTop = 0;";
+/// Scrolls the open panel's link list back to its top, now and again once
+/// the panel has finished growing.
+const LIST_TOP_JS: &str = "const top = () => { const l = document.querySelector('.nav-panel-open .nav-links'); if (l) l.scrollTop = 0; }; top(); setTimeout(top, 300);";
 
+/// Nav shell with a hamburger-collapsing link panel.
 #[component]
 pub fn NavBar(
     /// Panel open state, host-owned: pass a fresh signal and close it from
