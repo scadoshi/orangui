@@ -509,8 +509,8 @@ a.stat-chip {
         align-self: center;
     }
     .nav-panel {
-        /* One link row's vertical padding and the gap between rows; the
-           link list's height cap is counted in these rows. */
+        /* One link row's vertical padding and the gap between rows; an
+           app that caps the link list in whole rows counts in these. */
         --nav-row-pad: 0.65rem;
         --nav-row-gap: 0.75rem;
         /* The space between the panel's rule and the first link row, and
@@ -582,12 +582,11 @@ a.stat-chip {
         padding-left: var(--nav-pad);
         padding-right: var(--nav-pad);
     }
-    /* The links show four whole rows and scroll the rest a row at a time,
-       so no row is ever left cut at an edge; the trailing item (the theme
-       picker) sits right under them as the panel's base. The space above
-       its rule is the list's own bottom padding, which scrolls with the
-       rows. A row is its padding, the 0.95rem line and a 1px border each
-       side. */
+    /* The links show every row, capped only by the window: past the cap
+       they scroll a row at a time. The trailing item (the theme picker)
+       sits right under them as the panel's base and stays on screen. The
+       space above its rule is the list's own bottom padding, which scrolls
+       with the rows. */
     .nav-panel .nav-links {
         flex-direction: column;
         flex-wrap: nowrap;
@@ -602,7 +601,11 @@ a.stat-chip {
         padding-top: var(--nav-list-start);
         padding-bottom: var(--nav-list-end);
         scroll-padding-top: var(--nav-list-start);
-        max-height: calc(var(--nav-list-start) + 4 * (2 * var(--nav-row-pad) + 0.95rem + 2px) + 3 * var(--nav-row-gap) + var(--nav-list-end));
+        /* The window less the menu around the list: the header bar and the
+           panel's rule above it (73px on a phone) and the trailing row with
+           the nav's bottom inset below it (61px), with a little to spare. */
+        max-height: calc(100vh - 8.5rem);
+        max-height: calc(100dvh - 8.5rem);
         scroll-snap-type: y mandatory;
         /* The list keeps its own height while the panel grows around it
            and the inner clips it: a scroller that grew from nothing came
@@ -612,7 +615,11 @@ a.stat-chip {
         overscroll-behavior: contain;
         overflow-anchor: none;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
+        /* Scrolls, but shows no scrollbar. */
+        scrollbar-width: none;
+    }
+    .nav-panel .nav-links::-webkit-scrollbar {
+        display: none;
     }
     .nav-panel .nav-panel-inner > :not(.nav-links) {
         flex-shrink: 0;
