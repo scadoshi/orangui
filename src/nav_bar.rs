@@ -87,6 +87,10 @@ window.__oranguiNavAway = () => document.removeEventListener('pointerup', away, 
 pub struct NavPanelOpen(pub Signal<bool>);
 
 /// Nav shell with a hamburger-collapsing link panel.
+/// Scrolls the open panel's link list back to its top.
+const LIST_TOP_JS: &str =
+    "const l = document.querySelector('.nav-panel-open .nav-links'); if (l) l.scrollTop = 0;";
+
 #[component]
 pub fn NavBar(
     /// Panel open state, host-owned: pass a fresh signal and close it from
@@ -114,6 +118,13 @@ pub fn NavBar(
         let mut away = document::eval(NAV_AWAY_JS);
         while away.recv::<bool>().await.is_ok() {
             open.set(false);
+        }
+    });
+    // The list opens at its top: a scroller that grows from nothing can
+    // come up scrolled to its end, with the first row cut off.
+    use_effect(move || {
+        if open() {
+            document::eval(LIST_TOP_JS);
         }
     });
     let panel_class = if open() {

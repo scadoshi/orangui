@@ -604,6 +604,9 @@ a.stat-chip {
         min-height: 0;
         overflow-y: auto;
         overscroll-behavior: contain;
+        /* No scroll anchoring: as the panel grows the list from nothing,
+           anchoring would pin its scroll to the end and cut the first row. */
+        overflow-anchor: none;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
     }
