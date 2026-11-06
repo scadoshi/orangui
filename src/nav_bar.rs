@@ -105,7 +105,8 @@ pub fn NavBar(
     /// [`NavCtaIcon`].
     /// Wrapped in `div.nav-persistent`, whose children glide.
     persistent: Option<Element>,
-    /// Link items (`li` elements) rendered inside the panel's `ul.nav-links`.
+    /// Link items (`li` elements) rendered inside the panel's `ul.nav-links`,
+    /// which fades the rows it scrolls past at its cut edges.
     links: Element,
     /// Optional trailing panel item after the links (e.g. the theme picker),
     /// wrapped in `div.nav-trailing`, which at hamburger widths is the
@@ -164,7 +165,7 @@ pub fn NavBar(
                 }
                 div { class: "{panel_class}",
                     div { class: "nav-panel-inner",
-                        ul { class: "nav-links", "data-nav-glide": "true", {links} }
+                        ul { class: "nav-links scroll-fade-y", "data-nav-glide": "true", {links} }
                         if let Some(t) = trailing {
                             div { class: "nav-trailing", {t} }
                         }
