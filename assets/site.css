@@ -103,7 +103,7 @@ body .reveal-pending.reveal-in {
     justify-content: space-between;
     align-items: baseline;
     gap: 1rem;
-    color: var(--text-muted);
+    color: var(--ink-text-muted, var(--text-muted));
     font-size: 0.85rem;
 }
 
@@ -133,7 +133,7 @@ body .reveal-pending.reveal-in {
     border-top: 1px solid var(--accent-primary);
     box-shadow: var(--shadow-md);
     text-align: center;
-    color: var(--text-muted);
+    color: var(--ink-text-muted, var(--text-muted));
     font-size: 0.78rem;
 }
 

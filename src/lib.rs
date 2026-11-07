@@ -65,6 +65,7 @@ mod heat_grid;
 mod heat_readout;
 mod hint;
 pub mod icons;
+mod ink;
 mod lifecycle;
 #[cfg(feature = "links")]
 mod links;
@@ -119,6 +120,7 @@ pub use hint::{
     HintBullet, HintBullets, HintChip, HintDialog, HintKey, HintLine, InfoButton, ScreenHint,
     use_screen_hint, use_screen_hint_slot,
 };
+pub use ink::ink_color;
 pub use lifecycle::{
     AppLifecycle, AppPhase, use_app_lifecycle, use_app_lifecycle_root, use_on_resume,
 };

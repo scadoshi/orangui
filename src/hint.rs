@@ -9,7 +9,7 @@ use std::fmt;
 
 use dioxus::prelude::*;
 
-use crate::{AlertDialog, DialogAction};
+use crate::{AlertDialog, DialogAction, ink};
 
 /// A hint's dialog: the title, the body in a `hint-body` block, and a single
 /// dismiss button, "Got it" unless `dismiss` names another. `actions` go
@@ -149,10 +149,11 @@ pub fn HintKey(
     #[props(default = "--palette-2".to_string())] color: String,
     children: Element,
 ) -> Element {
+    let ink = ink::ink_color(&color);
     rsx! {
         span {
             class: "hint-key",
-            style: "border-color: var({color}); color: var({color});",
+            style: "border-color: var({color}); color: {ink};",
             {children}
         }
     }
