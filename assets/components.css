@@ -1798,8 +1798,8 @@ a.nav-dropdown-item.active:visited {
 
 .banner .banner-dismiss {
     position: absolute;
-    top: 0.5rem;
-    right: 0.7rem;
+    top: 0.25rem;
+    right: 0.35rem;
 }
 
 .banner + .banner {
@@ -1873,19 +1873,47 @@ a.nav-dropdown-item.active:visited {
     text-underline-offset: 3px;
 }
 
+/* The ✕: a 2rem box, a squircle filled softly on hover and press; on touch
+   its hit area reaches 2.75rem around it without changing how it looks. */
 .banner-dismiss {
-    background: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
     border: none;
+    border-radius: 0.6rem;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 0.8rem;
+    font-family: inherit;
+    font-size: 1.15rem;
     font-weight: 700;
     padding: 0;
     line-height: 1;
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
 }
 
-.banner-dismiss:hover {
+.banner-dismiss:active {
     color: var(--text-primary);
+    background-color: color-mix(in srgb, var(--text-primary) 14%, transparent);
+}
+
+@media (hover: hover) {
+    .banner-dismiss:hover {
+        color: var(--text-primary);
+        background-color: color-mix(in srgb, var(--text-primary) 10%, transparent);
+    }
+}
+
+@media (pointer: coarse) {
+    .banner-dismiss::before {
+        content: "";
+        position: absolute;
+        inset: -0.375rem;
+    }
 }
 
 @keyframes banner-rise-in {

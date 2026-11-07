@@ -183,18 +183,52 @@
     opacity: 0.8;
 }
 
-/* Toast close button: ToastCloseButton renders a <button> */
+/* Toast close button: ToastCloseButton renders a <button> with a ×. A
+   2rem box, a squircle filled softly on hover and press, reaching into the
+   toast's padding so the toast keeps its size; on touch its hit area
+   reaches 2.75rem around it without changing how it looks. */
 .toast-container [role="alertdialog"] button {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
     padding: 0;
     border: none;
-    margin: 0;
-    background: none;
+    border-radius: 0.6rem;
+    margin: -0.5rem -0.5rem -0.5rem 0;
+    background: transparent;
     color: var(--text-primary);
     cursor: pointer;
-    font-size: 1rem;
+    font-family: inherit;
+    font-size: 1.85rem;
     line-height: 1;
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
+    opacity: 0.7;
+    transition:
+        opacity 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.toast-container [role="alertdialog"] button:active {
+    opacity: 1;
+    background-color: color-mix(in srgb, var(--text-primary) 14%, transparent);
+}
+
+@media (hover: hover) {
+    .toast-container [role="alertdialog"] button:hover {
+        opacity: 1;
+        background-color: color-mix(in srgb, var(--text-primary) 10%, transparent);
+    }
+}
+
+@media (pointer: coarse) {
+    .toast-container [role="alertdialog"] button::before {
+        content: "";
+        position: absolute;
+        inset: -0.375rem;
+    }
 }
 
 /* ---- Timed fade (ToastStack's `timed_fade`) ----
