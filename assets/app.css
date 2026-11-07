@@ -130,7 +130,7 @@
     font-weight: 400;
     letter-spacing: 0.1em;
     margin: 0;
-    color: var(--accent-primary);
+    color: var(--ink-accent-primary, var(--accent-primary));
 }
 
 /* The corner buttons: the app's own on the left, the hint "?" on the right.
@@ -223,7 +223,7 @@
 }
 
 .input::placeholder {
-    color: var(--text-muted);
+    color: var(--ink-text-muted, var(--text-muted));
     font-weight: 400;
 }
 
@@ -251,7 +251,7 @@
     font-size: 1rem;
     font-weight: 400;
     letter-spacing: 0.1em;
-    color: var(--accent-tertiary);
+    color: var(--ink-accent-tertiary, var(--accent-tertiary));
     margin-bottom: 0.4rem;
 }
 
@@ -288,7 +288,7 @@
 
 .message-error {
     text-align: center;
-    color: var(--color-error);
+    color: var(--ink-color-error, var(--color-error));
 }
 
 /* ---- Alert dialog (orangui::AlertDialog, DialogHostView) ---- */
@@ -376,7 +376,7 @@
 
 /* The title's color and type are soft defaults. */
 :where(.alert-dialog-title) {
-    color: var(--accent-tertiary);
+    color: var(--ink-accent-tertiary, var(--accent-tertiary));
     font-size: 1.25rem;
     letter-spacing: 0.1em;
 }
@@ -558,7 +558,7 @@
 .settings-list-title {
     font-size: 1rem;
     letter-spacing: 0.1em;
-    color: var(--accent-primary);
+    color: var(--ink-accent-primary, var(--accent-primary));
     overflow-wrap: break-word;
     min-width: 0;
 }
@@ -636,7 +636,7 @@
 }
 
 .pref-note {
-    color: var(--text-muted);
+    color: var(--ink-text-muted, var(--text-muted));
     text-align: center;
     line-height: 1.4;
     overflow-wrap: anywhere;

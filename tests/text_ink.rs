@@ -1,8 +1,9 @@
-//! The control gate for the kit's sheets, per `context/development/styling.md`.
+//! The ink gate for the kit's sheets, per `context/development/styling.md`.
 //!
-//! A button, link or other control that draws its text in a tone reads the tone's ink,
-//! `var(--ink-<tone>, var(--<tone>))`, so it reads at 4.5:1 in every theme. A disabled control is
-//! exempt: it is dimmed on purpose.
+//! Text the kit draws in a tone (a title, a label, a button, a link, a tag) reads the tone's
+//! ink, `var(--ink-<tone>, var(--<tone>))`, so it reads at 4.5:1 in every theme. A disabled
+//! control is exempt, since it is dimmed on purpose, and so is a rule in [`NOT_TEXT`], whose
+//! `color` feeds a drawing through `currentColor` rather than letters.
 
 #![expect(
     clippy::string_slice,
@@ -28,25 +29,8 @@ const TONES: [&str; 14] = [
     "color-error",
 ];
 
-/// What marks a selector as a control: a button, a link, a menu item, a toggle.
-const CONTROLS: [&str; 16] = [
-    "btn",
-    "button",
-    "nav-link",
-    "nav-links > li > a",
-    "nav-dropdown-item",
-    "nav-dropdown-trigger",
-    "mode-toggle",
-    "nav-cta",
-    "nav-icon",
-    "pref-row",
-    "action-dock",
-    ".banner a",
-    "banner-dismiss",
-    "panel-action",
-    "alert-dialog-action",
-    "chip",
-];
+/// Rules whose `color` is a stroke or fill through `currentColor`, not text.
+const NOT_TEXT: [&str; 1] = [":where(.chart-line)"];
 
 /// Each rule's selector and body, innermost blocks only, comments removed.
 fn rules(css: &str) -> Vec<(String, String)> {
@@ -124,17 +108,17 @@ fn bare_tones(body: &str) -> Vec<&'static str> {
 }
 
 #[test]
-fn controls_draw_tone_text_in_its_ink() {
+fn tone_text_reads_its_ink() {
     let sheets = [
         ("components.css", include_str!("../assets/components.css")),
         ("app.css", include_str!("../assets/app.css")),
         ("site.css", include_str!("../assets/site.css")),
+        ("toast.css", include_str!("../assets/toast.css")),
     ];
     let mut offenders = Vec::new();
     for (name, css) in sheets {
         for (selector, body) in rules(css) {
-            let control = CONTROLS.iter().any(|marker| selector.contains(marker));
-            if !control || disabled(&selector) {
+            if NOT_TEXT.contains(&selector.as_str()) || disabled(&selector) {
                 continue;
             }
             for tone in bare_tones(&body) {
@@ -144,7 +128,7 @@ fn controls_draw_tone_text_in_its_ink() {
     }
     assert!(
         offenders.is_empty(),
-        "controls that draw text in a bare tone (read var(--ink-<tone>, var(--<tone>))):\n  {}",
+        "text drawn in a bare tone (read var(--ink-<tone>, var(--<tone>))):\n  {}",
         offenders.join("\n  ")
     );
 }

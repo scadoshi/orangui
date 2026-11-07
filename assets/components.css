@@ -1176,7 +1176,7 @@ a.nav-dropdown-item.active:visited {
 
 .pref-section-label {
     font-size: 1rem;
-    color: var(--accent-primary);
+    color: var(--ink-accent-primary, var(--accent-primary));
     letter-spacing: 0.1em;
     text-align: center;
     margin: 0.75rem 0 0.4rem;
@@ -1267,7 +1267,7 @@ a.nav-dropdown-item.active:visited {
 .nav-dropdown-label {
     margin-top: 0.85rem;
     padding: 0.4rem 1rem 0.25rem;
-    color: var(--accent-primary);
+    color: var(--ink-accent-primary, var(--accent-primary));
     font-size: 0.65rem;
     letter-spacing: 0.1em;
 }
@@ -1628,7 +1628,7 @@ a.nav-dropdown-item.active:visited {
 
 .sheet-title {
     font-size: 1rem;
-    color: var(--accent-tertiary);
+    color: var(--ink-accent-tertiary, var(--accent-tertiary));
 }
 
 /* The body starts as close under the title bar as a panel's body under
@@ -1787,7 +1787,7 @@ a.nav-dropdown-item.active:visited {
 
 .banner-category {
     font-size: 0.7rem;
-    color: var(--accent-tertiary);
+    color: var(--ink-accent-tertiary, var(--accent-tertiary));
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
@@ -1952,13 +1952,13 @@ a.nav-dropdown-item.active:visited {
 }
 
 .status-done {
-    color: var(--color-success);
+    color: var(--ink-color-success, var(--color-success));
     background-color: color-mix(in srgb, var(--color-success) 12%, transparent);
     border-color: color-mix(in srgb, var(--color-success) 35%, transparent);
 }
 
 .status-doing {
-    color: var(--color-warning);
+    color: var(--ink-color-warning, var(--color-warning));
     background-color: color-mix(in srgb, var(--color-warning) 12%, transparent);
     border-color: color-mix(in srgb, var(--color-warning) 35%, transparent);
 }
@@ -1992,14 +1992,14 @@ a.nav-dropdown-item.active:visited {
 
 .panel-eyebrow {
     font-size: 0.75rem;
-    color: var(--accent-tertiary);
+    color: var(--ink-accent-tertiary, var(--accent-tertiary));
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
 
 .panel-title {
     font-size: 1.1rem;
-    color: var(--accent-primary);
+    color: var(--ink-accent-primary, var(--accent-primary));
     font-weight: 700;
     margin: 0;
 }
@@ -2799,7 +2799,7 @@ html[data-wipe="left"]::view-transition-new(root) {
 
 .hint-key {
     border: 1px solid var(--accent-tertiary);
-    color: var(--accent-tertiary);
+    color: var(--ink-accent-tertiary, var(--accent-tertiary));
     border-radius: 0.5rem;
     padding: 0.05rem 0.45rem;
     font-size: 0.8rem;
