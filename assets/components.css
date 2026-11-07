@@ -1684,7 +1684,9 @@ a.nav-dropdown-item.active:visited {
         transform: translateX(0);
     }
 
-    .sheet-form-drawer > .sheet-backdrop.show {
+    /* On the backdrop at rest, not only while shown, so closing fades
+       the color alone and the opacity never snaps back to full. */
+    .sheet-form-drawer > .sheet-backdrop {
         opacity: 0.4;
     }
 
