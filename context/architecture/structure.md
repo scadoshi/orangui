@@ -37,6 +37,7 @@ src/
 ├── hint.rs              # HintDialog, InfoButton, HintLine, HintBullets, HintBullet, HintKey, HintChip, and the ScreenHint slot a screen offers its hint through
 ├── text_input.rs        # TextInput and FieldLabel: a labeled field with an optional "?" and error line
 ├── overlay_stack.rs     # OverlayBackStack and the use_overlay_back hooks
+├── lifecycle.rs         # use_app_lifecycle_root and use_on_resume: the app in the foreground or the background, from the page and the host's native events
 ├── os_back.rs           # use_os_back: the iOS edge swipe and Android back, through the overlay stack to the host's go_back; fill_window lays the page over the whole window on iOS 18
 ├── boot.rs              # BOOT_HEAD, BOOT_BG, BootReveal: the WebView launch hides #main until the styles are in
 ├── toast_stack.rs       # ToastStack, behind the toast feature; lib.rs re-exports use_toast, Toasts and ToastOptions beside it
