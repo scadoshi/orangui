@@ -2,7 +2,8 @@
 //!
 //! Every theme block carries an `--ink-<tone>` for each chip tone. The ink reads at 4.5:1 or better
 //! on everything a chip of that tone sits on: its 12% tint over `--bg-primary` and over `--bg-sink`,
-//! and either background bare. Where the tone already does, the ink is the tone itself.
+//! and either background bare. Inks are made for 4.6:1, a margin for the grounds a page paints
+//! between these, so where the tone already reads at 4.6 the ink is the tone itself.
 
 #![expect(
     clippy::string_slice,
@@ -33,6 +34,9 @@ const TONES: [&str; 14] = [
 ];
 
 const TARGET: f64 = 4.5;
+
+/// What the inks are made for: the target with a margin.
+const MADE_FOR: f64 = 4.6;
 
 struct Block {
     name: String,
@@ -156,7 +160,7 @@ fn every_tone_has_an_ink_that_reads_on_its_tint() {
             let same = block
                 .raw(tone_name)
                 .eq_ignore_ascii_case(block.raw(&format!("ink-{tone_name}")));
-            if worst(block, tone, tone) >= TARGET && !same {
+            if worst(block, tone, tone) >= MADE_FOR && !same {
                 failures.push(format!(
                     "{} --ink-{tone_name} differs from a tone that already reads",
                     block.name
