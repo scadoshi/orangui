@@ -34,6 +34,18 @@ pub const CHECK: &str = "M5 12.5l4.5 4.5L19 7";
 pub const COPY: &str = "M9 9h10v11H9zM5 15V4h10";
 /// The go icon: an arrow pointing right, for Log in and Create profile.
 pub const ARROW: &str = "M5 12h14M13 6l6 6-6 6";
+/// An arrow pointing left: a shaft and its head, for a move or a swipe
+/// that way.
+pub const ARROW_LEFT: &str = "M19 12H5M11 6l-6 6 6 6";
+/// An arrow pointing right: a shaft and its head, for a move or a swipe
+/// that way. The same drawing as [`ARROW`].
+pub const ARROW_RIGHT: &str = ARROW;
+/// An arrow pointing up: a shaft and its head, for a move or a swipe that
+/// way.
+pub const ARROW_UP: &str = "M12 19V5M6 11l6-6 6 6";
+/// An arrow pointing down: a shaft and its head, for a move or a swipe
+/// that way.
+pub const ARROW_DOWN: &str = "M12 5v14M6 13l6 6 6-6";
 /// The send icon: a paper plane.
 pub const SEND: &str = "M22 2L11 13M22 2l-7 20-4-9-9-4z";
 /// The play icon: a triangle pointing right.
