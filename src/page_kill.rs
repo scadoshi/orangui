@@ -27,6 +27,8 @@
 use std::ffi::c_void;
 use std::ptr::NonNull;
 use std::time::Duration;
+#[cfg(any(target_os = "ios", test))]
+use std::time::Instant;
 
 use dioxus::prelude::*;
 
@@ -62,8 +64,8 @@ pub fn use_page_kill_recovery(
                     continue;
                 }
                 match ios::next_step() {
-                    ios::Step::Rebuild => rebuild.call(()),
-                    ios::Step::Overlay(button) => {
+                    Step::Rebuild => rebuild.call(()),
+                    Step::Overlay(button) => {
                         let Some(webview) = ios_webview() else {
                             rebuild.call(());
                             continue;
@@ -72,8 +74,8 @@ pub fn use_page_kill_recovery(
                         ios::cover(webview, app_name, button, tap_tx);
                         if tap_rx.recv().await.is_some() {
                             match button {
-                                ios::Button::Reload => rebuild.call(()),
-                                ios::Button::Restart => ios::quit(),
+                                Button::Reload => rebuild.call(()),
+                                Button::Restart => ios::quit(),
                             }
                         }
                     }
@@ -99,6 +101,45 @@ async fn page_answers() -> bool {
     )
 }
 
+/// What a kill leads to.
+#[cfg(any(target_os = "ios", test))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Step {
+    /// The first in a while: rebuild at once.
+    Rebuild,
+    /// A repeat: cover the page and wait for a tap on the button.
+    Overlay(Button),
+}
+
+/// The overlay's one button.
+#[cfg(any(target_os = "ios", test))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Button {
+    /// Rebuilds the app.
+    Reload,
+    /// Quits the app, the last resort once a rebuild has not held.
+    Restart,
+}
+
+/// What a kill at `now` leads to, given the streak before it (when the last
+/// kill came and how many came in a row), and the streak's new length. A
+/// kill more than [`REPEAT_WINDOW`] after the last one starts a new streak.
+#[cfg(any(target_os = "ios", test))]
+fn step_after(streak: Option<(Instant, u32)>, now: Instant) -> (Step, u32) {
+    let count = match streak {
+        Some((last, count)) if now.saturating_duration_since(last) < REPEAT_WINDOW => {
+            count.saturating_add(1)
+        }
+        _ => 1,
+    };
+    let step = match count {
+        1 => Step::Rebuild,
+        2 => Step::Overlay(Button::Reload),
+        _ => Step::Overlay(Button::Restart),
+    };
+    (step, count)
+}
+
 /// The termination wrapper, the repeat guard and the overlay.
 #[cfg(target_os = "ios")]
 mod ios {
@@ -113,25 +154,7 @@ mod ios {
     use objc2::{AnyThread, MainThreadMarker, class, define_class, msg_send, sel};
     use tokio::sync::mpsc::UnboundedSender;
 
-    use super::REPEAT_WINDOW;
-
-    /// What a kill leads to.
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-    pub(super) enum Step {
-        /// The first in a while: rebuild at once.
-        Rebuild,
-        /// A repeat: cover the page and wait for a tap on `Button`.
-        Overlay(Button),
-    }
-
-    /// The overlay's one button.
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-    pub(super) enum Button {
-        /// Rebuilds the app.
-        Reload,
-        /// Quits the app, the last resort once a rebuild has not held.
-        Restart,
-    }
+    use super::{Button, Step, step_after};
 
     /// The kills in a row and when the last one came.
     static STREAK: Mutex<Option<(Instant, u32)>> = Mutex::new(None);
@@ -159,18 +182,9 @@ mod ios {
         let Ok(mut streak) = STREAK.lock() else {
             return Step::Rebuild;
         };
-        let count = match *streak {
-            Some((last, count)) if now.duration_since(last) < REPEAT_WINDOW => {
-                count.saturating_add(1)
-            }
-            _ => 1,
-        };
+        let (step, count) = step_after(*streak, now);
         *streak = Some((now, count));
-        match count {
-            1 => Step::Rebuild,
-            2 => Step::Overlay(Button::Reload),
-            _ => Step::Overlay(Button::Restart),
-        }
+        step
     }
 
     /// Quits the app on the user's tap, so the next launch starts clean.
@@ -275,6 +289,23 @@ mod ios {
         }
     }
 
+    /// The overlay's backdrop: gruvbox dark's `--bg-primary`, the launch color
+    /// ([`crate::BOOT_BG`]).
+    const BACKDROP: (u8, u8, u8) = (0x28, 0x28, 0x28);
+    /// The overlay's text and button outline: gruvbox dark's `--text-primary`.
+    const INK: (u8, u8, u8) = (0xeb, 0xdb, 0xb2);
+    /// The line's and the button's type size, in points.
+    const TYPE_PT: f64 = 17.0;
+    /// The line's height, and how far above the middle it sits.
+    const LINE_H: f64 = 32.0;
+    const LINE_RISE: f64 = 64.0;
+    /// The button's size, its top at the middle.
+    const BUTTON_W: f64 = 140.0;
+    const BUTTON_H: f64 = 48.0;
+    /// The button's outline width and corner radius, in points.
+    const BUTTON_BORDER: f64 = 1.0;
+    const BUTTON_RADIUS: f64 = 10.0;
+
     /// `UIViewAutoresizing`: flexible width and height.
     const FILL: usize = 2 | 16;
     /// `UIViewAutoresizing`: flexible width, top and bottom margins.
@@ -323,7 +354,7 @@ mod ios {
     }
 
     /// A `UIColor` from 8-bit channels, opaque.
-    fn color(r: u8, g: u8, b: u8) -> Retained<AnyObject> {
+    fn color((r, g, b): (u8, u8, u8)) -> Retained<AnyObject> {
         let channel = |c: u8| f64::from(c) / 255.0;
         // SAFETY: the class factory takes four CGFloat channels in 0..=1.
         unsafe {
@@ -375,15 +406,15 @@ mod ios {
         let (Some(line), Some(title)) = (ns_string(&line), ns_string(title)) else {
             return;
         };
-        let ink = color(0xeb, 0xdb, 0xb2);
-        let font = mono_font(17.0);
+        let ink = color(INK);
+        let font = mono_font(TYPE_PT);
 
         let cover = view(class!(UIView), bounds, FILL);
-        set_object(&cover, sel!(setBackgroundColor:), &color(0x28, 0x28, 0x28));
+        set_object(&cover, sel!(setBackgroundColor:), &color(BACKDROP));
 
         let label = view(
             class!(UILabel),
-            Rect::new(0.0, height / 2.0 - 64.0, width, 32.0),
+            Rect::new(0.0, height / 2.0 - LINE_RISE, width, LINE_H),
             ROW,
         );
         set_object(&label, sel!(setText:), &line);
@@ -396,7 +427,12 @@ mod ios {
         // SAFETY: the class factory for a system button.
         let reload: Retained<AnyObject> =
             unsafe { msg_send![class!(UIButton), buttonWithType: BUTTON_SYSTEM] };
-        let frame = Rect::new(width / 2.0 - 70.0, height / 2.0, 140.0, 48.0);
+        let frame = Rect::new(
+            width / 2.0 - BUTTON_W / 2.0,
+            height / 2.0,
+            BUTTON_W,
+            BUTTON_H,
+        );
         // SAFETY: UIView's frame setter takes a CGRect.
         let (): () = unsafe { msg_send![&*reload, setFrame: frame] };
         // SAFETY: UIView's autoresizing setter takes a UIViewAutoresizing.
@@ -415,9 +451,9 @@ mod ios {
         // SAFETY: CALayer's border color setter takes a CGColorRef.
         let (): () = unsafe { msg_send![&*layer, setBorderColor: ink_cg] };
         // SAFETY: CALayer's border width setter takes a CGFloat.
-        let (): () = unsafe { msg_send![&*layer, setBorderWidth: 1.0_f64] };
+        let (): () = unsafe { msg_send![&*layer, setBorderWidth: BUTTON_BORDER] };
         // SAFETY: CALayer's corner radius setter takes a CGFloat.
-        let (): () = unsafe { msg_send![&*layer, setCornerRadius: 10.0_f64] };
+        let (): () = unsafe { msg_send![&*layer, setCornerRadius: BUTTON_RADIUS] };
         let target = TapTarget::new();
         // SAFETY: UIControl's target-action setter, with a target that
         // implements the action's selector.
@@ -448,7 +484,21 @@ mod tests {
     use super::*;
 
     #[test]
-    fn a_repeat_is_webkits_thirty_seconds() {
-        assert_eq!(REPEAT_WINDOW, Duration::from_secs(30));
+    fn the_first_kill_rebuilds_a_repeat_offers_reload_then_restart() {
+        let start = Instant::now();
+        let (first, count) = step_after(None, start);
+        assert_eq!((first, count), (Step::Rebuild, 1));
+        let soon = start + Duration::from_secs(5);
+        let (second, count) = step_after(Some((start, count)), soon);
+        assert_eq!((second, count), (Step::Overlay(Button::Reload), 2));
+        let (third, count) = step_after(Some((soon, count)), soon + Duration::from_secs(5));
+        assert_eq!((third, count), (Step::Overlay(Button::Restart), 3));
+    }
+
+    #[test]
+    fn a_kill_after_the_window_starts_a_new_streak() {
+        let start = Instant::now();
+        let later = start + REPEAT_WINDOW;
+        assert_eq!(step_after(Some((start, 2)), later), (Step::Rebuild, 1));
     }
 }
