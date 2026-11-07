@@ -494,7 +494,7 @@
 /* An action that cannot be undone. */
 .alert-dialog-action-danger {
     border-color: var(--color-error);
-    color: var(--color-error);
+    color: var(--ink-color-error, var(--color-error));
 }
 
 /* A disabled action looks like a disabled Button: faded, with a not-allowed
