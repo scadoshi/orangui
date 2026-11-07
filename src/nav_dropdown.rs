@@ -48,6 +48,7 @@ pub fn NavDropdown(
         }
         div { class: "{dropdown_class}",
             button {
+                r#type: "button",
                 class: "nav-dropdown-trigger",
                 aria_expanded: "{open()}",
                 onclick: move |evt| {

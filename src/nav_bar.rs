@@ -151,6 +151,7 @@ pub fn NavBar(
                     div { class: "nav-persistent", "data-nav-glide": "true", {p} }
                 }
                 button {
+                    r#type: "button",
                     class: "{toggle_class}",
                     aria_label: "Toggle navigation menu",
                     aria_expanded: "{open()}",

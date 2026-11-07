@@ -228,6 +228,7 @@ pub fn BottomSheet(
             div { class: "sheet-header", onpointerdown: start_drag,
                 if closable {
                     button {
+                        r#type: "button",
                         class: "sheet-close",
                         aria_label: "Close",
                         onpointerdown: move |evt| evt.stop_propagation(),

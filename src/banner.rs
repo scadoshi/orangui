@@ -103,6 +103,7 @@ pub fn Banner(
             }
             span { class: "banner-text", {children} }
             button {
+                r#type: "button",
                 class: "banner-dismiss",
                 onclick: move |_| state.set(BannerState::Leaving),
                 "\u{2715}"

@@ -25,6 +25,7 @@ pub fn Chip(
     };
     rsx! {
         button {
+            r#type: "button",
             class: "{class}",
             disabled,
             onclick: move |evt| {

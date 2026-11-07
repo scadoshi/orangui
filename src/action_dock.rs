@@ -67,6 +67,7 @@ pub fn DockAction(
 ) -> Element {
     rsx! {
         button {
+            r#type: "button",
             class: "action-dock-btn {class}",
             "aria-label": label,
             disabled,
@@ -91,6 +92,7 @@ pub fn DockFilter(
     rsx! {
         div { class: "action-dock-group",
             button {
+                r#type: "button",
                 class: "action-dock-btn",
                 "aria-label": label,
                 onclick: move |_| onclick.call(()),
@@ -101,6 +103,7 @@ pub fn DockFilter(
             }
             if let (true, Some(on_reset)) = (active, on_reset) {
                 button {
+                    r#type: "button",
                     class: "action-dock-reset",
                     "aria-label": reset_label,
                     onclick: move |_| on_reset.call(()),
