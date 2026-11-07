@@ -17,10 +17,19 @@
 //! the screen column) so the layer shows through. [`crate::BottomSheet`]
 //! carries its own still copy under its header, content and action bar.
 
+use std::cell::Cell;
+use std::rc::Rc;
+
 use dioxus::prelude::*;
 
-/// The drawing, one canvas per layer. Inlined once; it guards itself.
+/// The drawing, one canvas per layer. Inlined once per page by the first
+/// [`GridCells`] to mount; it also guards itself.
 pub const GRID_CELLS_JS: &str = include_str!("../assets/grid-cells.js");
+
+/// Whether a [`GridCells`] has put the drawing in the page's head already.
+/// Kept at the root, so it lasts as long as the page.
+#[derive(Clone, Default)]
+struct ScriptInHead(Rc<Cell<bool>>);
 
 /// The backdrop: a fixed layer of shaded cells under everything on screen.
 /// `still` is the copy that is already in place and never moves: the app
@@ -31,8 +40,15 @@ pub const GRID_CELLS_JS: &str = include_str!("../assets/grid-cells.js");
 /// solid.
 #[component]
 pub fn GridCells(#[props(default)] still: bool, #[props(default)] delay_ms: u32) -> Element {
+    let first = use_hook(|| {
+        let in_head = dioxus::core::consume_context_from_scope::<ScriptInHead>(ScopeId::ROOT)
+            .unwrap_or_else(|| dioxus::core::provide_root_context(ScriptInHead::default()));
+        !in_head.0.replace(true)
+    });
     rsx! {
-        document::Script { {GRID_CELLS_JS} }
+        if first {
+            document::Script { {GRID_CELLS_JS} }
+        }
         if still {
             div { class: "grid-cells", "data-still": "true", aria_hidden: "true",
                 canvas { class: "grid-cells-canvas" }

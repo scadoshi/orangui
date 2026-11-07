@@ -9,9 +9,11 @@
 // The MutationObserver picks up boxes the SPA router mounts after load.
 //
 // Inlined in the head, it waits for the document to finish parsing, the
-// moment a deferred script would run.
+// moment a deferred script would run. It guards itself so a second load does
+// nothing.
 (() => {
-    if (CSS.supports("animation-timeline: scroll()")) return;
+    if (CSS.supports("animation-timeline: scroll()") || window.__oranguiScrollFade) return;
+    window.__oranguiScrollFade = true;
 
     const BOXES = ".scroll-fade-x, .diagram-scroll, .scroll-fade-y";
     const RAMP = 0.08;
