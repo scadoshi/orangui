@@ -424,9 +424,12 @@ const LINK_REL: Option<&str> = Some("noopener noreferrer");
 /// [`DialogHostView`]. Escape clicks the open dim, so it closes the dialog as
 /// a tap there does and holds while busy work runs. Enter clicks the first
 /// enabled `.alert-dialog-action`, which is a non-danger `Confirm` or a
-/// non-danger [`ActionButton`] with a handler, and stops there, so the page
-/// under the dialog never sees it; a focused button or link inside the
-/// dialog keeps its own Enter. With no dialog open both keys pass through.
+/// non-danger [`ActionButton`] with a handler. With none, and every action
+/// an enabled dismiss button (a hint's `Got it`), it clicks the first, so
+/// the dialog closes; a danger action or a [`DialogAction::Link`] among them
+/// leaves Enter doing nothing. Either way the page under the dialog never
+/// sees it, and a focused button or link inside the dialog keeps its own
+/// Enter. With no dialog open both keys pass through.
 const DIALOG_KEYS_JS: &str = r#"
 if (!window.__oranguiDialogKeys) {
     window.__oranguiDialogKeys = true;
@@ -445,7 +448,10 @@ if (!window.__oranguiDialogKeys) {
         e.preventDefault();
         e.stopPropagation();
         const primary = dialog.querySelector('.alert-dialog-actions .alert-dialog-action:not([disabled])');
-        if (primary) primary.click();
+        if (primary) { primary.click(); return; }
+        const actions = dialog.querySelectorAll('.alert-dialog-actions > *');
+        const cancels = dialog.querySelectorAll('.alert-dialog-actions > button.alert-dialog-cancel:not([disabled])');
+        if (actions.length > 0 && actions.length === cancels.length) cancels[0].click();
     }, true);
 }
 "#;
