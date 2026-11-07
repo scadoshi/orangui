@@ -13,7 +13,8 @@
 //! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
 //! [`ActionDock`] with [`DockAction`] and [`DockFilter`] on the [`icons`],
 //! [`TextInput`], the hint pieces with [`HintDialog`], the overlay back stack,
-//! the OS back bridge [`use_os_back`] with [`fill_window`], the launch guard ([`BOOT_HEAD`],
+//! the OS back bridge [`use_os_back`] with [`fill_window`], the lifecycle
+//! ([`use_app_lifecycle_root`], [`use_on_resume`]), the launch guard ([`BOOT_HEAD`],
 //! [`BOOT_BG`], [`BootReveal`]), behind the `toast` feature `ToastStack`
 //! with `use_toast`, `Toasts` and `ToastOptions`, and behind the `links`
 //! feature `open_url` and `use_in_app_links`, which open
@@ -63,6 +64,7 @@ mod heat_grid;
 mod heat_readout;
 mod hint;
 pub mod icons;
+mod lifecycle;
 #[cfg(feature = "links")]
 mod links;
 mod nav_bar;
@@ -114,6 +116,9 @@ pub use heat_readout::{HEAT_PICK_MS, HeatPick, HeatReadout, use_heat_pick};
 pub use hint::{
     HintBullet, HintBullets, HintChip, HintDialog, HintKey, HintLine, InfoButton, ScreenHint,
     use_screen_hint, use_screen_hint_slot,
+};
+pub use lifecycle::{
+    AppLifecycle, AppPhase, use_app_lifecycle, use_app_lifecycle_root, use_on_resume,
 };
 #[cfg(feature = "links")]
 pub use links::{OpenUrlError, open_url, use_in_app_links};

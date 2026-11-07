@@ -51,6 +51,15 @@
     pointer-events: none;
 }
 
+/* A screen that carries its own GridCells layer sits over another screen,
+   and that layer is all that hides the one beneath. The screen isolates, so
+   its layer paints over this fill, and a layer that stops drawing leaves the
+   screen solid. */
+.screen:has(> .grid-cells) {
+    isolation: isolate;
+    background-color: var(--bg-sink);
+}
+
 /* The screen's safe-area padding sits outside the header, so the layer
    would show in the status bar strip. A fixed band in the primary color
    fills it. Nothing sits over the home indicator: the content scrolls

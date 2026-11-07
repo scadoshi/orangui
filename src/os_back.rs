@@ -70,8 +70,11 @@ pub fn use_os_back(
                     }
                 }
             });
+            ios::route_edge_back(tx);
             if let Some(webview) = ios_webview() {
-                ios::install_edge_back(webview, tx);
+                if !EDGE_BACK_INSTALLED.swap(true, Ordering::AcqRel) {
+                    ios::install_edge_back(webview);
+                }
                 if !FILLED_WINDOW.swap(true, Ordering::AcqRel) {
                     ios::fill_window(webview);
                 }
@@ -85,7 +88,9 @@ pub fn use_os_back(
         let mut overlays: OverlayBackStack = use_context();
         use_future(move || async move {
             let mut eval = document::eval(&format!(
-                "window.addEventListener('{android_event}', () => dioxus.send(1));"
+                "if (window.__oranguiBack) window.removeEventListener('{android_event}', window.__oranguiBack);\
+                 window.__oranguiBack = () => dioxus.send(1);\
+                 window.addEventListener('{android_event}', window.__oranguiBack);"
             ));
             while eval.recv::<i32>().await.is_ok() {
                 if !overlays.close_top() && !go_back.call(()) {
@@ -106,6 +111,11 @@ pub fn use_os_back(
 /// life.
 #[cfg(target_os = "ios")]
 static FILLED_WINDOW: AtomicBool = AtomicBool::new(false);
+
+/// Whether the edge-swipe recognizer is on the WKWebView: one per app life,
+/// however often the layout that calls [`use_os_back`] mounts.
+#[cfg(target_os = "ios")]
+static EDGE_BACK_INSTALLED: AtomicBool = AtomicBool::new(false);
 
 /// Lays the page out over the whole window instead of the safe area, on iOS.
 ///
@@ -133,15 +143,17 @@ pub fn fill_window(webview: NonNull<c_void>) {
 }
 
 /// The left-edge swipe: a `UIScreenEdgePanGestureRecognizer` on the WKWebView
-/// whose target sends on a channel, and the whole-window layout.
+/// whose target sends on the mounted layout's channel, and the whole-window
+/// layout.
 #[cfg(target_os = "ios")]
 mod ios {
     use std::ffi::c_void;
     use std::ptr::NonNull;
+    use std::sync::Mutex;
 
     use objc2::rc::{Allocated, Retained};
     use objc2::runtime::{AnyObject, Bool, NSObject};
-    use objc2::{AnyThread, DefinedClass, MainThreadMarker, class, define_class, msg_send, sel};
+    use objc2::{AnyThread, MainThreadMarker, class, define_class, msg_send, sel};
     use tokio::sync::mpsc::UnboundedSender;
 
     /// `UIGestureRecognizerStateBegan`: the target fires once, as the pan
@@ -153,16 +165,21 @@ mod ios {
     /// `UIScrollViewContentInsetAdjustmentBehavior`.
     const ADJUSTMENT_NEVER: isize = 2;
 
-    /// The Rust state the Objective-C target carries.
-    struct Ivars {
-        tx: UnboundedSender<()>,
+    /// Where an edge swipe goes: the channel of the layout mounted now.
+    static EDGE_BACK_TX: Mutex<Option<UnboundedSender<()>>> = Mutex::new(None);
+
+    /// Sends the edge swipe to `tx` from now on, in place of the channel of a
+    /// layout that has since unmounted.
+    pub(super) fn route_edge_back(tx: UnboundedSender<()>) {
+        if let Ok(mut slot) = EDGE_BACK_TX.lock() {
+            *slot = Some(tx);
+        }
     }
 
     define_class!(
         // SAFETY: NSObject has no subclassing requirements; no Drop impl.
         #[unsafe(super(NSObject))]
         #[name = "OranguiEdgeBackTarget"]
-        #[ivars = Ivars]
         struct EdgeBackTarget;
 
         impl EdgeBackTarget {
@@ -171,8 +188,11 @@ mod ios {
             fn handle_edge_pan(&self, sender: &AnyObject) {
                 // SAFETY: `state` is a valid selector on UIGestureRecognizer.
                 let state: isize = unsafe { msg_send![sender, state] };
-                if state == STATE_BEGAN {
-                    let _ = self.ivars().tx.send(());
+                if state == STATE_BEGAN
+                    && let Ok(slot) = EDGE_BACK_TX.lock()
+                    && let Some(tx) = slot.as_ref()
+                {
+                    let _ = tx.send(());
                 }
             }
 
@@ -189,8 +209,8 @@ mod ios {
     );
 
     impl EdgeBackTarget {
-        fn new(tx: UnboundedSender<()>) -> Retained<Self> {
-            let this = Self::alloc().set_ivars(Ivars { tx });
+        fn new() -> Retained<Self> {
+            let this = Self::alloc().set_ivars(());
             // SAFETY: the designated initializer of an NSObject subclass.
             unsafe { msg_send![super(this), init] }
         }
@@ -198,7 +218,7 @@ mod ios {
 
     /// Attaches the edge-back recognizer to `webview`, the app's WKWebView.
     /// Runs on the main thread, as UI effects do.
-    pub(super) fn install_edge_back(webview: NonNull<c_void>, tx: UnboundedSender<()>) {
+    pub(super) fn install_edge_back(webview: NonNull<c_void>) {
         if MainThreadMarker::new().is_none() {
             dioxus::logger::tracing::error!(
                 "os back: the edge swipe installs on the main thread only; skipped"
@@ -208,7 +228,7 @@ mod ios {
         // SAFETY: the host hands over its live WKWebView, which the view
         // hierarchy keeps alive for the app's lifetime.
         let webview: &AnyObject = unsafe { webview.cast::<AnyObject>().as_ref() };
-        let target = EdgeBackTarget::new(tx);
+        let target = EdgeBackTarget::new();
         // SAFETY: `alloc` is valid on the UIScreenEdgePanGestureRecognizer class.
         let alloc: Allocated<AnyObject> =
             unsafe { msg_send![class!(UIScreenEdgePanGestureRecognizer), alloc] };
