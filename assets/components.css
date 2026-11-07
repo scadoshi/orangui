@@ -45,7 +45,7 @@
 
 .chip.selected {
     border-color: var(--accent-secondary);
-    color: var(--accent-secondary);
+    color: var(--ink-accent-secondary, var(--accent-secondary));
 }
 
 /* Inert chip: the toggle's target is empty/inapplicable right now. */
@@ -72,14 +72,17 @@
    Colored text on a faint tint of the same color with a soft outline of it.
    One tone drives all three: --tone is the color, a modifier sets it, and the
    number in a -pN modifier is the palette slot, so tag-p2 and stat-chip-p2
-   are the same color on every host. The tint mixes into --tone-base, which
-   is transparent unless an ancestor sets an opaque background for chips that
-   sit over a pattern. */
+   are the same color on every host. The text is the tone's ink, the theme's
+   --ink-<tone>: the tone itself where it reads at 4.5:1 on its tint, else
+   the nearest color that does. A rule that sets --tone sets --tone-ink with
+   it. The tint mixes into --tone-base, which is transparent unless an
+   ancestor sets an opaque background for chips that sit over a pattern. */
 
 .tag,
 .stat-chip {
     --tone: var(--accent-primary);
-    color: var(--tone);
+    --tone-ink: var(--ink-accent-primary, var(--accent-primary));
+    color: var(--tone-ink, var(--tone));
     background-color: color-mix(in srgb, var(--tone) 12%, var(--tone-base, transparent));
     border: 1px solid color-mix(in srgb, var(--tone) var(--tone-edge, 35%), var(--tone-base, transparent));
 }
@@ -130,59 +133,70 @@ a.stat-chip {
 .tag-p1,
 .stat-chip-p1 {
     --tone: var(--palette-1);
+    --tone-ink: var(--ink-palette-1, var(--palette-1));
 }
 
 .tag-p2,
 .stat-chip-p2 {
     --tone: var(--palette-2);
+    --tone-ink: var(--ink-palette-2, var(--palette-2));
 }
 
 .tag-p3,
 .stat-chip-p3 {
     --tone: var(--palette-3);
+    --tone-ink: var(--ink-palette-3, var(--palette-3));
 }
 
 .tag-p4,
 .stat-chip-p4 {
     --tone: var(--palette-4);
+    --tone-ink: var(--ink-palette-4, var(--palette-4));
 }
 
 .tag-p5,
 .stat-chip-p5 {
     --tone: var(--palette-5);
+    --tone-ink: var(--ink-palette-5, var(--palette-5));
 }
 
 .tag-p6,
 .stat-chip-p6 {
     --tone: var(--palette-6);
+    --tone-ink: var(--ink-palette-6, var(--palette-6));
 }
 
 /* A label, not a figure: gray, with a fainter outline. */
 .tag-muted,
 .stat-chip-muted {
     --tone: var(--text-muted);
+    --tone-ink: var(--ink-text-muted, var(--text-muted));
     --tone-edge: 30%;
 }
 
 .tag-money,
 .stat-chip-money {
     --tone: var(--color-money);
+    --tone-ink: var(--ink-color-money, var(--color-money));
 }
 
 /* The outcome tones: met, short of it, failed. */
 .tag-success,
 .stat-chip-success {
     --tone: var(--color-success);
+    --tone-ink: var(--ink-color-success, var(--color-success));
 }
 
 .tag-warning,
 .stat-chip-warning {
     --tone: var(--color-warning);
+    --tone-ink: var(--ink-color-warning, var(--color-warning));
 }
 
 .tag-error,
 .stat-chip-error {
     --tone: var(--color-error);
+    --tone-ink: var(--ink-color-error, var(--color-error));
 }
 
 /* ---- Button (orangui::Button) ---- */
@@ -2445,6 +2459,7 @@ a.nav-dropdown-item.active:visited {
 
 :where(.heat-readout-tag) {
     --tone: var(--text-muted);
+    --tone-ink: var(--ink-text-muted, var(--text-muted));
 }
 
 .heat-readout-pick {
@@ -2711,7 +2726,7 @@ html[data-wipe="left"]::view-transition-new(root) {
 
 .stats-strip .stat-num {
     font-weight: 600;
-    color: var(--palette-5);
+    color: var(--ink-palette-5, var(--palette-5));
     line-height: 1.1;
     font-variant-numeric: tabular-nums;
 }
