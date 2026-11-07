@@ -50,9 +50,9 @@ pub enum DialogAction {
         /// Runs after the dialog starts closing.
         on_confirm: Callback<()>,
     },
-    /// A link styled as a button, opened in a new tab (an app's WebView
-    /// hands a `_blank` https link to the system browser), and the dialog
-    /// closes.
+    /// A link styled as a button, and the dialog closes. In the browser it
+    /// opens in the same tab; elsewhere it carries `target="_blank"`, which
+    /// an app's WebView hands to the system browser.
     Link {
         /// The link's text.
         label: String,
@@ -407,6 +407,19 @@ impl DialogHost {
 
 static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
 
+/// A [`DialogAction::Link`]'s `target` and `rel`: none in the browser, so the
+/// link opens in the same tab.
+#[cfg(target_arch = "wasm32")]
+const LINK_TARGET: Option<&str> = None;
+#[cfg(target_arch = "wasm32")]
+const LINK_REL: Option<&str> = None;
+/// A [`DialogAction::Link`]'s `target` and `rel`: a new tab, which an app's
+/// WebView hands to the system browser.
+#[cfg(not(target_arch = "wasm32"))]
+const LINK_TARGET: Option<&str> = Some("_blank");
+#[cfg(not(target_arch = "wasm32"))]
+const LINK_REL: Option<&str> = Some("noopener noreferrer");
+
 /// The page-wide keys for an open dialog, installed once per page by
 /// [`DialogHostView`]. Escape clicks the open dim, so it closes the dialog as
 /// a tap there does and holds while busy work runs. Enter clicks the first
@@ -573,8 +586,8 @@ pub fn DialogHostView() -> Element {
                             a {
                                 class: "alert-dialog-cancel",
                                 href,
-                                target: "_blank",
-                                rel: "noopener noreferrer",
+                                target: LINK_TARGET,
+                                rel: LINK_REL,
                                 aria_disabled: if busy { "true" },
                                 onclick: move |evt| {
                                     if busy {
