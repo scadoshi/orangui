@@ -1,7 +1,7 @@
 //! The palette gate for `assets/themes.css`, per `context/development/styling.md`.
 //!
-//! Every theme block must carry `--palette-1` to `--palette-6` and `--color-money`. Each slot must
-//! read on the block's `--bg-primary` at 3:1 or better. Pairs closer than 15 in
+//! Every theme block must carry `--palette-1` to `--palette-6`, `--color-money` and
+//! `--color-stat`. Each slot must read on the block's `--bg-primary` at 3:1 or better. Pairs closer than 15 in
 //! OKLab are printed, never failed: published colors stay as published. The four
 //! accessibility themes are the exception: their six are built, not sourced, so
 //! every pair must stay 8 apart under the deficiency they are built for.
@@ -237,6 +237,48 @@ fn every_theme_has_six_legible_palette_slots() {
     assert!(
         failures.is_empty(),
         "palette floors failed:\n  {}",
+        failures.join("\n  ")
+    );
+}
+
+/// `--color-stat` is palette 5 on a dark theme. On a light one it is palette 5
+/// when that reads at least as well as `--color-money`, and otherwise palette 5
+/// darkened until it does, so a stat chip beside a price chip is as legible.
+#[test]
+fn every_theme_has_a_stat_color_as_legible_as_money() {
+    let mut failures = Vec::new();
+    for b in &blocks() {
+        let (Some(bg), Some(money), Some(p5)) = (
+            b.get("bg-primary").and_then(hex),
+            b.get("color-money").and_then(hex),
+            b.get("palette-5").and_then(hex),
+        ) else {
+            continue;
+        };
+        let Some(stat) = b.get("color-stat").and_then(hex) else {
+            failures.push(format!("{}: color-stat missing or not a hex", b.name));
+            continue;
+        };
+        let floor = contrast(money, bg);
+        if b.name.ends_with("-dark") || contrast(p5, bg) >= contrast(money, bg) {
+            if !b
+                .get("color-stat")
+                .zip(b.get("palette-5"))
+                .is_some_and(|(s, p)| s.eq_ignore_ascii_case(p))
+            {
+                failures.push(format!("{}: color-stat is not palette-5", b.name));
+            }
+        } else if contrast(stat, bg) + 0.005 < floor {
+            failures.push(format!(
+                "{}: color-stat is {:.2}:1, under color-money's {floor:.2}:1",
+                b.name,
+                contrast(stat, bg)
+            ));
+        }
+    }
+    assert!(
+        failures.is_empty(),
+        "stat colors failed:\n  {}",
         failures.join("\n  ")
     );
 }
