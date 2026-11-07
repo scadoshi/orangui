@@ -387,9 +387,12 @@
 }
 
 /* The body scrolls on its own when it is tall, so the title and the actions
-   stay pinned. */
+   stay pinned. It scrolls edge to edge between the two rules: it reaches out
+   through the side padding and the gaps beside the rules, and takes them
+   back as its own padding, so its lines scroll right up to the rules. */
 .alert-dialog-description {
-    margin: 0;
+    margin: -0.5rem calc(-1 * var(--dialog-pad-x));
+    padding: 0.5rem var(--dialog-pad-x);
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
