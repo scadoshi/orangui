@@ -61,6 +61,7 @@ fn ThemeRow(
     let click_theme = theme.clone();
     rsx! {
         button {
+            r#type: "button",
             class: if is_selected { "pref-row selected" } else { "pref-row" },
             onclick: move |_| {
                 if *selected.peek() == click_theme {

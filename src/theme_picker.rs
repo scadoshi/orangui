@@ -144,6 +144,7 @@ pub fn ThemePicker(
         // Its children glide aside when the label changes width (NAV_GLIDE_JS).
         div { class: "theme-picker", "data-nav-glide": "true",
             button {
+                r#type: "button",
                 class: "nav-dropdown-trigger",
                 aria_expanded: "{open()}",
                 onclick: move |_| {
@@ -154,6 +155,7 @@ pub fn ThemePicker(
                 {display_theme_name(&current)}
             }
             button {
+                r#type: "button",
                 class: "mode-toggle",
                 // It names the mode in use, as the apps' settings row does;
                 // the tooltip names the one a click switches to.
@@ -190,6 +192,7 @@ fn ThemeRows(theme: Signal<ThemeConfig>, current: String, mode: &'static str) ->
             }
             for name in group.themes.iter().copied() {
                 button {
+                    r#type: "button",
                     class: if current == *name { "nav-dropdown-item active" } else { "nav-dropdown-item" },
                     onclick: move |_| {
                         let dark = theme.read().is_dark;

@@ -31,6 +31,7 @@ pub fn GalleryFrame(
             {children}
             if total > 1 {
                 button {
+                    r#type: "button",
                     class: "gallery-nav gallery-prev",
                     aria_label: "Previous {noun}",
                     onclick: move |_| {
@@ -40,6 +41,7 @@ pub fn GalleryFrame(
                     "\u{2190}"
                 }
                 button {
+                    r#type: "button",
                     class: "gallery-nav gallery-next",
                     aria_label: "Next {noun}",
                     onclick: move |_| {
