@@ -30,8 +30,6 @@
 
 use std::ffi::c_void;
 use std::ptr::NonNull;
-#[cfg(target_os = "ios")]
-use std::sync::atomic::{AtomicUsize, Ordering};
 
 use dioxus::prelude::*;
 
@@ -72,11 +70,10 @@ pub fn use_os_back(
             });
             ios::route_edge_back(tx);
             if let Some(webview) = ios_webview() {
-                let address = webview.as_ptr().addr();
-                if EDGE_BACK_WEBVIEW.swap(address, Ordering::AcqRel) != address {
+                if ios::first_time(&ios::EDGE_BACK_ON, webview) {
                     ios::install_edge_back(webview);
                 }
-                if FILLED_WEBVIEW.swap(address, Ordering::AcqRel) != address {
+                if ios::first_time(&ios::FILLED, webview) {
                     ios::fill_window(webview);
                 }
             }
@@ -106,16 +103,6 @@ pub fn use_os_back(
         let _ = (android_event, ios_webview, go_back);
     }
 }
-
-/// The WKWebView [`use_os_back`] last laid out over the window, by address:
-/// once per webview, so a webview that replaces a killed one is laid out too.
-#[cfg(target_os = "ios")]
-static FILLED_WEBVIEW: AtomicUsize = AtomicUsize::new(0);
-
-/// The WKWebView the edge-swipe recognizer is on, by address: one recognizer
-/// per webview, however often the layout that calls [`use_os_back`] mounts.
-#[cfg(target_os = "ios")]
-static EDGE_BACK_WEBVIEW: AtomicUsize = AtomicUsize::new(0);
 
 /// Lays the page out over the whole window instead of the safe area, on iOS.
 ///
@@ -147,11 +134,13 @@ pub fn fill_window(webview: NonNull<c_void>) {
 /// layout.
 #[cfg(target_os = "ios")]
 mod ios {
+    use std::cell::RefCell;
     use std::ffi::c_void;
     use std::ptr::NonNull;
     use std::sync::Mutex;
+    use std::thread::LocalKey;
 
-    use objc2::rc::{Allocated, Retained};
+    use objc2::rc::{Allocated, Retained, Weak};
     use objc2::runtime::{AnyObject, Bool, NSObject};
     use objc2::{AnyThread, MainThreadMarker, class, define_class, msg_send, sel};
     use tokio::sync::mpsc::UnboundedSender;
@@ -214,6 +203,37 @@ mod ios {
             // SAFETY: the designated initializer of an NSObject subclass.
             unsafe { msg_send![super(this), init] }
         }
+    }
+
+    thread_local! {
+        /// The WKWebView the edge-swipe recognizer is on: one recognizer per
+        /// webview, however often the layout that calls `use_os_back` mounts.
+        pub(super) static EDGE_BACK_ON: RefCell<Option<Weak<AnyObject>>> = const { RefCell::new(None) };
+        /// The WKWebView last laid out over the window, so a webview that
+        /// replaces a killed one is laid out too.
+        pub(super) static FILLED: RefCell<Option<Weak<AnyObject>>> = const { RefCell::new(None) };
+    }
+
+    /// Whether `webview` is new to `slot`, recording it there when it is.
+    /// The slot holds its webview weakly, so one that has been freed reads
+    /// as gone rather than matching a new webview at its address.
+    pub(super) fn first_time(
+        slot: &'static LocalKey<RefCell<Option<Weak<AnyObject>>>>,
+        webview: NonNull<c_void>,
+    ) -> bool {
+        // SAFETY: the host hands over its live WKWebView.
+        let view: &AnyObject = unsafe { webview.cast::<AnyObject>().as_ref() };
+        slot.with(|held| {
+            let mut held = held.borrow_mut();
+            let same = held
+                .as_ref()
+                .and_then(Weak::load)
+                .is_some_and(|old| std::ptr::eq(Retained::as_ptr(&old), std::ptr::from_ref(view)));
+            if !same {
+                *held = Some(Weak::new(view));
+            }
+            !same
+        })
     }
 
     /// Attaches the edge-back recognizer to `webview`, the app's WKWebView.

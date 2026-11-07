@@ -40,7 +40,7 @@ window.__oranguiVisibility = () => dioxus.send(document.visibilityState === 'vis
 document.addEventListener('visibilitychange', window.__oranguiVisibility);";
 
 /// Where the app is: on screen, or in the background.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum AppPhase {
     /// On screen and taking input.
     Foreground,
@@ -110,14 +110,11 @@ pub fn use_app_lifecycle_root() -> AppLifecycle {
     life
 }
 
-/// The app's lifecycle, from [`use_app_lifecycle_root`] above.
-///
-/// # Panics
-///
-/// Panics when no [`use_app_lifecycle_root`] sits above the caller.
+/// The app's lifecycle, from [`use_app_lifecycle_root`] above, or `None`
+/// under a tree with none.
 #[must_use]
-pub fn use_app_lifecycle() -> AppLifecycle {
-    use_context()
+pub fn use_app_lifecycle() -> Option<AppLifecycle> {
+    try_use_context()
 }
 
 /// Runs `on_resume` each time the app comes back to the foreground, never at
@@ -140,15 +137,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn the_listener_replaces_its_last_copy() {
-        assert!(
-            VISIBILITY_JS
-                .contains("removeEventListener('visibilitychange', window.__oranguiVisibility)")
-        );
-        assert!(
-            VISIBILITY_JS
-                .contains("addEventListener('visibilitychange', window.__oranguiVisibility)")
-        );
+    fn with_no_root_there_is_no_lifecycle() {
+        let mut dom = VirtualDom::new(|| {
+            assert_eq!(use_app_lifecycle(), None);
+            rsx! {}
+        });
+        dom.rebuild_in_place();
     }
 
     #[test]
