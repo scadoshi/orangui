@@ -31,7 +31,7 @@
 use std::ffi::c_void;
 use std::ptr::NonNull;
 #[cfg(target_os = "ios")]
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use dioxus::prelude::*;
 
@@ -72,10 +72,11 @@ pub fn use_os_back(
             });
             ios::route_edge_back(tx);
             if let Some(webview) = ios_webview() {
-                if !EDGE_BACK_INSTALLED.swap(true, Ordering::AcqRel) {
+                let address = webview.as_ptr().addr();
+                if EDGE_BACK_WEBVIEW.swap(address, Ordering::AcqRel) != address {
                     ios::install_edge_back(webview);
                 }
-                if !FILLED_WINDOW.swap(true, Ordering::AcqRel) {
+                if FILLED_WEBVIEW.swap(address, Ordering::AcqRel) != address {
                     ios::fill_window(webview);
                 }
             }
@@ -106,16 +107,15 @@ pub fn use_os_back(
     }
 }
 
-/// Whether [`use_os_back`] has already laid the page out over the window:
-/// the hook mounts once per layout, and the layout call runs once per app
-/// life.
+/// The WKWebView [`use_os_back`] last laid out over the window, by address:
+/// once per webview, so a webview that replaces a killed one is laid out too.
 #[cfg(target_os = "ios")]
-static FILLED_WINDOW: AtomicBool = AtomicBool::new(false);
+static FILLED_WEBVIEW: AtomicUsize = AtomicUsize::new(0);
 
-/// Whether the edge-swipe recognizer is on the WKWebView: one per app life,
-/// however often the layout that calls [`use_os_back`] mounts.
+/// The WKWebView the edge-swipe recognizer is on, by address: one recognizer
+/// per webview, however often the layout that calls [`use_os_back`] mounts.
 #[cfg(target_os = "ios")]
-static EDGE_BACK_INSTALLED: AtomicBool = AtomicBool::new(false);
+static EDGE_BACK_WEBVIEW: AtomicUsize = AtomicUsize::new(0);
 
 /// Lays the page out over the whole window instead of the safe area, on iOS.
 ///
@@ -242,7 +242,7 @@ mod ios {
         // SAFETY: `addGestureRecognizer:` on the live WKWebView, on the main thread.
         let (): () = unsafe { msg_send![webview, addGestureRecognizer: &*recognizer] };
         // A recognizer holds its target weakly, so the target is leaked to
-        // outlive this call: one per app launch.
+        // outlive this call: one per WKWebView.
         std::mem::forget(target);
     }
 
