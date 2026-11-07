@@ -13,7 +13,8 @@
 //! [`AlertDialog`] and its [`DialogHost`], [`PageHeader`], [`ThemeSheet`],
 //! [`ActionDock`] with [`DockAction`] and [`DockFilter`] on the [`icons`],
 //! [`TextInput`], the hint pieces with [`HintDialog`], the overlay back stack,
-//! the OS back bridge [`use_os_back`] with [`fill_window`], the lifecycle
+//! the OS back bridge [`use_os_back`] with [`fill_window`], the killed-page
+//! recovery [`use_page_kill_recovery`], the lifecycle
 //! ([`use_app_lifecycle_root`], [`use_on_resume`]), the launch guard ([`BOOT_HEAD`],
 //! [`BOOT_BG`], [`BootReveal`]), behind the `toast` feature `ToastStack`
 //! with `use_toast`, `Toasts` and `ToastOptions`, and behind the `links`
@@ -72,6 +73,7 @@ mod nav_dropdown;
 mod os_back;
 mod overlay_stack;
 mod page_header;
+mod page_kill;
 mod page_meta;
 mod palette_guard;
 mod panel;
@@ -140,6 +142,7 @@ pub use overlay_stack::{
     OverlayBackStack, use_overlay_back, use_overlay_back_action, use_overlay_back_stack,
 };
 pub use page_header::PageHeader;
+pub use page_kill::{REPEAT_WINDOW, use_page_kill_recovery};
 pub use page_meta::{PageMeta, SiteMeta};
 pub use palette_guard::{StatusUse, status_uses};
 pub use panel::Panel;

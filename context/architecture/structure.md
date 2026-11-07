@@ -38,6 +38,7 @@ src/
 ├── text_input.rs        # TextInput and FieldLabel: a labeled field with an optional "?" and error line
 ├── overlay_stack.rs     # OverlayBackStack and the use_overlay_back hooks
 ├── lifecycle.rs         # use_app_lifecycle_root and use_on_resume: the app in the foreground or the background, from the page and the host's native events
+├── page_kill.rs         # use_page_kill_recovery: a page iOS killed is rebuilt through the host, an overlay with Reload on a repeat
 ├── os_back.rs           # use_os_back: the iOS edge swipe and Android back, through the overlay stack to the host's go_back; fill_window lays the page over the whole window on iOS 18
 ├── boot.rs              # BOOT_HEAD, BOOT_BG, BootReveal: the WebView launch hides #main until the styles are in
 ├── toast_stack.rs       # ToastStack, behind the toast feature; lib.rs re-exports use_toast, Toasts and ToastOptions beside it
@@ -89,5 +90,5 @@ Anything that knows a host. The crate names no product, no domain model and no r
 - `dioxus` with no platform feature, so any Dioxus target can consume the crate and cargo unifies the host's feature with it.
 - `serde` for `ThemeConfig`, in orangui-core, which depends on nothing else.
 - On the web, `gloo-timers`, `web-sys` and `serde_json` for the entrance timer and local storage; elsewhere `tokio`'s timer.
-- On iOS, `objc2` and `tokio`'s channel for the edge-swipe recognizer; on Android, `jni` and `ndk-context` to finish the Activity. Those two are the only target-OS dependencies, for `use_os_back`.
+- On iOS, `objc2` and `tokio`'s channel for the edge-swipe recognizer; on Android, `jni` and `ndk-context` to finish the Activity. Those two are the only target-OS dependencies, for `use_os_back` and `use_page_kill_recovery`.
 - `dioxus-primitives`, pinned to one commit, only behind the `toast` feature.
