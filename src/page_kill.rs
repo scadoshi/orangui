@@ -7,10 +7,13 @@
 //! while the app runs on behind it.
 //!
 //! [`use_page_kill_recovery`] hears the kill by wrapping that callback on
-//! wry's delegate class, calling wry's own first. It then gives the page
-//! about a second and a half to answer, so a dioxus that reloads the page
-//! itself is left to it, and otherwise asks the host to rebuild: a new
-//! window with a fresh app in it, the dead one closed. The host's session and
+//! wry's delegate class, calling wry's own first. Everything after runs
+//! natively on the main run loop, never as a task of the app: a `VirtualDom`
+//! that renders while its page is dead waits for good on edits the page will
+//! never take, and its tasks with it. A second and a half after the kill it
+//! looks whether a page has loaded since, so a dioxus that reloads the page
+//! itself is left to it, and otherwise calls the host's rebuild: a new window
+//! with a fresh app in it, the dead one closed. The host's session and
 //! settings come back from storage as at a launch; what a screen held in
 //! memory does not.
 //!
@@ -26,11 +29,14 @@
 
 use std::ffi::c_void;
 use std::ptr::NonNull;
+#[cfg(target_os = "ios")]
+use std::rc::Rc;
 use std::time::Duration;
 #[cfg(any(target_os = "ios", test))]
 use std::time::Instant;
 
-use dioxus::prelude::*;
+#[cfg(target_os = "ios")]
+use dioxus::prelude::use_hook;
 
 /// How close a kill must follow the last one to count as a repeat: one
 /// rebuild, then the overlay until the rebuilt page has lasted this long,
@@ -38,48 +44,31 @@ use dioxus::prelude::*;
 pub const REPEAT_WINDOW: Duration = Duration::from_secs(30);
 
 /// Rebuilds the app when iOS kills its web page. Call it once, at the app's
-/// root, so the rebuilt app calls it too.
+/// root, so the rebuilt app calls it too; the newest call is the one a kill
+/// reaches.
 ///
 /// - `app_name`: the app's name, for the overlay's line ("Zwipe needs to
 ///   reload").
 /// - `ios_webview`: returns the app's WKWebView, the one the overlay covers,
 ///   as [`use_os_back`](crate::use_os_back) takes it.
 /// - `rebuild`: opens a new window with a fresh `VirtualDom` of the app
-///   (with the root context its launch gave it) and closes this one. A host
-///   on `dioxus/mobile` calls `window().new_window(..)` and then
-///   `window().close()`.
+///   (with the root context its launch gave it) and closes this one. It runs
+///   on the main thread outside the app's runtime, so it captures what it
+///   needs at the call: a host on `dioxus/mobile` takes `window()` there,
+///   and calls `new_window(..)` then `close()` on it, which the event loop
+///   handles in that order.
 pub fn use_page_kill_recovery(
     app_name: &'static str,
     ios_webview: fn() -> Option<NonNull<c_void>>,
-    rebuild: Callback<()>,
+    rebuild: impl Fn() + 'static,
 ) {
     #[cfg(target_os = "ios")]
     {
-        use_hook(ios::wrap_termination);
-        use_future(move || async move {
-            let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<()>();
-            ios::route_kills(tx);
-            while rx.recv().await.is_some() {
-                if page_answers().await {
-                    continue;
-                }
-                match ios::next_step() {
-                    Step::Rebuild => rebuild.call(()),
-                    Step::Overlay(button) => {
-                        let Some(webview) = ios_webview() else {
-                            rebuild.call(());
-                            continue;
-                        };
-                        let (tap_tx, mut tap_rx) = tokio::sync::mpsc::unbounded_channel::<()>();
-                        ios::cover(webview, app_name, button, tap_tx);
-                        if tap_rx.recv().await.is_some() {
-                            match button {
-                                Button::Reload => rebuild.call(()),
-                                Button::Restart => ios::quit(),
-                            }
-                        }
-                    }
-                }
+        let mut rebuild = Some(rebuild);
+        use_hook(move || {
+            ios::wrap_delegate();
+            if let Some(rebuild) = rebuild.take() {
+                ios::watch(app_name, ios_webview(), Rc::new(rebuild));
             }
         });
     }
@@ -87,18 +76,6 @@ pub fn use_page_kill_recovery(
     {
         let _ = (app_name, ios_webview, rebuild);
     }
-}
-
-/// Whether the page answers within the grace a self-healing host needs.
-#[cfg(target_os = "ios")]
-async fn page_answers() -> bool {
-    /// Long enough for a dioxus that reloads a killed page itself.
-    const GRACE: Duration = Duration::from_millis(1500);
-    let mut eval = document::eval("dioxus.send(true);");
-    matches!(
-        tokio::time::timeout(GRACE, eval.recv::<bool>()).await,
-        Ok(Ok(true))
-    )
 }
 
 /// What a kill leads to.
@@ -140,11 +117,16 @@ fn step_after(streak: Option<(Instant, u32)>, now: Instant) -> (Step, u32) {
     (step, count)
 }
 
-/// The termination wrapper, the repeat guard and the overlay.
+/// The delegate wrappers, the deferred check, the repeat guard and the
+/// overlay.
 #[cfg(target_os = "ios")]
 mod ios {
+    use std::cell::RefCell;
     use std::ffi::{CString, c_void};
+    use std::panic::{self, AssertUnwindSafe};
     use std::ptr::NonNull;
+    use std::rc::Rc;
+    use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{Mutex, OnceLock};
     use std::time::Instant;
 
@@ -152,32 +134,74 @@ mod ios {
     use objc2::rc::{Allocated, Retained};
     use objc2::runtime::{AnyClass, AnyObject, Imp, NSObject, Sel};
     use objc2::{AnyThread, MainThreadMarker, class, define_class, msg_send, sel};
-    use tokio::sync::mpsc::UnboundedSender;
 
     use super::{Button, Step, step_after};
+
+    /// How long after a kill to look whether a page has loaded since: long
+    /// enough for a dioxus that reloads a killed page itself.
+    const GRACE_SECS: f64 = 1.5;
+
+    /// The newest app's recovery: what the overlay says, the webview it
+    /// covers and the host's rebuild. Main-thread state, as every callback
+    /// that reads it runs there.
+    struct Watch {
+        app_name: &'static str,
+        webview: Option<NonNull<c_void>>,
+        rebuild: Rc<dyn Fn()>,
+    }
+
+    thread_local! {
+        static WATCH: RefCell<Option<Watch>> = const { RefCell::new(None) };
+        /// The object the deferred check and the overlay's tap call into.
+        static TARGET: RefCell<Option<Retained<Target>>> = const { RefCell::new(None) };
+        /// What the overlay's button does when tapped.
+        static OVERLAY_BUTTON: RefCell<Option<Button>> = const { RefCell::new(None) };
+    }
 
     /// The kills in a row and when the last one came.
     static STREAK: Mutex<Option<(Instant, u32)>> = Mutex::new(None);
 
-    /// Where a kill goes: the channel of the app mounted now.
-    static KILL_TX: Mutex<Option<UnboundedSender<()>>> = Mutex::new(None);
+    /// Whether a page has committed a navigation since the last kill.
+    static NAVIGATED_SINCE_KILL: AtomicBool = AtomicBool::new(false);
 
-    /// Where the overlay's tap goes.
-    static TAP_TX: Mutex<Option<UnboundedSender<()>>> = Mutex::new(None);
-
-    /// wry's own termination method, which the wrapper calls first.
+    /// wry's own termination and commit methods, which the wrappers call
+    /// first.
     static WRY_TERMINATED: OnceLock<Imp> = OnceLock::new();
+    static WRY_COMMITTED: OnceLock<Imp> = OnceLock::new();
 
-    /// Sends kills to `tx` from now on, in place of the channel of an app
-    /// that has since been rebuilt.
-    pub(super) fn route_kills(tx: UnboundedSender<()>) {
-        if let Ok(mut slot) = KILL_TX.lock() {
-            *slot = Some(tx);
+    /// Makes this app's recovery the one a kill reaches.
+    pub(super) fn watch(
+        app_name: &'static str,
+        webview: Option<NonNull<c_void>>,
+        rebuild: Rc<dyn Fn()>,
+    ) {
+        WATCH.with(|slot| {
+            *slot.borrow_mut() = Some(Watch {
+                app_name,
+                webview,
+                rebuild,
+            });
+        });
+    }
+
+    /// Runs `body` at an Objective-C entry point, where a panic must not
+    /// unwind into the runtime: a panic is logged and stops there.
+    fn guarded(entry: &str, body: impl FnOnce()) {
+        if panic::catch_unwind(AssertUnwindSafe(body)).is_err() {
+            dioxus::logger::tracing::error!("page kill: {entry} panicked; recovery skipped");
+        }
+    }
+
+    /// Calls the newest app's rebuild.
+    fn rebuild() {
+        let rebuild = WATCH.with(|slot| slot.borrow().as_ref().map(|w| Rc::clone(&w.rebuild)));
+        if let Some(rebuild) = rebuild {
+            rebuild();
         }
     }
 
     /// What this kill leads to, counting it into the streak.
-    pub(super) fn next_step() -> Step {
+    fn next_step() -> Step {
         let now = Instant::now();
         let Ok(mut streak) = STREAK.lock() else {
             return Step::Rebuild;
@@ -187,17 +211,61 @@ mod ios {
         step
     }
 
+    /// The check a kill schedules: leaves a page that has loaded again to
+    /// whoever loaded it, else rebuilds or covers the dead page.
+    fn check() {
+        if NAVIGATED_SINCE_KILL.load(Ordering::Acquire) {
+            return;
+        }
+        match next_step() {
+            Step::Rebuild => rebuild(),
+            Step::Overlay(button) => {
+                let watched =
+                    WATCH.with(|slot| slot.borrow().as_ref().map(|w| (w.app_name, w.webview)));
+                match watched {
+                    Some((app_name, Some(webview))) => {
+                        OVERLAY_BUTTON.with(|slot| *slot.borrow_mut() = Some(button));
+                        cover(webview, app_name, button);
+                    }
+                    _ => rebuild(),
+                }
+            }
+        }
+    }
+
+    /// The overlay's button: rebuilds, or quits on the last resort.
+    fn tapped() {
+        match OVERLAY_BUTTON.with(|slot| slot.borrow_mut().take()) {
+            Some(Button::Reload) => rebuild(),
+            Some(Button::Restart) => quit(),
+            None => {}
+        }
+    }
+
     /// Quits the app on the user's tap, so the next launch starts clean.
     #[expect(
         clippy::exit,
         reason = "the overlay's last resort: a page that keeps dying, quit on the user's tap"
     )]
-    pub(super) fn quit() {
+    fn quit() {
         std::process::exit(0);
     }
 
+    /// The object the deferred check and the overlay's button call into,
+    /// made once and kept for the app's life.
+    fn target() -> Option<Retained<Target>> {
+        TARGET.with(|slot| {
+            let mut slot = slot.borrow_mut();
+            if slot.is_none() {
+                *slot = Some(Target::new());
+            }
+            slot.clone()
+        })
+    }
+
     /// The wrapper put in place of wry's termination method: wry's first, so
-    /// a handler wry calls still runs, then the kill on to the app.
+    /// a handler wry calls still runs, then the check, a grace period later
+    /// on the main run loop.
     unsafe extern "C-unwind" fn terminated(this: &AnyObject, cmd: Sel, webview: &AnyObject) {
         if let Some(&wry) = WRY_TERMINATED.get() {
             // SAFETY: `wry` is the method's own implementation, which takes
@@ -207,15 +275,40 @@ mod ios {
             // SAFETY: called with the arguments the runtime handed us.
             unsafe { wry(this, cmd, webview) };
         }
-        if let Ok(slot) = KILL_TX.lock()
-            && let Some(tx) = slot.as_ref()
-        {
-            let _ = tx.send(());
-        }
+        guarded("the termination wrapper", || {
+            NAVIGATED_SINCE_KILL.store(false, Ordering::Release);
+            if let Some(target) = target() {
+                let nothing: Option<&AnyObject> = None;
+                // SAFETY: NSObject's delayed perform, with a selector the
+                // target implements, on the main thread's run loop.
+                unsafe {
+                    let (): () = msg_send![&*target, performSelector: sel!(check:), withObject: nothing, afterDelay: GRACE_SECS];
+                }
+            }
+        });
     }
 
-    /// Wraps wry's termination method, once per app life.
-    pub(super) fn wrap_termination() {
+    /// The wrapper put in place of wry's commit method: wry's first, then a
+    /// note that a page has loaded since the kill.
+    unsafe extern "C-unwind" fn committed(
+        this: &AnyObject,
+        cmd: Sel,
+        webview: &AnyObject,
+        navigation: &AnyObject,
+    ) {
+        if let Some(&wry) = WRY_COMMITTED.get() {
+            // SAFETY: `wry` is the method's own implementation, which takes
+            // the receiver, the selector, the webview and the navigation.
+            let wry: unsafe extern "C-unwind" fn(&AnyObject, Sel, &AnyObject, &AnyObject) =
+                unsafe { std::mem::transmute(wry) };
+            // SAFETY: called with the arguments the runtime handed us.
+            unsafe { wry(this, cmd, webview, navigation) };
+        }
+        NAVIGATED_SINCE_KILL.store(true, Ordering::Release);
+    }
+
+    /// Wraps wry's termination and commit methods, once per app life.
+    pub(super) fn wrap_delegate() {
         if WRY_TERMINATED.get().is_some() {
             return;
         }
@@ -225,19 +318,28 @@ mod ios {
             );
             return;
         };
-        let Some(method) = class.instance_method(sel!(webViewWebContentProcessDidTerminate:))
-        else {
+        let (Some(terminate), Some(commit)) = (
+            class.instance_method(sel!(webViewWebContentProcessDidTerminate:)),
+            class.instance_method(sel!(webView:didCommitNavigation:)),
+        ) else {
             dioxus::logger::tracing::warn!(
-                "page kill: wry has no termination method; not watching"
+                "page kill: wry's delegate lacks a method; not watching"
             );
             return;
         };
-        let wrapper: unsafe extern "C-unwind" fn(&AnyObject, Sel, &AnyObject) = terminated;
+        let on_commit: unsafe extern "C-unwind" fn(&AnyObject, Sel, &AnyObject, &AnyObject) =
+            committed;
         // SAFETY: an `Imp` is any method implementation; the runtime calls
-        // it with the method's own arguments, which `terminated` takes.
-        let wrapper: Imp = unsafe { std::mem::transmute(wrapper) };
+        // it with the method's own arguments, which `committed` takes.
+        let on_commit: Imp = unsafe { std::mem::transmute(on_commit) };
         // SAFETY: the wrapper has the replaced method's signature.
-        let wry = unsafe { method.set_implementation(wrapper) };
+        let wry = unsafe { commit.set_implementation(on_commit) };
+        let _ = WRY_COMMITTED.set(wry);
+        let on_terminate: unsafe extern "C-unwind" fn(&AnyObject, Sel, &AnyObject) = terminated;
+        // SAFETY: as above, for `terminated` and the termination method.
+        let on_terminate: Imp = unsafe { std::mem::transmute(on_terminate) };
+        // SAFETY: the wrapper has the replaced method's signature.
+        let wry = unsafe { terminate.set_implementation(on_terminate) };
         let _ = WRY_TERMINATED.set(wry);
     }
 
@@ -323,22 +425,24 @@ mod ios {
         // SAFETY: NSObject has no subclassing requirements; no Drop impl.
         #[unsafe(super(NSObject))]
         #[name = "OranguiPageKillTarget"]
-        struct TapTarget;
+        struct Target;
 
-        impl TapTarget {
+        impl Target {
+            /// The check a kill schedules on the main run loop.
+            #[unsafe(method(check:))]
+            fn check_later(&self, _nothing: Option<&AnyObject>) {
+                guarded("the deferred check", check);
+            }
+
             /// Target-action for the overlay's button.
             #[unsafe(method(tapped:))]
-            fn tapped(&self, _sender: &AnyObject) {
-                if let Ok(slot) = TAP_TX.lock()
-                    && let Some(tx) = slot.as_ref()
-                {
-                    let _ = tx.send(());
-                }
+            fn tapped_button(&self, _sender: &AnyObject) {
+                guarded("the overlay's button", tapped);
             }
         }
     );
 
-    impl TapTarget {
+    impl Target {
         fn new() -> Retained<Self> {
             let this = Self::alloc().set_ivars(());
             // SAFETY: the designated initializer of an NSObject subclass.
@@ -379,21 +483,16 @@ mod ios {
     }
 
     /// Covers `webview`, the dead page's WKWebView, with the app's backdrop,
-    /// one line and `button`; its tap goes to `tap`. Runs on the main thread,
-    /// as UI effects do.
-    pub(super) fn cover(
-        webview: NonNull<c_void>,
-        app_name: &str,
-        button: Button,
-        tap: UnboundedSender<()>,
-    ) {
+    /// one line and `button`, whose tap goes to [`tapped`]. Runs on the main
+    /// thread, as the run loop's callbacks do.
+    fn cover(webview: NonNull<c_void>, app_name: &str, button: Button) {
         if MainThreadMarker::new().is_none() {
             dioxus::logger::tracing::error!("page kill: the overlay draws on the main thread only");
             return;
         }
-        if let Ok(mut slot) = TAP_TX.lock() {
-            *slot = Some(tap);
-        }
+        let Some(target) = target() else {
+            return;
+        };
         // SAFETY: the host hands over its live WKWebView.
         let webview: &AnyObject = unsafe { webview.cast::<AnyObject>().as_ref() };
         // SAFETY: `bounds` is a UIView getter returning a CGRect.
@@ -454,7 +553,6 @@ mod ios {
         let (): () = unsafe { msg_send![&*layer, setBorderWidth: BUTTON_BORDER] };
         // SAFETY: CALayer's corner radius setter takes a CGFloat.
         let (): () = unsafe { msg_send![&*layer, setCornerRadius: BUTTON_RADIUS] };
-        let target = TapTarget::new();
         // SAFETY: UIControl's target-action setter, with a target that
         // implements the action's selector.
         unsafe {
@@ -462,9 +560,6 @@ mod ios {
         }
         set_object(&cover, sel!(addSubview:), &reload);
         set_object(webview, sel!(addSubview:), &cover);
-        // A control holds its target weakly, so the target outlives this
-        // call: one per overlay, and an overlay ends the app or its window.
-        std::mem::forget(target);
     }
 
     /// A new view of `class` at `frame`, resizing by `mask`.
