@@ -149,9 +149,8 @@
     margin-right: 0.5rem;
 }
 
-/* Collapsed, a message is at most two lines and ends in an ellipsis; a tap
-   expands the stack and with it the whole message, wrapped. A URL or any
-   other unbroken run breaks wherever it has to. */
+/* A message shows whole, wrapped over as many lines as it needs, collapsed
+   or not. A URL or any other unbroken run breaks wherever it has to. */
 .toast-container [role="alertdialog"] [id$="-label"] {
     margin-bottom: 0.25rem;
     color: var(--text-primary);
@@ -159,21 +158,9 @@
     font-weight: 400;
     letter-spacing: 0.1em;
     overflow-wrap: anywhere;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    overflow: hidden;
     /* Center so any ragged trailing space on wrapped lines is symmetric,
        not dumped on the right edge next to the close button. */
     text-align: center;
-}
-
-.toast-container.expanded [role="alertdialog"] [id$="-label"] {
-    display: block;
-    -webkit-line-clamp: unset;
-    line-clamp: unset;
-    overflow: visible;
 }
 
 .toast-container [role="alertdialog"] [id$="-description"] {
