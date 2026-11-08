@@ -2004,6 +2004,14 @@ a.nav-dropdown-item.active:visited {
     margin: 0;
 }
 
+/* The title with a control at the row's right end (Panel's title_end). */
+.panel-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
 /* Full-bleed divider to the card edges, matching the dialogs. */
 .panel-rule {
     border: none;
@@ -2115,7 +2123,12 @@ a.nav-dropdown-item.active:visited {
     color: var(--ink-palette-1, var(--palette-1));
 }
 
-/* ---- Collapse (orangui::CollapseCaret, CollapseBody, CollapseAll) ---- */
+/* ---- Collapse (orangui::CollapseHeader, CollapseCaret, CollapseBody, CollapseAll) ---- */
+
+/* A header row that toggles from anywhere on it. */
+.collapse-header {
+    cursor: pointer;
+}
 
 /* Soft: the caret's size and color. */
 :where(.collapse-caret) {

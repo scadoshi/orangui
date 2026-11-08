@@ -40,6 +40,10 @@ pub fn Panel(
     /// the title. For chips that describe the panel, such as a project's tags.
     #[props(default)]
     title_trailing: Option<Element>,
+    /// Drawn at the right end of the title's row, outside the heading. For
+    /// a control that acts on the whole panel, such as Collapse all.
+    #[props(default)]
+    title_end: Option<Element>,
     /// Optional status pill shown beside the eyebrow.
     #[props(default)]
     status: Option<BannerStatus>,
@@ -94,12 +98,13 @@ pub fn Panel(
                             }
                         }
                     }
-                    if let Some(title) = title {
-                        if title_h1 {
-                            h1 { class: "panel-title", "{title}" {title_trailing} }
-                        } else {
-                            h2 { class: "panel-title", "{title}" {title_trailing} }
+                    if let Some(end) = title_end {
+                        div { class: "panel-title-row",
+                            PanelTitle { title, title_h1, title_trailing }
+                            {end}
                         }
+                    } else {
+                        PanelTitle { title, title_h1, title_trailing }
                     }
                 }
                 hr { class: "panel-rule" }
@@ -110,5 +115,19 @@ pub fn Panel(
                 div { class: "panel-actions", {actions} }
             }
         }
+    }
+}
+
+/// A panel's heading, an `h1` for a page hero and an `h2` otherwise, with
+/// its trailing chips inside it. Nothing without a `title`.
+#[component]
+fn PanelTitle(title: Option<String>, title_h1: bool, title_trailing: Option<Element>) -> Element {
+    let Some(title) = title else {
+        return rsx! {};
+    };
+    if title_h1 {
+        rsx! { h1 { class: "panel-title", "{title}" {title_trailing} } }
+    } else {
+        rsx! { h2 { class: "panel-title", "{title}" {title_trailing} } }
     }
 }

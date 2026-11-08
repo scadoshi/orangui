@@ -1,15 +1,19 @@
-//! Collapsible sections in a list: a caret on each section's header opens
-//! and shuts its body, and one button collapses or expands them all.
+//! Collapsible sections in a list: each section's header opens and shuts
+//! its body, and one icon button collapses or expands them all.
 //!
 //! [`use_collapse_set`] holds which sections are shut, keyed by a string the
 //! host picks (a version, an id); everything starts open. Each section draws
-//! a [`CollapseCaret`] in its header and wraps its body in [`CollapseBody`],
-//! and the list draws one [`CollapseAll`] over the keys it shows. A shut body
-//! eases closed, and is inert so Tab and screen readers pass over it.
+//! its header as a [`CollapseHeader`], which a click anywhere on toggles, or
+//! puts a lone [`CollapseCaret`] in a header of its own, and wraps its body
+//! in [`CollapseBody`]; the list draws one [`CollapseAll`] over the keys it
+//! shows. A shut body eases closed, and is inert so Tab and screen readers
+//! pass over it.
 
 use std::collections::BTreeSet;
 
 use dioxus::prelude::*;
+
+use crate::icons::{DockIcon, FOLD, UNFOLD};
 
 /// The keys of the shut sections. Everything not in it is open.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -119,6 +123,46 @@ pub fn CollapseCaret(set: CollapseSet, section: String, label: String) -> Elemen
     }
 }
 
+/// A section's header row that toggles `section` in `set` from a click
+/// anywhere on it: the caret, then `children` (a heading, a date, tags).
+/// The caret is the row's one Tab stop and carries `aria-expanded`; Enter or
+/// Space on it clicks it, and the click reaches the row. `label` names the
+/// section for a screen reader, as in "1.18.0", and `class` adds the host's
+/// classes after `collapse-header`. A link in `children` stops its click's
+/// propagation if following it should not toggle the section.
+#[component]
+pub fn CollapseHeader(
+    set: CollapseSet,
+    section: String,
+    label: String,
+    #[props(default)] class: Option<String>,
+    children: Element,
+) -> Element {
+    let open = set.is_open(&section);
+    let action = if open { "Collapse" } else { "Expand" };
+    let class = match class {
+        Some(extra) => format!("collapse-header {extra}"),
+        None => "collapse-header".to_owned(),
+    };
+    rsx! {
+        div {
+            class,
+            onclick: move |_| {
+                let mut set = set;
+                set.toggle(&section);
+            },
+            button {
+                r#type: "button",
+                class: "collapse-caret",
+                "aria-expanded": "{open}",
+                "aria-label": "{action} {label}",
+                span { class: "collapse-caret-glyph", "aria-hidden": "true", "\u{25b8}" }
+            }
+            {children}
+        }
+    }
+}
+
 /// A section's body, eased shut while `section` is shut in `set`, and inert
 /// while it is.
 #[component]
@@ -133,15 +177,17 @@ pub fn CollapseBody(set: CollapseSet, section: String, children: Element) -> Ele
     }
 }
 
-/// One button for the whole list: "Collapse all" while any of `keys` is
-/// open, "Expand all" once every one is shut.
+/// One icon button for the whole list: two arrows pointing in ("Collapse
+/// all") while any of `keys` is open, two pointing out ("Expand all") once
+/// every one is shut. The words are its accessible name.
 #[component]
 pub fn CollapseAll(set: CollapseSet, keys: Vec<String>) -> Element {
     let all_shut = set.all_shut(keys.iter().map(String::as_str));
     rsx! {
         button {
             r#type: "button",
-            class: "chip collapse-all",
+            class: "btn-action btn-icon collapse-all",
+            "aria-label": if all_shut { "Expand all" } else { "Collapse all" },
             onclick: move |_| {
                 let mut set = set;
                 if all_shut {
@@ -150,7 +196,7 @@ pub fn CollapseAll(set: CollapseSet, keys: Vec<String>) -> Element {
                     set.collapse_all(keys.iter().map(String::as_str));
                 }
             },
-            if all_shut { "Expand all" } else { "Collapse all" }
+            DockIcon { path: if all_shut { UNFOLD } else { FOLD } }
         }
     }
 }
