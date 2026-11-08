@@ -50,9 +50,9 @@ pub enum DialogAction {
         /// Runs after the dialog starts closing.
         on_confirm: Callback<()>,
     },
-    /// A link styled as a button, and the dialog closes. In the browser it
-    /// opens in the same tab; elsewhere it carries `target="_blank"`, which
-    /// an app's WebView hands to the system browser.
+    /// A link styled as a button, and the dialog closes. It opens in a new
+    /// tab, which an app's WebView hands to the system browser, except a
+    /// `mailto:` link in the browser.
     Link {
         /// The link's text.
         label: String,
@@ -407,18 +407,14 @@ impl DialogHost {
 
 static NEXT_OWNER: AtomicU64 = AtomicU64::new(1);
 
-/// A [`DialogAction::Link`]'s `target` and `rel`: none in the browser, so the
-/// link opens in the same tab.
-#[cfg(target_arch = "wasm32")]
-const LINK_TARGET: Option<&str> = None;
-#[cfg(target_arch = "wasm32")]
-const LINK_REL: Option<&str> = None;
-/// A [`DialogAction::Link`]'s `target` and `rel`: a new tab, which an app's
-/// WebView hands to the system browser.
-#[cfg(not(target_arch = "wasm32"))]
-const LINK_TARGET: Option<&str> = Some("_blank");
-#[cfg(not(target_arch = "wasm32"))]
-const LINK_REL: Option<&str> = Some("noopener noreferrer");
+/// Whether a [`DialogAction::Link`] to `href` opens in a new tab, with
+/// `rel="noopener noreferrer"`: always in an app, whose WebView hands it to
+/// the system browser, and in the browser for anything but a `mailto:` link,
+/// so the page keeps its state. A `mailto:` link never leaves the page, and a
+/// new tab for it would stay blank.
+fn link_opens_tab(href: &str) -> bool {
+    cfg!(not(target_arch = "wasm32")) || !href.starts_with("mailto:")
+}
 
 /// The page-wide keys for an open dialog, installed once per page by
 /// [`DialogHostView`]. Escape clicks the open dim, so it closes the dialog as
@@ -588,12 +584,14 @@ pub fn DialogHostView() -> Element {
                                 "{label}"
                             }
                         },
-                        DialogAction::Link { label, href } => rsx! {
+                        DialogAction::Link { label, href } => {
+                            let new_tab = link_opens_tab(&href);
+                            rsx! {
                             a {
                                 class: "alert-dialog-cancel",
                                 href,
-                                target: LINK_TARGET,
-                                rel: LINK_REL,
+                                target: new_tab.then_some("_blank"),
+                                rel: new_tab.then_some("noopener noreferrer"),
                                 aria_disabled: if busy { "true" },
                                 onclick: move |evt| {
                                     if busy {
@@ -603,7 +601,8 @@ pub fn DialogHostView() -> Element {
                                 },
                                 "{label}"
                             }
-                        },
+                            }
+                        }
                         DialogAction::Button(button) => {
                             let this_running = running == Some(index);
                             let activity = match running {
@@ -658,6 +657,17 @@ mod tests {
         seconds: Signal<u8>,
         flips: Signal<u32>,
         confirmed: Signal<u32>,
+    }
+
+    #[test]
+    fn dialog_links_open_a_new_tab_but_mail_stays() {
+        assert!(link_opens_tab("https://zwipe.net/guides/land-targets/"));
+        assert!(link_opens_tab("https://discord.gg/example"));
+        // Off the browser every link goes to the system's handler.
+        assert_eq!(
+            link_opens_tab("mailto:support@example.com"),
+            cfg!(not(target_arch = "wasm32"))
+        );
     }
 
     thread_local! {
