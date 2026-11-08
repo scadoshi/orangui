@@ -17,7 +17,7 @@ use dioxus::dioxus_core::NoOpMutations;
 use dioxus::prelude::*;
 use orangui::{
     ActionButton, AlertDialog, BannerStatus, BottomSheet, CollapseAll, CollapseBody, CollapseCaret,
-    DialogAction, DialogHostView, Panel, ThemeConfig, ThemeSheet, use_dialog_host,
+    CollapseHeader, DialogAction, DialogHostView, Panel, ThemeConfig, ThemeSheet, use_dialog_host,
     use_overlay_back_stack, use_theme_follow,
 };
 
@@ -73,6 +73,30 @@ fn collapse_app(shut: &'static [&'static str]) -> Element {
     }
 }
 
+/// Two sections whose whole header row toggles, `1.1.0` shut and `1.0.0`
+/// open, each header holding its version and a tag after the caret.
+fn collapse_header_app() -> Element {
+    let mut set = orangui::use_collapse_set();
+    use_hook(move || set.collapse_all(["1.1.0"]));
+    let keys = vec!["1.1.0".to_owned(), "1.0.0".to_owned()];
+    rsx! {
+        for key in keys {
+            div { key: "{key}",
+                CollapseHeader { set, section: key.clone(), label: key.clone(), class: "version-row",
+                    h2 { "{key}" }
+                    span { class: "status-tag", "Latest" }
+                }
+                CollapseBody { set, section: key.clone(), p { "{key}" } }
+            }
+        }
+    }
+}
+
+#[test]
+fn collapse_header_one_shut() {
+    golden("collapse_header_one_shut", &render(collapse_header_app));
+}
+
 #[test]
 fn collapse_one_shut() {
     golden("collapse_one_shut", &render(|| collapse_app(&["1.1.0"])));
@@ -83,6 +107,24 @@ fn collapse_all_shut() {
     golden(
         "collapse_all_shut",
         &render(|| collapse_app(&["1.1.0", "1.0.0"])),
+    );
+}
+
+#[test]
+fn panel_title_end() {
+    golden(
+        "panel_title_end",
+        &dioxus_ssr::render_element(rsx! {
+            Panel {
+                eyebrow: "Cairn",
+                title: "Changelog",
+                title_h1: true,
+                title_end: rsx! {
+                    button { r#type: "button", "End" }
+                },
+                p { "Body" }
+            }
+        }),
     );
 }
 
