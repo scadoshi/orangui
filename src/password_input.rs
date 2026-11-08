@@ -5,7 +5,9 @@ use dioxus::prelude::*;
 
 /// A password input whose Show/Hide toggle reveals what is typed. `class`
 /// appends the host's own input classes; the host's label and error line sit
-/// outside it.
+/// outside it. `autocomplete` is the field's autofill hint for password
+/// managers (`current-password` on a login, `new-password` where one is
+/// chosen), and `name` the form field name they key it by.
 #[component]
 pub fn PasswordInput(
     value: Signal<String>,
@@ -13,6 +15,8 @@ pub fn PasswordInput(
     #[props(default)] placeholder: Option<String>,
     #[props(default = false)] disabled: bool,
     #[props(default)] class: Option<String>,
+    #[props(default)] autocomplete: Option<String>,
+    #[props(default)] name: Option<String>,
 ) -> Element {
     let mut shown = use_signal(|| false);
     let input_class = match class {
@@ -25,6 +29,8 @@ pub fn PasswordInput(
             input {
                 class: "{input_class}",
                 id,
+                name,
+                autocomplete,
                 r#type: if shown() { "text" } else { "password" },
                 placeholder,
                 value: "{value}",

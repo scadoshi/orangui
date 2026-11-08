@@ -17,7 +17,8 @@ use dioxus::dioxus_core::NoOpMutations;
 use dioxus::prelude::*;
 use orangui::{
     ActionButton, AlertDialog, BannerStatus, BottomSheet, DialogAction, DialogHostView, Panel,
-    ThemeConfig, ThemeSheet, use_dialog_host, use_overlay_back_stack, use_theme_follow,
+    PasswordInput, ThemeConfig, ThemeSheet, use_dialog_host, use_overlay_back_stack,
+    use_theme_follow,
 };
 
 /// Compares `html` with the saved copy `name`, or saves it under `BLESS_HTML`.
@@ -54,6 +55,33 @@ fn render(app: fn() -> Element) -> String {
         dom.render_immediate(&mut NoOpMutations);
     }
     dioxus_ssr::render(&dom)
+}
+
+#[test]
+fn password_input_plain() {
+    fn app() -> Element {
+        let value = use_signal(String::new);
+        rsx! {
+            PasswordInput { value, id: "password" }
+        }
+    }
+    golden("password_input_plain", &render(app));
+}
+
+#[test]
+fn password_input_with_autofill_hints() {
+    fn app() -> Element {
+        let value = use_signal(String::new);
+        rsx! {
+            PasswordInput {
+                value,
+                id: "password",
+                name: "password",
+                autocomplete: "new-password",
+            }
+        }
+    }
+    golden("password_input_with_autofill_hints", &render(app));
 }
 
 #[test]
