@@ -2115,6 +2115,59 @@ a.nav-dropdown-item.active:visited {
     color: var(--ink-palette-1, var(--palette-1));
 }
 
+/* ---- Collapse (orangui::CollapseCaret, CollapseBody, CollapseAll) ---- */
+
+/* Soft: the caret's size and color. */
+:where(.collapse-caret) {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--ink-accent-primary, var(--accent-primary));
+}
+
+.collapse-caret {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+.collapse-caret-glyph {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.collapse-caret[aria-expanded="true"] .collapse-caret-glyph {
+    transform: rotate(90deg);
+}
+
+/* The body eases between its height and none, through grid rows. */
+.collapse-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease;
+}
+
+.collapse-body.open {
+    grid-template-rows: 1fr;
+}
+
+.collapse-body-inner {
+    min-height: 0;
+    overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .collapse-caret-glyph,
+    .collapse-body {
+        transition: none;
+    }
+}
+
 /* ---- ClearWrap (orangui::ClearWrap) ----
    The × beside a field's right end while it holds something: the field
    gives up the button's width as it slides in and takes it back when the
