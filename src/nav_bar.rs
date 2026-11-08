@@ -1,5 +1,6 @@
 //! Sticky site nav shell: brand on the left, a link panel on the right that
-//! collapses behind a hamburger toggle below the 60rem breakpoint.
+//! collapses behind a hamburger toggle below the 60rem breakpoint ([`crate::NAV_FOLD_CSS`]
+//! lets a host fold it at a wider one).
 //!
 //! The shell owns the structure (wrapper, toggle, collapsing panel) and its
 //! CSS; the host owns the content via slots: its brand link, its `li` link

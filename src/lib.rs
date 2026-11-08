@@ -163,8 +163,20 @@ pub use theme_wipe::{ThemeFollow, use_theme_follow, use_theme_wipe, use_theme_wi
 #[cfg(feature = "toast")]
 pub use toast_stack::ToastStack;
 
-/// The shared component rules.
-pub const COMPONENTS_CSS: &str = include_str!("../assets/components.css");
+/// The shared component rules, the `NavBar`'s hamburger-width rules
+/// ([`NAV_FOLD_CSS`]) among them under `@media (max-width: 60rem)`.
+pub const COMPONENTS_CSS: &str = concat!(
+    include_str!("../assets/components.css"),
+    "\n@media (max-width: 60rem) {\n",
+    include_str!("../assets/nav_fold.css"),
+    "}\n"
+);
+/// The `NavBar`'s hamburger-width rules: the panel folded behind the toggle and
+/// the narrow shape of what sits in or beside the folded menu. [`COMPONENTS_CSS`]
+/// already holds them under `@media (max-width: 60rem)`; a host whose bar
+/// needs more room adds them under its own wider query, after
+/// `COMPONENTS_CSS`, to fold sooner.
+pub const NAV_FOLD_CSS: &str = include_str!("../assets/nav_fold.css");
 /// The 50 theme palettes, each dark and light.
 pub const THEMES_CSS: &str = include_str!("../assets/themes.css");
 /// The apps' keyboard inset: the strip of the page the on-screen keyboard
