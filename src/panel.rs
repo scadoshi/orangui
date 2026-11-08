@@ -25,10 +25,10 @@ pub fn Panel(
     /// Panel title.
     #[props(default)]
     title: Option<String>,
-    /// Render the title as an `h1` instead of the default `h3`. For page heroes,
-    /// where the panel's title IS the document's heading. A page whose only
-    /// heading is an `h3` reads as a fragment to crawlers and screen readers.
-    /// Cards and in-page panels leave this off.
+    /// Render the title as an `h1` instead of the default `h2`. For page heroes,
+    /// where the panel's title is the document's heading. Cards and in-page
+    /// panels leave this off, so their `h2` sits one level under the page's
+    /// `h1` with no level skipped.
     #[props(default = false)]
     title_h1: bool,
     /// Center the title and action row, as the apps' dialogs do; the body
@@ -98,7 +98,7 @@ pub fn Panel(
                         if title_h1 {
                             h1 { class: "panel-title", "{title}" {title_trailing} }
                         } else {
-                            h3 { class: "panel-title", "{title}" {title_trailing} }
+                            h2 { class: "panel-title", "{title}" {title_trailing} }
                         }
                     }
                 }
