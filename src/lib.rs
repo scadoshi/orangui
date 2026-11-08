@@ -57,6 +57,7 @@ mod button;
 mod chart_tip;
 mod chip;
 mod clear_wrap;
+mod collapse;
 mod diagram;
 mod entrance;
 mod gallery;
@@ -102,6 +103,7 @@ pub use button::{Button, ButtonVariant};
 pub use chart_tip::ChartTip;
 pub use chip::Chip;
 pub use clear_wrap::ClearWrap;
+pub use collapse::{CollapseAll, CollapseBody, CollapseCaret, CollapseSet, Shut, use_collapse_set};
 pub use diagram::{DIAGRAM_NODE_HEIGHT, DiagramArrow, DiagramDefs, DiagramNode, DiagramTone};
 /// The toast handle and its types from `dioxus-primitives`, so a host calls
 /// `use_toast` below [`ToastStack`] with no dependency of its own on that crate.

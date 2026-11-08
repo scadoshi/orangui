@@ -16,8 +16,9 @@ use std::path::PathBuf;
 use dioxus::dioxus_core::NoOpMutations;
 use dioxus::prelude::*;
 use orangui::{
-    ActionButton, AlertDialog, BannerStatus, BottomSheet, DialogAction, DialogHostView, Panel,
-    ThemeConfig, ThemeSheet, use_dialog_host, use_overlay_back_stack, use_theme_follow,
+    ActionButton, AlertDialog, BannerStatus, BottomSheet, CollapseAll, CollapseBody, CollapseCaret,
+    DialogAction, DialogHostView, Panel, ThemeConfig, ThemeSheet, use_dialog_host,
+    use_overlay_back_stack, use_theme_follow,
 };
 
 /// Compares `html` with the saved copy `name`, or saves it under `BLESS_HTML`.
@@ -54,6 +55,35 @@ fn render(app: fn() -> Element) -> String {
         dom.render_immediate(&mut NoOpMutations);
     }
     dioxus_ssr::render(&dom)
+}
+
+/// Two sections, `1.1.0` shut and `1.0.0` open, with the list's button.
+fn collapse_app(shut: &'static [&'static str]) -> Element {
+    let mut set = orangui::use_collapse_set();
+    use_hook(move || set.collapse_all(shut.iter().copied()));
+    let keys = vec!["1.1.0".to_owned(), "1.0.0".to_owned()];
+    rsx! {
+        CollapseAll { set, keys: keys.clone() }
+        for key in keys {
+            div { key: "{key}",
+                CollapseCaret { set, section: key.clone(), label: key.clone() }
+                CollapseBody { set, section: key.clone(), p { "{key}" } }
+            }
+        }
+    }
+}
+
+#[test]
+fn collapse_one_shut() {
+    golden("collapse_one_shut", &render(|| collapse_app(&["1.1.0"])));
+}
+
+#[test]
+fn collapse_all_shut() {
+    golden(
+        "collapse_all_shut",
+        &render(|| collapse_app(&["1.1.0", "1.0.0"])),
+    );
 }
 
 #[test]
