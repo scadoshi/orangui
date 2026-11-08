@@ -43,6 +43,9 @@ pub fn FieldLabel(
 ///   it in a `message-error` line.
 /// - `filter` maps each typed value before it is stored, such as keeping
 ///   only the digits of an amount.
+/// - `name` and `autocomplete` go on the input as given, for browsers and
+///   password managers: `username`, `email`, `current-password`,
+///   `new-password`.
 /// - `on_clear` puts a `×` beside the input's right end while it holds
 ///   text ([`ClearWrap`]); the tap empties `value` and then calls it.
 ///
@@ -52,6 +55,8 @@ pub fn FieldLabel(
 pub fn TextInput(
     value: Signal<String>,
     #[props(default)] id: Option<String>,
+    #[props(default)] name: Option<String>,
+    #[props(default)] autocomplete: Option<String>,
     #[props(default)] label: Option<String>,
     #[props(default)] placeholder: Option<String>,
     #[props(default)] input_type: Option<String>,
@@ -75,6 +80,8 @@ pub fn TextInput(
             PasswordInput {
                 value,
                 id,
+                name,
+                autocomplete,
                 placeholder,
                 disabled,
                 class: class.to_string(),
@@ -83,6 +90,8 @@ pub fn TextInput(
             input {
                 class,
                 id,
+                name,
+                autocomplete,
                 r#type: "{input_type}",
                 placeholder,
                 inputmode,
@@ -207,5 +216,44 @@ mod tests {
         assert!(html.contains(r#"class="input input-error input-password""#));
         assert!(html.contains(r#"type="password""#));
         assert!(html.contains("password-toggle-btn"));
+    }
+
+    #[test]
+    fn name_and_autocomplete_reach_the_input() {
+        fn app() -> Element {
+            let user = use_signal(String::new);
+            let password = use_signal(String::new);
+            rsx! {
+                TextInput { value: user, name: "username", autocomplete: "username" }
+                TextInput {
+                    value: password,
+                    input_type: "password",
+                    name: "password",
+                    autocomplete: "current-password",
+                }
+            }
+        }
+        let html = render(app);
+        assert!(
+            html.contains(r#"name="username" autocomplete="username""#),
+            "{html}"
+        );
+        assert!(
+            html.contains(r#"name="password" autocomplete="current-password""#),
+            "{html}"
+        );
+    }
+
+    #[test]
+    fn a_field_without_hints_has_no_name_or_autocomplete() {
+        fn app() -> Element {
+            let value = use_signal(String::new);
+            rsx! {
+                TextInput { value }
+            }
+        }
+        let html = render(app);
+        assert!(!html.contains("name="), "{html}");
+        assert!(!html.contains("autocomplete="), "{html}");
     }
 }
