@@ -83,6 +83,7 @@ pub fn TextInput(
                 name,
                 autocomplete,
                 placeholder,
+                maxlength,
                 disabled,
                 class: class.to_string(),
             }
@@ -242,6 +243,19 @@ mod tests {
             html.contains(r#"name="password" autocomplete="current-password""#),
             "{html}"
         );
+    }
+
+    #[test]
+    fn a_password_field_takes_its_maxlength() {
+        fn app() -> Element {
+            let value = use_signal(String::new);
+            rsx! {
+                TextInput { value, input_type: "password", maxlength: 128usize }
+            }
+        }
+        let html = render(app);
+        assert!(html.contains(r#"maxlength="128""#), "{html}");
+        assert!(html.contains(r#"type="password""#), "{html}");
     }
 
     #[test]

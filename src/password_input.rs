@@ -7,7 +7,7 @@ use dioxus::prelude::*;
 /// appends the host's own input classes; the host's label and error line sit
 /// outside it. `name` and `autocomplete` go on the input as given, so a
 /// password manager can tell a sign-in (`current-password`) from a new
-/// password (`new-password`).
+/// password (`new-password`). `maxlength` caps what can be typed.
 #[component]
 pub fn PasswordInput(
     value: Signal<String>,
@@ -15,6 +15,7 @@ pub fn PasswordInput(
     #[props(default)] name: Option<String>,
     #[props(default)] autocomplete: Option<String>,
     #[props(default)] placeholder: Option<String>,
+    #[props(default)] maxlength: Option<usize>,
     #[props(default = false)] disabled: bool,
     #[props(default)] class: Option<String>,
 ) -> Element {
@@ -33,6 +34,7 @@ pub fn PasswordInput(
                 autocomplete,
                 r#type: if shown() { "text" } else { "password" },
                 placeholder,
+                maxlength: maxlength.map(|n| n.to_string()),
                 value: "{value}",
                 disabled,
                 autocapitalize: "none",
