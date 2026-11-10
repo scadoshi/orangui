@@ -17,8 +17,8 @@ use dioxus::dioxus_core::NoOpMutations;
 use dioxus::prelude::*;
 use orangui::{
     ActionButton, AlertDialog, BannerStatus, BottomSheet, CollapseAll, CollapseBody, CollapseCaret,
-    CollapseHeader, DialogAction, DialogHostView, Panel, ThemeConfig, ThemeSheet, use_dialog_host,
-    use_overlay_back_stack, use_theme_follow,
+    CollapseHeader, DialogAction, DialogHostView, Panel, ReleaseCard, ReleaseTag, ThemeConfig,
+    ThemeSheet, use_dialog_host, use_overlay_back_stack, use_theme_follow,
 };
 
 /// Compares `html` with the saved copy `name`, or saves it under `BLESS_HTML`.
@@ -90,6 +90,35 @@ fn collapse_header_app() -> Element {
             }
         }
     }
+}
+
+/// Two release cards, `1.1.0` shut with a linked version and an amber tag,
+/// `1.0.0` open with a green tag and no date.
+fn release_cards_app() -> Element {
+    let mut set = orangui::use_collapse_set();
+    use_hook(move || set.collapse_all(["1.1.0"]));
+    rsx! {
+        ReleaseCard {
+            set,
+            version: "1.1.0",
+            date: "Nov 9, 2026".to_owned(),
+            tag: ReleaseTag { status: BannerStatus::Doing, label: "Upcoming".to_owned() },
+            entries: vec!["A new quote".to_owned()],
+            id: "v1-1-0".to_owned(),
+            href: "#v1-1-0".to_owned(),
+        }
+        ReleaseCard {
+            set,
+            version: "1.0.0",
+            tag: ReleaseTag { status: BannerStatus::Done, label: "Latest".to_owned() },
+            entries: vec!["First release".to_owned(), "Second note".to_owned()],
+        }
+    }
+}
+
+#[test]
+fn release_cards_one_shut() {
+    golden("release_cards_one_shut", &render(release_cards_app));
 }
 
 #[test]

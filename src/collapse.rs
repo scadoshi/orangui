@@ -128,8 +128,10 @@ pub fn CollapseCaret(set: CollapseSet, section: String, label: String) -> Elemen
 /// The caret is the row's one Tab stop and carries `aria-expanded`; Enter or
 /// Space on it clicks it, and the click reaches the row. `label` names the
 /// section for a screen reader, as in "1.18.0", and `class` adds the host's
-/// classes after `collapse-header`. A link in `children` stops its click's
-/// propagation if following it should not toggle the section.
+/// classes after `collapse-header`; adding `collapse-header-quiet` drops the
+/// hover fill, for a header that heads a card which has its own hover. A link
+/// in `children` stops its click's propagation if following it should not
+/// toggle the section.
 #[component]
 pub fn CollapseHeader(
     set: CollapseSet,
