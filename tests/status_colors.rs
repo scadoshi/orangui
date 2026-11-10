@@ -1,11 +1,14 @@
 //! Status colors mean an outcome. Decoration draws from the palette slots. Every
 //! status reference in the crate's own stylesheets must be one of these.
 
-const ALLOWED: [&str; 12] = [
+const ALLOWED: [&str; 14] = [
     ".alert-dialog-action-danger",
     ".input-error, .input-error:focus",
     ".message-error",
     ".btn-danger, .btn-action-danger",
+    // A destructive button's hover and focus: the same red, as a tint.
+    r#":is(.btn-danger, .btn-action-danger, .alert-dialog-action-danger):not(:disabled, [aria-disabled="true"]):hover"#,
+    r#":is(.btn-danger, .btn-action-danger, .alert-dialog-action-danger):not(:disabled, [aria-disabled="true"]):focus-visible"#,
     ".tag-error, .stat-chip-error",
     ".tag-success, .stat-chip-success",
     ".tag-warning, .stat-chip-warning",
