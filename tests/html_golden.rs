@@ -4,12 +4,6 @@
 //! the copies after a deliberate markup change; the theme sheet's copies list
 //! every theme, so a theme added or renamed rewrites them too.
 
-#![expect(
-    clippy::unwrap_used,
-    clippy::panic,
-    reason = "test helpers: a failed read or render fails the test"
-)]
-
 use std::fs;
 use std::path::PathBuf;
 

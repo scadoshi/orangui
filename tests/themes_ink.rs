@@ -8,9 +8,7 @@
 #![expect(
     clippy::string_slice,
     clippy::arithmetic_side_effects,
-    clippy::indexing_slicing,
-    clippy::panic,
-    reason = "a test: a bad slice, index, overflow or missing variable fails it"
+    reason = "a test: a bad slice or an overflow fails it"
 )]
 
 const CSS: &str = include_str!("../assets/themes.css");
