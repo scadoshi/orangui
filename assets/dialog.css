@@ -1,0 +1,198 @@
+/* The alert dialog (AlertDialog, drawn by DialogHostView): its dim, its box,
+   its title and body, and the action row. Its own sheet, so a site can draw
+   the kit's dialogs without the app shell; APP_CSS includes it. */
+
+/* ---- Alert dialog (orangui::AlertDialog, DialogHostView) ---- */
+
+.alert-dialog-overlay {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background: var(--bg-overlay);
+}
+
+/* The dim and the dialog fade in together and out together. Opacity only:
+   any transform left on the dialog by an animation would fight its
+   centering. */
+.alert-dialog-overlay[data-state="open"],
+.alert-dialog[data-state="open"] {
+    animation: alert-dialog-in 150ms ease-out forwards;
+}
+
+.alert-dialog-overlay[data-state="closed"],
+.alert-dialog[data-state="closed"] {
+    animation: alert-dialog-out 150ms ease-in forwards;
+    pointer-events: none;
+}
+
+@keyframes alert-dialog-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes alert-dialog-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Leaves a band above and below for the app's header and footer, so a tall
+   dialog never reaches them; env() adds room where the device reports safe
+   insets. --dialog-pad-x is the side padding, which the rules break out of;
+   it and the padding are soft defaults an app sets with a rule of any
+   specificity. */
+:where(.alert-dialog) {
+    --dialog-pad-x: 2rem;
+    padding: 2rem var(--dialog-pad-x);
+}
+
+.alert-dialog {
+    position: fixed;
+    z-index: 1001;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: calc(100% - 2rem);
+    max-width: 20rem;
+    max-height: calc(
+        100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16rem
+    );
+    box-sizing: border-box;
+    border: 1px solid var(--border-secondary);
+    border-radius: 1rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 400;
+    text-align: center;
+}
+
+/* A long unbroken word in a title or body wraps rather than running out
+   through the side. break-word splits only a word too long for a line of its
+   own. */
+.alert-dialog-title,
+.alert-dialog-description {
+    overflow-wrap: break-word;
+}
+
+/* The title's color and type are soft defaults. */
+:where(.alert-dialog-title) {
+    color: var(--ink-accent-tertiary, var(--accent-tertiary));
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+}
+
+.alert-dialog-title {
+    margin: 0;
+    font-weight: 400;
+}
+
+/* The body scrolls on its own when it is tall, so the title and the actions
+   stay pinned. It scrolls edge to edge between the two rules: it reaches out
+   through the side padding and the gaps beside the rules, and takes them
+   back as its own padding, so its lines scroll right up to the rules. */
+.alert-dialog-description {
+    margin: -0.5rem calc(-1 * var(--dialog-pad-x));
+    padding: 0.5rem var(--dialog-pad-x);
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+/* A field in a dialog's body sits a line below the text above it. */
+.alert-dialog-description > .input,
+.alert-dialog-description > .password-input-wrapper {
+    margin-top: 1rem;
+}
+
+/* The dialog's gap spaces its children, so a Button inside drops its form
+   margin. */
+.alert-dialog .btn {
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+/* Full width under the title and above the actions, out through the side
+   padding. */
+.alert-dialog-rule {
+    align-self: stretch;
+    margin: 0 calc(-1 * var(--dialog-pad-x));
+    border: none;
+    border-top: 1px solid var(--border-secondary);
+}
+
+.alert-dialog-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+/* Filled and lifted like the action bar's buttons. A link takes the same
+   classes, so the text rules are set here too. */
+.alert-dialog-cancel,
+.alert-dialog-action,
+.alert-dialog-action-danger {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border-primary);
+    border-radius: 0.6rem;
+    background-color: var(--bg-primary);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-primary);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8rem;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.alert-dialog-cancel:focus-visible,
+.alert-dialog-action:focus-visible,
+.alert-dialog-action-danger:focus-visible {
+    outline: 1px solid var(--accent-secondary);
+    outline-offset: 2px;
+}
+
+/* An action that cannot be undone. */
+.alert-dialog-action-danger {
+    border-color: var(--color-error);
+    color: var(--ink-color-error, var(--color-error));
+}
+
+/* A disabled action looks like a disabled Button: faded, with a not-allowed
+   cursor. Every action is disabled while one runs its busy work. */
+.alert-dialog-cancel:disabled,
+.alert-dialog-action:disabled,
+.alert-dialog-action-danger:disabled,
+.alert-dialog-cancel[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* The action whose work is running keeps full strength, so its busy label
+   reads as working rather than off. */
+.alert-dialog-cancel[aria-busy="true"],
+.alert-dialog-action[aria-busy="true"],
+.alert-dialog-action-danger[aria-busy="true"] {
+    opacity: 1;
+    cursor: progress;
+}

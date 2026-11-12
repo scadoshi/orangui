@@ -207,11 +207,19 @@ pub const SCROLL_FADE_JS: &str = include_str!("../assets/scroll-fade.js");
 /// ([`GalleryFrame`], [`GalleryFooter`]) and the footer (`.site-footer`),
 /// for the websites only. Load it after [`COMPONENTS_CSS`].
 pub const SITE_CSS: &str = include_str!("../assets/site.css");
-/// The app shell's rules (screen, page header, alert dialog, settings lists,
-/// hints), for the apps only. Load it after
+/// The app shell's rules (screen, page header, settings lists, hints) and
+/// the alert dialog's ([`DIALOG_CSS`]), for the apps only. Load it after
 /// [`COMPONENTS_CSS`]. Sites leave it out: they style these class names their
 /// own way.
-pub const APP_CSS: &str = include_str!("../assets/app.css");
+pub const APP_CSS: &str = concat!(
+    include_str!("../assets/app.css"),
+    "\n",
+    include_str!("../assets/dialog.css")
+);
+/// The alert dialog's rules ([`AlertDialog`], drawn by [`DialogHostView`]):
+/// part of [`APP_CSS`], and on its own for a site that shows the kit's
+/// dialogs. Load it after [`COMPONENTS_CSS`].
+pub const DIALOG_CSS: &str = include_str!("../assets/dialog.css");
 /// The toast stack's rules, for [`ToastStack`]. Load it after the app's own
 /// stylesheet.
 #[cfg(feature = "toast")]
