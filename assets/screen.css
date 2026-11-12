@@ -1,0 +1,149 @@
+/* ---- Screen ---- */
+
+.screen-content {
+    flex: 1;
+    overflow-x: hidden;
+    /* Always a scroller, so a page that fits still rubber-bands and its
+       trailing padding can lift the last panel clear of the home indicator. */
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    /* WebKit bounces only a scroller whose content outgrows it, so the content
+       always does, by one pixel, through the pseudo-element below. */
+    overscroll-behavior-y: auto;
+    /* The containing block of the pixel below. */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 0;
+    padding-top: 1rem;
+    /* No fill: the host's GridCells layer under the screen is the backdrop. */
+    background-color: transparent;
+}
+
+/* One pixel past the scroller's own box, so a page that fits the screen
+   still rubber-bands at both ends on iOS. Out of the flex flow, where
+   justify-content: center or a child's auto margins absorb a flex item's
+   pixel as free space and the content fits exactly. */
+.screen-content::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+
+/* A screen that carries its own GridCells layer sits over another screen,
+   and that layer is all that hides the one beneath. The screen isolates, so
+   its layer paints over this fill, and a layer that stops drawing leaves the
+   screen solid. */
+.screen:has(> .grid-cells) {
+    isolation: isolate;
+    background-color: var(--bg-sink);
+}
+
+/* The screen's safe-area padding sits outside the header, so the layer
+   would show in the status bar strip. A fixed band in the primary color
+   fills it. Nothing sits over the home indicator: the content scrolls
+   under it. */
+.screen::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top, 0px);
+    z-index: 1;
+    pointer-events: none;
+    background-color: var(--bg-primary);
+}
+
+/* A screen with a dock ends its content with room to scroll the last row
+   clear of it, as .bottom-sheet:has(.sheet-dock) does for a sheet's content
+   in components.css. Soft: an app that adds its own trailing padding sets
+   it on .screen-content. */
+:where(.screen:has(> .action-dock) > .screen-content) {
+    padding-bottom: 5rem;
+}
+
+/* An app's header (.app-nav) sits over the top of the screen, so each
+   screen's scroll area opens with a spacer the header's height and nothing
+   moves at rest. Soft: the height is the bar's 0.5rem padding around a
+   1.7rem row and its 1px rule; an app with a taller bar sets --app-nav-h on
+   .screen. */
+:where(.screen) {
+    --app-nav-h: calc(2.7rem + 1px);
+}
+
+.screen > .app-nav ~ .screen-content::before {
+    content: "";
+    display: block;
+    flex: 0 0 var(--app-nav-h);
+    width: 100%;
+}
+
+.screen-content.centered {
+    justify-content: center;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---- Page header (orangui::PageHeader) ---- */
+
+.page-header {
+    position: relative;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-secondary);
+    background-color: var(--bg-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* Direct child only: a dialog mounted inside the header would otherwise
+   restyle its own h2 title. */
+.page-header > h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    margin: 0;
+    color: var(--ink-accent-primary, var(--accent-primary));
+}
+
+/* The corner buttons: the app's own on the left, the hint "?" on the right.
+   Both are action buttons made smaller and faded; this sheet loads after
+   components.css, so the padding here wins over .btn-action's. */
+.page-header-support,
+.page-header-corner {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.7rem;
+    opacity: var(--fade-corner);
+    padding: 0.2rem 0.6rem;
+}
+
+.page-header-support {
+    left: 1rem;
+}
+
+.page-header-corner {
+    right: 1rem;
+}
+
+/* A pressed corner lights up. */
+.page-header-corner:active {
+    opacity: 1;
+}
+

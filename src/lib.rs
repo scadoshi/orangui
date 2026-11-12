@@ -207,15 +207,22 @@ pub const SCROLL_FADE_JS: &str = include_str!("../assets/scroll-fade.js");
 /// ([`GalleryFrame`], [`GalleryFooter`]) and the footer (`.site-footer`),
 /// for the websites only. Load it after [`COMPONENTS_CSS`].
 pub const SITE_CSS: &str = include_str!("../assets/site.css");
-/// The app shell's rules (screen, page header, settings lists, hints) and
-/// the alert dialog's ([`DIALOG_CSS`]), for the apps only. Load it after
-/// [`COMPONENTS_CSS`]. Sites leave it out: they style these class names their
-/// own way.
+/// The app shell's rules: the screen and page header ([`SCREEN_CSS`]), then
+/// the settings lists and hints, then the alert dialog's ([`DIALOG_CSS`]), for
+/// the apps only. Load it after [`COMPONENTS_CSS`]. Sites leave it out: they
+/// style these class names their own way.
 pub const APP_CSS: &str = concat!(
+    include_str!("../assets/screen.css"),
     include_str!("../assets/app.css"),
     "\n",
     include_str!("../assets/dialog.css")
 );
+/// The app screen's frame and page header ([`PageHeader`]): `.screen`, its
+/// scrolling `.screen-content` and the header's corner buttons. The head of
+/// [`APP_CSS`], and on its own for a site that opens an app screen over its
+/// page; such a site scopes it to that screen, since it styles `.page-header`
+/// its own way.
+pub const SCREEN_CSS: &str = include_str!("../assets/screen.css");
 /// The alert dialog's rules ([`AlertDialog`], drawn by [`DialogHostView`]):
 /// part of [`APP_CSS`], and on its own for a site that shows the kit's
 /// dialogs. Load it after [`COMPONENTS_CSS`].
