@@ -20,7 +20,7 @@ const SHEETS: [(&str, &str); 5] = [
     ("toast.css", include_str!("../assets/toast.css")),
 ];
 
-const TUNABLE: [(&str, &[&str]); 36] = [
+const TUNABLE: [(&str, &[&str]); 37] = [
     (
         ".label",
         &["color", "font-size", "letter-spacing", "margin-bottom"],
@@ -35,6 +35,7 @@ const TUNABLE: [(&str, &[&str]); 36] = [
         ".nav-brand",
         &["font-weight", "font-size", "letter-spacing"],
     ),
+    (".nav-logo", &["font-size", "color"]),
     (".nav-dropdown-content", &["right"]),
     (
         ".content-enter",
