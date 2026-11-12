@@ -1,9 +1,10 @@
 //! The link gate: no link is underlined. A text link reads as one by the accent color alone, at
 //! rest, under a mouse and on keyboard focus, so no kit sheet sets an underline on anything.
 
-const SHEETS: [(&str, &str); 5] = [
+const SHEETS: [(&str, &str); 6] = [
     ("components.css", include_str!("../assets/components.css")),
     ("app.css", include_str!("../assets/app.css")),
+    ("dialog.css", include_str!("../assets/dialog.css")),
     ("site.css", include_str!("../assets/site.css")),
     ("toast.css", include_str!("../assets/toast.css")),
     ("nav_fold.css", include_str!("../assets/nav_fold.css")),

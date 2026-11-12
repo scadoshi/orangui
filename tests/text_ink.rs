@@ -112,6 +112,7 @@ fn tone_text_reads_its_ink() {
     let sheets = [
         ("components.css", include_str!("../assets/components.css")),
         ("app.css", include_str!("../assets/app.css")),
+        ("dialog.css", include_str!("../assets/dialog.css")),
         ("site.css", include_str!("../assets/site.css")),
         ("toast.css", include_str!("../assets/toast.css")),
     ];

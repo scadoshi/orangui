@@ -25,6 +25,7 @@ fn status_colors_only_where_they_mean_something() {
         include_str!("../assets/components.css"),
         include_str!("../assets/toast.css"),
         include_str!("../assets/app.css"),
+        include_str!("../assets/dialog.css"),
     ];
     let offenders: Vec<String> = sheets
         .iter()
