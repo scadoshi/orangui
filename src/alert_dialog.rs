@@ -31,11 +31,12 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 use dioxus::prelude::*;
 
+use crate::icons::DockIcon;
 use crate::use_overlay_back;
 
-/// One button in a dialog's action row. `Dismiss`, `Confirm` and `Link`
-/// close the dialog; a [`Button`](DialogAction::Button) closes it or not, as
-/// its [`ActionButton`] says.
+/// One button in a dialog's action row. `Dismiss`, `Confirm`, `Link` and
+/// `Icon` close the dialog; a [`Button`](DialogAction::Button) closes it or
+/// not, as its [`ActionButton`] says.
 #[derive(Clone, PartialEq, Debug)]
 pub enum DialogAction {
     /// Closes the dialog and does nothing else: Cancel, Got it.
@@ -63,6 +64,19 @@ pub enum DialogAction {
     /// signal, running async work under a busy label, or leaving the dialog
     /// open. See [`ActionButton`].
     Button(ActionButton),
+    /// A small icon button, drawn as the kit's icon buttons are
+    /// (`btn-action btn-icon` around a [`DockIcon`](crate::icons::DockIcon)),
+    /// with the `alert-dialog-icon` class. It closes the dialog, then runs
+    /// `on_click`, as [`Confirm`](DialogAction::Confirm) does. Enter never
+    /// presses it, and it never counts against a lone dismiss button.
+    Icon {
+        /// Its name for a screen reader and its tooltip.
+        label: String,
+        /// The icon, one SVG path as [`DockIcon`](crate::icons::DockIcon) takes.
+        path: &'static str,
+        /// Runs after the dialog starts closing.
+        on_click: Callback<()>,
+    },
 }
 
 impl From<ActionButton> for DialogAction {
@@ -350,6 +364,16 @@ impl fmt::Debug for DialogHost {
 }
 
 impl DialogHost {
+    /// Starts the fade out of `owner`'s dialog and, if it started, sets the
+    /// owner's `close` and then runs `then`: what a `Confirm` or an `Icon`
+    /// does on a click.
+    fn close_then(self, owner: u64, close: Callback<()>, then: Callback<()>) {
+        if self.leave(owner) {
+            close.call(());
+            then.call(());
+        }
+    }
+
     /// Starts the fade out of `owner`'s dialog, if it is the one showing and
     /// is not already leaving. Returns whether it started.
     fn leave(self, owner: u64) -> bool {
@@ -445,7 +469,7 @@ if (!window.__oranguiDialogKeys) {
         e.stopPropagation();
         const primary = dialog.querySelector('.alert-dialog-actions .alert-dialog-action:not([disabled])');
         if (primary) { primary.click(); return; }
-        const actions = dialog.querySelectorAll('.alert-dialog-actions > *');
+        const actions = dialog.querySelectorAll('.alert-dialog-actions > :not(.alert-dialog-icon)');
         const cancels = dialog.querySelectorAll('.alert-dialog-actions > button.alert-dialog-cancel:not([disabled])');
         if (actions.length > 0 && actions.length === cancels.length) cancels[0].click();
     }, true);
@@ -575,12 +599,7 @@ pub fn DialogHostView() -> Element {
                                 class: if danger { "alert-dialog-action-danger" } else { "alert-dialog-action" },
                                 r#type: "button",
                                 disabled: busy,
-                                onclick: move |_| {
-                                    if host.leave(owner) {
-                                        close.call(());
-                                        on_confirm.call(());
-                                    }
-                                },
+                                onclick: move |_| host.close_then(owner, close, on_confirm),
                                 "{label}"
                             }
                         },
@@ -632,6 +651,17 @@ pub fn DialogHostView() -> Element {
                                 }
                             }
                         }
+                        DialogAction::Icon { label, path, on_click } => rsx! {
+                            button {
+                                class: "btn-action btn-icon alert-dialog-icon",
+                                r#type: "button",
+                                "aria-label": "{label}",
+                                title: "{label}",
+                                disabled: busy,
+                                onclick: move |_| host.close_then(owner, close, on_click),
+                                DockIcon { path }
+                            }
+                        },
                     }
                 }
             }
@@ -892,5 +922,139 @@ mod tests {
         assert_eq!(a, a.clone());
         assert_ne!(a, ActionButton::new("Flip").stay_open(|| {}));
         assert_eq!(ActionButton::new("Ok"), ActionButton::new("Ok"));
+    }
+
+    mod icon {
+        use super::*;
+
+        /// The host, the dialog's `open` and the icon's click count, reached between renders.
+        type IconProbe = (DialogHost, Signal<bool>, Signal<u32>);
+
+        thread_local! {
+            static WITH_ICON: Cell<bool> = const { Cell::new(true) };
+            static ICON_PROBE: Cell<Option<IconProbe>> = const { Cell::new(None) };
+        }
+
+        /// A keyboard, as a host passes an icon's path.
+        const KEYS: &str = "M3 7h18v10H3z";
+
+        fn app() -> Element {
+            let stack = use_overlay_back_stack();
+            use_context_provider(|| stack);
+            let host = use_dialog_host();
+            use_context_provider(|| host);
+            rsx! {
+                IconOwner {}
+                DialogHostView {}
+            }
+        }
+
+        #[component]
+        fn IconOwner() -> Element {
+            let host = use_context::<DialogHost>();
+            let open = use_signal(|| true);
+            let mut clicks = use_signal(|| 0u32);
+            ICON_PROBE.with(|p| p.set(Some((host, open, clicks))));
+            let mut actions = vec![
+                DialogAction::Dismiss("Got it".into()),
+                DialogAction::Link {
+                    label: "See guide".into(),
+                    href: "https://example.com/guide".into(),
+                },
+            ];
+            if WITH_ICON.with(Cell::get) {
+                actions.push(DialogAction::Icon {
+                    label: "Keyboard shortcuts".into(),
+                    path: KEYS,
+                    on_click: Callback::new(move |()| {
+                        let next = clicks.peek().saturating_add(1);
+                        clicks.set(next);
+                    }),
+                });
+            }
+            rsx! {
+                AlertDialog { open, title: "Title", actions, "Body" }
+            }
+        }
+
+        fn rendered(with_icon: bool) -> (VirtualDom, String) {
+            WITH_ICON.with(|w| w.set(with_icon));
+            let mut dom = VirtualDom::new(app);
+            dom.rebuild_in_place();
+            settle(&mut dom);
+            let html = dioxus_ssr::render(&dom);
+            (dom, html)
+        }
+
+        /// The markup of the action row up to the icon, or all of it without one.
+        #[expect(
+            clippy::string_slice,
+            reason = "a test helper over ASCII markup; a bad slice fails the test"
+        )]
+        fn text_actions(html: &str) -> String {
+            let start = html.find(r#"class="alert-dialog-actions""#).unwrap();
+            let row = &html[start..];
+            let end = row.find("<button class=\"btn-action").unwrap_or(row.len());
+            row[..end].trim_end_matches("</div>").to_string()
+        }
+
+        #[test]
+        fn an_icon_draws_as_the_kits_icon_button_named_by_its_label() {
+            let (_, html) = rendered(true);
+            let at = html.find("alert-dialog-icon").unwrap();
+            let start = html.get(..at).unwrap().rfind("<button").unwrap();
+            let icon = html.get(start..).unwrap();
+            let icon = icon.get(..icon.find("</button>").unwrap()).unwrap();
+            for part in [
+                r#"class="btn-action btn-icon alert-dialog-icon""#,
+                r#"type="button""#,
+                r#"aria-label="Keyboard shortcuts""#,
+                r#"title="Keyboard shortcuts""#,
+                r#"class="action-dock-icon""#,
+                KEYS,
+            ] {
+                assert!(icon.contains(part), "{part} in {icon}");
+            }
+        }
+
+        #[test]
+        fn the_text_actions_read_the_same_with_an_icon_beside_them() {
+            let (_, with) = rendered(true);
+            let (_, without) = rendered(false);
+            let plain = text_actions(&without);
+            assert_eq!(text_actions(&with), plain);
+            assert!(
+                plain.contains("Got it") && plain.contains("See guide"),
+                "{plain}"
+            );
+        }
+
+        #[test]
+        fn an_icon_closes_the_dialog_then_runs() {
+            let (mut dom, _) = rendered(true);
+            let (host, open, clicks) = ICON_PROBE.with(Cell::get).unwrap();
+            dom.in_scope(ScopeId::APP, || {
+                let shown = host.slot.peek().clone().unwrap();
+                let Some(DialogAction::Icon { on_click, .. }) = shown.spec.actions.get(2).cloned()
+                else {
+                    panic!("the icon is the third action");
+                };
+                host.close_then(shown.owner, shown.close, on_click);
+            });
+            settle(&mut dom);
+            dom.in_runtime(|| {
+                assert_eq!(*clicks.peek(), 1);
+                assert!(!*open.peek());
+                assert!(host.slot.peek().as_ref().is_some_and(|s| s.leaving));
+            });
+        }
+
+        #[test]
+        fn enter_counts_no_icon_among_the_actions() {
+            assert!(
+                DIALOG_KEYS_JS.contains(".alert-dialog-actions > :not(.alert-dialog-icon)"),
+                "{DIALOG_KEYS_JS}"
+            );
+        }
     }
 }
