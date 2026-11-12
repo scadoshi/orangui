@@ -32,6 +32,8 @@
 
 use dioxus::prelude::*;
 
+use crate::OverlayLift;
+
 /// JS run on brand-click by convention: smooth-scroll to top and restart the
 /// `.logo` entrance animation. Exported so every surface's brand link shares
 /// one copy (`document::eval(BRAND_RESET_JS)`).
@@ -115,6 +117,10 @@ pub fn NavBar(
 ) -> Element {
     let mut open = open;
     use_context_provider(|| NavPanelOpen(open));
+    // A sheet inside the nav (the theme picker's) reports its layer here, and
+    // the nav, a stacking context of its own, rises to it while it shows.
+    let lifted = use_signal(|| None::<u32>);
+    use_context_provider(|| OverlayLift(lifted));
     use_future(move || async move {
         let mut away = document::eval(NAV_AWAY_JS);
         while away.recv::<bool>().await.is_ok() {
@@ -145,7 +151,9 @@ pub fn NavBar(
         if open() {
             div { class: "nav-backdrop", onclick: move |_| open.set(false) }
         }
-        div { class: "nav-wrapper",
+        div {
+            class: "nav-wrapper",
+            style: lifted().map(|z| format!("z-index: {z};")),
             nav {
                 {brand}
                 if let Some(p) = persistent {

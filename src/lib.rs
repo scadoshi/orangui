@@ -99,7 +99,7 @@ pub use alert_dialog::{
 };
 pub use banner::{Banner, BannerStatus};
 pub use boot::{BOOT_BG, BOOT_HEAD, BootReveal};
-pub use bottom_sheet::{BottomSheet, SheetFrame, SheetWide};
+pub use bottom_sheet::{BottomSheet, SheetDim, SheetFrame, SheetWide};
 pub use button::{Button, ButtonVariant};
 pub use chart_tip::ChartTip;
 pub use chip::Chip;
@@ -146,7 +146,8 @@ pub use orangui_core::theme::{
 pub use orangui_core::toast::{LONG as TOAST_LONG, NORMAL as TOAST_NORMAL, QUICK as TOAST_QUICK};
 pub use os_back::{fill_window, use_os_back};
 pub use overlay_stack::{
-    OverlayBackStack, use_overlay_back, use_overlay_back_action, use_overlay_back_stack,
+    OVERLAY_Z, OverlayBackStack, OverlayLift, overlay_z, use_overlay_back, use_overlay_back_action,
+    use_overlay_back_stack,
 };
 pub use page_header::PageHeader;
 pub use page_kill::{REPEAT_WINDOW, use_page_kill_recovery};

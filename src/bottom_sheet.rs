@@ -9,7 +9,7 @@
 use dioxus::prelude::*;
 use orangui_core::sheet_drag;
 
-use crate::overlay_stack::use_overlay_back_action;
+use crate::overlay_stack::{OverlayLift, use_overlay_back_action};
 use crate::{ActionBar, Button, ButtonVariant, entrance};
 
 /// One pointer pulling the sheet by its header.
@@ -64,7 +64,11 @@ fn now_ms() -> f64 {
 /// it through the slide.
 ///
 /// Registers with the [`OverlayBackStack`](crate::OverlayBackStack) when the
-/// host provides one above it, so the OS back gesture closes it.
+/// host provides one above it, so the OS back gesture closes it, and draws at
+/// its place there: a sheet opened later sits over one opened earlier. Inside
+/// an [`OverlayLift`]'s container it reports that z-index while it shows, so
+/// the container rises with it. `dim` says whether its backdrop dims the
+/// page ([`SheetDim`]).
 #[component]
 pub fn BottomSheet(
     mut open: Signal<bool>,
@@ -86,6 +90,9 @@ pub fn BottomSheet(
     /// replaces the default "Close" bar.
     #[props(default)]
     closable: bool,
+    /// Whether the backdrop dims what is under the sheet.
+    #[props(default)]
+    dim: SheetDim,
 ) -> Element {
     // The OS back gesture closes the sheet the way a backdrop tap does.
     let dismiss = use_callback(move |()| {
@@ -95,7 +102,7 @@ pub fn BottomSheet(
             None => open.set(false),
         }
     });
-    use_overlay_back_action(open.into(), dismiss);
+    let layer = use_overlay_back_action(open.into(), dismiss);
 
     // The first render carries `transition: none` through the premount class,
     // dropped once mounted. Without it iOS WebKit replays the transform
@@ -191,18 +198,49 @@ pub fn BottomSheet(
 
     // While a drag holds the sheet it follows the pointer with no easing;
     // dropping the style lets the class's transition slide it home or away.
+    // The sheet's layer holds through its slide away, so it leaves from where
+    // it was rather than under what it covered.
+    let mut held = use_signal(|| None::<u32>);
+    use_effect(move || {
+        if let Some(z) = layer() {
+            held.set(Some(z));
+        } else if held.peek().is_some() {
+            spawn(async move {
+                entrance::sleep_ms(SLIDE_MS).await;
+                if layer.peek().is_none() {
+                    held.set(None);
+                }
+            });
+        }
+    });
+    let lift = try_use_context::<OverlayLift>();
+    use_effect(move || {
+        if let Some(OverlayLift(mut lifted)) = lift {
+            lifted.set(held());
+        }
+    });
+    let layer_style = held().map(|z| format!("--overlay-z: {z};"));
     let drag_style =
         drag().map(|d| format!("transform: translateY({}px); transition: none;", d.offset));
+    let sheet_style = match (layer_style.clone(), drag_style) {
+        (Some(layer), Some(drag)) => Some(format!("{layer} {drag}")),
+        (layer, drag) => layer.or(drag),
+    };
+    let dim_class = match dim {
+        SheetDim::Always => "",
+        SheetDim::Phone => " sheet-dim-phone",
+    };
 
     rsx! {
         div {
             class: if hidden {
-                "sheet-backdrop snap"
+                "sheet-backdrop snap{dim_class}"
             } else if open() {
-                "sheet-backdrop show"
+                "sheet-backdrop show{dim_class}"
             } else {
-                "sheet-backdrop"
+                "sheet-backdrop{dim_class}"
             },
+            style: layer_style,
             onclick: move |_| dismiss.call(()),
             onpointermove: move_drag,
             onpointerup: move |evt| end_drag(evt, false),
@@ -220,7 +258,7 @@ pub fn BottomSheet(
             } else {
                 "bottom-sheet bottom-sheet-premount"
             },
-            style: drag_style,
+            style: sheet_style,
             onmounted: move |evt| sheet_el.set(Some(evt)),
             onpointermove: move_drag,
             onpointerup: move |evt| end_drag(evt, false),
@@ -263,6 +301,19 @@ pub fn BottomSheet(
             }
         }
     }
+}
+
+/// Whether a [`BottomSheet`]'s backdrop dims what is under it. Either way the
+/// backdrop takes a click outside the sheet, which dismisses it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum SheetDim {
+    /// Dims at every width: a sheet that asks for a decision.
+    #[default]
+    Always,
+    /// Dims only below the kit's modal width (60rem): a sheet that previews
+    /// its change live, such as the themes, leaves the page in full view on a
+    /// wide window.
+    Phone,
 }
 
 /// Where a [`BottomSheet`] sits on a wide window. Below the kit's bar

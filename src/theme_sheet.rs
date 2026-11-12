@@ -10,7 +10,7 @@
 
 use dioxus::prelude::*;
 
-use crate::{BottomSheet, THEME_GROUPS, ThemeConfig, display_theme_name};
+use crate::{BottomSheet, SheetDim, THEME_GROUPS, ThemeConfig, display_theme_name};
 
 /// The sheet's keys, installed once per page by [`ThemeSheet`]. The open
 /// sheet is the shown `.bottom-sheet` holding theme swatches. An arrow clicks
@@ -130,6 +130,7 @@ pub fn ThemeSheet(
         BottomSheet {
             open,
             title: "Themes".to_string(),
+            dim: SheetDim::Phone,
             hint,
             closable: true,
             on_dismiss: move |()| open.set(false),

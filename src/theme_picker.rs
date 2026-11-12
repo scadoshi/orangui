@@ -16,8 +16,8 @@
 use dioxus::prelude::*;
 
 use crate::{
-    BottomSheet, Button, ButtonVariant, NavPanelOpen, SheetFrame, SheetWide, THEME_GROUPS,
-    ThemeConfig, display_theme_name,
+    BottomSheet, Button, ButtonVariant, NavPanelOpen, SheetDim, SheetFrame, SheetWide,
+    THEME_GROUPS, ThemeConfig, display_theme_name,
 };
 
 /// The palette, the sign for the theme wherever it is named: a stroked
@@ -172,7 +172,7 @@ pub fn ThemePicker(
         }
         div { class: "theme-picker-sheet",
             SheetFrame { wide: SheetWide::Drawer,
-                BottomSheet { open, title: "Themes".to_string(), closable: true,
+                BottomSheet { open, title: "Themes".to_string(), closable: true, dim: SheetDim::Phone,
                     ThemeRows { theme, current, mode }
                 }
             }
