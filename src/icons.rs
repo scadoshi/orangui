@@ -10,6 +10,9 @@
 //! words. The palette has its own component, [`PaletteIcon`], and the sun
 //! and moon are [`ModeIcon`].
 //!
+//! Several are Feather's or Lucide's, as published or redrawn in this stroke: `LICENSE-FEATHER`
+//! (MIT) and `LICENSE-LUCIDE` (ISC) at the crate's root name each one and carry the notice.
+//!
 //! [`COMPONENTS_CSS`]: crate::COMPONENTS_CSS
 //! [`PaletteIcon`]: crate::PaletteIcon
 //! [`ModeIcon`]: crate::ModeIcon
