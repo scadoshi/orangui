@@ -91,6 +91,14 @@ impl OverlayBackStack {
         self.entries.read().iter().position(|(i, _)| *i == id)
     }
 
+    /// How many overlays are open. Reactive: a read subscribes to the stack,
+    /// so a host can follow overlays opening and closing, as a browser host
+    /// does to give each its own history entry.
+    #[must_use]
+    pub fn depth(&self) -> usize {
+        self.entries.read().len()
+    }
+
     /// Removes an overlay's entry, on close or unmount. No-op if absent.
     fn remove(&mut self, id: u64) {
         self.entries.write().retain(|(i, _)| *i != id);
@@ -236,6 +244,7 @@ mod tests {
         let p = probe();
         dom.in_runtime(|| {
             assert_eq!((z(p.a_z), z(p.b_z)), (None, None), "nothing open");
+            assert_eq!(p.stack.depth(), 0, "an empty stack");
             let mut a = p.a;
             a.set(true);
         });
@@ -251,6 +260,7 @@ mod tests {
                 (Some(OVERLAY_Z), Some(OVERLAY_Z + 2)),
                 "b over a"
             );
+            assert_eq!(p.stack.depth(), 2, "two open");
             let mut stack = p.stack;
             assert!(stack.close_top(), "back closes the top");
         });
