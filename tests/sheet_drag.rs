@@ -43,3 +43,42 @@ fn a_drawer_pulls_to_the_right_on_its_own_class() {
     );
     assert!(body.contains("transition: none !important;"), "{body}");
 }
+
+#[test]
+fn a_drawer_on_the_left_pulls_to_the_left_on_its_own_class() {
+    assert_eq!(orangui::Pull::Left.class(), " sheet-dragging-left");
+    let css = orangui::COMPONENTS_CSS;
+    let rule = ".bottom-sheet.sheet-dragging-left {";
+    let at = css.find(rule).unwrap_or_else(|| panic!("no rule {rule}"));
+    let body = css
+        .get(at..)
+        .and_then(|s| s.split('}').next())
+        .unwrap_or_default();
+    assert!(
+        body.contains("transform: translateX(calc(-1 * var(--sheet-drag, 0px))) !important;"),
+        "{body}"
+    );
+    assert!(body.contains("transition: none !important;"), "{body}");
+}
+
+#[test]
+fn a_wide_drawer_on_the_left_insets_and_slides_from_the_left() {
+    let css = orangui::COMPONENTS_CSS;
+    let rule = ".sheet-form-drawer > .bottom-sheet.drawer-left {";
+    let at = css.find(rule).unwrap_or_else(|| panic!("no rule {rule}"));
+    let body = css
+        .get(at..)
+        .and_then(|s| s.split('}').next())
+        .unwrap_or_default();
+    for want in [
+        "left: 1rem;",
+        "right: auto;",
+        "transform: translateX(calc(-100% - 1rem));",
+    ] {
+        assert!(body.contains(want), "{want} in {body}");
+    }
+    assert!(
+        css.contains(".sheet-form-drawer > .bottom-sheet.drawer-left.show {\n        transform: translateX(0);"),
+        "the shown left drawer rests in place"
+    );
+}

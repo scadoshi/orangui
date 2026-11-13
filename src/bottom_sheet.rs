@@ -66,7 +66,7 @@ pub struct SheetDrag {
 }
 
 /// Which way a sheet is pulled to close: a bottom sheet down, a drawer along the right edge to
-/// the right.
+/// the right, one along the left edge to the left.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum Pull {
     /// Down, by the pointer's y, against the sheet's height.
@@ -74,6 +74,8 @@ pub enum Pull {
     Down,
     /// To the right, by the pointer's x, against the sheet's width.
     Right,
+    /// To the left, by the pointer's x reversed, against the sheet's width.
+    Left,
 }
 
 impl Pull {
@@ -84,15 +86,17 @@ impl Pull {
         match self {
             Self::Down => " sheet-dragging",
             Self::Right => " sheet-dragging-right",
+            Self::Left => " sheet-dragging-left",
         }
     }
 
-    /// The pointer's coordinate along the pull.
+    /// The pointer's coordinate along the pull, growing the way the sheet closes.
     fn along(self, evt: &PointerEvent) -> f64 {
         let at = evt.client_coordinates();
         match self {
             Self::Down => at.y,
             Self::Right => at.x,
+            Self::Left => -at.x,
         }
     }
 }
@@ -128,7 +132,7 @@ pub fn use_sheet_drag_toward(
 
 impl SheetDrag {
     /// Starts a pull at the pointer, measuring the sheet along the pull (its height, or its
-    /// width for a pull to the right), while the sheet is open and no other pull holds it.
+    /// width for a pull to either side), while the sheet is open and no other pull holds it.
     pub fn start(mut self, evt: &PointerEvent) {
         if !(self.open)() || self.drag.peek().is_some() {
             return;
@@ -149,7 +153,7 @@ impl SheetDrag {
                 if let Ok(rect) = el.get_client_rect().await {
                     extent.set(match toward {
                         Pull::Down => rect.height(),
-                        Pull::Right => rect.width(),
+                        Pull::Right | Pull::Left => rect.width(),
                     });
                 }
             });
