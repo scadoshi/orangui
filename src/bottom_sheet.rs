@@ -591,15 +591,17 @@ pub fn sheet_pull(form: SheetWide, wide: bool) -> Option<Pull> {
     }
 }
 
-/// Installs, once a page, the pointer capture for pulls: a pointer that goes down on a pulling
+/// Installs, once a page, the pointer capture for pulls: a mouse that goes down on a pulling
 /// sheet's title bar or handle (not on a button, link or field in it) is captured to the sheet,
-/// so every move and the release reach the sheet's own handlers wherever the pointer goes: over
-/// something drawn above the sheet, or out of the window or frame. A touch is captured to what it
-/// touched already. Losing the capture ends the pull (`onlostpointercapture`).
+/// so every move and the release reach the sheet's own handlers wherever the mouse goes: over
+/// something drawn above the sheet, or out of the window or frame. A touch is left to the
+/// browser's own capture to what it touched; capturing it again, as a phone's keyboard hides,
+/// leaves the pull with no moves. Losing the capture ends the pull (`onlostpointercapture`).
 const CAPTURE_JS: &str = r"
 if (!window.__oranguiSheetCapture) {
     window.__oranguiSheetCapture = true;
     document.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse') return;
         const zone = e.target.closest && e.target.closest('.bottom-sheet.sheet-pulls > .sheet-header, .bottom-sheet.sheet-pulls > .sheet-handle');
         if (!zone || e.target.closest('button, a, input, select, textarea')) return;
         zone.parentElement.setPointerCapture(e.pointerId);
@@ -643,6 +645,14 @@ pub fn SheetFrame(#[props(default)] wide: SheetWide, children: Element) -> Eleme
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn only_a_mouse_is_captured_a_touch_keeps_the_browser_s_own_capture() {
+        assert!(
+            CAPTURE_JS.contains("if (e.pointerType !== 'mouse') return;"),
+            "re-capturing a touch while the keyboard hides leaves the pull without moves: {CAPTURE_JS}"
+        );
+    }
 
     #[test]
     fn a_pull_from_the_title_bar_or_handle_captures_the_pointer_to_the_sheet() {
