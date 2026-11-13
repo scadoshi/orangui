@@ -25,3 +25,9 @@ fn an_app_still_gets_the_dialog_from_app_css() {
     assert!(orangui::APP_CSS.contains(APP_SHEET));
     assert!(orangui::APP_CSS.contains(orangui::DIALOG_CSS));
 }
+
+#[test]
+fn a_danger_action_leading_the_row_stands_apart() {
+    let rule = ".alert-dialog-actions > .alert-dialog-action-danger:first-child {\n    margin-inline-end: 0.75rem;\n}";
+    assert!(orangui::DIALOG_CSS.contains(rule), "{rule}");
+}

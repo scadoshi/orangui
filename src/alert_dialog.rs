@@ -449,7 +449,8 @@ fn link_opens_tab(href: &str) -> bool {
 /// the dialog closes; a danger action or a [`DialogAction::Link`] among them
 /// leaves Enter doing nothing. Either way the page under the dialog never
 /// sees it, and a focused button or link inside the dialog keeps its own
-/// Enter. With no dialog open both keys pass through.
+/// Enter. Tab and Shift+Tab go round the dialog's own controls, never to the
+/// page under it. With no dialog open the keys pass through.
 const DIALOG_KEYS_JS: &str = r#"
 if (!window.__oranguiDialogKeys) {
     window.__oranguiDialogKeys = true;
@@ -459,6 +460,15 @@ if (!window.__oranguiDialogKeys) {
         if (e.key === 'Escape') {
             const overlay = document.querySelector('.alert-dialog-overlay[data-state="open"]');
             if (overlay) overlay.click();
+            return;
+        }
+        if (e.key === 'Tab') {
+            const items = [...dialog.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((el) => el.offsetParent !== null);
+            if (!items.length) return;
+            e.preventDefault();
+            const at = items.indexOf(document.activeElement);
+            const next = at < 0 ? (e.shiftKey ? items[items.length - 1] : items[0]) : items[(at + (e.shiftKey ? items.length - 1 : 1)) % items.length];
+            next.focus();
             return;
         }
         if (e.key !== 'Enter' || e.isComposing) return;
@@ -677,6 +687,19 @@ mod tests {
 
     use super::*;
     use crate::use_overlay_back_stack;
+
+    #[test]
+    fn tab_and_shift_tab_go_round_the_open_dialog() {
+        assert!(
+            DIALOG_KEYS_JS.contains("if (e.key === 'Tab') {"),
+            "{DIALOG_KEYS_JS}"
+        );
+        assert!(
+            DIALOG_KEYS_JS
+                .contains("items[(at + (e.shiftKey ? items.length - 1 : 1)) % items.length]"),
+            "wraps both ways, never leaving for the page under it: {DIALOG_KEYS_JS}"
+        );
+    }
 
     /// The owner's state, reached from the test between renders.
     #[derive(Clone, Copy)]
