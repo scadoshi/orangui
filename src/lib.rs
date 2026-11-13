@@ -171,7 +171,7 @@ pub use palette_guard::{StatusUse, status_uses};
 pub use panel::Panel;
 pub use password_input::PasswordInput;
 pub use release_card::{ReleaseCard, ReleaseTag};
-pub use sheet_focus::use_sheet_focus;
+pub use sheet_focus::{OpenFocus, use_sheet_entry, use_sheet_focus};
 pub use shortcuts_sheet::{
     GOT_IT, PageShortcuts, SHORTCUTS_TITLE, ShortcutGroup, ShortcutRow, ShortcutsSheet,
 };

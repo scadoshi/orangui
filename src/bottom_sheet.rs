@@ -12,6 +12,7 @@ use dioxus::prelude::*;
 use orangui_core::sheet_drag;
 
 use crate::overlay_stack::{OverlayLift, use_overlay_back_action};
+use crate::sheet_focus::{OpenFocus, use_sheet_entry};
 use crate::{ActionBar, Button, ButtonVariant, entrance};
 
 /// One pointer pulling the sheet by its header.
@@ -329,6 +330,10 @@ impl SheetDrag {
 /// an [`OverlayLift`]'s container it reports that z-index while it shows, so
 /// the container rises with it. `dim` says whether its backdrop dims the
 /// page ([`SheetDim`]).
+///
+/// As it opens its × or, with none, the sheet itself takes focus, and focus goes back as it
+/// closes ([`use_sheet_entry`](crate::use_sheet_entry)); while focus is in it, Tab stays inside
+/// and Esc closes it.
 #[component]
 pub fn BottomSheet(
     mut open: Signal<bool>,
@@ -353,7 +358,12 @@ pub fn BottomSheet(
     /// Whether the backdrop dims what is under the sheet.
     #[props(default)]
     dim: SheetDim,
+    /// What takes focus as it opens: its × or, with none, the sheet itself, unless
+    /// [`OpenFocus::Kept`].
+    #[props(default)]
+    focus: OpenFocus,
 ) -> Element {
+    use_sheet_entry(open.into(), &title, focus);
     // The OS back gesture closes the sheet the way a backdrop tap does.
     let dismiss = use_callback(move |()| {
         let mut open = open;
@@ -471,6 +481,7 @@ pub fn BottomSheet(
                 "bottom-sheet bottom-sheet-premount"
             },
             style: sheet_style,
+            tabindex: "-1",
             role: "dialog",
             "aria-label": "{title}",
             "aria-modal": modal,
