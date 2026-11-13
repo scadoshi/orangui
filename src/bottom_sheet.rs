@@ -292,6 +292,8 @@ pub fn BottomSheet(
         SheetDim::Always => "",
         SheetDim::Phone => " sheet-dim-phone",
     };
+    // A sheet that dims the page is modal; one that previews its change leaves the page in use.
+    let modal = (dim == SheetDim::Always).then_some("true");
 
     rsx! {
         div {
@@ -321,6 +323,9 @@ pub fn BottomSheet(
                 "bottom-sheet bottom-sheet-premount"
             },
             style: sheet_style,
+            role: "dialog",
+            "aria-label": "{title}",
+            "aria-modal": modal,
             onmounted: move |evt| drag.mounted(evt),
             onpointermove: move |evt| drag.follow(&evt),
             onpointerup: move |evt| drag.release(&evt),

@@ -11,8 +11,8 @@ use dioxus::dioxus_core::NoOpMutations;
 use dioxus::prelude::*;
 use orangui::{
     ActionButton, AlertDialog, BannerStatus, BottomSheet, CollapseAll, CollapseBody, CollapseCaret,
-    CollapseHeader, DialogAction, DialogHostView, Panel, ReleaseCard, ReleaseTag, ThemeConfig,
-    ThemeSheet, use_dialog_host, use_overlay_back_stack, use_theme_follow,
+    CollapseHeader, DialogAction, DialogHostView, Panel, ReleaseCard, ReleaseTag, SheetDim,
+    ThemeConfig, ThemeSheet, use_dialog_host, use_overlay_back_stack, use_theme_follow,
 };
 
 /// Compares `html` with the saved copy `name`, or saves it under `BLESS_HTML`.
@@ -328,4 +328,36 @@ fn a_closable_sheet_trades_the_close_bar_for_a_corner_button() {
     let html = render(plain);
     assert!(!html.contains("sheet-close"), "{html}");
     assert!(html.contains("action-bar"), "{html}");
+}
+
+#[test]
+fn a_sheet_is_a_dialog_named_by_its_title_and_modal_while_it_dims_the_page() {
+    fn dims() -> Element {
+        let open = use_signal(|| true);
+        rsx! {
+            BottomSheet { open, title: "Change username".to_string(), closable: true, "rows" }
+        }
+    }
+    fn previews() -> Element {
+        let open = use_signal(|| true);
+        rsx! {
+            BottomSheet {
+                open,
+                title: "Themes".to_string(),
+                closable: true,
+                dim: SheetDim::Phone,
+                "rows"
+            }
+        }
+    }
+    let html = render(dims);
+    assert!(html.contains("role=\"dialog\""), "{html}");
+    assert!(html.contains("aria-label=\"Change username\""), "{html}");
+    assert!(html.contains("aria-modal=\"true\""), "{html}");
+    let html = render(previews);
+    assert!(html.contains("role=\"dialog\""), "{html}");
+    assert!(
+        !html.contains("aria-modal"),
+        "a sheet beside a page in view: {html}"
+    );
 }
