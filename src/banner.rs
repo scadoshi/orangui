@@ -62,7 +62,8 @@ impl BannerState {
 /// The message and its call-to-action link go in `children`. A header row with
 /// an eyebrow label and a colored pill appears only when `category` or `status`
 /// is given; `status_label` overrides the pill's text. The `.banner-progress` bar auto-dismisses after
-/// `auto_dismiss_secs` (pauses on hover); the `✕` button dismisses immediately.
+/// `auto_dismiss_secs` (pauses on hover); the `✕` button, named Dismiss for a screen reader,
+/// dismisses immediately.
 /// Wrap one or more in a `div.banner-stack`.
 #[component]
 pub fn Banner(
@@ -105,8 +106,9 @@ pub fn Banner(
             button {
                 r#type: "button",
                 class: "banner-dismiss",
+                "aria-label": "Dismiss",
                 onclick: move |_| state.set(BannerState::Leaving),
-                "\u{2715}"
+                span { "aria-hidden": "true", "\u{2715}" }
             }
             div {
                 class: "banner-progress",
