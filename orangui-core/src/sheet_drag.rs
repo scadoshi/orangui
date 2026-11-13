@@ -50,9 +50,77 @@ pub fn closes(offset: f64, height: f64, velocity: f64) -> bool {
     velocity >= FLICK_PX_PER_MS || (height > 0.0 && offset >= height * CLOSE_FRACTION)
 }
 
+/// How far, in pixels, a pointer on a sheet pulled sideways moves before its way is read: about
+/// a touch's slop, under which a browser has not yet started a scroll either.
+pub const ARM_SLOP_PX: f64 = 8.0;
+
+/// What a pointer that went down on a sheet pulled sideways is doing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Intent {
+    /// Pulling the sheet: its move runs more along the pull than across it.
+    Pull,
+    /// Scrolling the sheet's content, or moving against the pull: the sheet stays put.
+    Scroll,
+}
+
+/// The [`Intent`] of a pointer that has moved `along` pixels the way the sheet closes and
+/// `across` pixels the other axis since it went down, or `None` while both stay under
+/// [`ARM_SLOP_PX`].
+#[must_use]
+pub fn intent(along: f64, across: f64) -> Option<Intent> {
+    if along.abs() < ARM_SLOP_PX && across.abs() < ARM_SLOP_PX {
+        return None;
+    }
+    Some(if along > across.abs() {
+        Intent::Pull
+    } else {
+        Intent::Scroll
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn an_armed_pull_waits_for_a_move_past_the_slop_then_reads_its_way() {
+        assert_eq!(intent(3.0, 2.0), None, "inside the slop");
+        assert_eq!(
+            intent(-ARM_SLOP_PX + 1.0, ARM_SLOP_PX - 1.0),
+            None,
+            "still inside"
+        );
+        assert_eq!(
+            intent(ARM_SLOP_PX, 2.0),
+            Some(Intent::Pull),
+            "along the pull"
+        );
+        assert_eq!(
+            intent(12.0, 11.0),
+            Some(Intent::Pull),
+            "more along than across"
+        );
+        assert_eq!(
+            intent(2.0, ARM_SLOP_PX),
+            Some(Intent::Scroll),
+            "across: a scroll"
+        );
+        assert_eq!(
+            intent(11.0, 12.0),
+            Some(Intent::Scroll),
+            "more across than along"
+        );
+        assert_eq!(
+            intent(-ARM_SLOP_PX, 0.0),
+            Some(Intent::Scroll),
+            "against the pull"
+        );
+        assert_eq!(
+            intent(0.0, -20.0),
+            Some(Intent::Scroll),
+            "across, the other way"
+        );
+    }
 
     #[test]
     fn a_drag_up_holds_the_sheet_in_place() {

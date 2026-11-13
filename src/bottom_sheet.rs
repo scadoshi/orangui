@@ -25,6 +25,15 @@ struct Drag {
     velocity: f64,
 }
 
+/// A pointer down on a sheet pulled from anywhere on it, whose way is not read yet: where it went
+/// down, along the pull and across it.
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct Arm {
+    pointer: i32,
+    along: f64,
+    across: f64,
+}
+
 /// How long the sheet takes to slide away, matching the `.bottom-sheet`
 /// transform transition in components.css.
 const SLIDE_MS: u32 = 300;
@@ -49,7 +58,8 @@ fn now_ms() -> f64 {
 }
 
 /// A sheet's pull by its header, shared by [`BottomSheet`] and any other sheet that slides up
-/// from the bottom: [`start`](Self::start) on the header's pointer down,
+/// from the bottom: [`start`](Self::start) on the header's pointer down (or
+/// [`arm`](Self::arm) on the pointer down anywhere on a sheet pulled sideways),
 /// [`follow`](Self::follow), [`release`](Self::release) and [`cancel`](Self::cancel) on the
 /// sheet's and its backdrop's pointer move, up and cancel, [`mounted`](Self::mounted) on the
 /// sheet's mount, and [`style`](Self::style) and [`class`](Self::class) on the sheet. Letting
@@ -61,6 +71,7 @@ pub struct SheetDrag {
     dismiss: Callback<()>,
     toward: Pull,
     drag: Signal<Option<Drag>>,
+    armed: Signal<Option<Arm>>,
     sheet: Signal<Option<MountedEvent>>,
     extent: Signal<f64>,
 }
@@ -87,6 +98,15 @@ impl Pull {
             Self::Down => " sheet-dragging",
             Self::Right => " sheet-dragging-right",
             Self::Left => " sheet-dragging-left",
+        }
+    }
+
+    /// The pointer's coordinate across the pull.
+    fn across(self, evt: &PointerEvent) -> f64 {
+        let at = evt.client_coordinates();
+        match self {
+            Self::Down => at.x,
+            Self::Right | Self::Left => at.y,
         }
     }
 
@@ -125,6 +145,7 @@ pub fn use_sheet_drag_toward(
         dismiss,
         toward,
         drag: use_signal(|| None),
+        armed: use_signal(|| None),
         sheet: use_signal(|| None),
         extent: use_signal(|| 0.0),
     }
@@ -133,13 +154,33 @@ pub fn use_sheet_drag_toward(
 impl SheetDrag {
     /// Starts a pull at the pointer, measuring the sheet along the pull (its height, or its
     /// width for a pull to either side), while the sheet is open and no other pull holds it.
-    pub fn start(mut self, evt: &PointerEvent) {
+    pub fn start(self, evt: &PointerEvent) {
         if !(self.open)() || self.drag.peek().is_some() {
             return;
         }
-        let at = self.toward.along(evt);
-        self.drag.set(Some(Drag {
+        self.begin(evt.pointer_id(), self.toward.along(evt));
+    }
+
+    /// Readies a pull at the pointer for a sheet pulled from anywhere on it, whose content
+    /// scrolls the other way: the pull starts once the pointer moves past
+    /// [`sheet_drag::ARM_SLOP_PX`] more along the pull than across it
+    /// ([`sheet_drag::intent`]), and a move across it leaves the sheet to scroll. Nothing on the
+    /// sheet changes until the pull starts, so a scroll the browser takes over runs undisturbed.
+    pub fn arm(mut self, evt: &PointerEvent) {
+        if !*self.open.peek() || self.drag.peek().is_some() {
+            return;
+        }
+        self.armed.set(Some(Arm {
             pointer: evt.pointer_id(),
+            along: self.toward.along(evt),
+            across: self.toward.across(evt),
+        }));
+    }
+
+    /// Holds the pull of `pointer` from `at` along it and measures the sheet.
+    fn begin(mut self, pointer: i32, at: f64) {
+        self.drag.set(Some(Drag {
+            pointer,
             start: at,
             offset: 0.0,
             last: at,
@@ -160,8 +201,34 @@ impl SheetDrag {
         }
     }
 
+    /// Reads an armed pointer's way ([`arm`](Self::arm)) as it moves: past the slop along the
+    /// pull it starts the pull from where it went down, across it the arm drops.
+    fn read_arm(mut self, evt: &PointerEvent) {
+        let Some(arm) = *self.armed.peek() else {
+            return;
+        };
+        if arm.pointer != evt.pointer_id() {
+            return;
+        }
+        let along = self.toward.along(evt) - arm.along;
+        let across = self.toward.across(evt) - arm.across;
+        match sheet_drag::intent(along, across) {
+            None => {}
+            Some(sheet_drag::Intent::Scroll) => self.armed.set(None),
+            Some(sheet_drag::Intent::Pull) => {
+                self.armed.set(None);
+                if *self.open.peek() && self.drag.peek().is_none() {
+                    self.begin(arm.pointer, arm.along);
+                }
+            }
+        }
+    }
+
     /// Moves the sheet with the pointer holding the pull.
     pub fn follow(mut self, evt: &PointerEvent) {
+        if self.armed.peek().is_some() {
+            self.read_arm(evt);
+        }
         let Some(mut d) = *self.drag.peek() else {
             return;
         };
@@ -225,8 +292,11 @@ impl SheetDrag {
         format!("--sheet-drag: {offset}px;")
     }
 
-    /// Drops the pull the pointer of `evt` holds, handing it back.
+    /// Drops the pull the pointer of `evt` holds, handing it back, and any arm.
     fn end(mut self, evt: &PointerEvent) -> Option<Drag> {
+        if self.armed.peek().is_some() {
+            self.armed.set(None);
+        }
         let d = (*self.drag.peek())?;
         if d.pointer != evt.pointer_id() {
             return None;
