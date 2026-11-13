@@ -18,9 +18,9 @@ use crate::{ActionBar, Button, ButtonVariant, entrance};
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct Drag {
     pointer: i32,
-    start_y: f64,
+    start: f64,
     offset: f64,
-    last_y: f64,
+    last: f64,
     last_ms: f64,
     velocity: f64,
 }
@@ -59,9 +59,42 @@ fn now_ms() -> f64 {
 pub struct SheetDrag {
     open: ReadSignal<bool>,
     dismiss: Callback<()>,
+    toward: Pull,
     drag: Signal<Option<Drag>>,
     sheet: Signal<Option<MountedEvent>>,
-    height: Signal<f64>,
+    extent: Signal<f64>,
+}
+
+/// Which way a sheet is pulled to close: a bottom sheet down, a drawer along the right edge to
+/// the right.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum Pull {
+    /// Down, by the pointer's y, against the sheet's height.
+    #[default]
+    Down,
+    /// To the right, by the pointer's x, against the sheet's width.
+    Right,
+}
+
+impl Pull {
+    /// The class a sheet carries while pulled this way, with its leading space: it moves the
+    /// sheet by `--sheet-drag` with no easing.
+    #[must_use]
+    pub const fn class(self) -> &'static str {
+        match self {
+            Self::Down => " sheet-dragging",
+            Self::Right => " sheet-dragging-right",
+        }
+    }
+
+    /// The pointer's coordinate along the pull.
+    fn along(self, evt: &PointerEvent) -> f64 {
+        let at = evt.client_coordinates();
+        match self {
+            Self::Down => at.y,
+            Self::Right => at.x,
+        }
+    }
 }
 
 impl fmt::Debug for SheetDrag {
@@ -73,36 +106,51 @@ impl fmt::Debug for SheetDrag {
 /// The pull of a sheet shown while `open`, which calls `dismiss` when let go far or fast enough.
 #[must_use]
 pub fn use_sheet_drag(open: ReadSignal<bool>, dismiss: Callback<()>) -> SheetDrag {
+    use_sheet_drag_toward(open, dismiss, Pull::Down)
+}
+
+/// [`use_sheet_drag`] pulled `toward` a way of its own, such as a drawer to the right.
+#[must_use]
+pub fn use_sheet_drag_toward(
+    open: ReadSignal<bool>,
+    dismiss: Callback<()>,
+    toward: Pull,
+) -> SheetDrag {
     SheetDrag {
         open,
         dismiss,
+        toward,
         drag: use_signal(|| None),
         sheet: use_signal(|| None),
-        height: use_signal(|| 0.0),
+        extent: use_signal(|| 0.0),
     }
 }
 
 impl SheetDrag {
-    /// Starts a pull at the pointer, measuring the sheet's height, while the sheet is open and
-    /// no other pull holds it.
+    /// Starts a pull at the pointer, measuring the sheet along the pull (its height, or its
+    /// width for a pull to the right), while the sheet is open and no other pull holds it.
     pub fn start(mut self, evt: &PointerEvent) {
         if !(self.open)() || self.drag.peek().is_some() {
             return;
         }
-        let y = evt.client_coordinates().y;
+        let at = self.toward.along(evt);
         self.drag.set(Some(Drag {
             pointer: evt.pointer_id(),
-            start_y: y,
+            start: at,
             offset: 0.0,
-            last_y: y,
+            last: at,
             last_ms: now_ms(),
             velocity: 0.0,
         }));
         if let Some(el) = self.sheet.peek().clone() {
-            let mut height = self.height;
+            let mut extent = self.extent;
+            let toward = self.toward;
             spawn(async move {
                 if let Ok(rect) = el.get_client_rect().await {
-                    height.set(rect.height());
+                    extent.set(match toward {
+                        Pull::Down => rect.height(),
+                        Pull::Right => rect.width(),
+                    });
                 }
             });
         }
@@ -116,11 +164,11 @@ impl SheetDrag {
         if d.pointer != evt.pointer_id() {
             return;
         }
-        let y = evt.client_coordinates().y;
+        let at = self.toward.along(evt);
         let now = now_ms();
-        d.velocity = sheet_drag::velocity(y - d.last_y, now - d.last_ms);
-        d.offset = sheet_drag::offset(d.start_y, y);
-        d.last_y = y;
+        d.velocity = sheet_drag::velocity(at - d.last, now - d.last_ms);
+        d.offset = sheet_drag::offset(d.start, at);
+        d.last = at;
         d.last_ms = now;
         self.drag.set(Some(d));
     }
@@ -130,7 +178,7 @@ impl SheetDrag {
     pub fn release(self, evt: &PointerEvent) {
         if let Some(d) = self.end(evt) {
             let velocity = sheet_drag::release_velocity(d.velocity, now_ms() - d.last_ms);
-            if sheet_drag::closes(d.offset, *self.height.peek(), velocity) {
+            if sheet_drag::closes(d.offset, *self.extent.peek(), velocity) {
                 self.dismiss.call(());
             }
         }
@@ -153,19 +201,19 @@ impl SheetDrag {
         (self.drag)().map(|d| Self::style_for(d.offset))
     }
 
-    /// The class the sheet carries while a pull holds it, with its leading space:
-    /// `sheet-dragging` follows the pointer with no easing, and its going lets the sheet's
+    /// The class the sheet carries while a pull holds it, with its leading space
+    /// ([`Pull::class`]): it follows the pointer with no easing, and its going lets the sheet's
     /// transition slide it home or away. Empty otherwise.
     #[must_use]
     pub fn class(self) -> &'static str {
         if (self.drag)().is_some() {
-            " sheet-dragging"
+            self.toward.class()
         } else {
             ""
         }
     }
 
-    /// The inline style of a pull `offset` pixels down. Only the distance goes inline: Dioxus
+    /// The inline style of a pull `offset` pixels along its way. Only the distance goes inline: Dioxus
     /// keeps an inline property that a new `style` value leaves out, so an inline transform
     /// would outlast the pull on a sheet whose style carries its layer.
     #[must_use]

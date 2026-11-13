@@ -25,3 +25,21 @@ fn the_dragging_class_moves_the_sheet_by_the_distance_with_no_easing() {
     );
     assert!(body.contains("transition: none !important;"), "{body}");
 }
+
+#[test]
+fn a_drawer_pulls_to_the_right_on_its_own_class() {
+    assert_eq!(orangui::Pull::Down.class(), " sheet-dragging");
+    assert_eq!(orangui::Pull::Right.class(), " sheet-dragging-right");
+    let css = orangui::COMPONENTS_CSS;
+    let rule = ".bottom-sheet.sheet-dragging-right {";
+    let at = css.find(rule).unwrap_or_else(|| panic!("no rule {rule}"));
+    let body = css
+        .get(at..)
+        .and_then(|s| s.split('}').next())
+        .unwrap_or_default();
+    assert!(
+        body.contains("transform: translateX(var(--sheet-drag, 0px)) !important;"),
+        "{body}"
+    );
+    assert!(body.contains("transition: none !important;"), "{body}");
+}
