@@ -52,8 +52,8 @@ fn now_ms() -> f64 {
 /// from the bottom: [`start`](Self::start) on the header's pointer down,
 /// [`follow`](Self::follow), [`release`](Self::release) and [`cancel`](Self::cancel) on the
 /// sheet's and its backdrop's pointer move, up and cancel, [`mounted`](Self::mounted) on the
-/// sheet's mount, and [`style`](Self::style) on the sheet. Letting go past a quarter of the
-/// sheet's height, or with a downward flick, calls the sheet's dismiss
+/// sheet's mount, and [`style`](Self::style) and [`class`](Self::class) on the sheet. Letting
+/// go past a quarter of the sheet's height, or with a downward flick, calls the sheet's dismiss
 /// (`orangui_core::sheet_drag` holds the thresholds); anything less springs it back.
 #[derive(Clone, Copy, PartialEq)]
 pub struct SheetDrag {
@@ -146,11 +146,31 @@ impl SheetDrag {
         self.sheet.set(Some(evt));
     }
 
-    /// The sheet's style while a pull holds it: it follows the pointer with no easing. `None`
-    /// otherwise, so the sheet's transition slides it home or away.
+    /// The sheet's style while a pull holds it: the pull's distance as `--sheet-drag`, which
+    /// [`class`](Self::class) moves the sheet by. `None` otherwise.
     #[must_use]
     pub fn style(self) -> Option<String> {
-        (self.drag)().map(|d| format!("transform: translateY({}px); transition: none;", d.offset))
+        (self.drag)().map(|d| Self::style_for(d.offset))
+    }
+
+    /// The class the sheet carries while a pull holds it, with its leading space:
+    /// `sheet-dragging` follows the pointer with no easing, and its going lets the sheet's
+    /// transition slide it home or away. Empty otherwise.
+    #[must_use]
+    pub fn class(self) -> &'static str {
+        if (self.drag)().is_some() {
+            " sheet-dragging"
+        } else {
+            ""
+        }
+    }
+
+    /// The inline style of a pull `offset` pixels down. Only the distance goes inline: Dioxus
+    /// keeps an inline property that a new `style` value leaves out, so an inline transform
+    /// would outlast the pull on a sheet whose style carries its layer.
+    #[must_use]
+    pub fn style_for(offset: f64) -> String {
+        format!("--sheet-drag: {offset}px;")
     }
 
     /// Drops the pull the pointer of `evt` holds, handing it back.
@@ -284,6 +304,7 @@ pub fn BottomSheet(
     });
     let layer_style = held().map(|z| format!("--overlay-z: {z};"));
     let drag_style = drag.style();
+    let pulled = drag.class();
     let sheet_style = match (layer_style.clone(), drag_style) {
         (Some(layer), Some(drag)) => Some(format!("{layer} {drag}")),
         (layer, drag) => layer.or(drag),
@@ -314,7 +335,7 @@ pub fn BottomSheet(
             class: if hidden {
                 "bottom-sheet snap"
             } else if open() {
-                "bottom-sheet show"
+                "bottom-sheet show{pulled}"
             } else if leaving() > 0 {
                 "bottom-sheet bottom-sheet-leaving"
             } else if mounted() {
