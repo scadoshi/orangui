@@ -478,6 +478,7 @@ pub fn BottomSheet(
             onpointermove: move |evt| drag.follow(&evt),
             onpointerup: move |evt| drag.release(&evt),
             onpointercancel: move |evt| drag.cancel(&evt),
+            onlostpointercapture: move |evt| drag.cancel(&evt),
             if let Some(toward) = pull {
                 SheetHandle { toward, drag }
             }
@@ -590,11 +591,30 @@ pub fn sheet_pull(form: SheetWide, wide: bool) -> Option<Pull> {
     }
 }
 
+/// Installs, once a page, the pointer capture for pulls: a pointer that goes down on a pulling
+/// sheet's title bar or handle (not on a button, link or field in it) is captured to the sheet,
+/// so every move and the release reach the sheet's own handlers wherever the pointer goes: over
+/// something drawn above the sheet, or out of the window or frame. A touch is captured to what it
+/// touched already. Losing the capture ends the pull (`onlostpointercapture`).
+const CAPTURE_JS: &str = r"
+if (!window.__oranguiSheetCapture) {
+    window.__oranguiSheetCapture = true;
+    document.addEventListener('pointerdown', (e) => {
+        const zone = e.target.closest && e.target.closest('.bottom-sheet.sheet-pulls > .sheet-header, .bottom-sheet.sheet-pulls > .sheet-handle');
+        if (!zone || e.target.closest('button, a, input, select, textarea')) return;
+        zone.parentElement.setPointerCapture(e.pointerId);
+    }, true);
+}
+";
+
 /// The handle a sheet that pulls shows where to drag it: a short bar at the top of a bottom
 /// sheet, a short upright bar on the inner edge of a drawer. Decorative to a screen reader; a
 /// pull starts from it as from the title bar, with a mouse as well as a touch.
 #[component]
 pub fn SheetHandle(toward: Pull, drag: SheetDrag) -> Element {
+    use_hook(|| {
+        document::eval(CAPTURE_JS);
+    });
     let side = match toward {
         Pull::Down => "sheet-handle-down",
         Pull::Right => "sheet-handle-right",
@@ -623,6 +643,31 @@ pub fn SheetFrame(#[props(default)] wide: SheetWide, children: Element) -> Eleme
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_pull_from_the_title_bar_or_handle_captures_the_pointer_to_the_sheet() {
+        assert!(
+            CAPTURE_JS.contains("e.target.closest('.bottom-sheet.sheet-pulls > .sheet-header, .bottom-sheet.sheet-pulls > .sheet-handle')"),
+            "{CAPTURE_JS}"
+        );
+        assert!(
+            CAPTURE_JS.contains("e.target.closest('button, a, input, select, textarea')) return;"),
+            "a control in the title bar keeps its click: {CAPTURE_JS}"
+        );
+        assert!(
+            CAPTURE_JS.contains("zone.parentElement.setPointerCapture(e.pointerId)"),
+            "{CAPTURE_JS}"
+        );
+    }
+
+    #[test]
+    fn an_open_sheet_never_hands_a_pull_to_the_browser_s_refresh() {
+        let css = crate::COMPONENTS_CSS;
+        assert!(
+            css.contains("html:has(.bottom-sheet.show),\nhtml:has(.bottom-sheet.show) body,\n.bottom-sheet .sheet-content {\n    overscroll-behavior-y: contain;\n}"),
+            "a pull down on an open sheet at the top of its content reloads nothing"
+        );
+    }
 
     #[test]
     fn a_sheet_pulls_down_on_a_phone_and_by_its_form_on_a_wide_window() {
