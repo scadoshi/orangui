@@ -401,7 +401,12 @@ pub fn BottomSheet(
         });
     }));
 
-    let drag = use_sheet_drag(open.into(), dismiss);
+    // The way it pulls: down below the kit's wide window, else by the form its frame gives it.
+    let form = try_use_context::<SheetForm>().map_or(SheetWide::Sheet, |SheetForm(form)| form);
+    let wide = crate::page_keys::use_media(KIT_WIDE_QUERY);
+    let pull = sheet_pull(form, wide());
+    let drag = use_sheet_drag_toward(open.into(), dismiss, pull.unwrap_or_default());
+    let pulls = if pull.is_some() { " sheet-pulls" } else { "" };
 
     // The sheet's layer holds through its slide away, so it leaves from where
     // it was rather than under what it covered.
@@ -457,7 +462,7 @@ pub fn BottomSheet(
             class: if hidden {
                 "bottom-sheet snap"
             } else if open() {
-                "bottom-sheet show{pulled}"
+                "bottom-sheet show{pulls}{pulled}"
             } else if leaving() > 0 {
                 "bottom-sheet bottom-sheet-leaving"
             } else if mounted() {
@@ -473,7 +478,16 @@ pub fn BottomSheet(
             onpointermove: move |evt| drag.follow(&evt),
             onpointerup: move |evt| drag.release(&evt),
             onpointercancel: move |evt| drag.cancel(&evt),
-            div { class: "sheet-header", onpointerdown: move |evt| drag.start(&evt),
+            if let Some(toward) = pull {
+                SheetHandle { toward, drag }
+            }
+            div {
+                class: "sheet-header",
+                onpointerdown: move |evt| {
+                    if pull.is_some() {
+                        drag.start(&evt);
+                    }
+                },
                 if closable {
                     button {
                         r#type: "button",
@@ -553,12 +567,98 @@ impl SheetWide {
     }
 }
 
+/// The form a [`SheetFrame`] gives the sheet inside it on a wide window, which decides the way
+/// the sheet pulls there ([`sheet_pull`]).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SheetForm(pub SheetWide);
+
+/// The query for the kit's wide window, where a framed sheet takes its wide form.
+pub const KIT_WIDE_QUERY: &str = "(min-width: 60rem)";
+
+/// The way a sheet in `form` pulls to close, `wide` the kit's wide window ([`KIT_WIDE_QUERY`]):
+/// below it every sheet is a bottom sheet pulled down; on it a bottom sheet still pulls down, a
+/// drawer toward its edge (the right), and a centered modal doesn't pull.
+#[must_use]
+pub fn sheet_pull(form: SheetWide, wide: bool) -> Option<Pull> {
+    if !wide {
+        return Some(Pull::Down);
+    }
+    match form {
+        SheetWide::Sheet => Some(Pull::Down),
+        SheetWide::Drawer => Some(Pull::Right),
+        SheetWide::Modal => None,
+    }
+}
+
+/// The handle a sheet that pulls shows where to drag it: a short bar at the top of a bottom
+/// sheet, a short upright bar on the inner edge of a drawer. Decorative to a screen reader; a
+/// pull starts from it as from the title bar, with a mouse as well as a touch.
+#[component]
+pub fn SheetHandle(toward: Pull, drag: SheetDrag) -> Element {
+    let side = match toward {
+        Pull::Down => "sheet-handle-down",
+        Pull::Right => "sheet-handle-right",
+        Pull::Left => "sheet-handle-left",
+    };
+    rsx! {
+        div {
+            class: "sheet-handle {side}",
+            "aria-hidden": "true",
+            onpointerdown: move |evt| drag.start(&evt),
+        }
+    }
+}
+
 /// Wraps one [`BottomSheet`] (or a component that renders one) so a wide
 /// window draws it as `wide`. The frame has no box of its own; the sheet and
 /// its backdrop stay fixed to the window.
 #[component]
 pub fn SheetFrame(#[props(default)] wide: SheetWide, children: Element) -> Element {
+    use_context_provider(|| SheetForm(wide));
     rsx! {
         div { class: wide.class(), {children} }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_sheet_pulls_down_on_a_phone_and_by_its_form_on_a_wide_window() {
+        for form in [SheetWide::Sheet, SheetWide::Modal, SheetWide::Drawer] {
+            assert_eq!(
+                sheet_pull(form, false),
+                Some(Pull::Down),
+                "{form:?} below the wide window"
+            );
+        }
+        assert_eq!(sheet_pull(SheetWide::Sheet, true), Some(Pull::Down));
+        assert_eq!(
+            sheet_pull(SheetWide::Drawer, true),
+            Some(Pull::Right),
+            "a drawer toward its edge"
+        );
+        assert_eq!(
+            sheet_pull(SheetWide::Modal, true),
+            None,
+            "a centered modal holds still"
+        );
+    }
+
+    #[test]
+    fn the_pull_beats_a_framed_sheet_s_resting_place_and_shows_a_grab() {
+        let css = crate::COMPONENTS_CSS;
+        for rule in [
+            ".sheet-form > .bottom-sheet.show.sheet-dragging {",
+            ".sheet-form > .bottom-sheet.show.sheet-dragging-right {",
+            ".sheet-form > .bottom-sheet.show.sheet-dragging-left {",
+            ".sheet-handle-down {",
+            ".sheet-handle-right {",
+            ".sheet-handle-left {",
+        ] {
+            assert!(css.contains(rule), "{rule}");
+        }
+        assert!(css.contains("cursor: grab;") && css.contains("cursor: grabbing;"));
     }
 }

@@ -243,7 +243,7 @@ pub fn use_pointer() -> Signal<bool> {
 
 /// True while the window matches `query`, kept current as it changes. Off the browser it stays
 /// false.
-fn use_media(query: &'static str) -> Signal<bool> {
+pub(crate) fn use_media(query: &'static str) -> Signal<bool> {
     let mut matches = use_signal(|| false);
     let id = use_hook(|| NEXT_ID.fetch_add(1, Ordering::Relaxed));
     use_hook(move || {

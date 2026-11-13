@@ -104,8 +104,8 @@ pub use alert_dialog::{
 pub use banner::{Banner, BannerStatus};
 pub use boot::{BOOT_BG, BOOT_HEAD, BootReveal};
 pub use bottom_sheet::{
-    BottomSheet, Pull, SheetDim, SheetDrag, SheetFrame, SheetWide, use_sheet_drag,
-    use_sheet_drag_toward,
+    BottomSheet, KIT_WIDE_QUERY, Pull, SheetDim, SheetDrag, SheetForm, SheetFrame, SheetHandle,
+    SheetWide, sheet_pull, use_sheet_drag, use_sheet_drag_toward,
 };
 pub use button::{Button, ButtonVariant};
 pub use chart_tip::ChartTip;
