@@ -145,7 +145,9 @@ pub use orangui_core::chart_math::{area, curve, peak_indices, tip_anchor};
 #[doc(inline)]
 pub use orangui_core::number::with_separators;
 #[doc(inline)]
-pub use orangui_core::page_keys::{KeyRow, PageKey, page_rows};
+pub use orangui_core::page_keys::{
+    CARD, IN_THEMES, KeyGroup, KeyRow, NAVIGATION, PAGE, PageKey, SWIPE, page_groups,
+};
 #[doc(inline)]
 pub use orangui_core::theme::{
     ALLOWED_THEMES, COLORBLIND_THEMES, RETIRED_THEMES, THEME_GROUPS, ThemeConfig, ThemeGroup,
@@ -170,7 +172,9 @@ pub use panel::Panel;
 pub use password_input::PasswordInput;
 pub use release_card::{ReleaseCard, ReleaseTag};
 pub use sheet_focus::use_sheet_focus;
-pub use shortcuts_sheet::{PageShortcuts, SHORTCUTS_TITLE, ShortcutRow, ShortcutsSheet};
+pub use shortcuts_sheet::{
+    GOT_IT, PageShortcuts, SHORTCUTS_TITLE, ShortcutGroup, ShortcutRow, ShortcutsSheet,
+};
 pub use splash::{SPLASH_JS, Splash, SplashGate};
 pub use stats_strip::StatsStrip;
 pub use text_input::{FieldLabel, TextInput};

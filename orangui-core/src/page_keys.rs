@@ -1,6 +1,6 @@
 //! The keys every page answers, as a vim reader expects them: `g` `g` to the top,
 //! Shift+G to the bottom, `j` and `k` a step down and up, `t` the theme sheet and Shift+H the
-//! shortcuts sheet; and the rows a shortcuts sheet lists for them. orangui's `use_page_keys` runs
+//! shortcuts sheet; and the grouped rows a shortcuts sheet lists for them. orangui's `use_page_keys` runs
 //! them in the browser; this module decides what a key means.
 
 /// What a page key does.
@@ -75,11 +75,13 @@ pub const STEP_ROWS: [KeyRow; 2] = [(&["j"], "Scroll down"), (&["k"], "Scroll up
 /// `t`'s row.
 pub const THEMES_ROW: KeyRow = (&["t"], "Themes");
 
-/// The theme sheet's own rows: its cursor moves through the themes and Enter picks one.
-pub const THEME_SHEET_ROWS: [KeyRow; 3] = [
-    (&["↑", "↓", "←", "→"], "Move between themes in Themes"),
-    (&["h", "j", "k", "l"], "Move between themes in Themes"),
-    (&["Enter"], "Pick the theme in Themes"),
+/// The theme sheet's own rows, listed under [`IN_THEMES`]: its cursor moves through the themes,
+/// `g` `g` and Shift+G go to the first and last, and Enter picks one.
+pub const THEME_SHEET_ROWS: [KeyRow; 4] = [
+    (&["↑", "↓", "←", "→"], "Move between themes"),
+    (&["h", "j", "k", "l"], "Move between themes"),
+    (&["gg", "Shift+G"], "First or last theme"),
+    (&["Enter"], "Pick the theme"),
 ];
 
 /// Shift+H's row.
@@ -88,18 +90,56 @@ pub const SHORTCUTS_ROW: KeyRow = (&["Shift+H"], "These shortcuts");
 /// Esc's row.
 pub const CLOSE_ROW: KeyRow = (&["Esc"], "Close the open sheet");
 
-/// The rows a page's shortcuts sheet lists for the page keys, the step rows only where `steps`
-/// are on: the moves, then Themes and its sheet, then the sheets.
+/// The heading over the keys that move around the page.
+pub const NAVIGATION: &str = "Navigation";
+
+/// The heading over the keys that act on a card.
+pub const CARD: &str = "Card";
+
+/// The heading over a swipe screen's four directions.
+pub const SWIPE: &str = "Swipe";
+
+/// The heading over the screen's own tools and the keys every page has.
+pub const PAGE: &str = "Page";
+
+/// The heading over the theme sheet's own keys.
+pub const IN_THEMES: &str = "In Themes";
+
+/// A shortcuts sheet's group: a small heading over its rows.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct KeyGroup {
+    /// The heading.
+    pub title: &'static str,
+    /// The rows under it, in order.
+    pub rows: Vec<KeyRow>,
+}
+
+impl KeyGroup {
+    /// A group titled `title` over `rows`.
+    #[must_use]
+    pub fn new(title: &'static str, rows: impl IntoIterator<Item = KeyRow>) -> Self {
+        Self {
+            title,
+            rows: rows.into_iter().collect(),
+        }
+    }
+}
+
+/// A site's shortcuts sheet for the page keys, the step rows only where `steps` are on:
+/// Navigation (the ends, then the steps), Page (Themes and the sheets) and the theme sheet's own.
 #[must_use]
-pub fn page_rows(steps: bool) -> Vec<KeyRow> {
+pub fn page_groups(steps: bool) -> Vec<KeyGroup> {
     let step_rows: &[KeyRow] = if steps { &STEP_ROWS } else { &[] };
-    [TOP_ROW, BOTTOM_ROW]
-        .into_iter()
-        .chain(step_rows.iter().copied())
-        .chain([THEMES_ROW])
-        .chain(THEME_SHEET_ROWS)
-        .chain([SHORTCUTS_ROW, CLOSE_ROW])
-        .collect()
+    vec![
+        KeyGroup::new(
+            NAVIGATION,
+            [TOP_ROW, BOTTOM_ROW]
+                .into_iter()
+                .chain(step_rows.iter().copied()),
+        ),
+        KeyGroup::new(PAGE, [THEMES_ROW, SHORTCUTS_ROW, CLOSE_ROW]),
+        KeyGroup::new(IN_THEMES, THEME_SHEET_ROWS),
+    ]
 }
 
 #[cfg(test)]
@@ -154,14 +194,19 @@ mod tests {
     }
 
     #[test]
-    fn the_rows_list_the_steps_only_where_they_are_on() {
-        let with = page_rows(true);
-        let without = page_rows(false);
-        assert!(STEP_ROWS.iter().all(|row| with.contains(row)));
-        assert!(STEP_ROWS.iter().all(|row| !without.contains(row)));
-        for row in [TOP_ROW, BOTTOM_ROW, THEMES_ROW, SHORTCUTS_ROW, CLOSE_ROW] {
-            assert!(with.contains(&row) && without.contains(&row), "{row:?}");
-        }
-        assert!(THEME_SHEET_ROWS.iter().all(|row| without.contains(row)));
+    fn a_site_s_groups_list_the_steps_only_where_they_are_on() {
+        let with = page_groups(true);
+        let without = page_groups(false);
+        let titles: Vec<&str> = with.iter().map(|group| group.title).collect();
+        assert_eq!(titles, [NAVIGATION, PAGE, IN_THEMES]);
+        let nav = |groups: &[KeyGroup]| groups.first().map_or_else(Vec::new, |g| g.rows.clone());
+        assert!(STEP_ROWS.iter().all(|row| nav(&with).contains(row)));
+        assert!(STEP_ROWS.iter().all(|row| !nav(&without).contains(row)));
+        assert_eq!(nav(&without), vec![TOP_ROW, BOTTOM_ROW]);
+        assert!(
+            without
+                .iter()
+                .any(|g| g.title == IN_THEMES && g.rows == THEME_SHEET_ROWS)
+        );
     }
 }
