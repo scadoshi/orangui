@@ -1,4 +1,4 @@
-//! The keys every page answers on a computer, as a vim reader expects them: `g` `g` to the top,
+//! The keys every page answers, as a vim reader expects them: `g` `g` to the top,
 //! Shift+G to the bottom, `j` and `k` a step down and up, `t` the theme sheet and Shift+H the
 //! shortcuts sheet; and the rows a shortcuts sheet lists for them. orangui's `use_page_keys` runs
 //! them in the browser; this module decides what a key means.
@@ -37,7 +37,7 @@ pub const PAGE_KEYS: [&str; 6] = ["g", "G", "j", "k", "t", "H"];
 pub const GG_WINDOW_MS: u32 = 800;
 
 /// The share of the window's height a step scrolls.
-pub const STEP_SHARE: f64 = 0.2;
+pub const STEP_SHARE: f64 = 0.1;
 
 /// The page key `key` stands for, `after_g` saying a first `g` came within [`GG_WINDOW_MS`]. A
 /// lone `g` stands for nothing yet: the page remembers it and waits for the second.
@@ -149,7 +149,7 @@ mod tests {
 
     #[test]
     fn a_step_is_a_share_of_the_window_and_never_tiny() {
-        assert!((step_px(1000.0) - 200.0).abs() < f64::EPSILON);
+        assert!((step_px(1000.0) - 100.0).abs() < f64::EPSILON);
         assert!((step_px(100.0) - 40.0).abs() < f64::EPSILON);
     }
 

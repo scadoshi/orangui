@@ -4,22 +4,18 @@
 //! What a save means (an API call, a local store) and what each outcome says
 //! (a toast) stay the host's, through [`ThemeSheet`]'s callbacks.
 //!
-//! On a keyboard, while the sheet is open and no dialog is over it, Enter
-//! closes the sheet unless a button or link inside the sheet has focus. On a
-//! computer the arrows and `h` `j` `k` `l` move focus through the rows (the
-//! theme cursor) and Enter picks the focused one; elsewhere the up and down
-//! arrows pick the row above or below the selected one.
+//! On a keyboard, while the sheet is open and no dialog is over it, the
+//! arrows and `h` `j` `k` `l` move focus through the rows (the theme cursor),
+//! Enter picks the focused one, and Enter with no row in focus closes the
+//! sheet.
 
 use dioxus::prelude::*;
 
-use crate::page_keys::COMPUTER_QUERY;
 use crate::{BottomSheet, SheetDim, THEME_GROUPS, ThemeConfig, display_theme_name};
 
-/// The sheet's keys, installed once per page by [`ThemeSheet`]. The open
-/// sheet is the shown `.bottom-sheet` holding theme swatches. An arrow clicks
-/// the row above or below the selected one and scrolls it into view, staying
-/// put at either end; Enter clicks the save check in the sheet's dock when it
-/// is enabled. Nothing happens while a dialog is open.
+/// The sheet's Enter, installed once per page by [`ThemeSheet`]: with no
+/// button or link in the open sheet in focus, Enter closes it. The theme
+/// cursor takes the moves. Nothing happens while a dialog is open.
 const THEME_KEYS_JS: &str = r#"
 if (!window.__oranguiThemeKeys) {
     window.__oranguiThemeKeys = true;
@@ -30,16 +26,7 @@ if (!window.__oranguiThemeKeys) {
         if (!sheet) return;
         const focus = document.activeElement;
         const onControl = focus && (focus.tagName === 'BUTTON' || focus.tagName === 'A');
-        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !matchMedia('__COMPUTER__').matches) {
-            const rows = Array.from(sheet.querySelectorAll('.pref-row'));
-            const at = rows.findIndex((row) => row.classList.contains('selected'));
-            const next = rows[e.key === 'ArrowDown' ? Math.min(at + 1, rows.length - 1) : Math.max(at - 1, 0)];
-            e.preventDefault();
-            if (next && next !== rows[at]) {
-                next.click();
-                next.scrollIntoView({ block: 'nearest' });
-            }
-        } else if (e.key === 'Enter' && !(onControl && sheet.contains(focus))) {
+        if (e.key === 'Enter' && !(onControl && sheet.contains(focus))) {
             const close = sheet.querySelector('.sheet-close');
             e.preventDefault();
             if (close) close.click();
@@ -98,7 +85,7 @@ fn ThemeRow(
 /// once; the sheet stays open to keep browsing, and the ×, a drag down and
 /// the backdrop only close it. Undoing a pick is a tap on the row before.
 ///
-/// On a keyboard the arrows walk the rows and Enter closes (see the module
+/// On a keyboard the theme cursor walks the rows, Enter picks, and Enter with no row in focus closes (see the module
 /// docs). Registers with the [`OverlayBackStack`](crate::OverlayBackStack)
 /// through [`BottomSheet`].
 #[component]
@@ -113,7 +100,7 @@ pub fn ThemeSheet(
     hint: Option<Signal<bool>>,
 ) -> Element {
     use_effect(|| {
-        let _ = document::eval(&THEME_KEYS_JS.replace("__COMPUTER__", COMPUTER_QUERY));
+        let _ = document::eval(THEME_KEYS_JS);
     });
     crate::theme_cursor::use_theme_cursor(open);
     let mut selected = use_signal(|| theme.peek().name.clone());

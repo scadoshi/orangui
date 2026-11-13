@@ -160,7 +160,8 @@ pub use overlay_stack::{
 };
 pub use page_header::PageHeader;
 pub use page_keys::{
-    COMPUTER_QUERY, PRESSED_KEY, PageKeys, THEMES_ACTION, use_computer, use_page_keys,
+    COMPUTER_QUERY, POINTER_QUERY, PRESSED_KEY, PageKeys, THEMES_ACTION, use_computer,
+    use_page_keys, use_pointer,
 };
 pub use page_kill::{REPEAT_WINDOW, use_page_kill_recovery};
 pub use page_meta::{PageMeta, SiteMeta};

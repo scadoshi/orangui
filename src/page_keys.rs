@@ -1,9 +1,9 @@
-//! The keys every page answers on a computer ([`orangui_core::page_keys`]): `g` `g` to the top,
-//! Shift+G to the bottom, `j` and `k` a step down and up where the host turns steps on, `t` the
-//! theme sheet and Shift+H the shortcuts sheet. Never while typing in a field, with Ctrl, Alt or
-//! Meta held, or while a dialog or sheet is open, and never off the computer layout
-//! ([`COMPUTER_QUERY`]). A key a page's own listener already took (`preventDefault`) passes by, so
-//! a page whose keys use `j` and `k` keeps them.
+//! The keys every page answers ([`orangui_core::page_keys`]), at any width, a phone with a
+//! keyboard included: `g` `g` to the top, Shift+G to the bottom, `j` and `k` a step down and up
+//! where the host turns steps on, `t` the theme sheet and Shift+H the shortcuts sheet. Never while
+//! typing in a field, with Ctrl, Alt or Meta held, or while a dialog or sheet is open. A key a
+//! page's own listener already took (`preventDefault`) passes by, so a page whose keys use `j` and
+//! `k` keeps them.
 
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -55,9 +55,10 @@ pub struct PageKeys {
 static NEXT_ID: AtomicU64 = AtomicU64::new(0);
 
 /// Registers the page keys under `__ID__`: the newest registration answers. It listens on the
-/// window after the page's own listeners, sends `[key, after_g]` for a page key under the
+/// window after the page's own listeners, at any width, sends `[key, after_g, held, in_overlay]` for a page key under the
 /// guard, and remembers a first `g` for `__GG__` milliseconds. Steps answer only while
-/// `__oranguiSteps__ID__` is true.
+/// `__oranguiSteps__ID__` is true. With a dialog, sheet or host overlay open, only `g` `g` and
+/// Shift+G answer, for that overlay.
 const KEYS_JS: &str = r"
 window.__oranguiPageKeys = window.__oranguiPageKeys || [];
 window.__oranguiPageKeys.push('__ID__');
@@ -68,14 +69,15 @@ const onKey = (e) => {
     if (e.defaultPrevented) return;
     const key = __KEY__;
     if (!__KEYS__.includes(key)) { lastG = 0; return; }
-    if (!matchMedia('__COMPUTER__').matches || !__NOT_TYPING__) return;
-    if (document.querySelector('__BLOCKED__')) return;
+    if (!__NOT_TYPING__) return;
+    const inOverlay = !!document.querySelector('__BLOCKED__');
+    if (inOverlay && key !== 'g' && key !== 'G') return;
     if ((key === 'j' || key === 'k') && !window['__oranguiSteps__ID__']) return;
     const now = Date.now();
     const afterG = key === 'g' && now - lastG < __GG__;
     lastG = key === 'g' && !afterG ? now : 0;
     e.preventDefault();
-    dioxus.send([key, afterG]);
+    dioxus.send([key, afterG, e.repeat, inOverlay]);
 };
 window['__oranguiPageKey__ID__'] = onKey;
 window.addEventListener('keydown', onKey);
@@ -90,19 +92,20 @@ delete window['__oranguiSteps__ID__'];
 window.__oranguiPageKeys = (window.__oranguiPageKeys || []).filter((id) => id !== '__ID__');
 ";
 
-/// Scrolls the page by `__BY__` at once, as vim does: `top` and `bottom` jump to an end, and a
-/// signed step count moves that many steps of the view's height.
+/// Scrolls the page by `__BY__`, gliding unless motion is reduced or the key is held: `top` to the
+/// top, `bottom` to the bottom, a signed step count that many steps.
 const SCROLL_JS: &str = r"
 (() => {
-    const sel = __SCROLLER__;
-    const found = sel && document.querySelector(sel);
-    const el = found && found.scrollHeight > found.clientHeight ? found : document.scrollingElement;
+    const el = __TARGET__;
     if (!el) return;
+    const page = el === document.scrollingElement;
+    const still = __HELD__ || matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior = still ? 'auto' : 'smooth';
     const by = __BY__;
-    const step = Math.max(40, (found ? el.clientHeight : window.innerHeight) * __SHARE__);
-    if (by === 'top') el.scrollTo({ top: 0, behavior: 'auto' });
-    else if (by === 'bottom') el.scrollTo({ top: el.scrollHeight, behavior: 'auto' });
-    else el.scrollBy({ top: by * step, behavior: 'auto' });
+    const step = Math.max(40, (page ? window.innerHeight : el.clientHeight) * __SHARE__);
+    if (by === 'top') { el.scrollTo({ top: 0, behavior }); return; }
+    if (by !== 'bottom') { el.scrollBy({ top: by * step, behavior }); return; }
+    el.scrollTo({ top: el.scrollHeight - el.clientHeight, behavior });
 })();
 ";
 
@@ -117,15 +120,22 @@ pub fn use_page_keys(keys: PageKeys, steps: ReadSignal<bool>) {
         let script = keys_js(id, keys.blocked_by);
         spawn(async move {
             let mut pressed = document::eval(&script);
-            while let Ok((key, after_g)) = pressed.recv::<(String, bool)>().await {
+            while let Ok((key, after_g, held, in_overlay)) =
+                pressed.recv::<(String, bool, bool, bool)>().await
+            {
+                let target = if in_overlay {
+                    Target::Overlay(keys.blocked_by)
+                } else {
+                    Target::Page(keys.scroller)
+                };
                 let Some(action) = page_key(&key, after_g) else {
                     continue;
                 };
                 match action {
-                    PageKey::Top => scroll(keys.scroller, "'top'"),
-                    PageKey::Bottom => scroll(keys.scroller, "'bottom'"),
-                    PageKey::StepDown => scroll(keys.scroller, "1"),
-                    PageKey::StepUp => scroll(keys.scroller, "-1"),
+                    PageKey::Top => scroll(target, "'top'", held),
+                    PageKey::Bottom => scroll(target, "'bottom'", held),
+                    PageKey::StepDown => scroll(target, "1", held),
+                    PageKey::StepUp => scroll(target, "-1", held),
                     PageKey::Themes => {
                         if keys.themes {
                             document::eval(&press_themes_js());
@@ -155,22 +165,52 @@ fn keys_js(id: u64, blocked_by: &[&str]) -> String {
         .replace("__ID__", &id.to_string())
         .replace("__KEY__", PRESSED_KEY)
         .replace("__KEYS__", &format!("{PAGE_KEYS:?}"))
-        .replace("__COMPUTER__", COMPUTER_QUERY)
         .replace("__NOT_TYPING__", NOT_TYPING)
         .replace("__BLOCKED__", &blocked)
         .replace("__GG__", &GG_WINDOW_MS.to_string())
 }
 
 /// Scrolls the page `by` (a script value: `'top'`, `'bottom'` or a signed step count).
-fn scroll(scroller: Option<&str>, by: &str) {
-    document::eval(&scroll_js(scroller, by));
+fn scroll(target: Target, by: &str, held: bool) {
+    document::eval(&scroll_js(target, by, held));
 }
 
-/// [`SCROLL_JS`] for `scroller` and `by`.
-fn scroll_js(scroller: Option<&str>, by: &str) -> String {
-    let scroller = scroller.map_or_else(|| "null".to_owned(), |sel| format!("'{sel}'"));
+/// What a page key scrolls.
+#[derive(Debug, Clone, Copy)]
+enum Target {
+    /// The page: the element a selector names, else the document.
+    Page(Option<&'static str>),
+    /// The topmost open dialog, sheet or host overlay (the extra selectors): its most scrollable
+    /// part.
+    Overlay(&'static [&'static str]),
+}
+
+/// A script expression for the element `target` scrolls, `null` when nothing scrolls.
+fn target_js(target: Target) -> String {
+    match target {
+        Target::Page(scroller) => {
+            let sel = scroller.map_or_else(|| "null".to_owned(), |sel| format!("'{sel}'"));
+            format!(
+                "(() => {{ const sel = {sel}; const found = sel && document.querySelector(sel); return found && found.scrollHeight > found.clientHeight ? found : document.scrollingElement; }})()"
+            )
+        }
+        Target::Overlay(blocked_by) => {
+            let open = std::iter::once(OVERLAYS)
+                .chain(blocked_by.iter().copied())
+                .collect::<Vec<_>>()
+                .join(", ");
+            format!(
+                "(() => {{ const open = [...document.querySelectorAll('{open}')]; const top = open[open.length - 1]; if (!top) return null; const room = (el) => {{ const o = getComputedStyle(el).overflowY; return (o === 'auto' || o === 'scroll') ? el.scrollHeight - el.clientHeight : 0; }}; return [top, ...top.querySelectorAll('*')].filter((el) => room(el) > 1).sort((a, b) => room(b) - room(a))[0] || null; }})()"
+            )
+        }
+    }
+}
+
+/// [`SCROLL_JS`] for `target`, `by` and whether the key is `held`.
+fn scroll_js(target: Target, by: &str, held: bool) -> String {
     SCROLL_JS
-        .replace("__SCROLLER__", &scroller)
+        .replace("__TARGET__", &target_js(target))
+        .replace("__HELD__", &held.to_string())
         .replace("__BY__", by)
         .replace("__SHARE__", &STEP_SHARE.to_string())
 }
@@ -180,14 +220,33 @@ fn press_themes_js() -> String {
     format!("document.querySelector('[data-action=\"{THEMES_ACTION}\"]')?.click();")
 }
 
+/// The query for a pointer that hovers and is precise (a mouse or a trackpad), at any width: where
+/// a keyboard is likely. Without it the input is touch.
+pub const POINTER_QUERY: &str = "(hover: hover) and (pointer: fine)";
+
 /// True on a computer's wide layout ([`COMPUTER_QUERY`]), kept current as the window changes.
 /// Off the browser it stays false.
 #[must_use]
 pub fn use_computer() -> Signal<bool> {
+    use_media(COMPUTER_QUERY)
+}
+
+/// True while the main input is a pointer that hovers and is precise ([`POINTER_QUERY`]), at any
+/// width, kept current as it changes. Off the browser it stays false.
+#[must_use]
+pub fn use_pointer() -> Signal<bool> {
+    use_media(POINTER_QUERY)
+}
+
+/// True while the window matches `query`, kept current as it changes. Off the browser it stays
+/// false.
+fn use_media(query: &'static str) -> Signal<bool> {
     let mut matches = use_signal(|| false);
     let id = use_hook(|| NEXT_ID.fetch_add(1, Ordering::Relaxed));
     use_hook(move || {
-        let script = MEDIA_JS.replace("__ID__", &id.to_string());
+        let script = MEDIA_JS
+            .replace("__ID__", &id.to_string())
+            .replace("__QUERY__", query);
         spawn(async move {
             let mut changes = document::eval(&script);
             while let Ok(now) = changes.recv::<bool>().await {
@@ -201,9 +260,9 @@ pub fn use_computer() -> Signal<bool> {
     matches
 }
 
-/// Sends whether the window is a computer's, then again on each change.
+/// Sends whether the window matches `__QUERY__`, then again on each change.
 const MEDIA_JS: &str = r"
-const query = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)');
+const query = window.matchMedia('__QUERY__');
 const onChange = (e) => dioxus.send(e.matches);
 window['__oranguiMedia__ID__'] = [query, onChange];
 dioxus.send(query.matches);
@@ -222,12 +281,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn the_keys_stay_off_while_typing_or_with_an_overlay_open_or_off_a_computer() {
+    fn the_keys_stay_off_while_typing_or_with_an_overlay_open_at_any_width() {
         let js = keys_js(0, &[".big-modal"]);
-        assert!(
-            js.contains(&format!("matchMedia('{COMPUTER_QUERY}')")),
-            "{js}"
-        );
+        assert!(!js.contains("matchMedia"), "any width: {js}");
         assert!(
             js.contains("['INPUT', 'TEXTAREA', 'SELECT'].includes(f.tagName)"),
             "{js}"
@@ -272,23 +328,60 @@ mod tests {
     }
 
     #[test]
-    fn scrolling_jumps_to_the_ends_or_a_step_at_once() {
-        let top = scroll_js(None, "'top'");
-        assert!(top.contains("const sel = null;"), "{top}");
+    fn scrolling_glides_unless_motion_is_reduced_or_the_key_is_held() {
+        let top = scroll_js(Target::Page(None), "'top'", false);
+        assert!(top.contains("const sel = null;"), "the document: {top}");
         assert!(
-            top.contains("if (by === 'top') el.scrollTo({ top: 0, behavior: 'auto' })"),
+            top.contains(
+                "const still = false || matchMedia('(prefers-reduced-motion: reduce)').matches;"
+            ),
             "{top}"
         );
-        let step = scroll_js(Some(".main"), "1");
-        assert!(step.contains("const sel = '.main';"), "{step}");
         assert!(
-            step.contains("el.scrollBy({ top: by * step, behavior: 'auto' })"),
-            "{step}"
+            top.contains("const behavior = still ? 'auto' : 'smooth';"),
+            "{top}"
         );
-        assert!(step.contains(&format!("* {STEP_SHARE})")), "{step}");
         assert!(
-            !step.contains("smooth"),
-            "no glide that needs animation frames: {step}"
+            top.contains("if (by === 'top') { el.scrollTo({ top: 0, behavior }); return; }"),
+            "{top}"
+        );
+        let held = scroll_js(Target::Page(Some(".main")), "1", true);
+        assert!(held.contains("const sel = '.main';"), "{held}");
+        assert!(
+            held.contains("const still = true ||"),
+            "a held key moves at once: {held}"
+        );
+        assert!(held.contains(&format!("* {STEP_SHARE})")), "{held}");
+    }
+
+    #[test]
+    fn in_an_overlay_only_gg_and_shift_g_answer_and_they_scroll_the_overlay() {
+        let js = keys_js(0, &[".big-modal"]);
+        assert!(
+            js.contains("if (inOverlay && key !== 'g' && key !== 'G') return;"),
+            "{js}"
+        );
+        let target = target_js(Target::Overlay(&[".big-modal"]));
+        assert!(
+            target.contains("document.querySelectorAll('.alert-dialog[data-state=\"open\"], .bottom-sheet.show, .big-modal')"),
+            "{target}"
+        );
+        assert!(
+            target.contains("const top = open[open.length - 1];"),
+            "the topmost: {target}"
+        );
+        assert!(
+            target.contains(".sort((a, b) => room(b) - room(a))[0]"),
+            "its most scrollable part: {target}"
+        );
+    }
+
+    #[test]
+    fn shift_g_glides_to_the_bottom() {
+        let js = scroll_js(Target::Page(None), "'bottom'", false);
+        assert!(
+            js.contains("el.scrollTo({ top: el.scrollHeight - el.clientHeight, behavior });"),
+            "{js}"
         );
     }
 
@@ -301,8 +394,12 @@ mod tests {
     }
 
     #[test]
-    fn the_media_listener_asks_the_computer_query() {
-        assert!(MEDIA_JS.contains(COMPUTER_QUERY), "{MEDIA_JS}");
+    fn the_media_listener_asks_the_query_it_is_given() {
+        assert!(
+            MEDIA_JS.contains("window.matchMedia('__QUERY__')"),
+            "{MEDIA_JS}"
+        );
+        assert!(COMPUTER_QUERY.starts_with(POINTER_QUERY));
     }
 
     #[test]

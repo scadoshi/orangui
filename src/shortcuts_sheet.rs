@@ -17,11 +17,13 @@ pub const SHORTCUTS_TITLE: &str = "Keyboard shortcuts";
 const SHEET_FOCUS: &str = ".shortcuts-layer .bottom-sheet.show .sheet-close";
 
 /// The shortcuts sheet, `note` the line above the keys when the page needs one, `children` its
-/// [`ShortcutRow`]s.
+/// [`ShortcutRow`]s, `rows` how many there are: given, a wide window lays them in two columns, read
+/// top to bottom then across.
 #[component]
 pub fn ShortcutsSheet(
     open: Signal<bool>,
     #[props(default)] note: Option<String>,
+    #[props(default)] rows: usize,
     children: Element,
 ) -> Element {
     let always = use_signal(|| true);
@@ -33,11 +35,17 @@ pub fn ShortcutsSheet(
                     if let Some(note) = note {
                         p { class: "shortcuts-note", "{note}" }
                     }
-                    ul { class: "shortcuts", {children} }
+                    ul { class: "shortcuts", style: column_style(rows), {children} }
                 }
             }
         }
     }
+}
+
+/// The list's style for `rows` rows: the first column's length, half of them rounded up, when
+/// there are any.
+fn column_style(rows: usize) -> Option<String> {
+    (rows > 0).then(|| format!("--shortcut-rows: {}", rows.div_ceil(2)))
 }
 
 /// One row: `keys` as the sheet writes them, each in the hint's key style, and what they do.
@@ -60,12 +68,49 @@ pub fn ShortcutRow(keys: Vec<String>, children: Element) -> Element {
     }
 }
 
-/// The page keys' rows ([`orangui_core::page_keys::page_rows`]), the step rows where `steps`.
+/// The page keys' rows ([`orangui_core::page_keys::page_rows`]), the step rows where `steps`; give
+/// the sheet `page_rows(steps).len()` as its `rows`.
 #[component]
 pub fn PageShortcuts(steps: bool) -> Element {
     rsx! {
         for (at, (keys, does)) in page_rows(steps).into_iter().enumerate() {
             ShortcutRow { key: "{at}", keys: keys.iter().map(ToString::to_string).collect::<Vec<_>>(), "{does}" }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_first_column_takes_half_the_rows_rounded_up() {
+        assert_eq!(column_style(23).as_deref(), Some("--shortcut-rows: 12"));
+        assert_eq!(column_style(10).as_deref(), Some("--shortcut-rows: 5"));
+        assert_eq!(column_style(0), None, "no count, one column");
+    }
+
+    #[test]
+    fn two_columns_only_on_a_wide_window_and_only_with_a_count() {
+        let css = crate::COMPONENTS_CSS;
+        let wide = css
+            .find("@media (min-width: 60rem) {\n    .shortcuts-layer")
+            .expect("the wide rule");
+        let rule = css
+            .get(wide..)
+            .and_then(|rest| rest.get(..800))
+            .unwrap_or_default();
+        assert!(
+            rule.contains(".shortcuts[style*=\"--shortcut-rows\"]"),
+            "{rule}"
+        );
+        assert!(
+            rule.contains("grid-auto-flow: column;"),
+            "top to bottom then across: {rule}"
+        );
+        assert!(
+            rule.contains("width: min(52rem, calc(100vw - 4rem));"),
+            "{rule}"
+        );
     }
 }

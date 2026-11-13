@@ -1,19 +1,21 @@
-//! The theme sheet's keyboard cursor on a computer: while the sheet is open, the arrow keys and
-//! `h` `j` `k` `l` move focus through the theme rows as drawn, stopping at the edges, and Home and
-//! End go to the first and last row. The cursor is the browser's focus on a row's button, so Enter
-//! picks the theme as a click does and Esc closes the sheet as it always has. Focus starts on the
-//! theme in use as the sheet opens and goes back as it closes.
+//! The theme sheet's keyboard cursor, at any width: while the sheet is open, the arrow keys and
+//! `h` `j` `k` `l` move focus through the theme rows as drawn, stopping at the edges; `g` `g` and
+//! Shift+G go to the first and last row, as Home and End do once a row has focus. The list glides
+//! to the row unless motion is reduced. The cursor is the browser's focus on a row's button, so
+//! Enter picks the theme as a click does and Esc closes the sheet as it always has. Where a
+//! keyboard is likely (a pointer that hovers and is precise), focus starts on the theme in use as
+//! the sheet opens and goes back as it closes; a touch screen's sheet opens as it always has.
 //!
 //! The browser gathers the rows with where each is drawn, and [`orangui_core::grid_cursor`] decides
-//! where a move lands. Only the computer layout takes the keys ([`COMPUTER_QUERY`]); elsewhere
-//! [`ThemeSheet`](crate::ThemeSheet)'s up and down arrows preview the row above or below.
+//! where a move lands.
 
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use dioxus::prelude::*;
 use orangui_core::grid_cursor::{Cell, MOVE_KEYS, Snapshot, Stop, move_for};
+use orangui_core::page_keys::GG_WINDOW_MS;
 
-use crate::page_keys::{COMPUTER_QUERY, PRESSED_KEY, top_sheet_guard_js, use_computer};
+use crate::page_keys::{PRESSED_KEY, top_sheet_guard_js, use_pointer};
 use crate::sheet_focus::use_sheet_focus;
 
 /// The next cursor's key among the page's listeners, unique across instances.
@@ -78,19 +80,29 @@ window.__oranguiThemeReveal = () => {
     };
     setTimeout(look, 60);
 };
+let lastG = 0;
 const onKey = (e) => {
     const stack = window.__oranguiThemeNav;
     if (!stack.length || stack[stack.length - 1] !== '__ID__') return;
-    const key = __KEY__;
-    if (!__MOVES__.includes(key) || e.shiftKey && key.startsWith('Arrow')) return;
-    if (!matchMedia('__POINTER__').matches || !__GUARD__) return;
+    const pressed = __KEY__;
+    const jump = pressed === 'G' || pressed === 'g';
+    if (!jump && (!__MOVES__.includes(pressed) || e.shiftKey && pressed.startsWith('Arrow'))) return;
+    if (!__GUARD__) return;
     const sheet = openSheet();
     if (!sheet) return;
     const rows = rowsOf(sheet);
     if (!rows.length) return;
+    let key = pressed;
+    if (pressed === 'G') key = 'End';
+    if (pressed === 'g') {
+        const now = Date.now();
+        if (now - lastG >= __GG__) { lastG = now; e.preventDefault(); e.stopPropagation(); return; }
+        key = 'Home';
+    }
+    lastG = 0;
     const focused = document.activeElement && document.activeElement.closest && document.activeElement.closest('__ROWS__');
     const onRow = !!focused && rows.includes(focused);
-    if ((key === 'Home' || key === 'End') && !onRow) return;
+    if ((pressed === 'Home' || pressed === 'End') && !onRow) return;
     e.preventDefault();
     e.stopPropagation();
     const fromEl = onRow ? focused : sheet.querySelector('__CURRENT__');
@@ -118,8 +130,8 @@ type SentCell = (usize, f64, f64, bool);
 
 /// Answers the theme sheet's cursor keys, as the module describes, for the sheet `open` shows.
 pub(crate) fn use_theme_cursor(open: Signal<bool>) {
-    let computer = use_computer();
-    use_sheet_focus(open.into(), computer.into(), CURRENT_ROW, REVEAL);
+    let keyboard = use_pointer();
+    use_sheet_focus(open.into(), keyboard.into(), CURRENT_ROW, REVEAL);
     let id = use_hook(|| NEXT_ID.fetch_add(1, Ordering::Relaxed));
     use_hook(move || {
         let script = nav_js(id);
@@ -151,7 +163,7 @@ fn nav_js(id: u64) -> String {
         .replace("__CURRENT__", CURRENT)
         .replace("__KEY__", PRESSED_KEY)
         .replace("__MOVES__", &format!("{MOVE_KEYS:?}"))
-        .replace("__POINTER__", COMPUTER_QUERY)
+        .replace("__GG__", &GG_WINDOW_MS.to_string())
         .replace("__GUARD__", &top_sheet_guard_js(THEME_SHEET_MARK))
 }
 
@@ -193,17 +205,32 @@ mod tests {
     }
 
     #[test]
-    fn the_keys_reach_only_the_theme_sheet_on_top_on_a_computer() {
+    fn the_keys_reach_only_the_theme_sheet_on_top_at_any_width() {
         let js = nav_js(0);
+        assert!(!js.contains("matchMedia('(hover"), "any width: {js}");
+        assert!(js.contains(".querySelector('.theme-group-label')"), "{js}");
         assert!(
-            js.contains(&format!("matchMedia('{COMPUTER_QUERY}')")),
+            js.contains("e.shiftKey && pressed.startsWith('Arrow')"),
             "{js}"
         );
-        assert!(js.contains(".querySelector('.theme-group-label')"), "{js}");
-        assert!(js.contains("e.shiftKey && key.startsWith('Arrow')"), "{js}");
         assert!(
-            js.contains("(key === 'Home' || key === 'End') && !onRow"),
+            js.contains("(pressed === 'Home' || pressed === 'End') && !onRow"),
             "{js}"
+        );
+    }
+
+    #[test]
+    fn shift_g_and_g_g_go_to_the_last_and_first_theme_from_anywhere() {
+        let js = nav_js(0);
+        assert!(js.contains("if (pressed === 'G') key = 'End';"), "{js}");
+        assert!(
+            js.contains(&format!("if (now - lastG >= {GG_WINDOW_MS})")),
+            "a first g waits: {js}"
+        );
+        assert!(js.contains("key = 'Home';"), "{js}");
+        assert!(
+            js.contains("if ((pressed === 'Home' || pressed === 'End') && !onRow) return;"),
+            "only Home and End need a row in focus: {js}"
         );
     }
 
