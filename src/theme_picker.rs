@@ -15,6 +15,7 @@
 
 use dioxus::prelude::*;
 
+use crate::page_keys::THEMES_ACTION;
 use crate::{
     BottomSheet, Button, ButtonVariant, NavPanelOpen, SheetDim, SheetFrame, SheetWide,
     THEME_GROUPS, ThemeConfig, display_theme_name,
@@ -136,6 +137,7 @@ pub fn ThemePicker(
             nav.0.set(false);
         }
     });
+    crate::theme_cursor::use_theme_cursor(open);
     let current = shown.read().name.clone();
     let is_dark = shown.read().is_dark;
     let mode = if is_dark { "dark" } else { "light" };
@@ -146,6 +148,7 @@ pub fn ThemePicker(
             button {
                 r#type: "button",
                 class: "nav-dropdown-trigger",
+                "data-action": THEMES_ACTION,
                 aria_expanded: "{open()}",
                 onclick: move |_| {
                     let next = !open();

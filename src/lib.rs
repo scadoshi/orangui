@@ -75,15 +75,19 @@ mod nav_dropdown;
 mod os_back;
 mod overlay_stack;
 mod page_header;
+mod page_keys;
 mod page_kill;
 mod page_meta;
 mod palette_guard;
 mod panel;
 mod password_input;
 mod release_card;
+mod sheet_focus;
+mod shortcuts_sheet;
 mod splash;
 mod stats_strip;
 mod text_input;
+mod theme_cursor;
 mod theme_picker;
 mod theme_sheet;
 mod theme_store;
@@ -141,6 +145,8 @@ pub use orangui_core::chart_math::{area, curve, peak_indices, tip_anchor};
 #[doc(inline)]
 pub use orangui_core::number::with_separators;
 #[doc(inline)]
+pub use orangui_core::page_keys::{KeyRow, PageKey, page_rows};
+#[doc(inline)]
 pub use orangui_core::theme::{
     ALLOWED_THEMES, COLORBLIND_THEMES, RETIRED_THEMES, THEME_GROUPS, ThemeConfig, ThemeGroup,
     current_theme, display_theme_name,
@@ -153,12 +159,17 @@ pub use overlay_stack::{
     use_overlay_back_stack,
 };
 pub use page_header::PageHeader;
+pub use page_keys::{
+    COMPUTER_QUERY, PRESSED_KEY, PageKeys, THEMES_ACTION, use_computer, use_page_keys,
+};
 pub use page_kill::{REPEAT_WINDOW, use_page_kill_recovery};
 pub use page_meta::{PageMeta, SiteMeta};
 pub use palette_guard::{StatusUse, status_uses};
 pub use panel::Panel;
 pub use password_input::PasswordInput;
 pub use release_card::{ReleaseCard, ReleaseTag};
+pub use sheet_focus::use_sheet_focus;
+pub use shortcuts_sheet::{PageShortcuts, SHORTCUTS_TITLE, ShortcutRow, ShortcutsSheet};
 pub use splash::{SPLASH_JS, Splash, SplashGate};
 pub use stats_strip::StatsStrip;
 pub use text_input::{FieldLabel, TextInput};

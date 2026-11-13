@@ -4,12 +4,15 @@
 //! What a save means (an API call, a local store) and what each outcome says
 //! (a toast) stay the host's, through [`ThemeSheet`]'s callbacks.
 //!
-//! On a keyboard, while the sheet is open and no dialog is over it, the up
-//! and down arrows pick the row above or below the selected one, and Enter
-//! closes the sheet unless a button or link inside the sheet has focus.
+//! On a keyboard, while the sheet is open and no dialog is over it, Enter
+//! closes the sheet unless a button or link inside the sheet has focus. On a
+//! computer the arrows and `h` `j` `k` `l` move focus through the rows (the
+//! theme cursor) and Enter picks the focused one; elsewhere the up and down
+//! arrows pick the row above or below the selected one.
 
 use dioxus::prelude::*;
 
+use crate::page_keys::COMPUTER_QUERY;
 use crate::{BottomSheet, SheetDim, THEME_GROUPS, ThemeConfig, display_theme_name};
 
 /// The sheet's keys, installed once per page by [`ThemeSheet`]. The open
@@ -27,7 +30,7 @@ if (!window.__oranguiThemeKeys) {
         if (!sheet) return;
         const focus = document.activeElement;
         const onControl = focus && (focus.tagName === 'BUTTON' || focus.tagName === 'A');
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !matchMedia('__COMPUTER__').matches) {
             const rows = Array.from(sheet.querySelectorAll('.pref-row'));
             const at = rows.findIndex((row) => row.classList.contains('selected'));
             const next = rows[e.key === 'ArrowDown' ? Math.min(at + 1, rows.length - 1) : Math.max(at - 1, 0)];
@@ -110,8 +113,9 @@ pub fn ThemeSheet(
     hint: Option<Signal<bool>>,
 ) -> Element {
     use_effect(|| {
-        let _ = document::eval(THEME_KEYS_JS);
+        let _ = document::eval(&THEME_KEYS_JS.replace("__COMPUTER__", COMPUTER_QUERY));
     });
+    crate::theme_cursor::use_theme_cursor(open);
     let mut selected = use_signal(|| theme.peek().name.clone());
     let mut dark = use_signal(|| theme.peek().is_dark);
 

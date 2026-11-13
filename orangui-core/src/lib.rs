@@ -13,6 +13,8 @@
 //! - [`grid_rain`]: the backdrop's shaded cells and how they rain in.
 //! - [`splash`]: the opening's timeline.
 //! - [`heat`]: the heatmap grid's measurements.
+//! - [`grid_cursor`]: where a keyboard cursor's move lands among items drawn in columns.
+//! - [`page_keys`]: the keys every page answers: to the top or bottom, a step, Themes, the shortcuts.
 //! - [`diagram`]: the diagram boxes' measurements.
 //! - [`sheet_drag`]: when a dragged bottom sheet closes or springs back.
 //! - [`toast`]: how long a toast stays up.
@@ -25,9 +27,11 @@ pub mod chart_math;
 pub mod count_up;
 pub mod decode;
 pub mod diagram;
+pub mod grid_cursor;
 pub mod grid_rain;
 pub mod heat;
 pub mod number;
+pub mod page_keys;
 pub mod rng;
 pub mod sheet_drag;
 pub mod splash;
