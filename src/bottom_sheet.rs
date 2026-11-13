@@ -6,6 +6,8 @@
 //! it the way a backdrop tap does; anything less springs it back
 //! (`orangui_core::sheet_drag` holds the thresholds).
 
+use std::fmt;
+
 use dioxus::prelude::*;
 use orangui_core::sheet_drag;
 
@@ -43,6 +45,122 @@ fn now_ms() -> f64 {
 
         static START: OnceLock<Instant> = OnceLock::new();
         START.get_or_init(Instant::now).elapsed().as_secs_f64() * 1000.0
+    }
+}
+
+/// A sheet's pull by its header, shared by [`BottomSheet`] and any other sheet that slides up
+/// from the bottom: [`start`](Self::start) on the header's pointer down,
+/// [`follow`](Self::follow), [`release`](Self::release) and [`cancel`](Self::cancel) on the
+/// sheet's and its backdrop's pointer move, up and cancel, [`mounted`](Self::mounted) on the
+/// sheet's mount, and [`style`](Self::style) on the sheet. Letting go past a quarter of the
+/// sheet's height, or with a downward flick, calls the sheet's dismiss
+/// (`orangui_core::sheet_drag` holds the thresholds); anything less springs it back.
+#[derive(Clone, Copy, PartialEq)]
+pub struct SheetDrag {
+    open: ReadSignal<bool>,
+    dismiss: Callback<()>,
+    drag: Signal<Option<Drag>>,
+    sheet: Signal<Option<MountedEvent>>,
+    height: Signal<f64>,
+}
+
+impl fmt::Debug for SheetDrag {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("SheetDrag").finish_non_exhaustive()
+    }
+}
+
+/// The pull of a sheet shown while `open`, which calls `dismiss` when let go far or fast enough.
+#[must_use]
+pub fn use_sheet_drag(open: ReadSignal<bool>, dismiss: Callback<()>) -> SheetDrag {
+    SheetDrag {
+        open,
+        dismiss,
+        drag: use_signal(|| None),
+        sheet: use_signal(|| None),
+        height: use_signal(|| 0.0),
+    }
+}
+
+impl SheetDrag {
+    /// Starts a pull at the pointer, measuring the sheet's height, while the sheet is open and
+    /// no other pull holds it.
+    pub fn start(mut self, evt: &PointerEvent) {
+        if !(self.open)() || self.drag.peek().is_some() {
+            return;
+        }
+        let y = evt.client_coordinates().y;
+        self.drag.set(Some(Drag {
+            pointer: evt.pointer_id(),
+            start_y: y,
+            offset: 0.0,
+            last_y: y,
+            last_ms: now_ms(),
+            velocity: 0.0,
+        }));
+        if let Some(el) = self.sheet.peek().clone() {
+            let mut height = self.height;
+            spawn(async move {
+                if let Ok(rect) = el.get_client_rect().await {
+                    height.set(rect.height());
+                }
+            });
+        }
+    }
+
+    /// Moves the sheet with the pointer holding the pull.
+    pub fn follow(mut self, evt: &PointerEvent) {
+        let Some(mut d) = *self.drag.peek() else {
+            return;
+        };
+        if d.pointer != evt.pointer_id() {
+            return;
+        }
+        let y = evt.client_coordinates().y;
+        let now = now_ms();
+        d.velocity = sheet_drag::velocity(y - d.last_y, now - d.last_ms);
+        d.offset = sheet_drag::offset(d.start_y, y);
+        d.last_y = y;
+        d.last_ms = now;
+        self.drag.set(Some(d));
+    }
+
+    /// Ends the pull as the pointer lets go: past the thresholds the sheet is dismissed, else it
+    /// springs back.
+    pub fn release(self, evt: &PointerEvent) {
+        if let Some(d) = self.end(evt) {
+            let velocity = sheet_drag::release_velocity(d.velocity, now_ms() - d.last_ms);
+            if sheet_drag::closes(d.offset, *self.height.peek(), velocity) {
+                self.dismiss.call(());
+            }
+        }
+    }
+
+    /// Ends the pull with the sheet springing back, as the browser takes the pointer.
+    pub fn cancel(self, evt: &PointerEvent) {
+        let _ = self.end(evt);
+    }
+
+    /// Keeps the sheet's element, measured as each pull starts.
+    pub fn mounted(mut self, evt: MountedEvent) {
+        self.sheet.set(Some(evt));
+    }
+
+    /// The sheet's style while a pull holds it: it follows the pointer with no easing. `None`
+    /// otherwise, so the sheet's transition slides it home or away.
+    #[must_use]
+    pub fn style(self) -> Option<String> {
+        (self.drag)().map(|d| format!("transform: translateY({}px); transition: none;", d.offset))
+    }
+
+    /// Drops the pull the pointer of `evt` holds, handing it back.
+    fn end(mut self, evt: &PointerEvent) -> Option<Drag> {
+        let d = (*self.drag.peek())?;
+        if d.pointer != evt.pointer_id() {
+            return None;
+        }
+        self.drag.set(None);
+        Some(d)
     }
 }
 
@@ -141,63 +259,8 @@ pub fn BottomSheet(
         });
     }));
 
-    // The drag in progress, and the sheet's height, measured as one starts.
-    let mut drag = use_signal(|| None::<Drag>);
-    let mut sheet_el = use_signal(|| None::<MountedEvent>);
-    let mut height = use_signal(|| 0.0_f64);
+    let drag = use_sheet_drag(open.into(), dismiss);
 
-    let start_drag = move |evt: PointerEvent| {
-        if !open() || drag.peek().is_some() {
-            return;
-        }
-        let y = evt.client_coordinates().y;
-        drag.set(Some(Drag {
-            pointer: evt.pointer_id(),
-            start_y: y,
-            offset: 0.0,
-            last_y: y,
-            last_ms: now_ms(),
-            velocity: 0.0,
-        }));
-        if let Some(el) = sheet_el.peek().clone() {
-            spawn(async move {
-                if let Ok(rect) = el.get_client_rect().await {
-                    height.set(rect.height());
-                }
-            });
-        }
-    };
-    let move_drag = move |evt: PointerEvent| {
-        let Some(mut d) = *drag.peek() else {
-            return;
-        };
-        if d.pointer != evt.pointer_id() {
-            return;
-        }
-        let y = evt.client_coordinates().y;
-        let now = now_ms();
-        d.velocity = sheet_drag::velocity(y - d.last_y, now - d.last_ms);
-        d.offset = sheet_drag::offset(d.start_y, y);
-        d.last_y = y;
-        d.last_ms = now;
-        drag.set(Some(d));
-    };
-    let mut end_drag = move |evt: PointerEvent, cancelled: bool| {
-        let Some(d) = *drag.peek() else {
-            return;
-        };
-        if d.pointer != evt.pointer_id() {
-            return;
-        }
-        drag.set(None);
-        let velocity = sheet_drag::release_velocity(d.velocity, now_ms() - d.last_ms);
-        if !cancelled && sheet_drag::closes(d.offset, *height.peek(), velocity) {
-            dismiss.call(());
-        }
-    };
-
-    // While a drag holds the sheet it follows the pointer with no easing;
-    // dropping the style lets the class's transition slide it home or away.
     // The sheet's layer holds through its slide away, so it leaves from where
     // it was rather than under what it covered.
     let mut held = use_signal(|| None::<u32>);
@@ -220,8 +283,7 @@ pub fn BottomSheet(
         }
     });
     let layer_style = held().map(|z| format!("--overlay-z: {z};"));
-    let drag_style =
-        drag().map(|d| format!("transform: translateY({}px); transition: none;", d.offset));
+    let drag_style = drag.style();
     let sheet_style = match (layer_style.clone(), drag_style) {
         (Some(layer), Some(drag)) => Some(format!("{layer} {drag}")),
         (layer, drag) => layer.or(drag),
@@ -242,9 +304,9 @@ pub fn BottomSheet(
             },
             style: layer_style,
             onclick: move |_| dismiss.call(()),
-            onpointermove: move_drag,
-            onpointerup: move |evt| end_drag(evt, false),
-            onpointercancel: move |evt| end_drag(evt, true),
+            onpointermove: move |evt| drag.follow(&evt),
+            onpointerup: move |evt| drag.release(&evt),
+            onpointercancel: move |evt| drag.cancel(&evt),
         }
         div {
             class: if hidden {
@@ -259,11 +321,11 @@ pub fn BottomSheet(
                 "bottom-sheet bottom-sheet-premount"
             },
             style: sheet_style,
-            onmounted: move |evt| sheet_el.set(Some(evt)),
-            onpointermove: move_drag,
-            onpointerup: move |evt| end_drag(evt, false),
-            onpointercancel: move |evt| end_drag(evt, true),
-            div { class: "sheet-header", onpointerdown: start_drag,
+            onmounted: move |evt| drag.mounted(evt),
+            onpointermove: move |evt| drag.follow(&evt),
+            onpointerup: move |evt| drag.release(&evt),
+            onpointercancel: move |evt| drag.cancel(&evt),
+            div { class: "sheet-header", onpointerdown: move |evt| drag.start(&evt),
                 if closable {
                     button {
                         r#type: "button",
