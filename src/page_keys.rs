@@ -47,7 +47,9 @@ pub struct PageKeys {
     pub shortcuts: Option<Signal<bool>>,
     /// More open overlays that keep the keys, as selectors, beyond a dialog and a sheet.
     pub blocked_by: &'static [&'static str],
-    /// The element the page scrolls in, as a selector; `None` or no match scrolls the document.
+    /// The elements the page scrolls in, as a selector: the last one shown, not inert and with
+    /// room to scroll takes the keys, so a layer over the page scrolls rather than the page under
+    /// it. `None` or no match scrolls the document.
     pub scroller: Option<&'static str>,
 }
 
@@ -178,7 +180,8 @@ fn scroll(target: Target, by: &str, held: bool) {
 /// What a page key scrolls.
 #[derive(Debug, Clone, Copy)]
 enum Target {
-    /// The page: the element a selector names, else the document.
+    /// The page: the last shown, live and scrollable element a selector names (a layer over the
+    /// page comes after it), else the document.
     Page(Option<&'static str>),
     /// The topmost open dialog, sheet or host overlay (the extra selectors): its most scrollable
     /// part.
@@ -191,7 +194,7 @@ fn target_js(target: Target) -> String {
         Target::Page(scroller) => {
             let sel = scroller.map_or_else(|| "null".to_owned(), |sel| format!("'{sel}'"));
             format!(
-                "(() => {{ const sel = {sel}; const found = sel && document.querySelector(sel); return found && found.scrollHeight > found.clientHeight ? found : document.scrollingElement; }})()"
+                "(() => {{ const sel = {sel}; const found = sel && [...document.querySelectorAll(sel)].filter((el) => el.getClientRects().length > 0 && !el.closest('[inert]') && el.scrollHeight > el.clientHeight).pop(); return found || document.scrollingElement; }})()"
             )
         }
         Target::Overlay(blocked_by) => {
@@ -373,6 +376,15 @@ mod tests {
         assert!(
             target.contains(".sort((a, b) => room(b) - room(a))[0]"),
             "its most scrollable part: {target}"
+        );
+    }
+
+    #[test]
+    fn the_page_scrolls_its_topmost_shown_scroller_not_one_under_a_layer() {
+        let target = target_js(Target::Page(Some(".screen")));
+        assert!(
+            target.contains("[...document.querySelectorAll(sel)].filter((el) => el.getClientRects().length > 0 && !el.closest('[inert]') && el.scrollHeight > el.clientHeight).pop()"),
+            "the last shown, live, scrollable match: a layer over the page, not the page under it: {target}"
         );
     }
 
