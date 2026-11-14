@@ -37,8 +37,10 @@ use crate::use_overlay_back;
 /// One button in a dialog's action row. `Dismiss`, `Confirm`, `Link` and
 /// `Icon` close the dialog; a [`Button`](DialogAction::Button) closes it or
 /// not, as its [`ActionButton`] says.
+///
+/// Exhaustive on purpose: hosts read an action row back by naming every kind, so a new kind
+/// should fail those matches until each decides what it shows.
 #[derive(Clone, PartialEq, Debug)]
-#[non_exhaustive]
 pub enum DialogAction {
     /// Closes the dialog and does nothing else: Cancel, Got it.
     Dismiss(String),
