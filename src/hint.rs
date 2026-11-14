@@ -186,9 +186,12 @@ mod tests {
         );
         let labels: Vec<_> = actions
             .iter()
-            .map(|a| match a {
-                DialogAction::Dismiss(label) => label.as_str(),
-                _ => "",
+            .map(|a| {
+                if let DialogAction::Dismiss(label) = a {
+                    label.as_str()
+                } else {
+                    ""
+                }
             })
             .collect();
         assert_eq!(labels, ["Got it", "Dictionary"]);
