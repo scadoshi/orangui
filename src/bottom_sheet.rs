@@ -544,8 +544,10 @@ pub fn BottomSheet(
 
 /// Whether a [`BottomSheet`]'s backdrop dims what is under it. Either way the
 /// backdrop takes a click outside the sheet, which dismisses it.
+///
+/// Exhaustive on purpose: hosts turn each choice into their own classes, so a new one should
+/// fail their match until they decide how it draws.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
-#[non_exhaustive]
 pub enum SheetDim {
     /// Dims at every width: a sheet that asks for a decision.
     #[default]
