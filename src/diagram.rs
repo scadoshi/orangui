@@ -9,6 +9,7 @@ use orangui_core::diagram;
 
 /// Which accent outlines a box.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[non_exhaustive]
 pub enum DiagramTone {
     /// The muted text color, for things outside the system.
     #[default]

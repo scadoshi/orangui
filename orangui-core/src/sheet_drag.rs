@@ -55,6 +55,8 @@ pub fn closes(offset: f64, height: f64, velocity: f64) -> bool {
 pub const ARM_SLOP_PX: f64 = 8.0;
 
 /// What a pointer that went down on a sheet pulled sideways is doing.
+///
+/// The set is closed, so a match need not carry a `_` arm.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Intent {
     /// Pulling the sheet: its move runs more along the pull than across it.

@@ -49,6 +49,8 @@ pub struct Cell<I> {
 const SAME_COLUMN_PX: f64 = 2.0;
 
 /// A cursor move.
+///
+/// The set is closed, so a match need not carry a `_` arm.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Move {
     /// `↑` or `k`.

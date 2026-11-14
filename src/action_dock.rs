@@ -17,6 +17,7 @@ use crate::icons::{DockIcon, FUNNEL};
 
 /// Where a dock floats.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[non_exhaustive]
 pub enum DockPlace {
     /// A screen's bottom right corner.
     #[default]

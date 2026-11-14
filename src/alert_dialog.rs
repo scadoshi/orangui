@@ -38,6 +38,7 @@ use crate::use_overlay_back;
 /// `Icon` close the dialog; a [`Button`](DialogAction::Button) closes it or
 /// not, as its [`ActionButton`] says.
 #[derive(Clone, PartialEq, Debug)]
+#[non_exhaustive]
 pub enum DialogAction {
     /// Closes the dialog and does nothing else: Cancel, Got it.
     Dismiss(String),

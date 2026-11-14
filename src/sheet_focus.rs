@@ -58,6 +58,7 @@ pub fn use_sheet_focus(
 
 /// What takes focus as a sheet opens.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[non_exhaustive]
 pub enum OpenFocus {
     /// The sheet's × when it has one, else the sheet itself, so the keyboard starts inside it and
     /// no field takes focus to raise a phone's keyboard. Focus goes back as it closes.
