@@ -55,16 +55,28 @@ pub fn frames(ms: u64) -> usize {
 /// wide: the noise front covers the art in the first [`NOISE_PCT`] of the
 /// pass, and the decode front starts at [`DECODE_DELAY_PCT`] and runs
 /// [`OVERRUN`] past the end by the finish.
+///
+/// A `frame` past `frames` stands where the last frame does. The arithmetic
+/// saturates, so art too wide for `usize` gets fronts held at the limit
+/// rather than a panic or a wrapped value.
 #[must_use]
-#[expect(
-    clippy::arithmetic_side_effects,
-    reason = "frame is at most frames, a few dozen, and columns is one line of art, so every product stays far below usize::MAX"
-)]
 pub fn fronts(columns: usize, frame: usize, frames: usize) -> Fronts {
-    let pct = frame * 100;
-    let noise = ((columns + 1) * pct / (frames * NOISE_PCT).max(1)).min(columns + 1);
-    let decode = (columns + OVERRUN) * pct.saturating_sub(frames * DECODE_DELAY_PCT)
-        / (frames * (100 - DECODE_DELAY_PCT)).max(1);
+    let pct = frame.min(frames).saturating_mul(100);
+    let noise = columns
+        .saturating_add(1)
+        .saturating_mul(pct)
+        .checked_div(frames.saturating_mul(NOISE_PCT).max(1))
+        .unwrap_or(0)
+        .min(columns.saturating_add(1));
+    let decode = columns
+        .saturating_add(OVERRUN)
+        .saturating_mul(pct.saturating_sub(frames.saturating_mul(DECODE_DELAY_PCT)))
+        .checked_div(
+            frames
+                .saturating_mul(100_usize.saturating_sub(DECODE_DELAY_PCT))
+                .max(1),
+        )
+        .unwrap_or(0);
     Fronts { noise, decode }
 }
 
@@ -291,6 +303,27 @@ mod tests {
         }
         assert!(last.noise > columns && last.decode >= columns + OVERRUN);
         assert_eq!(fronts(columns, 1, frames).decode, 0, "decode waits");
+    }
+
+    #[test]
+    fn a_frame_past_the_last_is_the_last_and_huge_inputs_never_overflow() {
+        let (columns, frames) = (40, 22);
+        assert_eq!(
+            fronts(columns, frames * 10, frames),
+            fronts(columns, frames, frames),
+            "past the end holds the last frame"
+        );
+        let wide = fronts(usize::MAX / 2, usize::MAX, usize::MAX / 3);
+        assert!(wide.noise <= usize::MAX / 2 + 1, "{wide:?}");
+        let text = "ab\ncd";
+        assert_eq!(
+            entry_frame(text, usize::MAX, frames),
+            entry_frame(text, frames, frames)
+        );
+        assert_eq!(
+            exit_frame(text, usize::MAX, frames),
+            exit_frame(text, frames, frames)
+        );
     }
 
     #[test]
