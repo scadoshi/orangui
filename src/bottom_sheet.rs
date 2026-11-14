@@ -79,6 +79,8 @@ pub struct SheetDrag {
 
 /// Which way a sheet is pulled to close: a bottom sheet down, a drawer along the right edge to
 /// the right, one along the left edge to the left.
+///
+/// The set is closed, the three edges a sheet leaves by, so a match need not carry a `_` arm.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum Pull {
     /// Down, by the pointer's y, against the sheet's height.
@@ -258,7 +260,8 @@ impl SheetDrag {
 
     /// Ends the pull with the sheet springing back, as the browser takes the pointer.
     pub fn cancel(self, evt: &PointerEvent) {
-        let _ = self.end(evt);
+        // The sheet springs back, so where the pull stood is not needed.
+        let _: Option<Drag> = self.end(evt);
     }
 
     /// Keeps the sheet's element, measured as each pull starts.
@@ -542,6 +545,7 @@ pub fn BottomSheet(
 /// Whether a [`BottomSheet`]'s backdrop dims what is under it. Either way the
 /// backdrop takes a click outside the sheet, which dismisses it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[non_exhaustive]
 pub enum SheetDim {
     /// Dims at every width: a sheet that asks for a decision.
     #[default]
@@ -555,6 +559,7 @@ pub enum SheetDim {
 /// Where a [`BottomSheet`] sits on a wide window. Below the kit's bar
 /// breakpoint every form is the bottom sheet.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[non_exhaustive]
 pub enum SheetWide {
     /// The bottom sheet at every width.
     #[default]

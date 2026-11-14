@@ -10,6 +10,8 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use dioxus::prelude::*;
 use orangui_core::page_keys::{GG_WINDOW_MS, PAGE_KEYS, PageKey, STEP_SHARE, page_key};
 
+use crate::js_str::js_str;
+
 /// The query for a computer: a pointer that hovers and is precise, which a phone's touch is not,
 /// with the window on the wide layout, from 900px.
 pub const COMPUTER_QUERY: &str = "(hover: hover) and (pointer: fine) and (min-width: 900px)";
@@ -34,7 +36,8 @@ const NOT_TYPING: &str = "(() => { const f = document.activeElement; const typin
 #[must_use]
 pub(crate) fn top_sheet_guard_js(holding: &str) -> String {
     format!(
-        "({NOT_TYPING} && (() => {{ const open = [...document.querySelectorAll('{OVERLAYS}')]; const top = open[open.length - 1]; return !!top && top.matches('.bottom-sheet.show') && !!top.querySelector('{holding}'); }})())"
+        "({NOT_TYPING} && (() => {{ const open = [...document.querySelectorAll('{OVERLAYS}')]; const top = open[open.length - 1]; return !!top && top.matches('.bottom-sheet.show') && !!top.querySelector({holding}); }})())",
+        holding = js_str(holding),
     )
 }
 
@@ -72,7 +75,7 @@ const onKey = (e) => {
     const key = __KEY__;
     if (!__KEYS__.includes(key)) { lastG = 0; return; }
     if (!__NOT_TYPING__) return;
-    const inOverlay = !!document.querySelector('__BLOCKED__');
+    const inOverlay = !!document.querySelector(__BLOCKED__);
     if (inOverlay && key !== 'g' && key !== 'G') return;
     if ((key === 'j' || key === 'k') && !window['__oranguiSteps__ID__']) return;
     const now = Date.now();
@@ -168,7 +171,7 @@ fn keys_js(id: u64, blocked_by: &[&str]) -> String {
         .replace("__KEY__", PRESSED_KEY)
         .replace("__KEYS__", &format!("{PAGE_KEYS:?}"))
         .replace("__NOT_TYPING__", NOT_TYPING)
-        .replace("__BLOCKED__", &blocked)
+        .replace("__BLOCKED__", &js_str(&blocked))
         .replace("__GG__", &GG_WINDOW_MS.to_string())
 }
 
@@ -192,7 +195,7 @@ enum Target {
 fn target_js(target: Target) -> String {
     match target {
         Target::Page(scroller) => {
-            let sel = scroller.map_or_else(|| "null".to_owned(), |sel| format!("'{sel}'"));
+            let sel = scroller.map_or_else(|| "null".to_owned(), js_str);
             format!(
                 "(() => {{ const sel = {sel}; const found = sel && [...document.querySelectorAll(sel)].filter((el) => el.getClientRects().length > 0 && !el.closest('[inert]') && el.scrollHeight > el.clientHeight).pop(); return found || document.scrollingElement; }})()"
             )
@@ -202,8 +205,9 @@ fn target_js(target: Target) -> String {
                 .chain(blocked_by.iter().copied())
                 .collect::<Vec<_>>()
                 .join(", ");
+            let open = js_str(&open);
             format!(
-                "(() => {{ const open = [...document.querySelectorAll('{open}')]; const top = open[open.length - 1]; if (!top) return null; const room = (el) => {{ const o = getComputedStyle(el).overflowY; return (o === 'auto' || o === 'scroll') ? el.scrollHeight - el.clientHeight : 0; }}; return [top, ...top.querySelectorAll('*')].filter((el) => room(el) > 1).sort((a, b) => room(b) - room(a))[0] || null; }})()"
+                "(() => {{ const open = [...document.querySelectorAll({open})]; const top = open[open.length - 1]; if (!top) return null; const room = (el) => {{ const o = getComputedStyle(el).overflowY; return (o === 'auto' || o === 'scroll') ? el.scrollHeight - el.clientHeight : 0; }}; return [top, ...top.querySelectorAll('*')].filter((el) => room(el) > 1).sort((a, b) => room(b) - room(a))[0] || null; }})()"
             )
         }
     }
@@ -293,7 +297,7 @@ mod tests {
         );
         assert!(js.contains("!(e.ctrlKey || e.altKey || e.metaKey)"), "{js}");
         assert!(
-            js.contains("document.querySelector('.alert-dialog[data-state=\"open\"], .bottom-sheet.show, .big-modal')"),
+            js.contains(r#"document.querySelector(".alert-dialog[data-state=\"open\"], .bottom-sheet.show, .big-modal")"#),
             "a host's own overlays block too: {js}"
         );
     }
@@ -349,7 +353,7 @@ mod tests {
             "{top}"
         );
         let held = scroll_js(Target::Page(Some(".main")), "1", true);
-        assert!(held.contains("const sel = '.main';"), "{held}");
+        assert!(held.contains(r#"const sel = ".main";"#), "{held}");
         assert!(
             held.contains("const still = true ||"),
             "a held key moves at once: {held}"
@@ -366,7 +370,7 @@ mod tests {
         );
         let target = target_js(Target::Overlay(&[".big-modal"]));
         assert!(
-            target.contains("document.querySelectorAll('.alert-dialog[data-state=\"open\"], .bottom-sheet.show, .big-modal')"),
+            target.contains(r#"document.querySelectorAll(".alert-dialog[data-state=\"open\"], .bottom-sheet.show, .big-modal")"#),
             "{target}"
         );
         assert!(
@@ -418,8 +422,26 @@ mod tests {
     fn an_open_sheet_s_keys_need_it_on_top() {
         let js = top_sheet_guard_js(".mark");
         assert!(
-            js.contains("top.matches('.bottom-sheet.show') && !!top.querySelector('.mark')"),
+            js.contains(r#"top.matches('.bottom-sheet.show') && !!top.querySelector(".mark")"#),
             "{js}"
+        );
+    }
+
+    #[test]
+    fn a_host_selector_with_a_quote_stays_one_string() {
+        let sel = "[aria-label='x']";
+        let quoted = r#""[aria-label='x']""#;
+        let page = target_js(Target::Page(Some("[aria-label='x']")));
+        assert!(page.contains(&format!("const sel = {quoted};")), "{page}");
+        let overlay = target_js(Target::Overlay(&["[aria-label='x']"]));
+        assert!(!overlay.contains(&format!("'{sel}'")), "{overlay}");
+        assert!(overlay.contains(&format!(", {sel}\"")), "{overlay}");
+        let keys = keys_js(0, &["[aria-label='x']"]);
+        assert!(keys.contains(&format!(", {sel}\")")), "{keys}");
+        let guard = top_sheet_guard_js(sel);
+        assert!(
+            guard.contains(&format!("top.querySelector({quoted})")),
+            "{guard}"
         );
     }
 }

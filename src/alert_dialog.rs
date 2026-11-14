@@ -38,6 +38,7 @@ use crate::use_overlay_back;
 /// `Icon` close the dialog; a [`Button`](DialogAction::Button) closes it or
 /// not, as its [`ActionButton`] says.
 #[derive(Clone, PartialEq, Debug)]
+#[non_exhaustive]
 pub enum DialogAction {
     /// Closes the dialog and does nothing else: Cancel, Got it.
     Dismiss(String),
@@ -550,7 +551,7 @@ pub fn AlertDialog(
 pub fn DialogHostView() -> Element {
     let host = use_context::<DialogHost>();
     use_effect(|| {
-        let _ = document::eval(DIALOG_KEYS_JS);
+        document::eval(DIALOG_KEYS_JS);
     });
     let Some(shown) = host.slot.read().clone() else {
         return rsx! {};

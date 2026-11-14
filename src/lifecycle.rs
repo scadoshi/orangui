@@ -40,6 +40,8 @@ window.__oranguiVisibility = () => dioxus.send(document.visibilityState === 'vis
 document.addEventListener('visibilitychange', window.__oranguiVisibility);";
 
 /// Where the app is: on screen, or in the background.
+///
+/// The set is closed, so a match need not carry a `_` arm.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum AppPhase {
     /// On screen and taking input.

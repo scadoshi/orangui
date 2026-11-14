@@ -13,6 +13,7 @@ use dioxus::prelude::*;
 
 /// The colored status pill shown in the banner header.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum BannerStatus {
     /// Shipped / finished (green pill), default label "Done". Callers that mean
     /// "live in production" rather than "work complete" pass their own label.
@@ -52,7 +53,7 @@ impl BannerState {
     fn class(self) -> &'static str {
         match self {
             BannerState::Leaving => "banner banner-leaving",
-            _ => "banner",
+            BannerState::Shown | BannerState::Dismissed => "banner",
         }
     }
 }

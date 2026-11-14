@@ -20,6 +20,7 @@
 
 use std::fmt;
 
+use dioxus::document::EvalError;
 use dioxus::prelude::*;
 use orangui_core::decode;
 use orangui_core::splash::{FADE_MS, LEAVE_AT_MS, MARK_AT_MS, OUT_AT_MS, paced};
@@ -78,7 +79,8 @@ pub fn Splash(
                 let mut eval = document::eval(
                     "const s = window.__oranguiSplash; if (s) s.out.then(() => dioxus.send(true)); else dioxus.send(true);",
                 );
-                let _ = eval.recv::<bool>().await;
+                // A failed script has no fade to wait for.
+                let _: Result<bool, EvalError> = eval.recv::<bool>().await;
             } else {
                 entrance::sleep_ms(paced(MARK_AT_MS, pace)).await;
                 mark.set(true);

@@ -71,7 +71,8 @@ pub fn curve(points: &[(f64, f64)]) -> String {
         let dx = (p2.0 - p1.0) / 3.0;
         let c1 = (p1.0 + dx, p1.1 + t1 * dx);
         let c2 = (p2.0 - dx, p2.1 - t2 * dx);
-        let _ = write!(
+        // Writing to a String cannot fail.
+        let _: std::fmt::Result = write!(
             d,
             " C {:.1} {:.1}, {:.1} {:.1}, {:.1} {:.1}",
             c1.0, c1.1, c2.0, c2.1, p2.0, p2.1

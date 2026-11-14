@@ -4,6 +4,8 @@
 //! them in the browser; this module decides what a key means.
 
 /// What a page key does.
+///
+/// Exhaustive on purpose: a new key fails every host's match until the host decides what it does.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PageKey {
     /// `g` `g`: to the top of the page.

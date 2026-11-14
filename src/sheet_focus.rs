@@ -8,6 +8,8 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 use dioxus::prelude::*;
 
+use crate::js_str::js_str;
+
 /// The next sheet's key in the page's focus store, unique across instances.
 static NEXT_ID: AtomicU64 = AtomicU64::new(0);
 
@@ -24,8 +26,8 @@ const FOCUS_RETRY_MS: u32 = 50;
 
 /// Focuses the element matching `target` (a selector naming something inside the open sheet, such
 /// as `.bottom-sheet.show .sheet-close`) as `open` turns true and `when` holds, remembering what
-/// had focus, and gives focus back as `open` turns false. `on_focus` is a script that runs once the
-/// target has focus, or `""`.
+/// had focus, and gives focus back as `open` turns false. `target` may hold any quotes. `on_focus` is
+/// script source that runs once the target has focus, or `""`, and goes into the page as written.
 pub fn use_sheet_focus(
     open: ReadSignal<bool>,
     when: ReadSignal<bool>,
@@ -56,6 +58,7 @@ pub fn use_sheet_focus(
 
 /// What takes focus as a sheet opens.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[non_exhaustive]
 pub enum OpenFocus {
     /// The sheet's × when it has one, else the sheet itself, so the keyboard starts inside it and
     /// no field takes focus to raise a phone's keyboard. Focus goes back as it closes.
@@ -104,8 +107,9 @@ const TRAP_JS: &str = r#"if (!window.__oranguiSheetKeys) { window.__oranguiSheet
 /// drawn: its ×, or the sheet itself with none, marked as the page's sheet entry so a
 /// [`use_sheet_focus`] target takes over from it. It leaves focus already inside the sheet.
 fn entry_js(id: u64, title: &str) -> String {
+    let title = js_str(title);
     format!(
-        "{{ const store = window.__oranguiSheetFocus = window.__oranguiSheetFocus || {{}}; const was = document.activeElement; store['{id}'] = was; store['{id}s'] = null; const name = {title:?}; const until = Date.now() + {FOCUS_TRY_MS}; const take = () => {{ const s = [...document.querySelectorAll('.bottom-sheet.show')].find((x) => x.getAttribute('aria-label') === name); const t = s && (s.querySelector(':scope > .sheet-header .sheet-close') || s); const a = document.activeElement; if (s) store['{id}s'] = s; if (s && a && s.contains(a)) return; if (t && (!a || a === document.body || a === was)) {{ t.focus({{ preventScroll: true }}); if (document.activeElement === t) {{ window.__oranguiSheetEntry = t; return; }} }} if (Date.now() < until) setTimeout(take, {FOCUS_RETRY_MS}); }}; setTimeout(take, {FOCUS_DELAY_MS}); }}"
+        "{{ const store = window.__oranguiSheetFocus = window.__oranguiSheetFocus || {{}}; const was = document.activeElement; store['{id}'] = was; store['{id}s'] = null; const name = {title}; const until = Date.now() + {FOCUS_TRY_MS}; const take = () => {{ const s = [...document.querySelectorAll('.bottom-sheet.show')].find((x) => x.getAttribute('aria-label') === name); const t = s && (s.querySelector(':scope > .sheet-header .sheet-close') || s); const a = document.activeElement; if (s) store['{id}s'] = s; if (s && a && s.contains(a)) return; if (t && (!a || a === document.body || a === was)) {{ t.focus({{ preventScroll: true }}); if (document.activeElement === t) {{ window.__oranguiSheetEntry = t; return; }} }} if (Date.now() < until) setTimeout(take, {FOCUS_RETRY_MS}); }}; setTimeout(take, {FOCUS_DELAY_MS}); }}"
     )
 }
 
@@ -113,8 +117,9 @@ fn entry_js(id: u64, title: &str) -> String {
 /// while focus is on the page, where it was or on a sheet's entry ([`use_sheet_entry`]), then runs
 /// `on_focus`.
 fn focus_js(id: u64, target: &str, on_focus: &str) -> String {
+    let target = js_str(target);
     format!(
-        "{{ const store = window.__oranguiSheetFocus = window.__oranguiSheetFocus || {{}}; const was = document.activeElement; store['{id}'] = was; store['{id}s'] = null; const until = Date.now() + {FOCUS_TRY_MS}; const take = () => {{ const t = document.querySelector('{target}'); const a = document.activeElement; if (t) store['{id}s'] = t.closest('.bottom-sheet') || t; if (t && a === t) {{ {on_focus} return; }} if (t && (!a || a === document.body || a === was || a === window.__oranguiSheetEntry)) t.focus({{ preventScroll: true }}); if (t && document.activeElement === t) {{ {on_focus} return; }} if (Date.now() < until) setTimeout(take, {FOCUS_RETRY_MS}); }}; setTimeout(take, {FOCUS_DELAY_MS}); }}"
+        "{{ const store = window.__oranguiSheetFocus = window.__oranguiSheetFocus || {{}}; const was = document.activeElement; store['{id}'] = was; store['{id}s'] = null; const until = Date.now() + {FOCUS_TRY_MS}; const take = () => {{ const t = document.querySelector({target}); const a = document.activeElement; if (t) store['{id}s'] = t.closest('.bottom-sheet') || t; if (t && a === t) {{ {on_focus} return; }} if (t && (!a || a === document.body || a === was || a === window.__oranguiSheetEntry)) t.focus({{ preventScroll: true }}); if (t && document.activeElement === t) {{ {on_focus} return; }} if (Date.now() < until) setTimeout(take, {FOCUS_RETRY_MS}); }}; setTimeout(take, {FOCUS_DELAY_MS}); }}"
     )
 }
 
@@ -134,7 +139,7 @@ mod tests {
     fn opening_remembers_focus_and_takes_it_once_the_sheet_draws() {
         let js = focus_js(0, ".bottom-sheet.show .x", "done();");
         assert!(
-            js.contains("document.querySelector('.bottom-sheet.show .x')"),
+            js.contains(r#"document.querySelector(".bottom-sheet.show .x")"#),
             "{js}"
         );
         assert!(js.contains("t.focus({ preventScroll: true })"), "{js}");
@@ -204,5 +209,16 @@ mod tests {
             js.contains("const inClosed = !!a && !!sheet && sheet.contains(a);"),
             "the sheet it focused into, whatever its classes say while it slides away: {js}"
         );
+    }
+
+    #[test]
+    fn a_target_or_title_with_a_quote_stays_one_string() {
+        let js = focus_js(0, "[aria-label='x']", "");
+        assert!(
+            js.contains(r#"document.querySelector("[aria-label='x']")"#),
+            "{js}"
+        );
+        let js = entry_js(0, "Scotty's sheet");
+        assert!(js.contains(r#"const name = "Scotty's sheet";"#), "{js}");
     }
 }
