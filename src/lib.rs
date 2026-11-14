@@ -67,6 +67,7 @@ mod heat_readout;
 mod hint;
 pub mod icons;
 mod ink;
+mod js_str;
 mod lifecycle;
 #[cfg(feature = "links")]
 mod links;
