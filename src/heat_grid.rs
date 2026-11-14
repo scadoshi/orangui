@@ -5,6 +5,7 @@
 //! back a [`HeatHit`] per pointer event to place its own chip. The look is
 //! the `.heat-*` rules in `assets/components.css`.
 
+use dioxus::document::EvalError;
 use dioxus::prelude::*;
 use orangui_core::heat;
 
@@ -126,7 +127,7 @@ pub fn use_scroll_to_end() {
     use_effect(|| {
         spawn(async {
             entrance::sleep_ms(60).await;
-            let _ = document::eval(
+            let _: Result<_, EvalError> = document::eval(
                 "for (const el of document.querySelectorAll('.scroll-end')) el.scrollLeft = el.scrollWidth;",
             )
             .await;

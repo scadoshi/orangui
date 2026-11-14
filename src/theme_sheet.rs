@@ -100,7 +100,7 @@ pub fn ThemeSheet(
     hint: Option<Signal<bool>>,
 ) -> Element {
     use_effect(|| {
-        let _ = document::eval(THEME_KEYS_JS);
+        document::eval(THEME_KEYS_JS);
     });
     crate::theme_cursor::use_theme_cursor(open);
     let mut selected = use_signal(|| theme.peek().name.clone());

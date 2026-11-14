@@ -550,7 +550,7 @@ pub fn AlertDialog(
 pub fn DialogHostView() -> Element {
     let host = use_context::<DialogHost>();
     use_effect(|| {
-        let _ = document::eval(DIALOG_KEYS_JS);
+        document::eval(DIALOG_KEYS_JS);
     });
     let Some(shown) = host.slot.read().clone() else {
         return rsx! {};

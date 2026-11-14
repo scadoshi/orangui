@@ -19,6 +19,7 @@ use std::cell::Cell;
 use std::fmt;
 use std::rc::Rc;
 
+use dioxus::document::EvalError;
 use dioxus::prelude::*;
 
 use crate::{Replay, ThemeConfig};
@@ -129,8 +130,9 @@ pub fn use_theme_wipe_follow(
         running.with_mut(|n| *n = n.saturating_add(1));
         spawn(async move {
             let mut js = document::eval(WIPE_JS);
-            let _ = js.send((target, next.css_class()));
-            let _ = js.recv::<bool>().await;
+            // A wipe script that fails leaves the swap to run without the animation.
+            let _: Result<(), EvalError> = js.send((target, next.css_class()));
+            let _: Result<bool, EvalError> = js.recv::<bool>().await;
             // A later pick supersedes this one and commits itself.
             if *picked.peek() == next {
                 theme.set(next.clone());
@@ -138,10 +140,10 @@ pub fn use_theme_wipe_follow(
                 if let Some(Replay(mut count)) = replay {
                     count.with_mut(|n| *n = n.saturating_add(1));
                 }
-                let _ = document::eval(LOGO_JS);
+                document::eval(LOGO_JS);
             }
-            let _ = js.send(true);
-            let _ = js.recv::<bool>().await;
+            let _: Result<(), EvalError> = js.send(true);
+            let _: Result<bool, EvalError> = js.recv::<bool>().await;
             wiping.set(wiping.get().saturating_sub(1));
             running.with_mut(|n| *n = n.saturating_sub(1));
         });
@@ -215,13 +217,14 @@ pub fn use_theme_follow(theme: Signal<ThemeConfig>, target: &'static str) -> The
         running.with_mut(|n| *n = n.saturating_add(1));
         spawn(async move {
             let mut js = document::eval(WIPE_JS);
-            let _ = js.send((target, next.css_class()));
-            let _ = js.recv::<bool>().await;
+            // A wipe script that fails leaves the swap to run without the animation.
+            let _: Result<(), EvalError> = js.send((target, next.css_class()));
+            let _: Result<bool, EvalError> = js.recv::<bool>().await;
             if *theme.peek() == next {
                 shown.set(next);
             }
-            let _ = js.send(true);
-            let _ = js.recv::<bool>().await;
+            let _: Result<(), EvalError> = js.send(true);
+            let _: Result<bool, EvalError> = js.recv::<bool>().await;
             running.with_mut(|n| *n = n.saturating_sub(1));
         });
     });

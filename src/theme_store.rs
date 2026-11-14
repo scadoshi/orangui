@@ -29,8 +29,10 @@ mod imp {
     pub(super) fn save(key: &str, cfg: &ThemeConfig) {
         if let Some(storage) = storage()
             && let Ok(json) = serde_json::to_string(cfg)
+            && let Err(e) = storage.set_item(key, &json)
         {
-            let _ = storage.set_item(key, &json);
+            // Private browsing or a full quota: the pick lasts until the page closes.
+            dioxus::logger::tracing::warn!("theme: could not save the picked theme: {e:?}");
         }
     }
 }

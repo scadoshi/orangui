@@ -258,7 +258,8 @@ impl SheetDrag {
 
     /// Ends the pull with the sheet springing back, as the browser takes the pointer.
     pub fn cancel(self, evt: &PointerEvent) {
-        let _ = self.end(evt);
+        // The sheet springs back, so where the pull stood is not needed.
+        let _: Option<Drag> = self.end(evt);
     }
 
     /// Keeps the sheet's element, measured as each pull starts.

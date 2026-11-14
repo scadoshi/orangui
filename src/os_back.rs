@@ -51,20 +51,32 @@ use crate::OverlayBackStack;
 ///   there is nothing to go back to. A router host checks
 ///   `can_go_back` before `go_back`.
 pub fn use_os_back(
+    #[cfg_attr(
+        not(target_os = "android"),
+        expect(unused_variables, reason = "only Android sends the back event")
+    )]
     android_event: &'static str,
+    #[cfg_attr(
+        not(target_os = "ios"),
+        expect(unused_variables, reason = "only iOS has the edge swipe")
+    )]
     ios_webview: fn() -> Option<NonNull<c_void>>,
+    #[cfg_attr(
+        not(any(target_os = "ios", target_os = "android")),
+        expect(unused_variables, reason = "only a phone has a back gesture")
+    )]
     go_back: Callback<(), bool>,
 ) {
     #[cfg(target_os = "ios")]
     {
-        let _ = android_event;
         let mut overlays: OverlayBackStack = use_context();
         use_effect(move || {
             let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<()>();
             spawn(async move {
                 while rx.recv().await.is_some() {
                     if !overlays.close_top() {
-                        let _ = go_back.call(());
+                        // With nothing to go back to, the swipe does nothing.
+                        let _: bool = go_back.call(());
                     }
                 }
             });
@@ -82,7 +94,6 @@ pub fn use_os_back(
 
     #[cfg(target_os = "android")]
     {
-        let _ = ios_webview;
         let mut overlays: OverlayBackStack = use_context();
         use_future(move || async move {
             let mut eval = document::eval(&format!(
@@ -96,11 +107,6 @@ pub fn use_os_back(
                 }
             }
         });
-    }
-
-    #[cfg(not(any(target_os = "ios", target_os = "android")))]
-    {
-        let _ = (android_event, ios_webview, go_back);
     }
 }
 
@@ -122,11 +128,15 @@ pub fn use_os_back(
 /// on the hook needs nothing more. A host that does not use the hook calls it
 /// once at mount, on the main thread, with the pointer `dioxus/mobile` hands
 /// out through wry's `WebViewExtIOS`. On every other target it does nothing.
-pub fn fill_window(webview: NonNull<c_void>) {
+pub fn fill_window(
+    #[cfg_attr(
+        not(target_os = "ios"),
+        expect(unused_variables, reason = "only iOS insets the page")
+    )]
+    webview: NonNull<c_void>,
+) {
     #[cfg(target_os = "ios")]
     ios::fill_window(webview);
-    #[cfg(not(target_os = "ios"))]
-    let _ = webview;
 }
 
 /// The left-edge swipe: a `UIScreenEdgePanGestureRecognizer` on the WKWebView
@@ -181,7 +191,8 @@ mod ios {
                     && let Ok(slot) = EDGE_BACK_TX.lock()
                     && let Some(tx) = slot.as_ref()
                 {
-                    let _ = tx.send(());
+                    // The layout that listened is gone, so there is no one to tell.
+                    let _: Result<(), _> = tx.send(());
                 }
             }
 

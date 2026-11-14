@@ -58,8 +58,20 @@ pub const REPEAT_WINDOW: Duration = Duration::from_secs(30);
 ///   and calls `new_window(..)` then `close()` on it, which the event loop
 ///   handles in that order.
 pub fn use_page_kill_recovery(
+    #[cfg_attr(
+        not(target_os = "ios"),
+        expect(unused_variables, reason = "only iOS kills the page's process")
+    )]
     app_name: &'static str,
+    #[cfg_attr(
+        not(target_os = "ios"),
+        expect(unused_variables, reason = "only iOS kills the page's process")
+    )]
     ios_webview: fn() -> Option<NonNull<c_void>>,
+    #[cfg_attr(
+        not(target_os = "ios"),
+        expect(unused_variables, reason = "only iOS kills the page's process")
+    )]
     rebuild: impl Fn() + 'static,
 ) {
     #[cfg(target_os = "ios")]
@@ -71,10 +83,6 @@ pub fn use_page_kill_recovery(
                 ios::watch(app_name, ios_webview(), Rc::new(rebuild));
             }
         });
-    }
-    #[cfg(not(target_os = "ios"))]
-    {
-        let _ = (app_name, ios_webview, rebuild);
     }
 }
 
@@ -334,13 +342,14 @@ mod ios {
         let on_commit: Imp = unsafe { std::mem::transmute(on_commit) };
         // SAFETY: the wrapper has the replaced method's signature.
         let wry = unsafe { commit.set_implementation(on_commit) };
-        let _ = WRY_COMMITTED.set(wry);
+        // Empty here: the guard at the top returns once they are set.
+        let _: Result<(), _> = WRY_COMMITTED.set(wry);
         let on_terminate: unsafe extern "C-unwind" fn(&AnyObject, Sel, &AnyObject) = terminated;
         // SAFETY: as above, for `terminated` and the termination method.
         let on_terminate: Imp = unsafe { std::mem::transmute(on_terminate) };
         // SAFETY: the wrapper has the replaced method's signature.
         let wry = unsafe { terminate.set_implementation(on_terminate) };
-        let _ = WRY_TERMINATED.set(wry);
+        let _: Result<(), _> = WRY_TERMINATED.set(wry);
     }
 
     /// A `CGPoint`, for the frames UIKit takes.
