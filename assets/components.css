@@ -1673,8 +1673,7 @@ html:has(.bottom-sheet.show) body,
     overflow: hidden;
     background: var(--bg-primary);
     border: 1px solid var(--border-secondary);
-    --banner-radius: 0.4rem;
-    border-radius: var(--banner-radius);
+    border-radius: 0.4rem;
     padding: 0.8rem 2.4rem 0.9rem 1.2rem;
     font-size: 0.75rem;
     color: var(--text-primary);
@@ -1703,14 +1702,10 @@ html:has(.bottom-sheet.show) body,
     line-height: 1.45;
 }
 
-/* In the banner's top-right corner: its corner is the banner's less the
-   border and its inset from the top, so it nests in the banner's curve. */
 .banner .banner-dismiss {
-    --banner-dismiss-inset: 0.25rem;
     position: absolute;
-    top: var(--banner-dismiss-inset);
+    top: 0.25rem;
     right: 0.35rem;
-    border-radius: max(0.15rem, calc(var(--banner-radius) - 1px - var(--banner-dismiss-inset)));
 }
 
 .banner + .banner {

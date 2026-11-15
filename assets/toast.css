@@ -92,12 +92,9 @@
     box-sizing: border-box;
     align-items: center;
     justify-content: flex-start;
-    /* The corner and the padding its close button's corner is made from. */
-    --toast-radius: 0.6rem;
-    --toast-pad: 1rem;
-    padding: var(--toast-pad);
+    padding: 1rem;
     border: 1px solid var(--border-primary);
-    border-radius: var(--toast-radius);
+    border-radius: 0.6rem;
     background: var(--bg-primary);
     color: var(--text-primary);
     font-family: 'JetBrains Mono', monospace;
@@ -187,9 +184,7 @@
     height: 2rem;
     padding: 0;
     border: none;
-    /* Pulled half a rem into the padding, so it sits that much nearer the
-       corner: its own corner is the toast's less the border and that inset. */
-    border-radius: max(0.15rem, calc(var(--toast-radius) - 1px - (var(--toast-pad) - 0.5rem)));
+    border-radius: 0.6rem;
     margin: -0.5rem -0.5rem -0.5rem 0;
     background: transparent;
     color: var(--text-primary);
