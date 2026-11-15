@@ -12,20 +12,6 @@ const SHEETS: [(&str, &str); 7] = [
     ("nav_fold.css", include_str!("../assets/nav_fold.css")),
 ];
 
-/// Hover rules that may stand outside the gate, each with the block it must sit in and why.
-const EXEMPT: [(&str, &str, &str); 2] = [
-    (
-        ".release-card:hover",
-        "prefers-reduced-motion",
-        "it only cancels the gated lift for reduced motion and lights nothing",
-    ),
-    (
-        ".banner:hover .banner-progress",
-        "",
-        "it pauses the countdown rather than lighting anything; gating it changes what a tap does on touch",
-    ),
-];
-
 /// `sheet` with its comments blanked out, line breaks kept so line numbers still match.
 fn without_comments(sheet: &str) -> String {
     let mut out = String::with_capacity(sheet.len());
@@ -83,11 +69,8 @@ fn every_hover_look_waits_for_a_device_that_hovers() {
             let gated = around
                 .iter()
                 .any(|p| p.starts_with("@media") && p.contains("(hover: hover)"));
-            let exempt = EXEMPT.iter().any(|(s, inside, _)| {
-                *s == selector && (inside.is_empty() || around.iter().any(|p| p.contains(inside)))
-            });
             assert!(
-                gated || exempt,
+                gated,
                 "{name}:{line}: `{selector}` is outside @media (hover: hover)"
             );
         }

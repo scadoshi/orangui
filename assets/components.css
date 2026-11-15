@@ -1749,8 +1749,10 @@ html:has(.bottom-sheet.show) body,
     animation-delay: 1.2s;
 }
 
-.banner:hover .banner-progress {
-    animation-play-state: paused;
+@media (hover: hover) {
+    .banner:hover .banner-progress {
+        animation-play-state: paused;
+    }
 }
 
 @keyframes banner-countdown {
@@ -1966,8 +1968,10 @@ html:has(.bottom-sheet.show) body,
         animation: none;
     }
 
-    .release-card:hover {
-        transform: none;
+    @media (hover: hover) {
+        .release-card:hover {
+            transform: none;
+        }
     }
 }
 
