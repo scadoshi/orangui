@@ -86,8 +86,10 @@ body .reveal-pending.reveal-in {
     transition: opacity 0.15s;
 }
 
-.gallery-nav:hover {
-    opacity: 1;
+@media (hover: hover) {
+    .gallery-nav:hover {
+        opacity: 1;
+    }
 }
 
 .gallery-prev {
