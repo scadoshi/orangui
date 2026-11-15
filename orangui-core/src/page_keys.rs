@@ -105,7 +105,7 @@ pub const SWIPE: &str = "Swipe";
 pub const PAGE: &str = "Page";
 
 /// The heading over the theme sheet's own keys.
-pub const IN_THEMES: &str = "In Themes";
+pub const IN_THEMES: &str = "In themes";
 
 /// A shortcuts sheet's group: a small heading over its rows.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -210,5 +210,21 @@ mod tests {
                 .iter()
                 .any(|g| g.title == IN_THEMES && g.rows == THEME_SHEET_ROWS)
         );
+    }
+
+    #[test]
+    fn every_group_heading_is_in_sentence_case() {
+        for title in [NAVIGATION, CARD, SWIPE, PAGE, IN_THEMES] {
+            let mut words = title.split(' ');
+            let first = words.next().unwrap_or_default();
+            assert!(
+                first.chars().next().is_some_and(char::is_uppercase),
+                "{title} starts with a capital"
+            );
+            assert!(
+                words.all(|word| word.chars().all(char::is_lowercase)),
+                "{title} has no other capitals"
+            );
+        }
     }
 }
