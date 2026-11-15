@@ -17,8 +17,8 @@ use dioxus::prelude::*;
 
 use crate::page_keys::THEMES_ACTION;
 use crate::{
-    BottomSheet, Button, ButtonVariant, NavPanelOpen, SheetDim, SheetFrame, SheetWide,
-    THEME_GROUPS, ThemeConfig, display_theme_name,
+    BottomSheet, NavPanelOpen, SheetDim, SheetFrame, SheetWide, THEME_GROUPS, ThemeConfig,
+    display_theme_name,
 };
 
 /// The palette, the sign for the theme wherever it is named: a stroked
@@ -79,27 +79,25 @@ pub fn ModeIcon(dark: bool) -> Element {
     }
 }
 
-/// A mode's icon followed by its name, "Dark" or "Light".
-#[component]
-fn ModeLabel(dark: bool) -> Element {
-    rsx! {
-        span { class: "mode-label",
-            ModeIcon { dark }
-            if dark { "Dark" } else { "Light" }
-        }
-    }
-}
-
-/// The dark/light toggle that sits in a settings screen's theme row, beside
-/// its `Change` button. It names the mode in use; the host flips and saves
-/// the mode in `onclick`.
+/// The dark/light toggle that sits in a settings screen's theme row, beside its pencil: an icon
+/// button showing the mode in use (the moon in dark, the sun in light), as the nav's mode toggle
+/// does, named for the switch a press makes ("Switch to light mode"). The host flips and saves the
+/// mode in `onclick`.
 #[component]
 pub fn DarkModeButton(is_dark: bool, onclick: EventHandler<MouseEvent>) -> Element {
+    let label = if is_dark {
+        "Switch to light mode"
+    } else {
+        "Switch to dark mode"
+    };
     rsx! {
-        Button {
-            variant: ButtonVariant::Action,
+        button {
+            class: "btn-action btn-icon",
+            r#type: "button",
+            "aria-label": label,
+            title: label,
             onclick: move |evt| onclick.call(evt),
-            ModeLabel { dark: is_dark }
+            ModeIcon { dark: is_dark }
         }
     }
 }
@@ -160,9 +158,10 @@ pub fn ThemePicker(
             button {
                 r#type: "button",
                 class: "mode-toggle",
-                // It names the mode in use, as the apps' settings row does;
-                // the tooltip names the one a click switches to.
-                title: if is_dark { "Switch to light" } else { "Switch to dark" },
+                // Its icon shows the mode in use, as the settings row's toggle does;
+                // its name and tooltip say the switch a click makes.
+                "aria-label": if is_dark { "Switch to light mode" } else { "Switch to dark mode" },
+                title: if is_dark { "Switch to light mode" } else { "Switch to dark mode" },
                 onclick: move |_| {
                     let current = theme.read().clone();
                     theme.set(ThemeConfig {
@@ -170,7 +169,7 @@ pub fn ThemePicker(
                         is_dark: !current.is_dark,
                     });
                 },
-                ModeLabel { dark: is_dark }
+                ModeIcon { dark: is_dark }
             }
         }
         div { class: "theme-picker-sheet",
@@ -226,5 +225,48 @@ fn ThemeDots(name: &'static str, mode: &'static str) -> Element {
             span { class: "theme-dot", style: "background:var(--palette-5)" }
             span { class: "theme-dot", style: "background:var(--palette-6)" }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn render(app: fn() -> Element) -> String {
+        let mut dom = VirtualDom::new(app);
+        dom.rebuild_in_place();
+        dioxus_ssr::render(&dom)
+    }
+
+    #[test]
+    fn the_mode_toggle_is_the_icon_of_the_mode_in_use_named_for_the_switch() {
+        fn dark() -> Element {
+            rsx! { DarkModeButton { is_dark: true, onclick: |_| {} } }
+        }
+        fn light() -> Element {
+            rsx! { DarkModeButton { is_dark: false, onclick: |_| {} } }
+        }
+        let html = render(dark);
+        assert!(
+            html.contains(r#"class="btn-action btn-icon""#),
+            "an icon button: {html}"
+        );
+        assert!(
+            html.contains(r#"aria-label="Switch to light mode""#)
+                && html.contains(r#"title="Switch to light mode""#),
+            "{html}"
+        );
+        assert!(
+            html.contains("M21 12.8"),
+            "the moon, the mode in use: {html}"
+        );
+        assert!(!html.contains(">Dark<"), "no word: {html}");
+        let html = render(light);
+        assert!(
+            html.contains(r#"aria-label="Switch to dark mode""#),
+            "{html}"
+        );
+        assert!(html.contains("<circle"), "the sun: {html}");
+        assert!(!html.contains(">Light<"), "{html}");
     }
 }

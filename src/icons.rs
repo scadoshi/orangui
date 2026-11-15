@@ -76,6 +76,10 @@ pub const INFO: &str = "M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18M12 11v5M12 8v0.01";
 /// Two chain links.
 pub const LINK: &str = "M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1";
 
+/// The edit icon: a pencil, the same drawing as [`EditIcon`], for an [`IconButton`](crate::IconButton)
+/// that changes a setting.
+pub const PENCIL: &str = "M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4zM13.5 6.5l4 4";
+
 /// One stroke icon drawn from a single SVG path, one of the constants here.
 #[component]
 pub fn DockIcon(path: &'static str) -> Element {
