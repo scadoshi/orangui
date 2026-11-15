@@ -1,4 +1,4 @@
-//! The keyboard shortcuts sheet: the keys in groups under small headings, each row its keys in
+//! The keyboard shortcuts sheet: the keys in groups under heading chips, each row its keys in
 //! the hint's key style at the left and what they do after them, closed from a `Got it` bar at its
 //! foot as a hint is, above every overlay. On a wide window the groups, each kept whole, fill two
 //! columns. Focus moves to `Got it` as it opens and back as it closes. A host lists its groups as
@@ -54,12 +54,15 @@ pub fn ShortcutsSheet(
     }
 }
 
-/// One group: its `title` as a small heading over its [`ShortcutRow`]s.
+/// One group: its `title` as a heading chip (`stat-chip-heading`, a panel section title's) over
+/// its [`ShortcutRow`]s.
 #[component]
 pub fn ShortcutGroup(title: String, children: Element) -> Element {
     rsx! {
         section { class: "shortcut-group",
-            h3 { class: "shortcut-group-title", "{title}" }
+            h3 { class: "shortcut-group-title",
+                span { class: "stat-chip stat-chip-heading", "{title}" }
+            }
             ul { class: "shortcuts", {children} }
         }
     }
@@ -101,6 +104,49 @@ pub fn PageShortcuts(steps: bool) -> Element {
 
 #[cfg(test)]
 mod tests {
+    use dioxus::prelude::*;
+
+    use super::ShortcutGroup;
+
+    /// The CSS rule whose selector is exactly `selector`, its declarations only.
+    fn rule(selector: &str) -> &'static str {
+        let opening = format!("\n{selector} {{");
+        crate::COMPONENTS_CSS
+            .split_once(&opening)
+            .and_then(|(_, rest)| rest.split_once('}'))
+            .map_or("", |(body, _)| body)
+    }
+
+    #[test]
+    fn a_group_s_heading_is_a_heading_chip() {
+        fn app() -> Element {
+            rsx! {
+                ShortcutGroup { title: "Navigation".to_string() }
+            }
+        }
+        let mut dom = VirtualDom::new(app);
+        dom.rebuild_in_place();
+        let html = dioxus_ssr::render(&dom);
+        assert!(
+            html.contains(
+                r#"<h3 class="shortcut-group-title"><span class="stat-chip stat-chip-heading">Navigation</span></h3>"#
+            ),
+            "{html}"
+        );
+        let heading = rule(".stat-chip-heading");
+        assert!(
+            heading.contains("--tone: var(--accent-tertiary);")
+                && heading
+                    .contains("--tone-ink: var(--ink-accent-tertiary, var(--accent-tertiary));"),
+            "the heading chip's tone, a panel section title's: {heading}"
+        );
+        let title = rule(".shortcut-group-title");
+        assert!(
+            !title.contains("text-transform") && !title.contains("letter-spacing"),
+            "the chip's own sentence case, not small caps: {title}"
+        );
+    }
+
     #[test]
     fn whole_groups_fill_two_columns_only_on_a_wide_window() {
         let css = crate::COMPONENTS_CSS;
