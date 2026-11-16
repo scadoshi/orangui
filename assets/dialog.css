@@ -71,6 +71,7 @@
     border: 1px solid var(--border-secondary);
     border-radius: 1rem;
     background: var(--bg-primary);
+    box-shadow: var(--shadow-lg);
     color: var(--text-primary);
     font-family: "JetBrains Mono", monospace;
     font-weight: 400;
