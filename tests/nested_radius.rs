@@ -20,7 +20,7 @@ fn rule(sheet: &'static str, selector: &str) -> &'static str {
 fn dock_buttons_follow_the_dock_corner() {
     let dock = rule(COMPONENTS, ":where(.action-dock)");
     assert!(dock.contains("--dock-radius: 0.9rem;"), "{dock:?}");
-    assert!(dock.contains("--dock-inset: 0.3rem;"), "{dock:?}");
+    assert!(dock.contains("--dock-inset: var(--space-1);"), "{dock:?}");
     assert!(
         dock.contains("border-radius: var(--dock-radius);"),
         "{dock:?}"
