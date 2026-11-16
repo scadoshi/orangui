@@ -17,7 +17,7 @@
     align-items: center;
     width: 100%;
     min-height: 0;
-    padding-top: 1rem;
+    padding-top: var(--space-4);
     /* No fill: the host's GridCells layer under the screen is the backdrop. */
     background-color: transparent;
 }
@@ -66,6 +66,7 @@
    in components.css. Soft: an app that adds its own trailing padding sets
    it on .screen-content. */
 :where(.screen:has(> .action-dock) > .screen-content) {
+    /* Room for the dock, off the scale. */
     padding-bottom: 5rem;
 }
 
@@ -104,8 +105,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
 }
 
 /* Direct child only: a dialog mounted inside the header would otherwise
@@ -131,7 +132,7 @@
     justify-content: center;
     height: 1.7rem;
     opacity: var(--fade-corner);
-    padding: 0.2rem 0.6rem;
+    padding: var(--space-1) var(--space-2);
 }
 
 .page-header-support {

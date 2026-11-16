@@ -18,22 +18,22 @@
 
 /* The body's padding is a soft default. */
 :where(.hint-body) {
-    padding: 1rem 0;
+    padding: var(--space-4) 0;
 }
 
 .hint-line {
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 var(--space-2) 0;
     text-align: left;
 }
 
 .hint-bullets {
-    margin: 0 0 0.5rem 0;
-    padding-left: 1.2rem;
+    margin: 0 0 var(--space-2) 0;
+    padding-left: var(--space-4);
     text-align: left;
 }
 
 .hint-bullets li {
-    margin-bottom: 0.4rem;
+    margin-bottom: var(--space-2);
 }
 
 /* A real chip shown as an example mid-sentence, inert since the hint points
@@ -54,7 +54,7 @@
 .input {
     width: 100%;
     text-align: left;
-    padding: 0.75rem 1rem;
+    padding: var(--space-3) var(--space-4);
     background-color: var(--bg-primary);
     /* The field's only edge on a panel of the same fill, so it takes the
        muted ink, held at 4.5:1 on every theme's panel and sink, rather than
@@ -66,7 +66,7 @@
     font-size: 1rem;
     font-weight: 400;
     transition: all 0.2s ease;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
     box-shadow: var(--shadow-sm);
 }
 
@@ -85,7 +85,7 @@
 /* PasswordInput's wrapper takes the field's bottom margin, so the wrapper is
    exactly the field's height and the Show/Hide toggle centers on it. */
 .password-input-wrapper {
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
 }
 
 .password-input-wrapper .input {
@@ -115,7 +115,7 @@
     font-weight: 400;
     letter-spacing: 0.1em;
     color: var(--ink-accent-tertiary, var(--accent-tertiary));
-    margin-bottom: 0.4rem;
+    margin-bottom: var(--space-2);
 }
 
 .label {
@@ -129,7 +129,7 @@
 .label-hint {
     display: flex;
     justify-content: center;
-    margin-bottom: 0.7rem;
+    margin-bottom: var(--space-3);
 }
 
 .label-hint-anchor {
@@ -146,7 +146,7 @@
     font-size: 0.9rem;
     font-weight: 400;
     letter-spacing: 0.1em;
-    padding-bottom: 1rem;
+    padding-bottom: var(--space-4);
 }
 
 .message-error {
@@ -167,7 +167,7 @@
     flex-direction: column;
     gap: var(--panel-gap);
     max-width: 40rem;
-    padding-bottom: 1rem;
+    padding-bottom: var(--space-4);
 }
 
 /* One boxed list: an optional header, then settings rows. */
@@ -187,8 +187,8 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
     border-bottom: 1px solid var(--border-secondary);
 }
 
@@ -202,8 +202,8 @@
 }
 
 .settings-list > .action-bar {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
 }
 
 .settings-row {
@@ -211,9 +211,9 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: var(--space-4);
     border-bottom: 1px solid var(--border-secondary);
-    gap: 0.75rem;
+    gap: var(--space-3);
 }
 
 .settings-row:last-child {
@@ -236,7 +236,7 @@
     align-items: center;
     justify-content: flex-end;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--space-2);
     font-size: 1rem;
     font-weight: 400;
     flex-shrink: 1;
@@ -250,9 +250,9 @@
 .theme-swatches {
     display: flex;
     align-items: center;
-    gap: 0.2rem;
+    gap: var(--space-1);
     flex-shrink: 0;
-    padding: 0.2rem 0.25rem;
+    padding: var(--space-1) var(--space-1);
     border-radius: 0.35rem;
     background: var(--bg-primary);
     border: 1px solid var(--text-muted);
@@ -270,7 +270,7 @@
    defaults. */
 :where(.pref-note) {
     font-size: 0.75rem;
-    margin: 0 0 0.6rem;
+    margin: 0 0 var(--space-2);
 }
 
 .pref-note {

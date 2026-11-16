@@ -28,6 +28,6 @@ fn an_app_still_gets_the_dialog_from_app_css() {
 
 #[test]
 fn a_danger_action_leading_the_row_stands_apart() {
-    let rule = ".alert-dialog-actions > .alert-dialog-action-danger:first-child {\n    margin-inline-end: 0.75rem;\n}";
+    let rule = ".alert-dialog-actions > .alert-dialog-action-danger:first-child {\n    margin-inline-end: var(--space-3);\n}";
     assert!(orangui::DIALOG_CSS.contains(rule), "{rule}");
 }
