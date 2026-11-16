@@ -1,7 +1,7 @@
 //! A changelog release as a card that opens and shuts.
 //!
-//! The card's header is the caret, the version, the date and an optional
-//! status tag at the right end, over a rule that runs the card's full width;
+//! The card's header is the caret, the version, the date and its status
+//! tags at the right end, over a rule that runs the card's full width;
 //! the notes sit under it. A click anywhere on the header opens or shuts the
 //! notes through the caller's [`CollapseSet`], so a
 //! [`CollapseAll`](crate::CollapseAll) over the same set works on every card.
@@ -24,7 +24,7 @@ pub struct ReleaseTag {
     pub label: String,
 }
 
-/// One release: `version` with its `date` and `tag` in the header and
+/// One release: `version` with its `date` and `tags` in the header and
 /// `entries` as the notes. `set` holds which releases are shut, keyed by
 /// `version`.
 ///
@@ -38,7 +38,7 @@ pub fn ReleaseCard(
     set: CollapseSet,
     version: String,
     #[props(default)] date: Option<String>,
-    #[props(default)] tag: Option<ReleaseTag>,
+    #[props(default)] tags: Vec<ReleaseTag>,
     entries: Vec<String>,
     #[props(default)] id: Option<String>,
     #[props(default)] href: Option<String>,
@@ -65,8 +65,12 @@ pub fn ReleaseCard(
                 if let Some(date) = date {
                     span { class: "release-card-date", "{date}" }
                 }
-                if let Some(tag) = tag {
-                    span { class: "{tag.status.class()} release-card-tag", "{tag.label}" }
+                if !tags.is_empty() {
+                    span { class: "release-card-tags",
+                        for tag in tags {
+                            span { class: "{tag.status.class()} release-card-tag", "{tag.label}" }
+                        }
+                    }
                 }
             }
             CollapseBody { set, section: version,
