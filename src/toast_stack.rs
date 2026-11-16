@@ -69,9 +69,20 @@ pub fn ToastStack(
                         });
                     },
                     Toast { ..props }
+                    ToastIcons {}
                 }
             },
             {children}
         }
     }
+}
+
+/// Draws any icon token in the shown toasts' titles as its key, once its toast is on the page: an
+/// effect, since a toast renders through a portal, where an element's `onmounted` never fires.
+#[component]
+fn ToastIcons() -> Element {
+    use_effect(|| {
+        document::eval(&crate::icon_text::toast_icons_js());
+    });
+    rsx! {}
 }

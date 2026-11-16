@@ -65,6 +65,8 @@ mod grid_cells;
 mod heat_grid;
 mod heat_readout;
 mod hint;
+mod icon_button;
+mod icon_text;
 pub mod icons;
 mod ink;
 mod js_str;
@@ -133,6 +135,8 @@ pub use hint::{
     HintBullet, HintBullets, HintChip, HintDialog, HintKey, HintLine, InfoButton, ScreenHint,
     use_screen_hint, use_screen_hint_slot,
 };
+pub use icon_button::IconButton;
+pub use icon_text::{IconText, names_an_icon, spoken};
 pub use ink::ink_color;
 pub use lifecycle::{
     AppLifecycle, AppPhase, use_app_lifecycle, use_app_lifecycle_root, use_on_resume,
