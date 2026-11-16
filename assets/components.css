@@ -707,8 +707,19 @@ a.stat-chip {
     right: 0;
 }
 
+/* Always laid out, hidden while closed, so it can fade and scale in from
+   the trigger and back out without the page reflowing: in quickly with a
+   strong ease-out, out faster with an ease-in. */
 .nav-dropdown-content {
-    display: none;
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+    transform-origin: top center;
+    transition:
+        opacity 100ms ease-in,
+        transform 100ms ease-in,
+        visibility 0s linear 100ms;
     position: absolute;
     top: 100%;
     margin-top: 0.5rem;
@@ -734,7 +745,29 @@ a.stat-chip {
 }
 
 .nav-dropdown-open .nav-dropdown-content {
-    display: flex;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition:
+        opacity 150ms cubic-bezier(0.23, 1, 0.32, 1),
+        transform 150ms cubic-bezier(0.23, 1, 0.32, 1),
+        visibility 0s;
+}
+
+/* Reduced motion keeps only a quick fade. */
+@media (prefers-reduced-motion: reduce) {
+    .nav-dropdown-content {
+        transform: none;
+        transition:
+            opacity 100ms linear,
+            visibility 0s linear 100ms;
+    }
+
+    .nav-dropdown-open .nav-dropdown-content {
+        transition:
+            opacity 100ms linear,
+            visibility 0s;
+    }
 }
 
 /* Menu rows: buttons or anchors alike. The `a.…:visited` selector rides in
