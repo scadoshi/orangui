@@ -96,7 +96,7 @@ fn release_cards_app() -> Element {
             set,
             version: "1.1.0",
             date: "Nov 9, 2026".to_owned(),
-            tag: ReleaseTag { status: BannerStatus::Doing, label: "Upcoming".to_owned() },
+            tags: vec![ReleaseTag { status: BannerStatus::Doing, label: "Upcoming".to_owned() }],
             entries: vec!["A new quote".to_owned()],
             id: "v1-1-0".to_owned(),
             href: "#v1-1-0".to_owned(),
@@ -104,7 +104,10 @@ fn release_cards_app() -> Element {
         ReleaseCard {
             set,
             version: "1.0.0",
-            tag: ReleaseTag { status: BannerStatus::Done, label: "Latest".to_owned() },
+            tags: vec![
+                ReleaseTag { status: BannerStatus::Done, label: "Web".to_owned() },
+                ReleaseTag { status: BannerStatus::Done, label: "Mobile".to_owned() },
+            ],
             entries: vec!["First release".to_owned(), "Second note".to_owned()],
         }
     }
