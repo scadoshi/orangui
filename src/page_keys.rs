@@ -1,9 +1,10 @@
 //! The keys every page answers ([`orangui_core::page_keys`]), at any width, a phone with a
 //! keyboard included: `g` `g` to the top, Shift+G to the bottom, `j` and `k` a step down and up
 //! where the host turns steps on, `t` the theme sheet and Shift+H the shortcuts sheet. Never while
-//! typing in a field, with Ctrl, Alt or Meta held, or while a dialog or sheet is open. A key a
-//! page's own listener already took (`preventDefault`) passes by, so a page whose keys use `j` and
-//! `k` keeps them.
+//! typing in a field or with Ctrl, Alt or Meta held. While a dialog or sheet is open only `g` `g`
+//! and Shift+G answer, for it, and `j` and `k` too when it is a hint, so a hint taller than the
+//! window steps like the page. A key a page's own listener already took (`preventDefault`) passes
+//! by, so a page whose keys use `j` and `k` keeps them.
 
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -26,6 +27,11 @@ pub const PRESSED_KEY: &str = "((k, shift) => k.length === 1 && k.toLowerCase() 
 
 /// Open overlays that keep a page's keys: a dialog and a sheet or drawer.
 const OVERLAYS: &str = ".alert-dialog[data-state=\"open\"], .bottom-sheet.show";
+
+/// A hint's lines, which mark an open dialog as a hint: [`HintDialog`](crate::HintDialog)'s body
+/// and the [`HintLine`](crate::HintLine) and [`HintBullets`](crate::HintBullets) a host composes
+/// one from.
+const HINT_PARTS: &str = ".hint-body, .hint-line, .hint-bullets";
 
 /// Not typing in a field and no Ctrl, Alt or Meta, as a script expression over a keydown `e`.
 const NOT_TYPING: &str = "(() => { const f = document.activeElement; const typing = !!f && (['INPUT', 'TEXTAREA', 'SELECT'].includes(f.tagName) || f.isContentEditable); return !typing && !(e.ctrlKey || e.altKey || e.metaKey) && !e.isComposing; })()";
@@ -63,7 +69,8 @@ static NEXT_ID: AtomicU64 = AtomicU64::new(0);
 /// window after the page's own listeners, at any width, sends `[key, after_g, held, in_overlay]` for a page key under the
 /// guard, and remembers a first `g` for `__GG__` milliseconds. Steps answer only while
 /// `__oranguiSteps__ID__` is true. With a dialog, sheet or host overlay open, only `g` `g` and
-/// Shift+G answer, for that overlay.
+/// Shift+G answer, for that overlay, and the steps too when the topmost one holds `__HINT__`,
+/// whatever the screen under it leaves to the page.
 const KEYS_JS: &str = r"
 window.__oranguiPageKeys = window.__oranguiPageKeys || [];
 window.__oranguiPageKeys.push('__ID__');
@@ -76,8 +83,10 @@ const onKey = (e) => {
     if (!__KEYS__.includes(key)) { lastG = 0; return; }
     if (!__NOT_TYPING__) return;
     const inOverlay = !!document.querySelector(__BLOCKED__);
-    if (inOverlay && key !== 'g' && key !== 'G') return;
-    if ((key === 'j' || key === 'k') && !window['__oranguiSteps__ID__']) return;
+    const step = key === 'j' || key === 'k';
+    const inHint = inOverlay && (() => { const open = [...document.querySelectorAll(__BLOCKED__)]; const top = open[open.length - 1]; return !!top && !!top.querySelector(__HINT__); })();
+    if (inOverlay && key !== 'g' && key !== 'G' && !(step && inHint)) return;
+    if (step && !inHint && !window['__oranguiSteps__ID__']) return;
     const now = Date.now();
     const afterG = key === 'g' && now - lastG < __GG__;
     lastG = key === 'g' && !afterG ? now : 0;
@@ -172,6 +181,7 @@ fn keys_js(id: u64, blocked_by: &[&str]) -> String {
         .replace("__KEYS__", &format!("{PAGE_KEYS:?}"))
         .replace("__NOT_TYPING__", NOT_TYPING)
         .replace("__BLOCKED__", &js_str(&blocked))
+        .replace("__HINT__", &js_str(HINT_PARTS))
         .replace("__GG__", &GG_WINDOW_MS.to_string())
 }
 
@@ -311,7 +321,7 @@ mod tests {
             "after the page's own listeners: {js}"
         );
         assert!(
-            js.contains("(key === 'j' || key === 'k') && !window['__oranguiSteps0']"),
+            js.contains("if (step && !inHint && !window['__oranguiSteps0']) return;"),
             "{js}"
         );
     }
@@ -365,7 +375,9 @@ mod tests {
     fn in_an_overlay_only_gg_and_shift_g_answer_and_they_scroll_the_overlay() {
         let js = keys_js(0, &[".big-modal"]);
         assert!(
-            js.contains("if (inOverlay && key !== 'g' && key !== 'G') return;"),
+            js.contains(
+                "if (inOverlay && key !== 'g' && key !== 'G' && !(step && inHint)) return;"
+            ),
             "{js}"
         );
         let target = target_js(Target::Overlay(&[".big-modal"]));
@@ -380,6 +392,28 @@ mod tests {
         assert!(
             target.contains(".sort((a, b) => room(b) - room(a))[0]"),
             "its most scrollable part: {target}"
+        );
+    }
+
+    #[test]
+    fn in_a_hint_j_and_k_step_it_whatever_the_screen_leaves_to_the_page() {
+        let js = keys_js(0, &[".big-modal"]);
+        assert!(
+            js.contains("const step = key === 'j' || key === 'k';"),
+            "{js}"
+        );
+        assert!(
+            js.contains(&format!(
+                "const inHint = inOverlay && (() => {{ const open = [...document.querySelectorAll({blocked})]; const top = open[open.length - 1]; return !!top && !!top.querySelector({parts}); }})();",
+                blocked = js_str(".alert-dialog[data-state=\"open\"], .bottom-sheet.show, .big-modal"),
+                parts = js_str(HINT_PARTS),
+            )),
+            "the topmost overlay holds a hint's lines: {js}"
+        );
+        assert_eq!(HINT_PARTS, ".hint-body, .hint-line, .hint-bullets");
+        assert!(
+            js.contains("if (step && !inHint && !window['__oranguiSteps0']) return;"),
+            "a hint's steps answer even where the screen keeps j and k: {js}"
         );
     }
 
