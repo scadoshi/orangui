@@ -73,9 +73,9 @@ const ALLOWED: [(&str, &str, &str, &str); 5] = [
     ),
     (
         "toast.css",
-        "margin-top",
+        "margin-bottom",
         "2.75rem",
-        "a stacked toast's overlap with the one before",
+        "an older toast's overlap with the newer one under it",
     ),
 ];
 
