@@ -62,6 +62,7 @@ mod diagram;
 mod entrance;
 mod gallery;
 mod grid_cells;
+mod heat_axis;
 mod heat_grid;
 mod heat_readout;
 mod hint;
@@ -126,6 +127,7 @@ pub use dioxus_primitives::toast::{ToastOptions, Toasts, use_toast};
 pub use entrance::{CountUp, Decode, Figure, Replay};
 pub use gallery::{GalleryFooter, GalleryFrame};
 pub use grid_cells::{GRID_CELLS_JS, GridCells};
+pub use heat_axis::{HeatScrollParts, HeatWeekdays, open_on_newest_js, use_open_on_newest};
 pub use heat_grid::{
     HEAT_CELL, HEAT_GAP, HEAT_ROWS, HEAT_STEP, HeatCell, HeatGrid, HeatHit, heat_span,
     use_scroll_to_end,
