@@ -2,8 +2,8 @@
 //! keyboard included: `g` `g` to the top, Shift+G to the bottom, `j` and `k` a step down and up
 //! where the host turns steps on, `t` the theme sheet and Shift+H the shortcuts sheet. Never while
 //! typing in a field or with Ctrl, Alt or Meta held. While a dialog or sheet is open only `g` `g`
-//! and Shift+G answer, for it, and `j` and `k` too when it is a hint, so a hint taller than the
-//! window steps like the page. A key a page's own listener already took (`preventDefault`) passes
+//! and Shift+G answer, for it, and `j` and `k` too when it is a hint or the shortcuts sheet, so
+//! either, taller than the window, steps like the page. A key a page's own listener already took (`preventDefault`) passes
 //! by, so a page whose keys use `j` and `k` keeps them.
 
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -28,10 +28,11 @@ pub const PRESSED_KEY: &str = "((k, shift) => k.length === 1 && k.toLowerCase() 
 /// Open overlays that keep a page's keys: a dialog and a sheet or drawer.
 const OVERLAYS: &str = ".alert-dialog[data-state=\"open\"], .bottom-sheet.show";
 
-/// A hint's lines, which mark an open dialog as a hint: [`HintDialog`](crate::HintDialog)'s body
-/// and the [`HintLine`](crate::HintLine) and [`HintBullets`](crate::HintBullets) a host composes
-/// one from.
-const HINT_PARTS: &str = ".hint-body, .hint-line, .hint-bullets";
+/// What marks an open overlay as one to read, which `j` and `k` step through: a hint's lines
+/// ([`HintDialog`](crate::HintDialog)'s body and the [`HintLine`](crate::HintLine) and
+/// [`HintBullets`](crate::HintBullets) a host composes one from) and the shortcuts sheet's groups
+/// ([`ShortcutsSheet`](crate::ShortcutsSheet)).
+const HINT_PARTS: &str = ".hint-body, .hint-line, .hint-bullets, .shortcut-groups";
 
 /// Not typing in a field and no Ctrl, Alt or Meta, as a script expression over a keydown `e`.
 const NOT_TYPING: &str = "(() => { const f = document.activeElement; const typing = !!f && (['INPUT', 'TEXTAREA', 'SELECT'].includes(f.tagName) || f.isContentEditable); return !typing && !(e.ctrlKey || e.altKey || e.metaKey) && !e.isComposing; })()";
@@ -396,7 +397,7 @@ mod tests {
     }
 
     #[test]
-    fn in_a_hint_j_and_k_step_it_whatever_the_screen_leaves_to_the_page() {
+    fn in_a_hint_or_the_shortcuts_sheet_j_and_k_step_it_whatever_the_screen_leaves_to_the_page() {
         let js = keys_js(0, &[".big-modal"]);
         assert!(
             js.contains("const step = key === 'j' || key === 'k';"),
@@ -410,7 +411,10 @@ mod tests {
             )),
             "the topmost overlay holds a hint's lines: {js}"
         );
-        assert_eq!(HINT_PARTS, ".hint-body, .hint-line, .hint-bullets");
+        assert_eq!(
+            HINT_PARTS, ".hint-body, .hint-line, .hint-bullets, .shortcut-groups",
+            "a hint dialog's lines and the shortcuts sheet's groups"
+        );
         assert!(
             js.contains("if (step && !inHint && !window['__oranguiSteps0']) return;"),
             "a hint's steps answer even where the screen keeps j and k: {js}"
