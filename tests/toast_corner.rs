@@ -1,11 +1,27 @@
-//! Toasts and banners sit in the bottom-left corner of the window, as far from its left edge as
-//! from its bottom edge, on every site, with nothing lifting them over a dock or a footer. One
-//! inset, `--toast-inset`, places both stacks; the safe area adds to each side on its own.
+//! Toasts and banners sit in the bottom-left corner as the action dock's [+] sits in the
+//! bottom-right one: as far from the screen's side edge as from its bottom edge, measured from
+//! the physical edges, on a phone with a home indicator and on the web alike. One gap,
+//! `--corner-gap`, places all three, so they sit on the same 45 degree line from their corners,
+//! and one radius, `--corner-radius`, rounds the toast and the dock alike.
+//!
+//! A toast rises in from below the bottom edge and drops back below it as it leaves, moving by
+//! transform only. Stacked, the older toasts line up behind the newest, which stays in front.
+
+#![expect(
+    clippy::float_arithmetic,
+    reason = "a test: works out CSS lengths in px"
+)]
 
 const TOAST: &str = include_str!("../assets/toast.css");
 const COMPONENTS: &str = include_str!("../assets/components.css");
+const TOAST_STACK: &str = include_str!("../src/toast_stack.rs");
 
-/// The declarations of the rule whose selector is exactly `selector` in `css`.
+/// What a toast's entrance starts from and its timed exit ends on: its own height, the corner
+/// gap and the keyboard below its spot, and its shadow's reach, so it is wholly below the edge.
+const BELOW_THE_EDGE: &str =
+    "translateY(calc(100% + var(--corner-gap) + var(--keyboard-inset, 0px) + var(--space-4)))";
+
+/// The declarations of the first rule whose selector is exactly `selector` in `css`.
 fn rule<'css>(css: &'css str, selector: &str) -> &'css str {
     let opening = format!("\n{selector} {{");
     let (_, rest) = css
@@ -26,37 +42,198 @@ fn value<'css>(declarations: &'css str, property: &str) -> Option<&'css str> {
         .map(|v| v.trim().trim_end_matches(';'))
 }
 
-const LEFT: &str = "calc(var(--toast-inset, var(--space-4)) + env(safe-area-inset-left, 0px))";
-const BOTTOM: &str = "calc(var(--toast-inset, var(--space-4)) + env(safe-area-inset-bottom, 0px))";
+/// The body of the keyframe stop `stop` (`from`, `to`, `0%`, ...) in `@keyframes name`.
+fn keyframe<'css>(css: &'css str, name: &str, stop: &str) -> &'css str {
+    let (_, rest) = css
+        .split_once(&format!("@keyframes {name} {{"))
+        .unwrap_or_else(|| panic!("keyframes {name}"));
+    let (_, rest) = rest
+        .split_once(&format!("{stop} {{"))
+        .unwrap_or_else(|| panic!("{name}'s {stop}"));
+    rest.split_once('}').map_or("", |(body, _)| body)
+}
 
-#[test]
-fn toasts_sit_bottom_left_at_one_inset_from_both_edges() {
-    let stack = rule(TOAST, ".toast-container");
-    assert_eq!(value(stack, "left"), Some(LEFT));
-    assert_eq!(value(stack, "bottom"), Some(BOTTOM));
-    assert_eq!(value(stack, "top"), None, "nothing anchors it to the top");
+/// A length in px: `expr` written with `var(--corner-gap)`, `var(--space-2)`,
+/// `var(--keyboard-inset, 0px)`, `env(safe-area-inset-*, 0px)`, px, rem, `+`, `/` and `calc()`,
+/// on a device whose home indicator's safe area is `bottom_inset` px and whose side safe area is
+/// none.
+fn px(expr: &str, bottom_inset: f64) -> f64 {
+    let gap = value(rule(COMPONENTS, ":root"), "--corner-gap").unwrap_or("0px");
+    let resolved = expr
+        .replace("var(--corner-gap)", gap)
+        .replace("var(--keyboard-inset, 0px)", "0px")
+        .replace("var(--space-2)", "0.5rem")
+        .replace(
+            "env(safe-area-inset-bottom, 0px)",
+            &format!("{bottom_inset}px"),
+        )
+        .replace("env(safe-area-inset-left, 0px)", "0px")
+        .replace("calc", "");
+    eval(&resolved)
+}
+
+/// Sums `expr`'s `+`-separated terms, each a length or a length `/` a number, brackets ignored.
+fn eval(expr: &str) -> f64 {
+    let flat: String = expr.chars().filter(|c| !matches!(c, '(' | ')')).collect();
+    flat.split('+')
+        .map(|term| {
+            let (length, divisor) = term
+                .split_once('/')
+                .map_or((term, 1.0), |(l, d)| (l, d.trim().parse().unwrap_or(1.0)));
+            let length = length.trim();
+            let number = |unit: &str| {
+                length
+                    .strip_suffix(unit)
+                    .and_then(|n| n.parse::<f64>().ok())
+            };
+            number("rem").map_or_else(|| number("px").unwrap_or(f64::NAN), |rem| rem * 16.0)
+                / divisor
+        })
+        .sum()
 }
 
 #[test]
-fn banners_sit_in_the_same_corner_at_the_same_inset() {
-    let stack = rule(COMPONENTS, ".banner-stack");
-    assert_eq!(value(stack, "left"), Some(LEFT));
-    assert_eq!(value(stack, "bottom"), Some(BOTTOM));
-}
-
-#[test]
-fn the_newest_toast_is_at_the_bottom_and_rises_in() {
+fn one_corner_gap_from_the_home_indicator_places_the_dock_the_toasts_and_the_banners() {
     assert_eq!(
-        value(rule(TOAST, ".toast-container ol"), "flex-direction"),
-        Some("column-reverse")
+        value(rule(COMPONENTS, ":root"), "--corner-gap"),
+        Some("calc(env(safe-area-inset-bottom, 0px) / 2 + var(--space-2))"),
+        "half the home indicator's strip plus a margin, clear of the rounded corner"
     );
     assert_eq!(
-        value(rule(TOAST, ".toast-container li"), "margin-bottom"),
-        Some("-2.75rem"),
-        "older toasts tuck above the newest"
+        value(rule(COMPONENTS, ".action-dock"), "--dock-gap"),
+        Some("var(--corner-gap)")
+    );
+    for (css, selector) in [(TOAST, ".toast-container"), (COMPONENTS, ".banner-stack")] {
+        let stack = rule(css, selector);
+        assert_eq!(
+            value(stack, "left"),
+            Some("var(--corner-gap)"),
+            "{selector}"
+        );
+        assert_eq!(
+            value(stack, "bottom"),
+            Some("calc(var(--corner-gap) + var(--keyboard-inset, 0px))"),
+            "{selector}: rides the keyboard, as the dock does"
+        );
+        assert_eq!(
+            value(stack, "top"),
+            None,
+            "nothing anchors {selector} to the top"
+        );
+    }
+}
+
+#[test]
+fn the_toast_s_side_and_bottom_gaps_match_with_and_without_a_home_indicator() {
+    let stack = rule(TOAST, ".toast-container");
+    let left = value(stack, "left").unwrap_or_default();
+    let bottom = value(stack, "bottom").unwrap_or_default();
+    // An iPhone in portrait: a 34px home indicator strip and no side safe area. Then the web.
+    for (bottom_inset, device) in [(34.0, "iPhone"), (0.0, "web")] {
+        let (l, b) = (px(left, bottom_inset), px(bottom, bottom_inset));
+        assert!((l - b).abs() < 0.01, "{device}: left {l}px, bottom {b}px");
+    }
+    assert!(
+        (px(left, 34.0) - 25.0).abs() < 0.01,
+        "17px of the strip plus 8px"
+    );
+    let dock = value(rule(COMPONENTS, ".action-dock"), "--dock-gap").unwrap_or_default();
+    assert!(
+        (px(dock, 34.0) - px(left, 34.0)).abs() < 0.01,
+        "the toast and the [+] sit on the same line from their corners"
+    );
+}
+
+#[test]
+fn the_toast_and_the_dock_share_a_corner_and_the_close_button_nests_inside_it() {
+    assert_eq!(
+        value(rule(COMPONENTS, ":root"), "--corner-radius"),
+        Some("0.9rem")
+    );
+    assert_eq!(
+        value(rule(COMPONENTS, ":where(.action-dock)"), "--dock-radius"),
+        Some("var(--corner-radius)")
+    );
+    let toast = rule(TOAST, ".toast-container [role=\"alertdialog\"]");
+    assert_eq!(value(toast, "border-radius"), Some("var(--corner-radius)"));
+    // The × sits var(--space-2) in from the toast's edge: its padding less its negative margin.
+    assert_eq!(
+        value(
+            rule(TOAST, ".toast-container [role=\"alertdialog\"] button"),
+            "border-radius"
+        ),
+        Some("max(0.15rem, calc(var(--corner-radius) - 1px - var(--space-2)))")
+    );
+}
+
+#[test]
+fn a_toast_rises_from_below_the_bottom_edge_by_transform_alone() {
+    let from = keyframe(TOAST, "toast-rise-in", "from");
+    assert_eq!(value(from, "transform"), Some(BELOW_THE_EDGE));
+    assert_eq!(value(from, "opacity"), None, "it moves; it does not fade");
+    assert_eq!(
+        value(keyframe(TOAST, "toast-rise-in", "to"), "transform"),
+        Some("translateY(0)")
+    );
+}
+
+#[test]
+fn a_timed_toast_rises_from_and_drops_back_below_the_edge() {
+    for name in ["toast-life-3000", "toast-life-5000"] {
+        for stop in ["0%", "100%"] {
+            assert_eq!(
+                value(keyframe(TOAST, name, stop), "transform"),
+                Some(BELOW_THE_EDGE),
+                "{name} {stop}"
+            );
+        }
+    }
+}
+
+#[test]
+fn a_toast_that_leaves_drops_below_the_edge() {
+    let js = orangui::TOAST_LEAVE_JS;
+    assert!(js.contains("new MutationObserver"), "{js}");
+    assert!(
+        js.contains("innerHeight - box.top"),
+        "it falls from where it was to past the bottom edge: {js}"
     );
     assert!(
-        rule(TOAST, ".toast-container [role=\"alertdialog\"]").contains("toast-rise-in"),
-        "a toast enters from below, the way the stack grows"
+        js.contains("animationName.startsWith('toast-life')"),
+        "a timed toast that already dropped by its own keyframes is not dropped again: {js}"
+    );
+    assert!(
+        TOAST_STACK.contains("document::eval(crate::TOAST_LEAVE_JS)"),
+        "ToastStack installs it"
+    );
+}
+
+#[test]
+fn stacked_toasts_line_up_behind_the_newest_which_stays_in_front() {
+    // Collapsed, an older toast adds nothing to the stack's width and takes the newest's.
+    let older = rule(
+        TOAST,
+        ".toast-container:not(.expanded) li:not(:first-child)",
+    );
+    assert_eq!(value(older, "width"), Some("0"));
+    assert_eq!(value(older, "min-width"), Some("100%"));
+    let stretched = rule(
+        TOAST,
+        ".toast-container:not(.expanded) li:not(:first-child) [role=\"alertdialog\"]",
+    );
+    assert_eq!(value(stretched, "width"), Some("100%"));
+    // The library renders the newest first, and the first paints over the rest.
+    let z = |n: u8| {
+        value(
+            rule(TOAST, &format!(".toast-container li:nth-child({n})")),
+            "z-index",
+        )
+        .and_then(|v| v.parse::<u8>().ok())
+        .unwrap_or(0)
+    };
+    assert!(z(1) > z(2) && z(2) > z(3), "the newest is in front");
+    assert!(
+        orangui::TOAST_LEAVE_JS.contains("front ? '10000' : '9998'"),
+        "a leaving newest falls in front of the rest, an older one behind them"
     );
 }

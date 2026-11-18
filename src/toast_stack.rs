@@ -29,6 +29,10 @@ pub fn ToastStack(
     timed_fade: bool,
     children: Element,
 ) -> Element {
+    // A leaving toast drops below the bottom edge.
+    use_hook(|| {
+        document::eval(crate::TOAST_LEAVE_JS);
+    });
     let mut expanded = use_signal(|| false);
     // Set only for the length of a tap-driven toggle. The collapse offset is
     // a margin, and an arriving toast changes that same margin by taking over

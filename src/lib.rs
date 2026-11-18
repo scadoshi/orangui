@@ -259,3 +259,7 @@ pub const DIALOG_CSS: &str = include_str!("../assets/dialog.css");
 /// stylesheet.
 #[cfg(feature = "toast")]
 pub const TOAST_CSS: &str = include_str!("../assets/toast.css");
+/// Drops a leaving toast from where it sat to below the screen's bottom edge, since the toast
+/// library takes its element out of the page outright. [`ToastStack`] installs it once a page.
+#[cfg(feature = "toast")]
+pub const TOAST_LEAVE_JS: &str = include_str!("../assets/toast-leave.js");
