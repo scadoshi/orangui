@@ -256,11 +256,12 @@ const SEARCH_RETRY_MS: u32 = 50;
 /// field once it draws, marking the page root meanwhile so the sheet leaves the theme in use
 /// unfocused. Characters typed before the field has focus are held from the page and the sheet,
 /// then go into the field in order as it takes focus; after the second's tries they are dropped.
+/// Esc passes through and ends the hold, dropping what it held.
 /// A page with no such button is left as it was.
 #[must_use]
 pub fn open_themes_js() -> String {
     format!(
-        "{{ const b = document.querySelector('[data-action=\"{THEMES_ACTION}\"]'); if (b) {{ const root = document.documentElement; root.setAttribute('{THEME_SEARCH_MARK}', ''); const typed = []; const hold = (e) => {{ if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {{ e.preventDefault(); e.stopImmediatePropagation(); typed.push(e.key); }} }}; window.addEventListener('keydown', hold, true); const done = () => {{ window.removeEventListener('keydown', hold, true); root.removeAttribute('{THEME_SEARCH_MARK}'); }}; b.click(); const until = Date.now() + {SEARCH_TRY_MS}; const take = () => {{ const f = document.querySelector('{THEME_SEARCH_FIELD}'); if (f) f.focus({{ preventScroll: true }}); if (f && document.activeElement === f) {{ done(); if (typed.length) {{ const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(f, f.value + typed.join('')); f.dispatchEvent(new Event('input', {{ bubbles: true }})); }} return; }} if (Date.now() < until) setTimeout(take, {SEARCH_RETRY_MS}); else done(); }}; setTimeout(take, {SEARCH_DELAY_MS}); }} }}"
+        "{{ const b = document.querySelector('[data-action=\"{THEMES_ACTION}\"]'); if (b) {{ const root = document.documentElement; root.setAttribute('{THEME_SEARCH_MARK}', ''); let over = false; const typed = []; const hold = (e) => {{ if (e.key === 'Escape') {{ typed.length = 0; done(); return; }} if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {{ e.preventDefault(); e.stopImmediatePropagation(); typed.push(e.key); }} }}; window.addEventListener('keydown', hold, true); const done = () => {{ over = true; window.removeEventListener('keydown', hold, true); root.removeAttribute('{THEME_SEARCH_MARK}'); }}; b.click(); const until = Date.now() + {SEARCH_TRY_MS}; const take = () => {{ if (over) return; const f = document.querySelector('{THEME_SEARCH_FIELD}'); if (f) f.focus({{ preventScroll: true }}); if (f && document.activeElement === f) {{ done(); if (typed.length) {{ const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(f, f.value + typed.join('')); f.dispatchEvent(new Event('input', {{ bubbles: true }})); }} return; }} if (Date.now() < until) setTimeout(take, {SEARCH_RETRY_MS}); else done(); }}; setTimeout(take, {SEARCH_DELAY_MS}); }} }}"
     )
 }
 
@@ -469,7 +470,7 @@ mod tests {
     fn t_marks_the_search_then_presses_the_themes_button() {
         assert_eq!(
             open_themes_js(),
-            "{ const b = document.querySelector('[data-action=\"themes\"]'); if (b) { const root = document.documentElement; root.setAttribute('data-orangui-theme-search', ''); const typed = []; const hold = (e) => { if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); e.stopImmediatePropagation(); typed.push(e.key); } }; window.addEventListener('keydown', hold, true); const done = () => { window.removeEventListener('keydown', hold, true); root.removeAttribute('data-orangui-theme-search'); }; b.click(); const until = Date.now() + 1000; const take = () => { const f = document.querySelector('.bottom-sheet.show:has(.theme-group-label) .theme-search'); if (f) f.focus({ preventScroll: true }); if (f && document.activeElement === f) { done(); if (typed.length) { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(f, f.value + typed.join('')); f.dispatchEvent(new Event('input', { bubbles: true })); } return; } if (Date.now() < until) setTimeout(take, 50); else done(); }; setTimeout(take, 60); } }"
+            "{ const b = document.querySelector('[data-action=\"themes\"]'); if (b) { const root = document.documentElement; root.setAttribute('data-orangui-theme-search', ''); let over = false; const typed = []; const hold = (e) => { if (e.key === 'Escape') { typed.length = 0; done(); return; } if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); e.stopImmediatePropagation(); typed.push(e.key); } }; window.addEventListener('keydown', hold, true); const done = () => { over = true; window.removeEventListener('keydown', hold, true); root.removeAttribute('data-orangui-theme-search'); }; b.click(); const until = Date.now() + 1000; const take = () => { if (over) return; const f = document.querySelector('.bottom-sheet.show:has(.theme-group-label) .theme-search'); if (f) f.focus({ preventScroll: true }); if (f && document.activeElement === f) { done(); if (typed.length) { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(f, f.value + typed.join('')); f.dispatchEvent(new Event('input', { bubbles: true })); } return; } if (Date.now() < until) setTimeout(take, 50); else done(); }; setTimeout(take, 60); } }"
         );
     }
 
@@ -477,7 +478,7 @@ mod tests {
     fn letters_typed_before_the_search_takes_focus_land_in_it() {
         let js = open_themes_js();
         assert!(
-            js.contains("const typed = []; const hold = (e) => { if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); e.stopImmediatePropagation(); typed.push(e.key); } }; window.addEventListener('keydown', hold, true);"),
+            js.contains("if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); e.stopImmediatePropagation(); typed.push(e.key); } }; window.addEventListener('keydown', hold, true);"),
             "a letter waits for the field, kept from the page and the sheet: {js}"
         );
         assert!(
@@ -485,8 +486,16 @@ mod tests {
             "the held letters go into the field in order once it has focus: {js}"
         );
         assert!(
-            js.contains("const done = () => { window.removeEventListener('keydown', hold, true); root.removeAttribute('data-orangui-theme-search'); };"),
+            js.contains("const done = () => { over = true; window.removeEventListener('keydown', hold, true); root.removeAttribute('data-orangui-theme-search'); };"),
             "the hold ends with the mark, focused or timed out: {js}"
+        );
+        assert!(
+            js.contains("const hold = (e) => { if (e.key === 'Escape') { typed.length = 0; done(); return; }"),
+            "Esc passes through, drops what was held and ends the hold: {js}"
+        );
+        assert!(
+            js.contains("const take = () => { if (over) return;"),
+            "an ended hold stops trying to focus the field: {js}"
         );
     }
 
