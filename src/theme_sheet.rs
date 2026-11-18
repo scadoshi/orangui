@@ -197,10 +197,18 @@ mod tests {
         let first_group = html.find("theme-group-label");
         assert!(field.is_some(), "{html}");
         assert!(field < first_group, "above the themes: {html}");
-        assert!(html.contains(r#"type="search""#), "{html}");
         assert!(
-            html.contains(r#"<div class="theme-search-bar"><input class="theme-search""#),
-            "in its sticky bar: {html}"
+            html.contains(r#"type="text""#) && html.contains(r#"role="searchbox""#),
+            "a text field, so no browser draws its own clear: {html}"
+        );
+        assert!(!html.contains(r#"type="search""#), "{html}");
+        assert!(
+            html.contains(r#"<div class="theme-search-bar"><div class="input-clear-wrap"><input class="theme-search""#),
+            "in its sticky bar, with the kit's clear: {html}"
+        );
+        assert!(
+            html.contains(r#"class="input-clear-btn""#) && !html.contains("has-text"),
+            "the clear waits, hidden, for text: {html}"
         );
         assert!(html.contains(r#"placeholder="Search themes""#), "{html}");
     }
