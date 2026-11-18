@@ -30,6 +30,22 @@ pub(crate) fn enter_target(query: &str, top: Option<&'static str>) -> Option<&'s
     if query.is_empty() { None } else { top }
 }
 
+/// What Enter in the search does.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum EnterPress {
+    /// Applies the highlighted theme and closes.
+    Apply(&'static str),
+    /// Closes, applying nothing: no theme is highlighted.
+    Close,
+}
+
+/// What Enter does for `query` with top match `top`: applies the theme [`enter_target`]
+/// highlights, else only closes, so Enter never applies a theme the sheet doesn't show as its
+/// target.
+pub(crate) fn enter_press(query: &str, top: Option<&'static str>) -> EnterPress {
+    enter_target(query, top).map_or(EnterPress::Close, EnterPress::Apply)
+}
+
 /// The search field, its `Search` label chip on its left. `query` holds what is typed;
 /// `on_enter` runs as Enter is pressed in it.
 #[component]
@@ -92,6 +108,22 @@ pub(crate) fn NoThemeMatch() -> Element {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn enter_applies_only_the_highlighted_theme_and_otherwise_only_closes() {
+        let top = Some("Darcula");
+        assert_eq!(
+            enter_press("", top),
+            EnterPress::Close,
+            "an empty search highlights nothing, so Enter only closes"
+        );
+        assert_eq!(enter_press("dar", top), EnterPress::Apply("Darcula"));
+        assert_eq!(
+            enter_press("zzzz", None),
+            EnterPress::Close,
+            "no match highlights nothing either"
+        );
+    }
 
     /// The sequence `t`, type, Escape, `j`, Escape: Escape in the field takes no other listener's
     /// Escape and puts the cursor on the top row shown, the filtered list's first; `j` from there

@@ -12,7 +12,7 @@
 
 use dioxus::prelude::*;
 
-use crate::theme_search::{NoThemeMatch, ThemeSearch};
+use crate::theme_search::{EnterPress, NoThemeMatch, ThemeSearch, enter_press};
 use crate::{
     BottomSheet, SheetDim, ThemeConfig, display_theme_name, filter_theme_groups, top_theme,
 };
@@ -134,9 +134,10 @@ pub fn ThemeSheet(
     let found = filter_theme_groups(&query());
     let top = top_theme(&found);
     let target = crate::theme_search::enter_target(&query(), top);
-    // Enter in the search applies the top match, as a click on its row does, and closes.
+    // Enter in the search applies the highlighted match, as a click on its row does, and
+    // closes; with nothing highlighted it only closes.
     let apply_top = move |()| {
-        if let Some(name) = top
+        if let EnterPress::Apply(name) = enter_press(&query.peek(), top)
             && *selected.peek() != name
         {
             selected.set(name.to_string());
@@ -147,9 +148,7 @@ pub fn ThemeSheet(
             theme.set(picked.clone());
             on_save.call(picked);
         }
-        if top.is_some() {
-            open.set(false);
-        }
+        open.set(false);
     };
 
     rsx! {
