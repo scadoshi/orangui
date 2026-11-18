@@ -14,6 +14,8 @@ const FOCUS_FIRST_JS: &str = "window.__oranguiThemeFocus && window.__oranguiThem
 #[component]
 pub(crate) fn ThemeSearch(mut query: Signal<String>, on_enter: EventHandler<()>) -> Element {
     rsx! {
+        // The bar holds the field at the top of the sheet's scroll as the themes pass under it.
+        div { class: "theme-search-bar",
         input {
             class: "theme-search",
             r#type: "search",
@@ -33,6 +35,7 @@ pub(crate) fn ThemeSearch(mut query: Signal<String>, on_enter: EventHandler<()>)
                     document::eval(FOCUS_FIRST_JS);
                 }
             },
+        }
         }
     }
 }
