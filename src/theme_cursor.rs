@@ -5,6 +5,7 @@
 //! Enter picks the theme as a click does and Esc closes the sheet as it always has. Where a
 //! keyboard is likely (a pointer that hovers and is precise), focus starts on the theme in use as
 //! the sheet opens and goes back as it closes; a touch screen's sheet opens as it always has.
+//! While `t` brings the search up, the cursor leaves every key to it.
 //!
 //! The browser gathers the rows with where each is drawn, and [`orangui_core::grid_cursor`] decides
 //! where a move lands.
@@ -15,7 +16,7 @@ use dioxus::prelude::*;
 use orangui_core::grid_cursor::{Cell, MOVE_KEYS, Snapshot, Stop, move_for};
 use orangui_core::page_keys::GG_WINDOW_MS;
 
-use crate::page_keys::{PRESSED_KEY, top_sheet_guard_js, use_pointer};
+use crate::page_keys::{PRESSED_KEY, THEME_SEARCH_MARK, top_sheet_guard_js, use_pointer};
 use crate::sheet_focus::use_sheet_focus;
 
 /// The next cursor's key among the page's listeners, unique across instances.
@@ -84,6 +85,7 @@ let lastG = 0;
 const onKey = (e) => {
     const stack = window.__oranguiThemeNav;
     if (!stack.length || stack[stack.length - 1] !== '__ID__') return;
+    if (document.documentElement.hasAttribute('__SEARCHING__')) return;
     const pressed = __KEY__;
     const jump = pressed === 'G' || pressed === 'g';
     if (!jump && (!__MOVES__.includes(pressed) || e.shiftKey && pressed.startsWith('Arrow'))) return;
@@ -158,6 +160,7 @@ pub(crate) fn use_theme_cursor(open: Signal<bool>) {
 fn nav_js(id: u64) -> String {
     NAV_JS
         .replace("__ID__", &id.to_string())
+        .replace("__SEARCHING__", THEME_SEARCH_MARK)
         .replace("__MARK__", THEME_SHEET_MARK)
         .replace("__ROWS__", ROWS)
         .replace("__CURRENT__", CURRENT)
@@ -239,6 +242,15 @@ mod tests {
         assert!(
             js.contains("if ((pressed === 'Home' || pressed === 'End') && !onRow) return;"),
             "only Home and End need a row in focus: {js}"
+        );
+    }
+
+    #[test]
+    fn the_cursor_leaves_keys_alone_while_t_brings_the_search_up() {
+        let js = nav_js(0);
+        assert!(
+            js.contains("if (!stack.length || stack[stack.length - 1] !== '0') return;\n    if (document.documentElement.hasAttribute('data-orangui-theme-search')) return;"),
+            "letters typed after t go to the search, not the rows: {js}"
         );
     }
 
