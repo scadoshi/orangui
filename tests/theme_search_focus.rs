@@ -48,3 +48,20 @@ fn the_search_stays_in_view_as_the_themes_scroll() {
         "opaque in the sheet's own fill, so rows pass under it: {bar}"
     );
 }
+
+#[test]
+fn the_search_is_a_theme_rows_size() {
+    let field = rule(".theme-search");
+    for want in [
+        "padding: var(--space-2) var(--space-4);",
+        "font-size: 0.85rem;",
+        "border-radius: 0.4rem;",
+    ] {
+        assert!(field.contains(want), "{want} as a row has it: {field}");
+    }
+    let wrap = rule(".theme-search-bar .input-clear-wrap");
+    assert!(
+        wrap.contains("margin-bottom: 0;"),
+        "the bar's padding is the gap under it: {wrap}"
+    );
+}
