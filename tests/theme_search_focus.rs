@@ -65,3 +65,25 @@ fn the_search_is_a_theme_rows_size() {
         "the bar's padding is the gap under it: {wrap}"
     );
 }
+
+#[test]
+fn a_phone_s_theme_sheet_holds_its_height_while_searching() {
+    let held = rule(
+        "    .bottom-sheet:has(.theme-search:focus, .input-clear-wrap.has-text > .theme-search)",
+    );
+    assert!(held.contains("height: 85vh;"), "full height: {held}");
+    let at = COMPONENTS
+        .find(".bottom-sheet:has(.theme-search:focus")
+        .unwrap_or(0);
+    let query = COMPONENTS
+        .get(..at)
+        .and_then(|head| head.rfind("@media"))
+        .and_then(|q| COMPONENTS.get(q..at))
+        .and_then(|line| line.split('{').next())
+        .unwrap_or("");
+    assert_eq!(
+        query.trim(),
+        "@media (max-width: 59.99rem)",
+        "below the drawer"
+    );
+}
