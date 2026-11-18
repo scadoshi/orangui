@@ -12,9 +12,15 @@
     const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
     const root = () => getComputedStyle(document.documentElement);
     const ease = () => root().getPropertyValue('--ease-enter').trim() || 'ease-out';
+    // A CSS time in milliseconds, from either unit: a minified sheet writes 280ms as .28s.
+    const toMs = (time) => {
+        const t = time.trim();
+        const n = parseFloat(t);
+        return t.endsWith('ms') ? n : t.endsWith('s') ? n * 1000 : NaN;
+    };
     const rise = (li) => {
         if (li.closest('.timed-fade')) return TIMED_RISE_MS;
-        const ms = parseFloat(root().getPropertyValue('--enter-duration'));
+        const ms = toMs(root().getPropertyValue('--enter-duration'));
         return Number.isFinite(ms) ? ms : 280;
     };
     const stamp = (li) => {

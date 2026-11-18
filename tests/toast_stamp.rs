@@ -65,3 +65,20 @@ fn an_update_crossfades_the_part_that_changed_by_opacity() {
         "under reduced motion the new number simply shows"
     );
 }
+
+/// A release build's CSS minifier writes `280ms` as `.28s`, so the rise's length is read with its
+/// unit: a bare number would start the stamp a fraction of a millisecond in, mid-rise.
+#[test]
+fn the_stamp_waits_for_the_rise_in_milliseconds_whichever_unit_the_sheet_uses() {
+    assert!(
+        !STAMP.contains("parseFloat(root().getPropertyValue('--enter-duration'))"),
+        "the length is never read as a bare number: {STAMP}"
+    );
+    for want in [
+        "const toMs = (time) => {",
+        "return t.endsWith('ms') ? n : t.endsWith('s') ? n * 1000 : NaN;",
+        "const ms = toMs(root().getPropertyValue('--enter-duration'));",
+    ] {
+        assert!(STAMP.contains(want), "{want} in {STAMP}");
+    }
+}
