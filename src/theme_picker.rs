@@ -213,6 +213,7 @@ fn ThemeRows(
 ) -> Element {
     let mut theme = theme;
     let found = filter_theme_groups(&query);
+    let target = crate::theme_search::enter_target(&query, top_theme(&found));
     rsx! {
         if found.is_empty() {
             NoThemeMatch {}
@@ -224,7 +225,12 @@ fn ThemeRows(
             for name in group.themes {
                 button {
                     r#type: "button",
-                    class: if current == *name { "nav-dropdown-item active" } else { "nav-dropdown-item" },
+                    class: match (current == *name, target == Some(name)) {
+                        (true, true) => "nav-dropdown-item active enter-target",
+                        (true, false) => "nav-dropdown-item active",
+                        (false, true) => "nav-dropdown-item enter-target",
+                        (false, false) => "nav-dropdown-item",
+                    },
                     onclick: move |_| {
                         let dark = theme.read().is_dark;
                         theme.set(ThemeConfig {
