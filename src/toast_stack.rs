@@ -13,8 +13,8 @@ use std::time::Duration;
 use dioxus::dioxus_core::DynamicNode;
 use dioxus::prelude::*;
 use dioxus_primitives::toast::{
-    Toast, ToastCloseButton, ToastContent, ToastOptions, ToastProps, ToastPropsWithOwner,
-    ToastProvider, ToastTitle, ToastType, Toasts,
+    Toast, ToastCloseButton, ToastContent, ToastDescription, ToastOptions, ToastProps,
+    ToastPropsWithOwner, ToastProvider, ToastTitle, ToastType, Toasts,
 };
 use orangui_core::live_toast::{LiveText, live_key, live_title};
 
@@ -113,6 +113,22 @@ impl StackTap {
     }
 }
 
+/// The class of the wrapper around a toast's ×.
+const CLOSE_CLASS: &str = "toast-close";
+
+/// A toast's ×: its click closes the toast and goes no further, so it never reaches the toast's
+/// tap and expands or collapses the stack. The wrapper has no box of its own (toast.css).
+#[component]
+fn CloseButton() -> Element {
+    rsx! {
+        span {
+            class: CLOSE_CLASS,
+            onclick: move |event: MouseEvent| event.stop_propagation(),
+            ToastCloseButton {}
+        }
+    }
+}
+
 /// The fewest toasts that make a stack to expand.
 const STACK_MIN: usize = 2;
 
@@ -146,6 +162,17 @@ fn StackToast(props: ToastProps) -> Element {
     use_stack_slot(tap);
     if let Some(name) = live_key(&props.title).map(str::to_owned) {
         return rsx! { LiveToast { name, toast: props } };
+    }
+    let mut props = props;
+    if props.children.is_none() {
+        // The library's own layout, with the × in the wrapper that keeps its click from the tap.
+        props.children = Some(rsx! {
+            ToastContent {
+                ToastTitle {}
+                ToastDescription {}
+            }
+            CloseButton {}
+        });
     }
     rsx! {
         div { class: "toast-tap", onclick: move |_| tap.toggle(),
@@ -232,7 +259,7 @@ fn LiveToastBody(text: LiveText, toast: ToastProps) -> Element {
                 LiveTitle { text }
             }
         }
-        ToastCloseButton {}
+        CloseButton {}
     });
     rsx! {
         div {
@@ -396,6 +423,76 @@ mod tests {
             assert!(expanded(&dom), "two toasts are still a stack");
             show(&mut dom, 1);
             assert!(!expanded(&dom), "a lone toast has nothing to expand");
+        }
+    }
+
+    mod close_button {
+        use std::time::Duration;
+
+        use dioxus::dioxus_core::NoOpMutations;
+        use dioxus_primitives::toast::use_toast;
+
+        use super::super::*;
+
+        /// Pushes one plain toast and one keyed toast, neither timing out.
+        #[component]
+        fn Pusher() -> Element {
+            let toasts = use_toast();
+            let live = use_live_toasts();
+            use_hook(move || {
+                toasts.info("Saved".to_owned(), ToastOptions::default().permanent(true));
+                live.show(
+                    toasts,
+                    "count",
+                    "Pull-ups +1".to_owned(),
+                    ToastType::Info,
+                    ToastOptions::default().duration(Duration::from_secs(600)),
+                );
+            });
+            rsx! {}
+        }
+
+        fn app() -> Element {
+            rsx! {
+                ToastStack { Pusher {} }
+            }
+        }
+
+        fn render() -> String {
+            // The library times each toast on tokio.
+            let tokio = tokio::runtime::Builder::new_current_thread()
+                .enable_time()
+                .build()
+                .unwrap();
+            let _inside = tokio.enter();
+            let mut dom = VirtualDom::new(app);
+            dom.rebuild_in_place();
+            for _ in 0..8 {
+                dom.process_events();
+                dom.render_immediate(&mut NoOpMutations);
+            }
+            dioxus_ssr::render(&dom)
+        }
+
+        #[test]
+        fn every_toast_s_close_sits_in_the_wrapper_that_keeps_its_click_from_the_tap() {
+            let html = render();
+            let closes = html.matches("aria-label=\"close\"").count();
+            assert_eq!(closes, 2, "a plain toast and a keyed one: {html}");
+            let wrapped = html
+                .matches(&format!("<span class=\"{CLOSE_CLASS}\"><button"))
+                .count();
+            assert_eq!(wrapped, closes, "each × in the wrapper: {html}");
+            // Split, so only the wrapper's own line holds it whole.
+            let stops = [
+                "onclick: move |event: MouseEvent| event.",
+                "stop_propagation(),",
+            ]
+            .concat();
+            assert!(
+                include_str!("toast_stack.rs").contains(&stops),
+                "the wrapper stops the ×'s click"
+            );
         }
     }
 }
