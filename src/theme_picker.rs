@@ -143,20 +143,22 @@ pub fn ThemePicker(
             query.set(String::new());
         }
     });
-    // Enter in the search applies the highlighted match, keeping the mode, and closes; with
-    // nothing highlighted it only closes.
+    // Enter in the search applies the highlighted match, keeping the mode, and closes; an empty
+    // search only closes; a search that matches nothing stays open.
     let apply_top = move |()| {
         let typed = query.peek().clone();
-        if let EnterPress::Apply(name) =
-            enter_press(&typed, top_theme(&filter_theme_groups(&typed)))
-        {
-            let dark = theme.peek().is_dark;
-            theme.set(ThemeConfig {
-                name: name.to_string(),
-                is_dark: dark,
-            });
+        match enter_press(&typed, top_theme(&filter_theme_groups(&typed))) {
+            EnterPress::Apply(name) => {
+                let dark = theme.peek().is_dark;
+                theme.set(ThemeConfig {
+                    name: name.to_string(),
+                    is_dark: dark,
+                });
+                open.set(false);
+            }
+            EnterPress::Close => open.set(false),
+            EnterPress::Stay => {}
         }
-        open.set(false);
     };
     let current = shown.read().name.clone();
     let is_dark = shown.read().is_dark;

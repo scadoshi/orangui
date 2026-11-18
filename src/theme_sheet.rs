@@ -135,20 +135,22 @@ pub fn ThemeSheet(
     let top = top_theme(&found);
     let target = crate::theme_search::enter_target(&query(), top);
     // Enter in the search applies the highlighted match, as a click on its row does, and
-    // closes; with nothing highlighted it only closes.
-    let apply_top = move |()| {
-        if let EnterPress::Apply(name) = enter_press(&query.peek(), top)
-            && *selected.peek() != name
-        {
-            selected.set(name.to_string());
-            let picked = ThemeConfig {
-                name: name.to_string(),
-                is_dark: *dark.peek(),
-            };
-            theme.set(picked.clone());
-            on_save.call(picked);
+    // closes; an empty search only closes; a search that matches nothing stays open.
+    let apply_top = move |()| match enter_press(&query.peek(), top) {
+        EnterPress::Apply(name) => {
+            if *selected.peek() != name {
+                selected.set(name.to_string());
+                let picked = ThemeConfig {
+                    name: name.to_string(),
+                    is_dark: *dark.peek(),
+                };
+                theme.set(picked.clone());
+                on_save.call(picked);
+            }
+            open.set(false);
         }
-        open.set(false);
+        EnterPress::Close => open.set(false),
+        EnterPress::Stay => {}
     };
 
     rsx! {
