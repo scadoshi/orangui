@@ -24,7 +24,14 @@ const FOCUS_FIELD_JS: &str =
 /// Focuses the first theme row shown, once the theme cursor has installed its focus helper.
 const FOCUS_FIRST_JS: &str = "window.__oranguiThemeFocus && window.__oranguiThemeFocus(0);";
 
-/// The search field. `query` holds what is typed; `on_enter` runs as Enter is pressed in it.
+/// The theme Enter in the search applies, which its row shows: the top match `top` while `query`
+/// has text, else none, so an empty search leaves every row plain until the cursor moves.
+pub(crate) fn enter_target(query: &str, top: Option<&'static str>) -> Option<&'static str> {
+    if query.is_empty() { None } else { top }
+}
+
+/// The search field, its `Search` label chip on its left. `query` holds what is typed;
+/// `on_enter` runs as Enter is pressed in it.
 #[component]
 pub(crate) fn ThemeSearch(mut query: Signal<String>, on_enter: EventHandler<()>) -> Element {
     use_effect(|| {
@@ -33,6 +40,9 @@ pub(crate) fn ThemeSearch(mut query: Signal<String>, on_enter: EventHandler<()>)
     rsx! {
         // The bar holds the field at the top of the sheet's scroll as the themes pass under it.
         div { class: "theme-search-bar",
+            // The row is the field's label, so a click on the chip focuses the field.
+            label { class: "theme-search-row",
+            span { class: "stat-chip stat-chip-p1 theme-search-label", "Search" }
             ClearWrap {
                 filled: !query().is_empty(),
                 label: "Clear search".to_string(),
@@ -62,6 +72,7 @@ pub(crate) fn ThemeSearch(mut query: Signal<String>, on_enter: EventHandler<()>)
                         }
                     },
                 }
+            }
             }
         }
     }
@@ -122,6 +133,29 @@ mod tests {
         assert_eq!(
             FOCUS_FIELD_JS,
             "document.querySelector('.bottom-sheet.show .theme-search')?.focus({ preventScroll: true });"
+        );
+    }
+
+    #[test]
+    fn the_top_match_is_enter_s_target_only_while_the_search_has_text() {
+        let found = crate::filter_theme_groups("gru");
+        let top = crate::top_theme(&found);
+        assert!(top.is_some(), "gru matches a theme");
+        assert_eq!(enter_target("gru", top), top);
+        assert_eq!(
+            enter_target("", top),
+            None,
+            "an empty search leaves the rows plain"
+        );
+        assert_eq!(enter_target("zzzz", None), None, "no match, no target");
+    }
+
+    #[test]
+    fn the_target_wears_the_cursor_s_highlight_while_the_field_has_focus() {
+        let css = include_str!("../assets/components.css");
+        assert!(
+            css.contains(".bottom-sheet:has(.theme-search:focus) :is(.pref-row, .nav-dropdown-item).enter-target"),
+            "the highlight shows while Enter is the field's"
         );
     }
 }

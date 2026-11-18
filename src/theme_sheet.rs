@@ -46,6 +46,8 @@ if (!window.__oranguiThemeKeys) {
 /// only in themes.css.
 #[component]
 fn ThemeRow(
+    /// Whether Enter in the search applies this theme, which the row shows as the cursor does.
+    enter_target: bool,
     theme: String,
     mode: String,
     mut selected: Signal<String>,
@@ -58,7 +60,12 @@ fn ThemeRow(
     rsx! {
         button {
             r#type: "button",
-            class: if is_selected { "pref-row selected" } else { "pref-row" },
+            class: match (is_selected, enter_target) {
+                (true, true) => "pref-row selected enter-target",
+                (true, false) => "pref-row selected",
+                (false, true) => "pref-row enter-target",
+                (false, false) => "pref-row",
+            },
             onclick: move |_| {
                 if *selected.peek() == click_theme {
                     return;
@@ -126,6 +133,7 @@ pub fn ThemeSheet(
     let mode = (if dark() { "dark" } else { "light" }).to_string();
     let found = filter_theme_groups(&query());
     let top = top_theme(&found);
+    let target = crate::theme_search::enter_target(&query(), top);
     // Enter in the search applies the top match, as a click on its row does, and closes.
     let apply_top = move |()| {
         if let Some(name) = top
@@ -162,6 +170,7 @@ pub fn ThemeSheet(
                 }
                 for t in group.themes {
                     ThemeRow {
+                        enter_target: target == Some(t),
                         theme: t.to_string(),
                         mode: mode.clone(),
                         selected,
@@ -203,14 +212,25 @@ mod tests {
         );
         assert!(!html.contains(r#"type="search""#), "{html}");
         assert!(
-            html.contains(r#"<div class="theme-search-bar"><div class="input-clear-wrap"><input class="theme-search""#),
-            "in its sticky bar, with the kit's clear: {html}"
+            html.contains(r#"<div class="theme-search-bar"><label class="theme-search-row"><span class="stat-chip stat-chip-p1 theme-search-label">Search</span><div class="input-clear-wrap"><input class="theme-search""#),
+            "in its sticky bar, its Search chip on its left in the field's label, with the kit's clear: {html}"
         );
         assert!(
             html.contains(r#"class="input-clear-btn""#) && !html.contains("has-text"),
             "the clear waits, hidden, for text: {html}"
         );
         assert!(html.contains(r#"placeholder="Search themes""#), "{html}");
+    }
+
+    #[test]
+    fn nothing_is_enter_s_target_with_an_empty_search() {
+        fn app() -> Element {
+            let open = use_signal(|| true);
+            let theme = use_signal(ThemeConfig::default);
+            rsx! { ThemeSheet { open, theme, on_save: |_| {} } }
+        }
+        let html = render(app);
+        assert!(!html.contains("enter-target"), "{html}");
     }
 
     #[test]
