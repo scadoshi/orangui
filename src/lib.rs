@@ -264,7 +264,3 @@ pub const TOAST_CSS: &str = include_str!("../assets/toast.css");
 /// [`ToastStack`] installs it once a page.
 #[cfg(feature = "toast")]
 pub const TOAST_LEAVE_JS: &str = include_str!("../assets/toast-leave.js");
-/// Stamps a toast as it lands: a quick jump and scale-up that settles, as a stack badge pops, by
-/// transform alone and not under reduced motion. [`ToastStack`] installs it once a page.
-#[cfg(feature = "toast")]
-pub const TOAST_STAMP_JS: &str = include_str!("../assets/toast-stamp.js");

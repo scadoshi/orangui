@@ -5,7 +5,7 @@
 //! and one radius, `--corner-radius`, rounds the toast and the dock alike.
 //!
 //! A toast rises in from below the bottom edge and drops back below it as it leaves, moving by
-//! transform only. Stacked, the older toasts line up behind the newest, which stays in front.
+//! translate only. Stacked, the older toasts line up behind the newest, which stays in front.
 
 #![expect(
     clippy::float_arithmetic,
@@ -19,7 +19,7 @@ const TOAST_STACK: &str = include_str!("../src/toast_stack.rs");
 /// What a toast's entrance starts from and its timed exit ends on: its own height, the corner
 /// gap and the keyboard below its spot, and its shadow's reach, so it is wholly below the edge.
 const BELOW_THE_EDGE: &str =
-    "translateY(calc(100% + var(--corner-gap) + var(--keyboard-inset, 0px) + var(--space-4)))";
+    "0 calc(100% + var(--corner-gap) + var(--keyboard-inset, 0px) + var(--space-4))";
 
 /// The declarations of the first rule whose selector is exactly `selector` in `css`.
 fn rule<'css>(css: &'css str, selector: &str) -> &'css str {
@@ -167,36 +167,39 @@ fn the_toast_and_the_dock_share_a_corner_and_the_close_button_nests_inside_it() 
 }
 
 #[test]
-fn a_toast_rises_from_below_the_bottom_edge_by_transform_alone() {
+fn a_toast_rises_from_below_the_bottom_edge_by_translate_alone() {
     let from = keyframe(TOAST, "toast-rise-in", "from");
-    assert_eq!(value(from, "transform"), Some(BELOW_THE_EDGE));
+    assert_eq!(value(from, "translate"), Some(BELOW_THE_EDGE));
     assert_eq!(value(from, "opacity"), None, "it moves; it does not fade");
     assert_eq!(
-        value(keyframe(TOAST, "toast-rise-in", "to"), "transform"),
-        Some("translateY(0)")
+        value(keyframe(TOAST, "toast-rise-in", "to"), "translate"),
+        Some("0")
     );
 }
 
 /// Where a leaving toast drifts to as it fades: a little way up from its spot.
 const DRIFT: &str = "translateY(-0.75rem)";
 
+/// The same drift as the timed keyframes write it.
+const DRIFT_TRANSLATE: &str = "0 -0.75rem";
+
 #[test]
 fn a_timed_toast_rises_from_below_and_leaves_drifting_up_as_it_fades() {
     for (name, held) in [("toast-life-3000", "92%"), ("toast-life-5000", "95%")] {
         assert_eq!(
-            value(keyframe(TOAST, name, "0%"), "transform"),
+            value(keyframe(TOAST, name, "0%"), "translate"),
             Some(BELOW_THE_EDGE),
             "{name} rises from below"
         );
         let up = keyframe(TOAST, name, held);
-        assert_eq!(
-            value(up, "transform"),
-            Some("translateY(0)"),
-            "{name} {held}"
-        );
+        assert_eq!(value(up, "translate"), Some("0"), "{name} {held}");
         assert_eq!(value(up, "opacity"), Some("1"), "{name} {held}");
         let gone = keyframe(TOAST, name, "100%");
-        assert_eq!(value(gone, "transform"), Some(DRIFT), "{name} drifts up");
+        assert_eq!(
+            value(gone, "translate"),
+            Some(DRIFT_TRANSLATE),
+            "{name} drifts up"
+        );
         assert_eq!(value(gone, "opacity"), Some("0"), "{name} fades out");
     }
 }
@@ -212,6 +215,7 @@ fn under_reduced_motion_a_timed_toast_only_fades_out() {
         let gone = keyframe(TOAST, name, "100%");
         assert_eq!(value(gone, "opacity"), Some("0"), "{name}");
         assert_eq!(value(gone, "transform"), None, "{name} never moves");
+        assert_eq!(value(gone, "translate"), None, "{name} never moves");
     }
 }
 
