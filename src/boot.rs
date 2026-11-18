@@ -8,7 +8,7 @@
 //! `#main`, the root Dioxus renders into. [`BootReveal`] goes last among the
 //! host's head elements and shows `#main` once every stylesheet has loaded:
 //!
-//! ```ignore
+//! ```text
 //! dioxus::LaunchBuilder::new()
 //!     .with_cfg(
 //!         Config::new()

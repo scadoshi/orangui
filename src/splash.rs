@@ -6,7 +6,7 @@
 //! The host hands in its mark, already dressed the way its home screen draws
 //! it, so the two match:
 //!
-//! ```ignore
+//! ```text
 //! Splash { pre { class: "logo", Decode { text: MARK } } }
 //! ```
 //!

@@ -8,7 +8,7 @@
 //!
 //! A host mounts one under its shell:
 //!
-//! ```ignore
+//! ```text
 //! GridCells {}
 //! ```
 //!

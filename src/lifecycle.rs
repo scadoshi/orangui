@@ -11,7 +11,7 @@
 //! forwards the window events from `use_wry_event_handler`, which only it can
 //! reach:
 //!
-//! ```ignore
+//! ```text
 //! let life = orangui::use_app_lifecycle_root();
 //! dioxus::mobile::use_wry_event_handler(move |event, _| {
 //!     if let Event::WindowEvent { event, .. } = event {
