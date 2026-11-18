@@ -30,6 +30,7 @@ pub mod diagram;
 pub mod grid_cursor;
 pub mod grid_rain;
 pub mod heat;
+pub mod live_toast;
 pub mod number;
 pub mod page_keys;
 pub mod rng;

@@ -124,7 +124,7 @@ pub use diagram::{DIAGRAM_NODE_HEIGHT, DiagramArrow, DiagramDefs, DiagramNode, D
 /// `use_toast` below [`ToastStack`] with no dependency of its own on that crate.
 #[cfg(feature = "toast")]
 #[doc(no_inline)]
-pub use dioxus_primitives::toast::{ToastOptions, Toasts, use_toast};
+pub use dioxus_primitives::toast::{ToastOptions, ToastType, Toasts, use_toast};
 pub use entrance::{CountUp, Decode, Figure, Replay};
 pub use gallery::{GalleryFooter, GalleryFrame};
 pub use grid_cells::{GRID_CELLS_JS, GridCells};
@@ -191,7 +191,7 @@ pub use theme_sheet::ThemeSheet;
 pub use theme_store::use_persisted_theme;
 pub use theme_wipe::{ThemeFollow, use_theme_follow, use_theme_wipe, use_theme_wipe_follow};
 #[cfg(feature = "toast")]
-pub use toast_stack::ToastStack;
+pub use toast_stack::{LiveToasts, ToastStack, use_live_toasts};
 
 /// The shared component rules, the `NavBar`'s hamburger-width rules
 /// ([`NAV_FOLD_CSS`]) among them under `@media (max-width: 60rem)`.
@@ -264,3 +264,7 @@ pub const TOAST_CSS: &str = include_str!("../assets/toast.css");
 /// [`ToastStack`] installs it once a page.
 #[cfg(feature = "toast")]
 pub const TOAST_LEAVE_JS: &str = include_str!("../assets/toast-leave.js");
+/// Stamps a toast as it lands: a quick jump and scale-up that settles, as a stack badge pops, by
+/// transform alone and not under reduced motion. [`ToastStack`] installs it once a page.
+#[cfg(feature = "toast")]
+pub const TOAST_STAMP_JS: &str = include_str!("../assets/toast-stamp.js");
