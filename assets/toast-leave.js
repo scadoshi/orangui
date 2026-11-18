@@ -1,22 +1,24 @@
-// A toast leaving drops from where it sat to below the screen's bottom edge, by transform alone.
-// The toast library takes a toast's element out of the page outright, with no closing state, so
-// this keeps each shown toast's last box and, as one goes, drops a copy of it from there. A timed
-// toast that already dropped by its own keyframes, and any toast under reduced motion, is let go
-// without one. The newest toast falls in front of the rest, an older one behind them.
+// A toast leaving drifts up a little from where it sat and fades out, like a puff of smoke, by
+// transform and opacity alone; under reduced motion it only fades. The toast library takes a
+// toast's element out of the page outright, with no closing state, so this keeps each shown
+// toast's last box and, as one goes, fades a copy of it from there. A timed toast that already
+// faded by its own keyframes is let go without one. The newest toast leaves in front of the rest,
+// an older one behind them.
 (() => {
     if (window.__oranguiToastLeave) return;
     window.__oranguiToastLeave = true;
     const seen = new Map();
     let frame = 0;
-    // Each shown toast's box and whether it has already gone below the edge, every frame while any
-    // is up: only the box it last had is left to drop from once the library removes it.
+    // Each shown toast's box and whether it has already faded out, every frame while any is up:
+    // only the box it last had is left to fade from once the library removes it.
     const measure = () => {
         const items = [...document.querySelectorAll('.toast-container:not(.toast-ghost) li')];
         items.forEach((li, index) => {
             const toast = li.querySelector('[role="alertdialog"]');
             if (!toast) return;
             const box = toast.getBoundingClientRect();
-            const gone = getComputedStyle(toast).animationName.startsWith('toast-life') && box.top >= innerHeight - 1;
+            const style = getComputedStyle(toast);
+            const gone = style.animationName.startsWith('toast-life') && Number(style.opacity) <= 0.02;
             seen.set(li, { box, front: index === 0, gone });
         });
         frame = items.length ? requestAnimationFrame(measure) : 0;
@@ -24,10 +26,10 @@
     const watch = () => {
         if (!frame) frame = requestAnimationFrame(measure);
     };
-    const drop = (li) => {
+    const fade = (li) => {
         const last = seen.get(li);
         seen.delete(li);
-        if (!last || last.gone || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (!last || last.gone) return;
         const { box, front } = last;
         const holder = document.createElement('div');
         holder.className = 'toast-container toast-ghost';
@@ -43,18 +45,18 @@
             toast.style.width = `${box.width}px`;
         }
         document.body.appendChild(holder);
-        const fall = innerHeight - box.top + 16;
-        const motion = copy.animate(
-            [{ transform: 'translateY(0)' }, { transform: `translateY(${fall}px)` }],
-            { duration: 220, easing: 'cubic-bezier(0.4, 0, 1, 1)' },
-        );
+        const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const frames = still
+            ? [{ opacity: 1 }, { opacity: 0 }]
+            : [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-0.75rem)', opacity: 0 }];
+        const motion = copy.animate(frames, { duration: 200, easing: 'ease-out' });
         motion.onfinish = () => holder.remove();
         motion.oncancel = () => holder.remove();
     };
     new MutationObserver((records) => {
         for (const record of records) {
             record.removedNodes.forEach((node) => {
-                if (seen.has(node)) drop(node);
+                if (seen.has(node)) fade(node);
             });
             if (record.addedNodes.length) watch();
         }

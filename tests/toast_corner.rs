@@ -177,30 +177,63 @@ fn a_toast_rises_from_below_the_bottom_edge_by_transform_alone() {
     );
 }
 
+/// Where a leaving toast drifts to as it fades: a little way up from its spot.
+const DRIFT: &str = "translateY(-0.75rem)";
+
 #[test]
-fn a_timed_toast_rises_from_and_drops_back_below_the_edge() {
-    for name in ["toast-life-3000", "toast-life-5000"] {
-        for stop in ["0%", "100%"] {
-            assert_eq!(
-                value(keyframe(TOAST, name, stop), "transform"),
-                Some(BELOW_THE_EDGE),
-                "{name} {stop}"
-            );
-        }
+fn a_timed_toast_rises_from_below_and_leaves_drifting_up_as_it_fades() {
+    for (name, held) in [("toast-life-3000", "92%"), ("toast-life-5000", "95%")] {
+        assert_eq!(
+            value(keyframe(TOAST, name, "0%"), "transform"),
+            Some(BELOW_THE_EDGE),
+            "{name} rises from below"
+        );
+        let up = keyframe(TOAST, name, held);
+        assert_eq!(
+            value(up, "transform"),
+            Some("translateY(0)"),
+            "{name} {held}"
+        );
+        assert_eq!(value(up, "opacity"), Some("1"), "{name} {held}");
+        let gone = keyframe(TOAST, name, "100%");
+        assert_eq!(value(gone, "transform"), Some(DRIFT), "{name} drifts up");
+        assert_eq!(value(gone, "opacity"), Some("0"), "{name} fades out");
     }
 }
 
 #[test]
-fn a_toast_that_leaves_drops_below_the_edge() {
+fn under_reduced_motion_a_timed_toast_only_fades_out() {
+    for (name, held) in [("toast-still-3000", "92%"), ("toast-still-5000", "95%")] {
+        assert_eq!(
+            value(keyframe(TOAST, name, held), "opacity"),
+            Some("1"),
+            "{name}"
+        );
+        let gone = keyframe(TOAST, name, "100%");
+        assert_eq!(value(gone, "opacity"), Some("0"), "{name}");
+        assert_eq!(value(gone, "transform"), None, "{name} never moves");
+    }
+}
+
+#[test]
+fn a_toast_that_leaves_drifts_up_and_fades_out() {
     let js = orangui::TOAST_LEAVE_JS;
     assert!(js.contains("new MutationObserver"), "{js}");
     assert!(
-        js.contains("innerHeight - box.top"),
-        "it falls from where it was to past the bottom edge: {js}"
+        js.contains(&format!("{{ transform: '{DRIFT}', opacity: 0 }}")),
+        "it drifts up a little as it fades: {js}"
+    );
+    assert!(
+        js.contains("{ opacity: 0 }"),
+        "under reduced motion it only fades: {js}"
+    );
+    assert!(
+        !js.contains("innerHeight - box.top"),
+        "it no longer falls below the edge: {js}"
     );
     assert!(
         js.contains("animationName.startsWith('toast-life')"),
-        "a timed toast that already dropped by its own keyframes is not dropped again: {js}"
+        "a timed toast that already faded by its own keyframes is not faded again: {js}"
     );
     assert!(
         TOAST_STACK.contains("document::eval(crate::TOAST_LEAVE_JS)"),
@@ -234,6 +267,6 @@ fn stacked_toasts_line_up_behind_the_newest_which_stays_in_front() {
     assert!(z(1) > z(2) && z(2) > z(3), "the newest is in front");
     assert!(
         orangui::TOAST_LEAVE_JS.contains("front ? '10000' : '9998'"),
-        "a leaving newest falls in front of the rest, an older one behind them"
+        "a leaving newest fades in front of the rest, an older one behind them"
     );
 }
