@@ -51,9 +51,11 @@ pub fn ToastStack(
     // expanding and dropping back every time one landed. CSS cannot tell the
     // two apart; this can, because only the tap sets it.
     let animating = use_signal(|| false);
+    let shown = use_signal(|| 0);
     use_context_provider(|| StackTap {
         expanded,
         animating,
+        shown,
     });
     let mut class = String::from("toast-container");
     if timed_fade {
@@ -89,6 +91,8 @@ pub fn ToastStack(
 struct StackTap {
     expanded: Signal<bool>,
     animating: Signal<bool>,
+    /// How many toasts are on the page.
+    shown: Signal<usize>,
 }
 
 impl StackTap {
@@ -97,6 +101,7 @@ impl StackTap {
         let Self {
             mut expanded,
             mut animating,
+            ..
         } = self;
         expanded.toggle();
         animating.set(true);
@@ -108,11 +113,37 @@ impl StackTap {
     }
 }
 
+/// The fewest toasts that make a stack to expand.
+const STACK_MIN: usize = 2;
+
+/// Counts a toast in the stack while it is mounted, and collapses the stack once fewer than
+/// [`STACK_MIN`] are left, so the next stack arrives collapsed. A tap on a toast's × also reaches
+/// its tap and expands the stack as the toast closes.
+fn use_stack_slot(tap: StackTap) {
+    let StackTap {
+        mut expanded,
+        mut shown,
+        ..
+    } = tap;
+    use_hook(move || {
+        let up = shown.peek().saturating_add(1);
+        shown.set(up);
+    });
+    use_drop(move || {
+        let left = shown.peek().saturating_sub(1);
+        shown.set(left);
+        if left < STACK_MIN && *expanded.peek() {
+            expanded.set(false);
+        }
+    });
+}
+
 /// One toast in the stack, tapped to expand or collapse it: a keyed one ([`LiveToast`]) or a
 /// plain one as the library draws it.
 #[expect(non_snake_case, reason = "a component, named as one")]
 fn StackToast(props: ToastProps) -> Element {
     let tap = use_context::<StackTap>();
+    use_stack_slot(tap);
     if let Some(name) = live_key(&props.title).map(str::to_owned) {
         return rsx! { LiveToast { name, toast: props } };
     }
@@ -271,5 +302,100 @@ mod tests {
             render(updated),
             "<span class=\"toast-live\">Pull-ups +<span class=\"toast-live-change\"><span class=\"toast-live-new\">2</span><span class=\"toast-live-old\" aria-hidden=\"true\">1</span></span></span>"
         );
+    }
+
+    mod stack_slots {
+        use std::cell::Cell;
+
+        use dioxus::dioxus_core::NoOpMutations;
+
+        use super::super::*;
+
+        thread_local! {
+            static PROBE: Cell<Option<(StackTap, Signal<usize>)>> = const { Cell::new(None) };
+        }
+
+        /// The stack's state and how many toasts the app shows.
+        fn probe() -> (StackTap, Signal<usize>) {
+            PROBE.with(Cell::get).unwrap()
+        }
+
+        /// A toast as the stack counts it.
+        #[component]
+        fn Slot() -> Element {
+            use_stack_slot(use_context::<StackTap>());
+            rsx! {}
+        }
+
+        fn app() -> Element {
+            let tap = StackTap {
+                expanded: use_signal(|| false),
+                animating: use_signal(|| false),
+                shown: use_signal(|| 0),
+            };
+            use_context_provider(|| tap);
+            let toasts = use_signal(|| 0_usize);
+            PROBE.with(|p| p.set(Some((tap, toasts))));
+            rsx! {
+                for i in 0..toasts() {
+                    Slot { key: "{i}" }
+                }
+            }
+        }
+
+        fn settle(dom: &mut VirtualDom) {
+            for _ in 0..8 {
+                dom.process_events();
+                dom.render_immediate(&mut NoOpMutations);
+            }
+        }
+
+        /// Shows `n` toasts.
+        fn show(dom: &mut VirtualDom, n: usize) {
+            let (_, mut toasts) = probe();
+            dom.in_runtime(|| toasts.set(n));
+            settle(dom);
+        }
+
+        fn expand(dom: &VirtualDom) {
+            let (tap, _) = probe();
+            let mut expanded = tap.expanded;
+            dom.in_runtime(|| expanded.set(true));
+        }
+
+        fn expanded(dom: &VirtualDom) -> bool {
+            let (tap, _) = probe();
+            dom.in_runtime(|| *tap.expanded.peek())
+        }
+
+        fn mount() -> VirtualDom {
+            let mut dom = VirtualDom::new(app);
+            dom.rebuild_in_place();
+            settle(&mut dom);
+            dom
+        }
+
+        #[test]
+        fn closing_a_lone_toast_its_tap_expanded_leaves_the_next_stack_collapsed() {
+            let mut dom = mount();
+            show(&mut dom, 1);
+            // The ×'s click bubbles to the toast's tap, which expands the stack as it closes.
+            expand(&dom);
+            show(&mut dom, 0);
+            assert!(!expanded(&dom), "no toast up, nothing to expand");
+            show(&mut dom, 2);
+            assert!(!expanded(&dom), "the next stack arrives collapsed");
+        }
+
+        #[test]
+        fn an_expanded_stack_collapses_once_one_toast_is_left_and_not_before() {
+            let mut dom = mount();
+            show(&mut dom, 3);
+            expand(&dom);
+            show(&mut dom, 2);
+            assert!(expanded(&dom), "two toasts are still a stack");
+            show(&mut dom, 1);
+            assert!(!expanded(&dom), "a lone toast has nothing to expand");
+        }
     }
 }
