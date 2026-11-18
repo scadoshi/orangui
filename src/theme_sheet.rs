@@ -7,14 +7,19 @@
 //! On a keyboard, while the sheet is open and no dialog is over it, the
 //! arrows and `h` `j` `k` `l` move focus through the rows (the theme cursor),
 //! Enter picks the focused one, and Enter with no row in focus closes the
-//! sheet.
+//! sheet. The search field over the rows keeps its own Enter, which applies
+//! the top match ([`ThemeSearch`]).
 
 use dioxus::prelude::*;
 
-use crate::{BottomSheet, SheetDim, THEME_GROUPS, ThemeConfig, display_theme_name};
+use crate::theme_search::{NoThemeMatch, ThemeSearch};
+use crate::{
+    BottomSheet, SheetDim, ThemeConfig, display_theme_name, filter_theme_groups, top_theme,
+};
 
 /// The sheet's Enter, installed once per page by [`ThemeSheet`]: with no
-/// button or link in the open sheet in focus, Enter closes it. The theme
+/// button or link in the open sheet in focus, Enter closes it, except in the
+/// search field, whose Enter is its own. The theme
 /// cursor takes the moves. Nothing happens while a dialog is open.
 const THEME_KEYS_JS: &str = r#"
 if (!window.__oranguiThemeKeys) {
@@ -25,6 +30,7 @@ if (!window.__oranguiThemeKeys) {
             .find((s) => s.querySelector('.theme-swatches'));
         if (!sheet) return;
         const focus = document.activeElement;
+        if (focus && focus.closest('.theme-search')) return;
         const onControl = focus && (focus.tagName === 'BUTTON' || focus.tagName === 'A');
         if (e.key === 'Enter' && !(onControl && sheet.contains(focus))) {
             const close = sheet.querySelector('.sheet-close');
@@ -105,6 +111,7 @@ pub fn ThemeSheet(
     crate::theme_cursor::use_theme_cursor(open);
     let mut selected = use_signal(|| theme.peek().name.clone());
     let mut dark = use_signal(|| theme.peek().is_dark);
+    let mut query = use_signal(String::new);
 
     // Opening reads the live theme, so the sheet marks what the app draws.
     use_effect(move || {
@@ -112,10 +119,30 @@ pub fn ThemeSheet(
             let current = theme.peek().clone();
             selected.set(current.name.clone());
             dark.set(current.is_dark);
+            query.set(String::new());
         }
     });
 
     let mode = (if dark() { "dark" } else { "light" }).to_string();
+    let found = filter_theme_groups(&query());
+    let top = top_theme(&found);
+    // Enter in the search applies the top match, as a click on its row does, and closes.
+    let apply_top = move |()| {
+        if let Some(name) = top
+            && *selected.peek() != name
+        {
+            selected.set(name.to_string());
+            let picked = ThemeConfig {
+                name: name.to_string(),
+                is_dark: *dark.peek(),
+            };
+            theme.set(picked.clone());
+            on_save.call(picked);
+        }
+        if top.is_some() {
+            open.set(false);
+        }
+    };
 
     rsx! {
         BottomSheet {
@@ -125,11 +152,15 @@ pub fn ThemeSheet(
             hint,
             closable: true,
             on_dismiss: move |()| open.set(false),
-            for group in THEME_GROUPS {
+            ThemeSearch { query, on_enter: apply_top }
+            if found.is_empty() {
+                NoThemeMatch {}
+            }
+            for group in found {
                 div { class: "theme-group-label",
                     span { class: "stat-chip stat-chip-p1", "{group.label}" }
                 }
-                for t in group.themes.iter().copied() {
+                for t in group.themes {
                     ThemeRow {
                         theme: t.to_string(),
                         mode: mode.clone(),
@@ -141,5 +172,40 @@ pub fn ThemeSheet(
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn render(app: fn() -> Element) -> String {
+        let mut dom = VirtualDom::new(app);
+        dom.rebuild_in_place();
+        dioxus_ssr::render(&dom)
+    }
+
+    #[test]
+    fn the_open_sheet_starts_with_its_search_field() {
+        fn app() -> Element {
+            let open = use_signal(|| true);
+            let theme = use_signal(ThemeConfig::default);
+            rsx! { ThemeSheet { open, theme, on_save: |_| {} } }
+        }
+        let html = render(app);
+        let field = html.find(r#"class="theme-search""#);
+        let first_group = html.find("theme-group-label");
+        assert!(field.is_some(), "{html}");
+        assert!(field < first_group, "above the themes: {html}");
+        assert!(html.contains(r#"type="search""#), "{html}");
+        assert!(html.contains(r#"placeholder="Search themes""#), "{html}");
+    }
+
+    #[test]
+    fn enter_in_the_search_is_the_fields_own() {
+        assert!(
+            THEME_KEYS_JS.contains("focus.closest('.theme-search')"),
+            "{THEME_KEYS_JS}"
+        );
     }
 }

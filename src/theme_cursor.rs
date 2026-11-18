@@ -30,9 +30,9 @@ const ROWS: &str = ".pref-row, .nav-dropdown-item";
 /// The row for the theme in use.
 const CURRENT: &str = ".pref-row.selected, .nav-dropdown-item.active";
 
-/// The open theme sheet's row for the theme in use, which takes focus as the sheet opens.
-const CURRENT_ROW: &str =
-    ".bottom-sheet.show:has(.theme-group-label) :is(.pref-row.selected, .nav-dropdown-item.active)";
+/// The open theme sheet's row for the theme in use, which takes focus as the sheet opens, unless
+/// `t` opened it for its search field.
+const CURRENT_ROW: &str = ":root:not([data-orangui-theme-search]) .bottom-sheet.show:has(.theme-group-label) :is(.pref-row.selected, .nav-dropdown-item.active)";
 
 /// Scrolls the row in focus into the sheet's view once the sheet has given it focus.
 const REVEAL: &str = "window.__oranguiThemeReveal && window.__oranguiThemeReveal();";
@@ -188,6 +188,14 @@ mod tests {
     use orangui_core::grid_cursor::Move;
 
     use super::*;
+
+    #[test]
+    fn t_keeps_the_opening_focus_off_the_theme_in_use() {
+        assert!(
+            CURRENT_ROW.starts_with(":root:not([data-orangui-theme-search]) "),
+            "{CURRENT_ROW}"
+        );
+    }
 
     #[test]
     fn a_list_of_rows_steps_up_and_down_and_stops_at_its_ends() {

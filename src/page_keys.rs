@@ -153,7 +153,7 @@ pub fn use_page_keys(keys: PageKeys, steps: ReadSignal<bool>) {
                     PageKey::StepUp => scroll(target, "-1", held),
                     PageKey::Themes => {
                         if keys.themes {
-                            document::eval(&press_themes_js());
+                            document::eval(&open_themes_js());
                         }
                     }
                     PageKey::Shortcuts => {
@@ -233,9 +233,33 @@ fn scroll_js(target: Target, by: &str, held: bool) -> String {
         .replace("__SHARE__", &STEP_SHARE.to_string())
 }
 
-/// Clicks the first button marked [`THEMES_ACTION`].
-fn press_themes_js() -> String {
-    format!("document.querySelector('[data-action=\"{THEMES_ACTION}\"]')?.click();")
+/// The attribute `t` sets on the page's root while it opens the theme sheet and focuses its search
+/// field, so the sheet's own opening focus leaves the theme in use alone. `t` clears it once the
+/// field has focus, or after a second.
+pub(crate) const THEME_SEARCH_MARK: &str = "data-orangui-theme-search";
+
+/// The open theme sheet's search field, which `t` focuses.
+const THEME_SEARCH_FIELD: &str = ".bottom-sheet.show:has(.theme-group-label) .theme-search";
+
+/// How long after `t` the search field takes focus, in milliseconds: the sheet's first frame has
+/// drawn it by then.
+const SEARCH_DELAY_MS: u32 = 60;
+
+/// How long `t` keeps trying to focus the search field, in milliseconds: a sheet refuses focus
+/// until it has started to slide in.
+const SEARCH_TRY_MS: u32 = 1000;
+
+/// How often `t` tries while the search field has not taken focus, in milliseconds.
+const SEARCH_RETRY_MS: u32 = 50;
+
+/// What `t` runs: clicks the first button marked [`THEMES_ACTION`] and focuses the sheet's search
+/// field once it draws, marking the page root meanwhile so the sheet leaves the theme in use
+/// unfocused. A page with no such button is left as it was.
+#[must_use]
+pub fn open_themes_js() -> String {
+    format!(
+        "{{ const b = document.querySelector('[data-action=\"{THEMES_ACTION}\"]'); if (b) {{ const root = document.documentElement; root.setAttribute('{THEME_SEARCH_MARK}', ''); b.click(); const until = Date.now() + {SEARCH_TRY_MS}; const take = () => {{ const f = document.querySelector('{THEME_SEARCH_FIELD}'); if (f) f.focus({{ preventScroll: true }}); if (f && document.activeElement === f) {{ root.removeAttribute('{THEME_SEARCH_MARK}'); return; }} if (Date.now() < until) setTimeout(take, {SEARCH_RETRY_MS}); else root.removeAttribute('{THEME_SEARCH_MARK}'); }}; setTimeout(take, {SEARCH_DELAY_MS}); }} }}"
+    )
 }
 
 /// The query for a pointer that hovers and is precise (a mouse or a trackpad), at any width: where
@@ -440,10 +464,10 @@ mod tests {
     }
 
     #[test]
-    fn t_presses_the_themes_button() {
+    fn t_marks_the_search_then_presses_the_themes_button() {
         assert_eq!(
-            press_themes_js(),
-            "document.querySelector('[data-action=\"themes\"]')?.click();"
+            open_themes_js(),
+            "{ const b = document.querySelector('[data-action=\"themes\"]'); if (b) { const root = document.documentElement; root.setAttribute('data-orangui-theme-search', ''); b.click(); const until = Date.now() + 1000; const take = () => { const f = document.querySelector('.bottom-sheet.show:has(.theme-group-label) .theme-search'); if (f) f.focus({ preventScroll: true }); if (f && document.activeElement === f) { root.removeAttribute('data-orangui-theme-search'); return; } if (Date.now() < until) setTimeout(take, 50); else root.removeAttribute('data-orangui-theme-search'); }; setTimeout(take, 60); } }"
         );
     }
 
