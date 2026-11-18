@@ -12,7 +12,7 @@
 
 use dioxus::prelude::*;
 
-use crate::theme_search::{NoThemeMatch, ThemeSearch};
+use crate::theme_search::{EnterPress, NoThemeMatch, ThemeSearch, enter_press};
 use crate::{
     BottomSheet, SheetDim, ThemeConfig, display_theme_name, filter_theme_groups, top_theme,
 };
@@ -134,22 +134,23 @@ pub fn ThemeSheet(
     let found = filter_theme_groups(&query());
     let top = top_theme(&found);
     let target = crate::theme_search::enter_target(&query(), top);
-    // Enter in the search applies the top match, as a click on its row does, and closes.
-    let apply_top = move |()| {
-        if let Some(name) = top
-            && *selected.peek() != name
-        {
-            selected.set(name.to_string());
-            let picked = ThemeConfig {
-                name: name.to_string(),
-                is_dark: *dark.peek(),
-            };
-            theme.set(picked.clone());
-            on_save.call(picked);
-        }
-        if top.is_some() {
+    // Enter in the search applies the highlighted match, as a click on its row does, and
+    // closes; an empty search only closes; a search that matches nothing stays open.
+    let apply_top = move |()| match enter_press(&query.peek(), top) {
+        EnterPress::Apply(name) => {
+            if *selected.peek() != name {
+                selected.set(name.to_string());
+                let picked = ThemeConfig {
+                    name: name.to_string(),
+                    is_dark: *dark.peek(),
+                };
+                theme.set(picked.clone());
+                on_save.call(picked);
+            }
             open.set(false);
         }
+        EnterPress::Close => open.set(false),
+        EnterPress::Stay => {}
     };
 
     rsx! {

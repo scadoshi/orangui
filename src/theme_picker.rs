@@ -16,7 +16,7 @@
 use dioxus::prelude::*;
 
 use crate::page_keys::THEMES_ACTION;
-use crate::theme_search::{NoThemeMatch, ThemeSearch};
+use crate::theme_search::{EnterPress, NoThemeMatch, ThemeSearch, enter_press};
 use crate::{
     BottomSheet, NavPanelOpen, SheetDim, SheetFrame, SheetWide, ThemeConfig, display_theme_name,
     filter_theme_groups, top_theme,
@@ -143,15 +143,21 @@ pub fn ThemePicker(
             query.set(String::new());
         }
     });
-    // Enter in the search applies the top match, keeping the mode, and closes.
+    // Enter in the search applies the highlighted match, keeping the mode, and closes; an empty
+    // search only closes; a search that matches nothing stays open.
     let apply_top = move |()| {
-        if let Some(name) = top_theme(&filter_theme_groups(&query.peek())) {
-            let dark = theme.peek().is_dark;
-            theme.set(ThemeConfig {
-                name: name.to_string(),
-                is_dark: dark,
-            });
-            open.set(false);
+        let typed = query.peek().clone();
+        match enter_press(&typed, top_theme(&filter_theme_groups(&typed))) {
+            EnterPress::Apply(name) => {
+                let dark = theme.peek().is_dark;
+                theme.set(ThemeConfig {
+                    name: name.to_string(),
+                    is_dark: dark,
+                });
+                open.set(false);
+            }
+            EnterPress::Close => open.set(false),
+            EnterPress::Stay => {}
         }
     };
     let current = shown.read().name.clone();

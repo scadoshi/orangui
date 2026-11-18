@@ -25,9 +25,32 @@ const FOCUS_FIELD_JS: &str =
 const FOCUS_FIRST_JS: &str = "window.__oranguiThemeFocus && window.__oranguiThemeFocus(0);";
 
 /// The theme Enter in the search applies, which its row shows: the top match `top` while `query`
-/// has text, else none, so an empty search leaves every row plain until the cursor moves.
+/// has text other than spaces, else none, so an empty search leaves every row plain until the
+/// cursor moves.
 pub(crate) fn enter_target(query: &str, top: Option<&'static str>) -> Option<&'static str> {
-    if query.is_empty() { None } else { top }
+    if query.trim().is_empty() { None } else { top }
+}
+
+/// What Enter in the search does.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum EnterPress {
+    /// Applies the highlighted theme and closes.
+    Apply(&'static str),
+    /// Closes, applying nothing: the search is empty, so no theme is highlighted.
+    Close,
+    /// Leaves the sheet open as it is: the search matches nothing, so the typing can be fixed.
+    Stay,
+}
+
+/// What Enter does for `query` with top match `top`: applies the theme [`enter_target`]
+/// highlights; with an empty search only closes; with text that matches nothing stays open. Enter
+/// never applies a theme the sheet doesn't show as its target.
+pub(crate) fn enter_press(query: &str, top: Option<&'static str>) -> EnterPress {
+    match enter_target(query, top) {
+        Some(name) => EnterPress::Apply(name),
+        None if query.trim().is_empty() => EnterPress::Close,
+        None => EnterPress::Stay,
+    }
 }
 
 /// The search field, its `Search` label chip on its left. `query` holds what is typed;
@@ -92,6 +115,28 @@ pub(crate) fn NoThemeMatch() -> Element {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn enter_applies_only_the_highlighted_theme_and_otherwise_only_closes() {
+        let top = Some("Darcula");
+        assert_eq!(
+            enter_press("", top),
+            EnterPress::Close,
+            "an empty search highlights nothing, so Enter only closes"
+        );
+        assert_eq!(enter_press("dar", top), EnterPress::Apply("Darcula"));
+        assert_eq!(
+            enter_press("zzzz", None),
+            EnterPress::Stay,
+            "a typo with no match keeps the sheet open to fix it"
+        );
+        assert_eq!(
+            enter_press("   ", top),
+            EnterPress::Close,
+            "spaces alone are an empty search"
+        );
+        assert_eq!(enter_target("  ", top), None, "and highlight nothing");
+    }
 
     /// The sequence `t`, type, Escape, `j`, Escape: Escape in the field takes no other listener's
     /// Escape and puts the cursor on the top row shown, the filtered list's first; `j` from there
