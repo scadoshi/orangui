@@ -2,12 +2,21 @@
 //! `assets/toast.css` ([`TOAST_CSS`](crate::TOAST_CSS)).
 //!
 //! Toasts collapse into a stack and expand on tap, the way grouped
-//! notifications do, so three of them cost about one toast of screen.
+//! notifications do, so three of them cost about one toast of screen. A toast
+//! stamps as it lands, and one pushed under a key already showing
+//! ([`LiveToasts`]) changes in place.
 
+use std::collections::HashMap;
+use std::iter;
 use std::time::Duration;
 
+use dioxus::dioxus_core::DynamicNode;
 use dioxus::prelude::*;
-use dioxus_primitives::toast::{Toast, ToastPropsWithOwner, ToastProvider};
+use dioxus_primitives::toast::{
+    Toast, ToastCloseButton, ToastContent, ToastOptions, ToastProps, ToastPropsWithOwner,
+    ToastProvider, ToastTitle, ToastType, Toasts,
+};
+use orangui_core::live_toast::{LiveText, live_key, live_title};
 
 use crate::{TOAST_NORMAL, entrance};
 
@@ -32,14 +41,20 @@ pub fn ToastStack(
     // A leaving toast drops below the bottom edge.
     use_hook(|| {
         document::eval(crate::TOAST_LEAVE_JS);
+        document::eval(crate::TOAST_STAMP_JS);
     });
-    let mut expanded = use_signal(|| false);
+    use_context_provider(|| LiveToasts(Signal::new(HashMap::new())));
+    let expanded = use_signal(|| false);
     // Set only for the length of a tap-driven toggle. The collapse offset is
     // a margin, and an arriving toast changes that same margin by taking over
     // as `:first-child`, so a permanent transition animated the stack
     // expanding and dropping back every time one landed. CSS cannot tell the
     // two apart; this can, because only the tap sets it.
-    let mut animating = use_signal(|| false);
+    let animating = use_signal(|| false);
+    use_context_provider(|| StackTap {
+        expanded,
+        animating,
+    });
     let mut class = String::from("toast-container");
     if timed_fade {
         class.push_str(" timed-fade");
@@ -60,23 +75,141 @@ pub fn ToastStack(
             // event handlers through `attributes`, so the tap target has to
             // be the toast itself. `display: contents` keeps this wrapper out
             // of the layout.
-            render_toast: move |props: ToastPropsWithOwner| rsx! {
-                div {
-                    class: "toast-tap",
-                    onclick: move |_| {
-                        expanded.toggle();
-                        animating.set(true);
-                        spawn(async move {
-                            // Outlasts the 0.2s transition in toast.css.
-                            entrance::sleep_ms(250).await;
-                            animating.set(false);
-                        });
-                    },
-                    Toast { ..props }
-                    ToastIcons {}
-                }
+            render_toast: move |props: ToastPropsWithOwner| {
+                let toast = DynamicNode::Component(props.into_vcomponent(StackToast));
+                rsx! { {toast} }
             },
             {children}
+        }
+    }
+}
+
+/// The stack's expanded state and whether a tap is animating it, for each toast's tap.
+#[derive(Clone, Copy)]
+struct StackTap {
+    expanded: Signal<bool>,
+    animating: Signal<bool>,
+}
+
+impl StackTap {
+    /// Expands or collapses the stack on a tap, animating the change.
+    fn toggle(self) {
+        let Self {
+            mut expanded,
+            mut animating,
+        } = self;
+        expanded.toggle();
+        animating.set(true);
+        spawn(async move {
+            // Outlasts the 0.2s transition in toast.css.
+            entrance::sleep_ms(250).await;
+            animating.set(false);
+        });
+    }
+}
+
+/// One toast in the stack, tapped to expand or collapse it: a keyed one ([`LiveToast`]) or a
+/// plain one as the library draws it.
+#[expect(non_snake_case, reason = "a component, named as one")]
+fn StackToast(props: ToastProps) -> Element {
+    let tap = use_context::<StackTap>();
+    if let Some(name) = live_key(&props.title).map(str::to_owned) {
+        return rsx! { LiveToast { name, toast: props } };
+    }
+    rsx! {
+        div { class: "toast-tap", onclick: move |_| tap.toggle(),
+            {Toast(props)}
+            ToastIcons {}
+        }
+    }
+}
+
+/// The keyed toasts showing, each its live text by key. [`ToastStack`] provides it; reach it with
+/// [`use_live_toasts`].
+///
+/// A toast pushed with [`LiveToasts::show`] under a key that is already showing changes that toast
+/// in place: its text crossfades where it changed, it doesn't rise or stamp again, and its timer
+/// starts over. Under a new key it lands as any toast does.
+#[derive(Clone, Copy, Debug)]
+pub struct LiveToasts(Signal<HashMap<String, LiveText>>);
+
+impl LiveToasts {
+    /// Shows `text` under `key`: updates the toast showing under it, or pushes a new one through
+    /// `toasts` as `toast_type` with `options`.
+    pub fn show(
+        mut self,
+        toasts: Toasts,
+        key: &str,
+        text: String,
+        toast_type: ToastType,
+        options: ToastOptions,
+    ) {
+        {
+            let mut live = self.0.write();
+            if let Some(showing) = live.get_mut(key) {
+                showing.update(text);
+                return;
+            }
+            live.insert(key.to_owned(), LiveText::new(text));
+        }
+        toasts.show(live_title(key), toast_type, options);
+    }
+
+    /// Whether a toast under `key` is showing.
+    #[must_use]
+    pub fn is_showing(&self, key: &str) -> bool {
+        self.0.peek().contains_key(key)
+    }
+}
+
+/// The keyed toasts below [`ToastStack`].
+#[must_use]
+pub fn use_live_toasts() -> LiveToasts {
+    use_context::<LiveToasts>()
+}
+
+/// A keyed toast: its live text in the library's toast. Its key leaves [`LiveToasts`] as the
+/// toast leaves the list.
+#[component]
+fn LiveToast(name: String, toast: ToastProps) -> Element {
+    let LiveToasts(mut live) = use_live_toasts();
+    let gone = name.clone();
+    use_drop(move || {
+        live.write().remove(&gone);
+    });
+    let Some(text) = live.read().get(&name).cloned() else {
+        return rsx! {};
+    };
+    let updates = text.updates();
+    rsx! {
+        for update in iter::once(updates) {
+            LiveToastBody { key: "{update}", text: text.clone(), toast: toast.clone() }
+        }
+    }
+}
+
+/// A keyed toast's body, mounted afresh on each update so the library's timer starts over; an
+/// update holds its place rather than rising again (toast.css).
+#[component]
+fn LiveToastBody(text: LiveText, toast: ToastProps) -> Element {
+    let tap = use_context::<StackTap>();
+    let updated = text.updates() > 0;
+    let mut toast = toast;
+    toast.children = Some(rsx! {
+        ToastContent {
+            ToastTitle {
+                LiveTitle { text }
+            }
+        }
+        ToastCloseButton {}
+    });
+    rsx! {
+        div {
+            class: "toast-tap",
+            "data-live-update": updated.then_some("true"),
+            onclick: move |_| tap.toggle(),
+            {Toast(toast)}
+            ToastIcons {}
         }
     }
 }
@@ -89,4 +222,54 @@ fn ToastIcons() -> Element {
         document::eval(&crate::icon_text::toast_icons_js());
     });
     rsx! {}
+}
+
+/// A keyed toast's title: its text whole as it lands; after an update the part the old and new
+/// text share, then the new rest with the old rest laid over it, fading out (toast.css).
+#[component]
+fn LiveTitle(text: LiveText) -> Element {
+    let change = text.change();
+    let updated = text.updates() > 0;
+    rsx! {
+        span { class: "toast-live",
+            "{change.kept}"
+            if updated {
+                span { class: "toast-live-change",
+                    span { class: "toast-live-new", "{change.new}" }
+                    span { class: "toast-live-old", "aria-hidden": "true", "{change.old}" }
+                }
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn render(app: fn() -> Element) -> String {
+        let mut dom = VirtualDom::new(app);
+        dom.rebuild_in_place();
+        dioxus_ssr::render(&dom)
+    }
+
+    #[test]
+    fn a_keyed_toast_lands_whole_then_crossfades_what_changed() {
+        fn landed() -> Element {
+            rsx! { LiveTitle { text: LiveText::new("Pull-ups +1".to_owned()) } }
+        }
+        fn updated() -> Element {
+            let mut text = LiveText::new("Pull-ups +1".to_owned());
+            text.update("Pull-ups +2".to_owned());
+            rsx! { LiveTitle { text } }
+        }
+        assert_eq!(
+            render(landed),
+            "<span class=\"toast-live\">Pull-ups +1</span>"
+        );
+        assert_eq!(
+            render(updated),
+            "<span class=\"toast-live\">Pull-ups +<span class=\"toast-live-change\"><span class=\"toast-live-new\">2</span><span class=\"toast-live-old\" aria-hidden=\"true\">1</span></span></span>"
+        );
+    }
 }
