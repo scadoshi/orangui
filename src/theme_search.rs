@@ -67,11 +67,14 @@ pub(crate) fn ThemeSearch(mut query: Signal<String>, on_enter: EventHandler<()>)
     }
 }
 
-/// What a sheet shows in place of its themes when a search matches none.
+/// What a sheet shows in place of its themes when a search matches none: the kit's no-results
+/// chip.
 #[component]
 pub(crate) fn NoThemeMatch() -> Element {
     rsx! {
-        p { class: "theme-search-empty", "No themes match" }
+        div { class: "theme-search-empty",
+            div { class: "chip-unselected", "No themes match" }
+        }
     }
 }
 
