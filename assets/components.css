@@ -970,6 +970,15 @@ a.nav-dropdown-item.active:visited {
     margin-top: 0;
 }
 
+/* On a phone the theme sheet holds its full height while its search has
+   focus or text, so a short list of matches keeps the field and the first
+   results at the top, above the keyboard. */
+@media (max-width: 59.99rem) {
+    .bottom-sheet:has(.theme-search:focus, .input-clear-wrap.has-text > .theme-search) {
+        height: 85vh;
+    }
+}
+
 .theme-search-empty {
     margin: var(--space-2) 0;
     text-align: center;
