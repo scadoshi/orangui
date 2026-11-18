@@ -41,7 +41,6 @@ pub fn ToastStack(
     // A leaving toast drops below the bottom edge.
     use_hook(|| {
         document::eval(crate::TOAST_LEAVE_JS);
-        document::eval(crate::TOAST_STAMP_JS);
     });
     use_context_provider(|| LiveToasts(Signal::new(HashMap::new())));
     let expanded = use_signal(|| false);
