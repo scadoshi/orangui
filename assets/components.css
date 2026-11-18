@@ -921,10 +921,20 @@ a.nav-dropdown-item.active:visited {
     box-shadow: var(--shadow-sm);
 }
 
+/* Focus draws a 2px ring in the accent, which clears 3:1 on every panel,
+   in place of the browser's; a hover lifts the edge where the device
+   hovers. */
 .theme-search:focus {
-    outline: none;
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
     background-color: var(--border-muted);
     border-color: var(--accent-primary);
+}
+
+@media (hover: hover) {
+    .theme-search:not(:focus):hover {
+        border-color: var(--text-primary);
+    }
 }
 
 .theme-search::placeholder {
