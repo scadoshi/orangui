@@ -254,11 +254,13 @@ const SEARCH_RETRY_MS: u32 = 50;
 
 /// What `t` runs: clicks the first button marked [`THEMES_ACTION`] and focuses the sheet's search
 /// field once it draws, marking the page root meanwhile so the sheet leaves the theme in use
-/// unfocused. A page with no such button is left as it was.
+/// unfocused. Characters typed before the field has focus are held from the page and the sheet,
+/// then go into the field in order as it takes focus; after the second's tries they are dropped.
+/// A page with no such button is left as it was.
 #[must_use]
 pub fn open_themes_js() -> String {
     format!(
-        "{{ const b = document.querySelector('[data-action=\"{THEMES_ACTION}\"]'); if (b) {{ const root = document.documentElement; root.setAttribute('{THEME_SEARCH_MARK}', ''); b.click(); const until = Date.now() + {SEARCH_TRY_MS}; const take = () => {{ const f = document.querySelector('{THEME_SEARCH_FIELD}'); if (f) f.focus({{ preventScroll: true }}); if (f && document.activeElement === f) {{ root.removeAttribute('{THEME_SEARCH_MARK}'); return; }} if (Date.now() < until) setTimeout(take, {SEARCH_RETRY_MS}); else root.removeAttribute('{THEME_SEARCH_MARK}'); }}; setTimeout(take, {SEARCH_DELAY_MS}); }} }}"
+        "{{ const b = document.querySelector('[data-action=\"{THEMES_ACTION}\"]'); if (b) {{ const root = document.documentElement; root.setAttribute('{THEME_SEARCH_MARK}', ''); const typed = []; const hold = (e) => {{ if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {{ e.preventDefault(); e.stopImmediatePropagation(); typed.push(e.key); }} }}; window.addEventListener('keydown', hold, true); const done = () => {{ window.removeEventListener('keydown', hold, true); root.removeAttribute('{THEME_SEARCH_MARK}'); }}; b.click(); const until = Date.now() + {SEARCH_TRY_MS}; const take = () => {{ const f = document.querySelector('{THEME_SEARCH_FIELD}'); if (f) f.focus({{ preventScroll: true }}); if (f && document.activeElement === f) {{ done(); if (typed.length) {{ const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(f, f.value + typed.join('')); f.dispatchEvent(new Event('input', {{ bubbles: true }})); }} return; }} if (Date.now() < until) setTimeout(take, {SEARCH_RETRY_MS}); else done(); }}; setTimeout(take, {SEARCH_DELAY_MS}); }} }}"
     )
 }
 
@@ -467,7 +469,24 @@ mod tests {
     fn t_marks_the_search_then_presses_the_themes_button() {
         assert_eq!(
             open_themes_js(),
-            "{ const b = document.querySelector('[data-action=\"themes\"]'); if (b) { const root = document.documentElement; root.setAttribute('data-orangui-theme-search', ''); b.click(); const until = Date.now() + 1000; const take = () => { const f = document.querySelector('.bottom-sheet.show:has(.theme-group-label) .theme-search'); if (f) f.focus({ preventScroll: true }); if (f && document.activeElement === f) { root.removeAttribute('data-orangui-theme-search'); return; } if (Date.now() < until) setTimeout(take, 50); else root.removeAttribute('data-orangui-theme-search'); }; setTimeout(take, 60); } }"
+            "{ const b = document.querySelector('[data-action=\"themes\"]'); if (b) { const root = document.documentElement; root.setAttribute('data-orangui-theme-search', ''); const typed = []; const hold = (e) => { if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); e.stopImmediatePropagation(); typed.push(e.key); } }; window.addEventListener('keydown', hold, true); const done = () => { window.removeEventListener('keydown', hold, true); root.removeAttribute('data-orangui-theme-search'); }; b.click(); const until = Date.now() + 1000; const take = () => { const f = document.querySelector('.bottom-sheet.show:has(.theme-group-label) .theme-search'); if (f) f.focus({ preventScroll: true }); if (f && document.activeElement === f) { done(); if (typed.length) { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(f, f.value + typed.join('')); f.dispatchEvent(new Event('input', { bubbles: true })); } return; } if (Date.now() < until) setTimeout(take, 50); else done(); }; setTimeout(take, 60); } }"
+        );
+    }
+
+    #[test]
+    fn letters_typed_before_the_search_takes_focus_land_in_it() {
+        let js = open_themes_js();
+        assert!(
+            js.contains("const typed = []; const hold = (e) => { if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); e.stopImmediatePropagation(); typed.push(e.key); } }; window.addEventListener('keydown', hold, true);"),
+            "a letter waits for the field, kept from the page and the sheet: {js}"
+        );
+        assert!(
+            js.contains("if (f && document.activeElement === f) { done(); if (typed.length) { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(f, f.value + typed.join('')); f.dispatchEvent(new Event('input', { bubbles: true })); } return; }"),
+            "the held letters go into the field in order once it has focus: {js}"
+        );
+        assert!(
+            js.contains("const done = () => { window.removeEventListener('keydown', hold, true); root.removeAttribute('data-orangui-theme-search'); };"),
+            "the hold ends with the mark, focused or timed out: {js}"
         );
     }
 
