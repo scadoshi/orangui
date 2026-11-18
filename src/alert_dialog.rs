@@ -412,9 +412,12 @@ impl DialogHost {
                 self.set_running(owner, Some(index));
                 spawn(async move {
                     let done = work.await;
-                    self.set_running(owner, None);
+                    // Work that closes the dialog keeps its busy label through the fade out, so
+                    // the button never shows its own label again as the dialog leaves.
                     if done && self.leave(owner) {
                         close.call(());
+                    } else {
+                        self.set_running(owner, None);
                     }
                 });
             }
@@ -907,6 +910,20 @@ mod tests {
         let p = probe();
         assert!(leaving(&dom));
         dom.in_runtime(|| assert!(!*p.open.peek()));
+    }
+
+    #[test]
+    fn busy_work_that_succeeds_keeps_its_label_as_the_dialog_fades() {
+        OUTCOME.with(|o| o.set(true));
+        let mut dom = mount();
+        click(&dom, 3);
+        settle(&mut dom);
+        assert!(leaving(&dom));
+        let html = dioxus_ssr::render(&dom);
+        assert!(
+            html.contains(">Saving...</button>"),
+            "the button never shows its own label again as it fades: {html}"
+        );
     }
 
     #[test]
