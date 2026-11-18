@@ -241,9 +241,109 @@ impl Default for ThemeConfig {
     }
 }
 
+/// One section of the theme pickers as a search leaves it: its label and the themes under it
+/// that match, in the order the pickers show them.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct FoundGroup {
+    /// The section's heading.
+    pub label: &'static str,
+    /// The slugs under it that match, never empty.
+    pub themes: Vec<&'static str>,
+}
+
+/// The pickers' sections and themes that match `query`, in the order the pickers show them: a
+/// theme matches when its name or slug holds the query, and every theme in a section matches
+/// when the section's label does, so `blue` finds the cool themes. Case and the spaces around the
+/// query don't count. An empty query matches everything. Sections with no match are left out.
+#[must_use]
+pub fn filter_theme_groups(query: &str) -> Vec<FoundGroup> {
+    let query = query.trim().to_lowercase();
+    let holds = |text: &str| text.to_lowercase().contains(&query);
+    THEME_GROUPS
+        .iter()
+        .filter_map(|group| {
+            let whole = holds(group.label);
+            let themes: Vec<&'static str> = group
+                .themes
+                .iter()
+                .copied()
+                .filter(|slug| {
+                    whole
+                        || holds(slug)
+                        || holds(&slug.replace('-', " "))
+                        || holds(&display_theme_name(slug))
+                })
+                .collect();
+            (!themes.is_empty()).then_some(FoundGroup {
+                label: group.label,
+                themes,
+            })
+        })
+        .collect()
+}
+
+/// The theme a search lands on first, the one Enter applies: the first match as drawn.
+#[must_use]
+pub fn top_theme(found: &[FoundGroup]) -> Option<&'static str> {
+    found
+        .first()
+        .and_then(|group| group.themes.first().copied())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn an_empty_search_finds_every_theme_in_its_section() {
+        let found = filter_theme_groups("  ");
+        assert_eq!(found.len(), THEME_GROUPS.len());
+        for (got, want) in found.iter().zip(THEME_GROUPS) {
+            assert_eq!(got.label, want.label);
+            assert_eq!(got.themes, want.themes);
+        }
+    }
+
+    #[test]
+    fn a_search_finds_a_theme_by_name_in_any_case() {
+        let found = filter_theme_groups(" NoRd ");
+        assert_eq!(
+            found,
+            vec![FoundGroup {
+                label: "Cool & blue",
+                themes: vec!["nord"],
+            }]
+        );
+        assert_eq!(top_theme(&found), Some("nord"));
+    }
+
+    #[test]
+    fn a_search_finds_a_theme_by_its_shown_name_or_its_slug() {
+        let shown = filter_theme_groups("rosé");
+        assert_eq!(top_theme(&shown), Some("rose-pine"), "{shown:?}");
+        let slug = filter_theme_groups("rose");
+        assert_eq!(top_theme(&slug), Some("rose-pine"), "{slug:?}");
+        let spaced = filter_theme_groups("one dark");
+        assert_eq!(top_theme(&spaced), Some("one-dark"), "{spaced:?}");
+    }
+
+    #[test]
+    fn a_search_for_a_color_finds_its_whole_section() {
+        let found = filter_theme_groups("blue");
+        let cool = THEME_GROUPS
+            .iter()
+            .find(|g| g.label == "Cool & blue")
+            .map(|g| g.themes.to_vec());
+        assert_eq!(found.first().map(|g| g.themes.clone()), cool);
+        assert_eq!(top_theme(&found), cool.and_then(|t| t.first().copied()));
+    }
+
+    #[test]
+    fn a_search_with_no_match_finds_nothing() {
+        let found = filter_theme_groups("zzqx");
+        assert!(found.is_empty(), "{found:?}");
+        assert_eq!(top_theme(&found), None);
+    }
 
     #[test]
     fn every_retired_theme_is_unlisted_and_moves_to_a_listed_one() {

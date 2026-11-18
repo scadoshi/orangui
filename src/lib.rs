@@ -93,6 +93,7 @@ mod stats_strip;
 mod text_input;
 mod theme_cursor;
 mod theme_picker;
+mod theme_search;
 mod theme_sheet;
 mod theme_store;
 mod theme_wipe;
@@ -157,8 +158,8 @@ pub use orangui_core::page_keys::{
 };
 #[doc(inline)]
 pub use orangui_core::theme::{
-    ALLOWED_THEMES, COLORBLIND_THEMES, RETIRED_THEMES, THEME_GROUPS, ThemeConfig, ThemeGroup,
-    current_theme, display_theme_name,
+    ALLOWED_THEMES, COLORBLIND_THEMES, FoundGroup, RETIRED_THEMES, THEME_GROUPS, ThemeConfig,
+    ThemeGroup, current_theme, display_theme_name, filter_theme_groups, top_theme,
 };
 #[doc(inline)]
 pub use orangui_core::toast::{LONG as TOAST_LONG, NORMAL as TOAST_NORMAL, QUICK as TOAST_QUICK};
@@ -169,8 +170,8 @@ pub use overlay_stack::{
 };
 pub use page_header::PageHeader;
 pub use page_keys::{
-    COMPUTER_QUERY, POINTER_QUERY, PRESSED_KEY, PageKeys, THEMES_ACTION, use_computer,
-    use_page_keys, use_pointer,
+    COMPUTER_QUERY, POINTER_QUERY, PRESSED_KEY, PageKeys, THEMES_ACTION, open_themes_js,
+    use_computer, use_page_keys, use_pointer,
 };
 pub use page_kill::{REPEAT_WINDOW, use_page_kill_recovery};
 pub use page_meta::{PageMeta, SiteMeta};

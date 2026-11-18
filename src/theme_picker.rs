@@ -16,9 +16,10 @@
 use dioxus::prelude::*;
 
 use crate::page_keys::THEMES_ACTION;
+use crate::theme_search::{NoThemeMatch, ThemeSearch};
 use crate::{
-    BottomSheet, NavPanelOpen, SheetDim, SheetFrame, SheetWide, THEME_GROUPS, ThemeConfig,
-    display_theme_name,
+    BottomSheet, NavPanelOpen, SheetDim, SheetFrame, SheetWide, ThemeConfig, display_theme_name,
+    filter_theme_groups, top_theme,
 };
 
 /// The palette, the sign for the theme wherever it is named: a stroked
@@ -136,6 +137,23 @@ pub fn ThemePicker(
         }
     });
     crate::theme_cursor::use_theme_cursor(open);
+    let mut query = use_signal(String::new);
+    use_effect(move || {
+        if open() {
+            query.set(String::new());
+        }
+    });
+    // Enter in the search applies the top match, keeping the mode, and closes.
+    let apply_top = move |()| {
+        if let Some(name) = top_theme(&filter_theme_groups(&query.peek())) {
+            let dark = theme.peek().is_dark;
+            theme.set(ThemeConfig {
+                name: name.to_string(),
+                is_dark: dark,
+            });
+            open.set(false);
+        }
+    };
     let current = shown.read().name.clone();
     let is_dark = shown.read().is_dark;
     let mode = if is_dark { "dark" } else { "light" };
@@ -175,24 +193,35 @@ pub fn ThemePicker(
         div { class: "theme-picker-sheet",
             SheetFrame { wide: SheetWide::Drawer,
                 BottomSheet { open, title: "Themes".to_string(), closable: true, dim: SheetDim::Phone,
-                    ThemeRows { theme, current, mode }
+                    ThemeSearch { query, on_enter: apply_top }
+                    ThemeRows { theme, current, mode, query: query() }
                 }
             }
         }
     }
 }
 
-/// Every allowed theme as a row under its group's name as a chip. A pick
-/// keeps the mode and leaves the sheet where it is.
+/// The themes that match `query` as rows under their group's name as a chip,
+/// every allowed theme with no query. A pick keeps the mode and leaves the
+/// sheet where it is.
 #[component]
-fn ThemeRows(theme: Signal<ThemeConfig>, current: String, mode: &'static str) -> Element {
+fn ThemeRows(
+    theme: Signal<ThemeConfig>,
+    current: String,
+    mode: &'static str,
+    query: String,
+) -> Element {
     let mut theme = theme;
+    let found = filter_theme_groups(&query);
     rsx! {
-        for group in THEME_GROUPS {
+        if found.is_empty() {
+            NoThemeMatch {}
+        }
+        for group in found {
             div { class: "nav-dropdown-label theme-group-label",
                 span { class: "stat-chip stat-chip-p1", "{group.label}" }
             }
-            for name in group.themes.iter().copied() {
+            for name in group.themes {
                 button {
                     r#type: "button",
                     class: if current == *name { "nav-dropdown-item active" } else { "nav-dropdown-item" },
@@ -268,5 +297,21 @@ mod tests {
         );
         assert!(html.contains("<circle"), "the sun: {html}");
         assert!(!html.contains(">Light<"), "{html}");
+    }
+
+    #[test]
+    fn the_open_picker_starts_with_its_search_field() {
+        fn app() -> Element {
+            let theme = use_signal(ThemeConfig::default);
+            let open = use_signal(|| true);
+            rsx! { ThemePicker { theme, open } }
+        }
+        let html = render(app);
+        let field = html.find(r#"class="theme-search""#);
+        assert!(field.is_some(), "{html}");
+        assert!(
+            field < html.find("theme-group-label"),
+            "above the themes: {html}"
+        );
     }
 }
