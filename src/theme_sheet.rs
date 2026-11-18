@@ -198,6 +198,10 @@ mod tests {
         assert!(field.is_some(), "{html}");
         assert!(field < first_group, "above the themes: {html}");
         assert!(html.contains(r#"type="search""#), "{html}");
+        assert!(
+            html.contains(r#"<div class="theme-search-bar"><input class="theme-search""#),
+            "in its sticky bar: {html}"
+        );
         assert!(html.contains(r#"placeholder="Search themes""#), "{html}");
     }
 

@@ -34,3 +34,17 @@ fn the_search_answers_a_hover() {
         "the edge answers a hover: {hover}"
     );
 }
+
+#[test]
+fn the_search_stays_in_view_as_the_themes_scroll() {
+    let bar = rule(".theme-search-bar");
+    assert!(bar.contains("position: sticky;"), "{bar}");
+    assert!(
+        bar.contains("top: calc(-1 * var(--space-4));"),
+        "pinned at the sheet body's padding edge, past the content edge sticky uses: {bar}"
+    );
+    assert!(
+        bar.contains("background-color: var(--bg-sink);"),
+        "opaque in the sheet's own fill, so rows pass under it: {bar}"
+    );
+}
