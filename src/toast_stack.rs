@@ -5,18 +5,30 @@
 //! notifications do, so three of them cost about one toast of screen. A toast
 //! stamps as it lands, and one pushed under a key already showing
 //! ([`LiveToasts`]) changes in place.
+//!
+//! A host that tells the stack which screen is up (`ToastStack`'s `screen`) has each toast leave,
+//! by its usual exit, once the screen it landed on is left, unless its title carries
+//! [`CARRY_MARK`](orangui_core::toast::CARRY_MARK) ([`carry_title`](orangui_core::toast::carry_title)).
 
 use std::collections::HashMap;
 use std::iter;
+use std::rc::Rc;
 use std::time::Duration;
 
 use dioxus::dioxus_core::DynamicNode;
+use dioxus::html::geometry::{ClientPoint, ElementPoint, PagePoint, ScreenPoint};
+use dioxus::html::input_data::{MouseButton, MouseButtonSet};
+use dioxus::html::point_interaction::{
+    InteractionElementOffset, InteractionLocation, ModifiersInteraction, PointerInteraction,
+};
+use dioxus::html::{HasMouseData, Modifiers};
 use dioxus::prelude::*;
 use dioxus_primitives::toast::{
     Toast, ToastCloseButton, ToastContent, ToastDescription, ToastOptions, ToastProps,
     ToastPropsWithOwner, ToastProvider, ToastTitle, ToastType, Toasts,
 };
 use orangui_core::live_toast::{LiveText, live_key, live_title};
+use orangui_core::toast::carried;
 
 use crate::{TOAST_NORMAL, entrance};
 
@@ -36,6 +48,11 @@ pub fn ToastStack(
     /// library removes it.
     #[props(default)]
     timed_fade: bool,
+    /// The screen the app is on, as any text that changes when the user leaves it, such as the
+    /// route's path. Each toast notes it as it lands and leaves once it changes, unless its title
+    /// carries the carry mark. Without it every toast lives out its own life.
+    #[props(default)]
+    screen: Option<ReadSignal<String>>,
     children: Element,
 ) -> Element {
     // A leaving toast drops below the bottom edge.
@@ -43,6 +60,7 @@ pub fn ToastStack(
         document::eval(crate::TOAST_LEAVE_JS);
     });
     use_context_provider(|| LiveToasts(Signal::new(HashMap::new())));
+    use_context_provider(|| ToastScreen(screen));
     let expanded = use_signal(|| false);
     // Set only for the length of a tap-driven toggle. The collapse offset is
     // a margin, and an arriving toast changes that same margin by taking over
@@ -159,10 +177,16 @@ fn use_stack_slot(tap: StackTap) {
 fn StackToast(props: ToastProps) -> Element {
     let tap = use_context::<StackTap>();
     use_stack_slot(tap);
+    let mut props = props;
+    let carry = carried(&props.title).map(str::to_owned);
+    let carries = carry.is_some();
+    if let Some(title) = carry {
+        props.title = title;
+    }
+    use_leave_with_screen(props.on_close, carries);
     if let Some(name) = live_key(&props.title).map(str::to_owned) {
         return rsx! { LiveToast { name, toast: props } };
     }
-    let mut props = props;
     if props.children.is_none() {
         // The library's own layout, with the × in the wrapper that keeps its click from the tap.
         props.children = Some(rsx! {
@@ -178,6 +202,75 @@ fn StackToast(props: ToastProps) -> Element {
             {Toast(props)}
             ToastIcons {}
         }
+    }
+}
+
+/// The screen [`ToastStack`] was told about, if any, for each toast to leave with.
+#[derive(Clone, Copy)]
+struct ToastScreen(Option<ReadSignal<String>>);
+
+/// Closes the toast through `on_close`, by the same exit as its ×, once the screen it landed on is
+/// left, unless it `carries` over. A toast notes the screen as it mounts, on the render after it is
+/// shown, so one shown in the same update as a screen change lands on the new screen.
+fn use_leave_with_screen(on_close: Callback<MouseEvent>, carries: bool) {
+    let ToastScreen(screen) = use_context::<ToastScreen>();
+    let landed_on = use_hook(|| screen.map(|screen| screen.peek().clone()));
+    let mut left = use_signal(|| false);
+    use_effect(move || {
+        let (Some(screen), Some(landed_on)) = (screen, landed_on.as_ref()) else {
+            return;
+        };
+        if carries || *screen.read() == *landed_on || *left.peek() {
+            return;
+        }
+        left.set(true);
+        on_close.call(Event::new(Rc::new(MouseData::new(NoClick)), false));
+    });
+}
+
+/// The click a toast's `on_close` takes when no one clicked: closing it because its screen was
+/// left. Nothing reads it; the library's `on_close` only removes the toast.
+struct NoClick;
+
+impl InteractionLocation for NoClick {
+    fn client_coordinates(&self) -> ClientPoint {
+        ClientPoint::origin()
+    }
+
+    fn screen_coordinates(&self) -> ScreenPoint {
+        ScreenPoint::origin()
+    }
+
+    fn page_coordinates(&self) -> PagePoint {
+        PagePoint::origin()
+    }
+}
+
+impl InteractionElementOffset for NoClick {
+    fn element_coordinates(&self) -> ElementPoint {
+        ElementPoint::origin()
+    }
+}
+
+impl ModifiersInteraction for NoClick {
+    fn modifiers(&self) -> Modifiers {
+        Modifiers::empty()
+    }
+}
+
+impl PointerInteraction for NoClick {
+    fn trigger_button(&self) -> Option<MouseButton> {
+        None
+    }
+
+    fn held_buttons(&self) -> MouseButtonSet {
+        MouseButtonSet::empty()
+    }
+}
+
+impl HasMouseData for NoClick {
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
     }
 }
 
@@ -492,6 +585,128 @@ mod tests {
                 include_str!("toast_stack.rs").contains(&stops),
                 "the wrapper stops the ×'s click"
             );
+        }
+    }
+
+    mod screen_life {
+        use std::cell::Cell;
+        use std::time::Duration;
+
+        use dioxus::dioxus_core::NoOpMutations;
+        use dioxus_primitives::toast::use_toast;
+        use orangui_core::toast::carry_title;
+
+        use super::super::*;
+
+        thread_local! {
+            static PROBE: Cell<Option<(Toasts, Signal<String>)>> = const { Cell::new(None) };
+            static WATCHES: Cell<bool> = const { Cell::new(true) };
+        }
+
+        /// The toaster and the screen the stack is told about.
+        fn probe() -> (Toasts, Signal<String>) {
+            PROBE.with(Cell::get).unwrap()
+        }
+
+        /// Hands the probe the toaster from under the stack.
+        #[component]
+        fn Grab(screen: Signal<String>) -> Element {
+            let toasts = use_toast();
+            PROBE.with(|p| p.set(Some((toasts, screen))));
+            rsx! {}
+        }
+
+        fn app() -> Element {
+            let screen = use_signal(|| "/decks".to_owned());
+            let watched = WATCHES.with(Cell::get).then(|| ReadSignal::from(screen));
+            rsx! {
+                ToastStack { screen: watched, Grab { screen } }
+            }
+        }
+
+        fn settle(dom: &mut VirtualDom) {
+            for _ in 0..8 {
+                dom.process_events();
+                dom.render_immediate(&mut NoOpMutations);
+            }
+        }
+
+        /// The titles of the toasts on the page.
+        fn shown(dom: &VirtualDom) -> String {
+            dioxus_ssr::render(dom)
+        }
+
+        fn long() -> ToastOptions {
+            ToastOptions::default().duration(Duration::from_secs(600))
+        }
+
+        /// Mounts the stack on tokio, which times each toast, and runs `steps` against it.
+        fn run(watches: bool, steps: impl FnOnce(&mut VirtualDom)) {
+            let tokio = tokio::runtime::Builder::new_current_thread()
+                .enable_time()
+                .build()
+                .unwrap();
+            let _inside = tokio.enter();
+            WATCHES.with(|w| w.set(watches));
+            let mut dom = VirtualDom::new(app);
+            dom.rebuild_in_place();
+            settle(&mut dom);
+            steps(&mut dom);
+        }
+
+        fn toast(dom: &mut VirtualDom, title: String) {
+            let (toasts, _) = probe();
+            dom.in_runtime(|| toasts.info(title, long()));
+            settle(dom);
+        }
+
+        fn go(dom: &mut VirtualDom, to: &str) {
+            let (_, mut screen) = probe();
+            dom.in_runtime(|| screen.set(to.to_owned()));
+            settle(dom);
+        }
+
+        #[test]
+        fn a_toast_leaves_when_the_screen_changes() {
+            run(true, |dom| {
+                toast(dom, "Filter applied".to_owned());
+                assert!(shown(dom).contains("Filter applied"), "{}", shown(dom));
+                go(dom, "/decks/1");
+                assert!(!shown(dom).contains("Filter applied"), "{}", shown(dom));
+            });
+        }
+
+        #[test]
+        fn a_carried_toast_stays_on_the_next_screen_without_its_mark() {
+            run(true, |dom| {
+                toast(dom, carry_title("Copied to clipboard"));
+                go(dom, "/decks/1");
+                let html = shown(dom);
+                assert!(html.contains("Copied to clipboard"), "{html}");
+                assert!(!html.contains("carry:"), "the mark is never drawn: {html}");
+            });
+        }
+
+        #[test]
+        fn a_toast_shown_as_the_screen_changes_lives_on_the_new_screen() {
+            run(true, |dom| {
+                let (toasts, mut screen) = probe();
+                dom.in_runtime(|| {
+                    toasts.info("Deck opened".to_owned(), long());
+                    screen.set("/decks/2".to_owned());
+                });
+                settle(dom);
+                assert!(shown(dom).contains("Deck opened"), "{}", shown(dom));
+            });
+        }
+
+        #[test]
+        fn a_stack_told_no_screen_keeps_every_toast() {
+            run(false, |dom| {
+                toast(dom, "Filter applied".to_owned());
+                go(dom, "/decks/1");
+                assert!(shown(dom).contains("Filter applied"), "{}", shown(dom));
+            });
         }
     }
 }

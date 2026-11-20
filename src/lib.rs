@@ -162,7 +162,10 @@ pub use orangui_core::theme::{
     ThemeGroup, current_theme, display_theme_name, filter_theme_groups, top_theme,
 };
 #[doc(inline)]
-pub use orangui_core::toast::{LONG as TOAST_LONG, NORMAL as TOAST_NORMAL, QUICK as TOAST_QUICK};
+pub use orangui_core::toast::{
+    CARRY_MARK as TOAST_CARRY_MARK, LONG as TOAST_LONG, NORMAL as TOAST_NORMAL,
+    QUICK as TOAST_QUICK, carry_title,
+};
 pub use os_back::{fill_window, use_os_back};
 pub use overlay_stack::{
     OVERLAY_Z, OverlayBackStack, OverlayLift, overlay_z, use_overlay_back, use_overlay_back_action,
