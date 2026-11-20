@@ -1,13 +1,14 @@
 //! Site-style theme picker: a trigger pill naming the theme, which opens
 //! every allowed theme (sectioned by look, the color-blind themes last) in a
-//! [`BottomSheet`], plus a dark/light mode toggle.
+//! [`ThemeSheet`], the apps' sheet, plus a dark/light mode toggle.
 //!
 //! On a wide window the sheet is a [`SheetWide::Drawer`] under the bar, so
 //! the page stays in view beside it as the themes change; below the bar
 //! breakpoint it is the plain bottom sheet. A pick leaves it up through its
 //! wipe, so the next theme is one click away; it closes from its ×, a click
 //! on the backdrop, Escape or a drag down. In a [`NavBar`](crate::NavBar)'s
-//! folded menu, opening the sheet folds the menu.
+//! folded menu, opening the sheet folds the menu. The sheet's body, keys and
+//! rules are [`ThemeSheet`]'s, so a site and an app draw the same sheet.
 //!
 //! This is the canonical copy for every site; the host passes its `Signal<ThemeConfig>` in,
 //! so how the theme is provided (context, prop drilling) and applied (body
@@ -16,11 +17,7 @@
 use dioxus::prelude::*;
 
 use crate::page_keys::THEMES_ACTION;
-use crate::theme_search::{EnterPress, NoThemeMatch, ThemeSearch, enter_press};
-use crate::{
-    BottomSheet, NavPanelOpen, SheetDim, SheetFrame, SheetWide, ThemeConfig, display_theme_name,
-    filter_theme_groups, top_theme,
-};
+use crate::{NavPanelOpen, SheetFrame, SheetWide, ThemeConfig, ThemeSheet, display_theme_name};
 
 /// The palette, the sign for the theme wherever it is named: a stroked
 /// painter's palette in the current color, the text color as a rule, the
@@ -104,15 +101,14 @@ pub fn DarkModeButton(is_dark: bool, onclick: EventHandler<MouseEvent>) -> Eleme
 }
 
 /// Theme trigger + dark/light toggle. Every theme has both modes, so the
-/// toggle is always shown. The trigger opens the themes in a sheet
+/// toggle is always shown. The trigger opens the themes in a [`ThemeSheet`]
 /// (`div.theme-picker-sheet`, after `div.theme-picker`), a drawer on a wide
 /// window.
 #[component]
 pub fn ThemePicker(
     theme: Signal<ThemeConfig>,
-    /// What the picker shows as current (its label, the active row, the mode
-    /// toggle) when that should lag behind `theme`, as during a wipe. Defaults
-    /// to `theme`.
+    /// What the trigger and the mode toggle show as current when that should
+    /// lag behind `theme`, as during a wipe. Defaults to `theme`.
     #[props(default)]
     shown: Option<Signal<ThemeConfig>>,
     /// The menu's open state, when the host wants it: a nav with menus of its
@@ -120,6 +116,9 @@ pub fn ThemePicker(
     /// the picker's own.
     #[props(default)]
     open: Option<Signal<bool>>,
+    /// A hint's open signal, for the sheet header's "?".
+    #[props(default)]
+    hint: Option<Signal<bool>>,
 ) -> Element {
     let mut theme = theme;
     // Always taken, so the hook order holds whether or not the host passes one.
@@ -136,33 +135,8 @@ pub fn ThemePicker(
             nav.0.set(false);
         }
     });
-    crate::theme_cursor::use_theme_cursor(open);
-    let mut query = use_signal(String::new);
-    use_effect(move || {
-        if open() {
-            query.set(String::new());
-        }
-    });
-    // Enter in the search applies the highlighted match, keeping the mode, and closes; an empty
-    // search only closes; a search that matches nothing stays open.
-    let apply_top = move |()| {
-        let typed = query.peek().clone();
-        match enter_press(&typed, top_theme(&filter_theme_groups(&typed))) {
-            EnterPress::Apply(name) => {
-                let dark = theme.peek().is_dark;
-                theme.set(ThemeConfig {
-                    name: name.to_string(),
-                    is_dark: dark,
-                });
-                open.set(false);
-            }
-            EnterPress::Close => open.set(false),
-            EnterPress::Stay => {}
-        }
-    };
     let current = shown.read().name.clone();
     let is_dark = shown.read().is_dark;
-    let mode = if is_dark { "dark" } else { "light" };
 
     rsx! {
         // Its children glide aside when the label changes width (NAV_GLIDE_JS).
@@ -198,73 +172,8 @@ pub fn ThemePicker(
         }
         div { class: "theme-picker-sheet",
             SheetFrame { wide: SheetWide::Drawer,
-                BottomSheet { open, title: "Themes".to_string(), closable: true, dim: SheetDim::Phone,
-                    ThemeSearch { query, on_enter: apply_top }
-                    ThemeRows { theme, current, mode, query: query() }
-                }
+                ThemeSheet { open, theme, hint, on_save: |_| {} }
             }
-        }
-    }
-}
-
-/// The themes that match `query` as rows under their group's name as a chip,
-/// every allowed theme with no query. A pick keeps the mode and leaves the
-/// sheet where it is.
-#[component]
-fn ThemeRows(
-    theme: Signal<ThemeConfig>,
-    current: String,
-    mode: &'static str,
-    query: String,
-) -> Element {
-    let mut theme = theme;
-    let found = filter_theme_groups(&query);
-    let target = crate::theme_search::enter_target(&query, top_theme(&found));
-    rsx! {
-        if found.is_empty() {
-            NoThemeMatch {}
-        }
-        for group in found {
-            div { class: "nav-dropdown-label theme-group-label",
-                span { class: "stat-chip stat-chip-p1", "{group.label}" }
-            }
-            for name in group.themes {
-                button {
-                    r#type: "button",
-                    class: match (current == *name, target == Some(name)) {
-                        (true, true) => "nav-dropdown-item active enter-target",
-                        (true, false) => "nav-dropdown-item active",
-                        (false, true) => "nav-dropdown-item enter-target",
-                        (false, false) => "nav-dropdown-item",
-                    },
-                    onclick: move |_| {
-                        let dark = theme.read().is_dark;
-                        theme.set(ThemeConfig {
-                            name: name.to_string(),
-                            is_dark: dark,
-                        });
-                    },
-                    span { "{display_theme_name(name)}" }
-                    ThemeDots { name, mode }
-                }
-            }
-        }
-    }
-}
-
-/// A theme's colors as a strip of dots: background, text, the three accents
-/// and the error color. The strip carries the theme's own class, so the dots
-/// read its CSS variables and the colors stay defined only in themes.css.
-#[component]
-fn ThemeDots(name: &'static str, mode: &'static str) -> Element {
-    rsx! {
-        span { class: "theme-swatches theme-{name}-{mode}",
-            span { class: "theme-dot", style: "background:var(--palette-1)" }
-            span { class: "theme-dot", style: "background:var(--palette-2)" }
-            span { class: "theme-dot", style: "background:var(--palette-3)" }
-            span { class: "theme-dot", style: "background:var(--palette-4)" }
-            span { class: "theme-dot", style: "background:var(--palette-5)" }
-            span { class: "theme-dot", style: "background:var(--palette-6)" }
         }
     }
 }
