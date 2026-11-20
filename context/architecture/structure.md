@@ -41,7 +41,7 @@ src/
 ├── page_kill.rs         # use_page_kill_recovery: a page iOS killed is rebuilt through the host, an overlay with Reload on a repeat
 ├── os_back.rs           # use_os_back: the iOS edge swipe and Android back, through the overlay stack to the host's go_back; fill_window lays the page over the whole window on iOS 18
 ├── boot.rs              # BOOT_HEAD, BOOT_BG, BootReveal: the WebView launch hides #main until the styles are in
-├── toast_stack.rs       # ToastStack, behind the toast feature; lib.rs re-exports use_toast, Toasts and ToastOptions beside it
+├── toast_stack.rs       # ToastStack, behind the toast feature, with its optional screen for toasts that leave with it; lib.rs re-exports use_toast, Toasts and ToastOptions beside it
 │
 │   # the site kit, with the gallery base in SITE_CSS
 ├── theme_store.rs       # use_persisted_theme: the pick kept in localStorage
@@ -59,7 +59,7 @@ orangui-core/src/        # no Dioxus, no web-sys; orangui re-exports what it alr
 ├── splash.rs            # the opening's timeline and paced
 ├── heat.rs              # the heatmap grid's measurements and PICK_MS
 ├── diagram.rs           # NODE_HEIGHT
-├── toast.rs             # QUICK, NORMAL, LONG
+├── toast.rs             # QUICK, NORMAL, LONG, and the carry mark
 └── theme.rs             # ThemeConfig, ALLOWED_THEMES, THEME_GROUPS, COLORBLIND_THEMES, display_theme_name
 
 assets/

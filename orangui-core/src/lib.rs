@@ -17,7 +17,7 @@
 //! - [`page_keys`]: the keys every page answers: to the top or bottom, a step, Themes, the shortcuts.
 //! - [`diagram`]: the diagram boxes' measurements.
 //! - [`sheet_drag`]: when a dragged bottom sheet closes or springs back.
-//! - [`toast`]: how long a toast stays up.
+//! - [`toast`]: how long a toast stays up, and whether it carries over to the next screen.
 //! - [`theme`]: the theme list, its picker groups and the stored pick.
 //!
 //! Every frame function is deterministic: the same inputs give the same

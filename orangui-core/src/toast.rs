@@ -1,4 +1,4 @@
-//! How long a toast stays up.
+//! How long a toast stays up, and whether it carries over to the next screen.
 //!
 //! Three bands rather than a number per call site, so tuning one band moves
 //! every toast meant to feel that way, and a call site says which it meant.
@@ -24,6 +24,24 @@ pub const NORMAL: Duration = Duration::from_secs(5);
 /// Failures, and anything naming a next step.
 pub const LONG: Duration = Duration::from_secs(8);
 
+/// The mark at the front of a carried toast's title. A host that tells the toast stack which
+/// screen is up has every other toast leave when the screen changes; a carried one lives out its
+/// own life on the next screen.
+pub const CARRY_MARK: &str = "\u{1f}carry:";
+
+/// The title a toast that carries over to the next screen is pushed to the toast library with. The
+/// stack reads the mark before any other, so it sits outside one.
+#[must_use]
+pub fn carry_title(title: &str) -> String {
+    format!("{CARRY_MARK}{title}")
+}
+
+/// The title without its carry mark, when a library title carries one.
+#[must_use]
+pub fn carried(title: &str) -> Option<&str> {
+    title.strip_prefix(CARRY_MARK)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -33,5 +51,25 @@ mod tests {
         assert!(QUICK < NORMAL && NORMAL < LONG);
         assert_eq!(QUICK.as_secs(), 3);
         assert_eq!(LONG.as_secs(), 8);
+    }
+
+    #[test]
+    fn a_carried_title_gives_back_the_title_it_was_made_from() {
+        assert_eq!(
+            carried(&carry_title("Copied to clipboard")),
+            Some("Copied to clipboard")
+        );
+        assert_eq!(
+            carried("Filter applied"),
+            None,
+            "a plain title carries nothing"
+        );
+    }
+
+    #[test]
+    fn a_carried_keyed_title_keeps_its_key_under_the_carry_mark() {
+        let title = carry_title(&crate::live_toast::live_title("import"));
+        let inner = carried(&title).unwrap();
+        assert_eq!(crate::live_toast::live_key(inner), Some("import"));
     }
 }
