@@ -1,7 +1,7 @@
-//! A toast stamps as it lands, in one motion with its rise: it comes up from below the edge a
-//! little larger than its size and shrinks to it as it rises, both on one ease-out curve, so it
-//! arrives at its size and nothing moves once it is in its spot. Transform alone, and not at all
-//! under reduced motion. A keyed toast's update changes it in place: no rise and no
+//! A toast stamps as it lands, in one motion with its rise: it comes up from below the edge well
+//! over its size, lands in its spot at its size, squashes a touch under it, rebounds a touch over
+//! it and settles, one set of keyframes with a curve per stretch. Transform and shadow alone, and
+//! not at all under reduced motion. A keyed toast's update changes it in place: no rise and no
 //! stamp, its life starting over where it sits, and the part of its text that changed crossfades
 //! from the old to the new.
 
@@ -13,11 +13,21 @@ const LIB: &str = include_str!("../src/lib.rs");
 const BELOW_THE_EDGE: &str =
     "0 calc(100% + var(--corner-gap) + var(--keyboard-inset, 0px) + var(--space-4))";
 
-/// How large a toast starts its rise: it shrinks to its own size as it arrives.
-const STAMP_FROM: &str = "1.08";
+/// How large a toast starts its rise: it is at its own size when it lands.
+const STAMP_FROM: &str = "1.28";
 
-/// The one curve a toast's rise and shrink share.
-const RISE_CURVE: &str = "var(--ease-enter, ease-out)";
+/// The squash just after it lands, and the rebound after that.
+const SQUASH: &str = "0.96";
+const REBOUND: &str = "1.02";
+
+/// The drop into its spot: near linear, a fast attack that still lands with speed.
+const DROP: &str = "cubic-bezier(0.35, 0.2, 0.85, 0.7)";
+
+/// Out of the impact and the rebound: an ease-out.
+const OUT: &str = "cubic-bezier(0.2, 0.6, 0.4, 1)";
+
+/// From the squash into the rebound: an ease-in-out.
+const SWAY: &str = "cubic-bezier(0.4, 0, 0.6, 1)";
 
 /// The toast at rest in its spot.
 const REST: &str = "0";
@@ -75,47 +85,70 @@ fn stops<'css>(css: &'css str, name: &str) -> Vec<Stop<'css>> {
 }
 
 #[test]
-fn a_toast_comes_in_large_and_lands_at_its_size_with_nothing_after() {
+fn a_toast_stamps_lands_squashes_rebounds_and_settles_in_one_motion() {
     assert_eq!(
         stops(TOAST, "toast-rise-in"),
         [
-            ("from", Some(BELOW_THE_EDGE), Some(STAMP_FROM), None),
+            ("from", Some(BELOW_THE_EDGE), Some(STAMP_FROM), Some(DROP)),
+            ("40%", Some(REST), Some("1"), Some(OUT)),
+            ("58%", None, Some(SQUASH), Some(SWAY)),
+            ("78%", None, Some(REBOUND), Some(OUT)),
             ("to", Some(REST), Some("1"), None),
         ],
-        "one stretch from below and large to its spot at its size: no peak and no settle"
+        "lands at its size at 160ms, squashes, rebounds and settles by 400ms"
     );
     let toast = rule(TOAST, ".toast-container [role=\"alertdialog\"]");
     assert!(
-        toast.contains(&format!(
-            "animation: toast-rise-in var(--enter-duration, 280ms) {RISE_CURVE} both;"
-        )),
-        "the rise's length alone, on the one curve: {toast}"
+        toast.contains("animation: toast-rise-in 400ms both;"),
+        "the stops carry their own curves: {toast}"
     );
 }
 
 #[test]
-fn a_timed_toast_comes_in_large_and_lands_at_its_size_with_nothing_after() {
-    for (name, lands, held) in [
-        ("toast-life-3000", "7%", "92%"),
-        ("toast-life-5000", "4%", "95%"),
+fn a_timed_toast_stamps_in_its_first_400ms_then_holds_still() {
+    for (name, lands, squash, rebound, settled, held) in [
+        (
+            "toast-life-3000",
+            "5.33%",
+            "7.73%",
+            "10.4%",
+            "13.33%",
+            "92%",
+        ),
+        ("toast-life-5000", "3.2%", "4.64%", "6.24%", "8%", "95%"),
     ] {
         let got = stops(TOAST, name);
         assert_eq!(
-            got.get(..3),
+            got.get(..6),
             Some(
                 [
-                    (
-                        "0%",
-                        Some(BELOW_THE_EDGE),
-                        Some(STAMP_FROM),
-                        Some(RISE_CURVE)
-                    ),
-                    (lands, Some(REST), Some("1"), None),
+                    ("0%", Some(BELOW_THE_EDGE), Some(STAMP_FROM), Some(DROP)),
+                    (lands, Some(REST), Some("1"), Some(OUT)),
+                    (squash, None, Some(SQUASH), Some(SWAY)),
+                    (rebound, None, Some(REBOUND), Some(OUT)),
+                    (settled, Some(REST), Some("1"), None),
                     (held, Some(REST), None, None),
                 ]
                 .as_slice()
             ),
-            "{name}: the rise and shrink end together, and it holds still until it leaves: {got:?}"
+            "{name}: {got:?}"
+        );
+    }
+}
+
+#[test]
+fn a_toast_lands_with_its_shadow_pressed_short() {
+    for name in ["toast-rise-in", "toast-life-3000", "toast-life-5000"] {
+        let frames = TOAST
+            .split_once(&format!("@keyframes {name} {{"))
+            .and_then(|(_, rest)| rest.split_once("\n}"))
+            .map_or("", |(body, _)| body);
+        let long = frames.find("box-shadow: var(--shadow-lg);");
+        let short = frames.find("box-shadow: var(--shadow-sm);");
+        let rest = frames.find("box-shadow: var(--shadow-md);");
+        assert!(
+            long < short && short < rest && long.is_some(),
+            "{name}: long in the air, short on impact, resting after"
         );
     }
 }
