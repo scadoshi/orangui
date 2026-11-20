@@ -25,15 +25,16 @@ static NEXT_ID: AtomicU64 = AtomicU64::new(0);
 /// What marks a theme sheet: its group headings.
 const THEME_SHEET_MARK: &str = ".theme-group-label";
 
-/// A theme row: [`ThemeSheet`](crate::ThemeSheet)'s and [`ThemePicker`](crate::ThemePicker)'s.
-const ROWS: &str = ".pref-row, .nav-dropdown-item";
+/// A theme row, in [`ThemeSheet`](crate::ThemeSheet), which [`ThemePicker`](crate::ThemePicker)
+/// opens too.
+const ROWS: &str = ".pref-row";
 
 /// The row for the theme in use.
-const CURRENT: &str = ".pref-row.selected, .nav-dropdown-item.active";
+const CURRENT: &str = ".pref-row.selected";
 
 /// The open theme sheet's row for the theme in use, which takes focus as the sheet opens, unless
 /// `t` opened it for its search field.
-const CURRENT_ROW: &str = ":root:not([data-orangui-theme-search]) .bottom-sheet.show:has(.theme-group-label) :is(.pref-row.selected, .nav-dropdown-item.active)";
+const CURRENT_ROW: &str = ":root:not([data-orangui-theme-search]) .bottom-sheet.show:has(.theme-group-label) .pref-row.selected";
 
 /// Scrolls the row in focus into the sheet's view once the sheet has given it focus.
 const REVEAL: &str = "window.__oranguiThemeReveal && window.__oranguiThemeReveal();";
@@ -280,11 +281,8 @@ mod tests {
     }
 
     #[test]
-    fn both_kinds_of_theme_row_are_rows_and_the_one_in_use_takes_focus() {
-        assert!(ROWS.contains(".pref-row") && ROWS.contains(".nav-dropdown-item"));
-        assert!(
-            CURRENT_ROW.contains(".pref-row.selected")
-                && CURRENT_ROW.contains(".nav-dropdown-item.active")
-        );
+    fn the_sheet_s_rows_are_rows_and_the_one_in_use_takes_focus() {
+        assert_eq!(ROWS, ".pref-row");
+        assert!(CURRENT_ROW.ends_with(".pref-row.selected"), "{CURRENT_ROW}");
     }
 }

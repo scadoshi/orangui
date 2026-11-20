@@ -199,7 +199,7 @@ mod tests {
     fn the_target_wears_the_cursor_s_highlight_while_the_field_has_focus() {
         let css = include_str!("../assets/components.css");
         assert!(
-            css.contains(".bottom-sheet:has(.theme-search:focus) :is(.pref-row, .nav-dropdown-item).enter-target"),
+            css.contains(".bottom-sheet:has(.theme-search:focus) .pref-row.enter-target"),
             "the highlight shows while Enter is the field's"
         );
     }

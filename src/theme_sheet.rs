@@ -52,7 +52,7 @@ fn ThemeRow(
     mode: String,
     mut selected: Signal<String>,
     mut live: Signal<ThemeConfig>,
-    dark: Signal<bool>,
+    dark: Memo<bool>,
     on_pick: EventHandler<ThemeConfig>,
 ) -> Element {
     let is_selected = selected() == theme;
@@ -99,7 +99,7 @@ fn ThemeRow(
 /// the backdrop only close it. Undoing a pick is a tap on the row before.
 ///
 /// On a keyboard the theme cursor walks the rows, Enter picks, and Enter with no row in focus closes (see the module
-/// docs). Registers with the [`OverlayBackStack`](crate::OverlayBackStack)
+/// docs). With `search` off the sheet is the rows alone. Registers with the [`OverlayBackStack`](crate::OverlayBackStack)
 /// through [`BottomSheet`].
 #[component]
 pub fn ThemeSheet(
@@ -111,21 +111,25 @@ pub fn ThemeSheet(
     /// A hint's open signal, for the sheet header's "?".
     #[props(default)]
     hint: Option<Signal<bool>>,
+    /// Whether the search field sits over the themes. The sites and the web app keep it; a native
+    /// app leaves it out.
+    #[props(default = true)]
+    search: bool,
 ) -> Element {
     use_effect(|| {
         document::eval(THEME_KEYS_JS);
     });
     crate::theme_cursor::use_theme_cursor(open);
     let mut selected = use_signal(|| theme.peek().name.clone());
-    let mut dark = use_signal(|| theme.peek().is_dark);
+    // The mode follows the live theme, so a mode flipped while the sheet is up shows in its dots
+    // and stays through a pick.
+    let dark = use_memo(move || theme.read().is_dark);
     let mut query = use_signal(String::new);
 
     // Opening reads the live theme, so the sheet marks what the app draws.
     use_effect(move || {
         if open() {
-            let current = theme.peek().clone();
-            selected.set(current.name.clone());
-            dark.set(current.is_dark);
+            selected.set(theme.peek().name.clone());
             query.set(String::new());
         }
     });
@@ -161,7 +165,9 @@ pub fn ThemeSheet(
             hint,
             closable: true,
             on_dismiss: move |()| open.set(false),
-            ThemeSearch { query, on_enter: apply_top }
+            if search {
+                ThemeSearch { query, on_enter: apply_top }
+            }
             if found.is_empty() {
                 NoThemeMatch {}
             }

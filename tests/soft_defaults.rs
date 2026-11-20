@@ -21,7 +21,7 @@ const SHEETS: [(&str, &str); 6] = [
     ("toast.css", include_str!("../assets/toast.css")),
 ];
 
-const TUNABLE: [(&str, &[&str]); 37] = [
+const TUNABLE: [(&str, &[&str]); 36] = [
     (
         ".label",
         &["color", "font-size", "letter-spacing", "margin-bottom"],
@@ -114,10 +114,6 @@ const TUNABLE: [(&str, &[&str]); 37] = [
             "font-weight",
             "font-size",
         ],
-    ),
-    (
-        ".theme-picker-sheet .nav-dropdown-item",
-        &["gap", "padding", "border-radius", "font-size"],
     ),
     (".nav-trailing-row", &["padding-bottom"]),
     (".nav-trailing-group", &["gap"]),
