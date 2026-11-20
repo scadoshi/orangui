@@ -1,6 +1,7 @@
-//! A toast stamps as it lands, in one motion with its rise: it comes up from below the edge, carries
-//! a little past its spot as it grows, as a stack badge pops, and settles, by transform alone and
-//! not at all under reduced motion. A keyed toast's update changes it in place: no rise and no
+//! A toast stamps as it lands, in one motion with its rise: it comes up from below the edge a
+//! little larger than its size and shrinks to it as it rises, both on one ease-out curve, so it
+//! arrives at its size and nothing moves once it is in its spot. Transform alone, and not at all
+//! under reduced motion. A keyed toast's update changes it in place: no rise and no
 //! stamp, its life starting over where it sits, and the part of its text that changed crossfades
 //! from the old to the new.
 
@@ -12,8 +13,11 @@ const LIB: &str = include_str!("../src/lib.rs");
 const BELOW_THE_EDGE: &str =
     "0 calc(100% + var(--corner-gap) + var(--keyboard-inset, 0px) + var(--space-4))";
 
-/// The stamp's peak: a little above the toast's spot.
-const PEAK: &str = "0 -2px";
+/// How large a toast starts its rise: it shrinks to its own size as it arrives.
+const STAMP_FROM: &str = "1.08";
+
+/// The one curve a toast's rise and shrink share.
+const RISE_CURVE: &str = "var(--ease-enter, ease-out)";
 
 /// The toast at rest in its spot.
 const REST: &str = "0";
@@ -26,8 +30,14 @@ fn rule<'css>(css: &'css str, selector: &str) -> &'css str {
         .map_or("", |(body, _)| body)
 }
 
-/// A stop of a toast's keyframes: its offset, and the translate and scale it sets, if any.
-type Stop<'css> = (&'css str, Option<&'css str>, Option<&'css str>);
+/// A stop of a toast's keyframes: its offset, and the translate, scale and timing function it
+/// sets, if any.
+type Stop<'css> = (
+    &'css str,
+    Option<&'css str>,
+    Option<&'css str>,
+    Option<&'css str>,
+);
 
 /// The stops of `@keyframes name` in order.
 fn stops<'css>(css: &'css str, name: &str) -> Vec<Stop<'css>> {
@@ -53,53 +63,59 @@ fn stops<'css>(css: &'css str, name: &str) -> Vec<Stop<'css>> {
                 .find_map(|line| line.trim().strip_prefix(property))
                 .map(|v| v.trim().trim_end_matches(';'))
         };
-        out.push((stop, set("translate:"), set("scale:")));
+        out.push((
+            stop,
+            set("translate:"),
+            set("scale:"),
+            set("animation-timing-function:"),
+        ));
         rest = after;
     }
     out
 }
 
 #[test]
-fn a_toast_rises_into_its_stamp_and_settles_in_one_motion() {
+fn a_toast_comes_in_large_and_lands_at_its_size_with_nothing_after() {
     assert_eq!(
         stops(TOAST, "toast-rise-in"),
         [
-            ("from", Some(BELOW_THE_EDGE), Some("1")),
-            ("55%", None, Some("1")),
-            ("70%", Some(PEAK), Some("1.04")),
-            ("to", Some(REST), Some("1")),
+            ("from", Some(BELOW_THE_EDGE), Some(STAMP_FROM), None),
+            ("to", Some(REST), Some("1"), None),
         ],
-        "no stop at rest between the rise and the stamp, and it grows only as it lands"
+        "one stretch from below and large to its spot at its size: no peak and no settle"
     );
     let toast = rule(TOAST, ".toast-container [role=\"alertdialog\"]");
     assert!(
-        toast.contains(
-            "animation: toast-rise-in calc(var(--enter-duration, 280ms) + 120ms) var(--ease-enter, ease-out) both;"
-        ),
-        "the rise's length plus the settle: {toast}"
+        toast.contains(&format!(
+            "animation: toast-rise-in var(--enter-duration, 280ms) {RISE_CURVE} both;"
+        )),
+        "the rise's length alone, on the one curve: {toast}"
     );
 }
 
 #[test]
-fn a_timed_toast_rises_into_its_stamp_and_settles_in_one_motion() {
-    for (name, grows, peak, settled, held) in [
-        ("toast-life-3000", "5%", "7%", "11%", "92%"),
-        ("toast-life-5000", "3%", "4%", "6.5%", "95%"),
+fn a_timed_toast_comes_in_large_and_lands_at_its_size_with_nothing_after() {
+    for (name, lands, held) in [
+        ("toast-life-3000", "7%", "92%"),
+        ("toast-life-5000", "4%", "95%"),
     ] {
         let got = stops(TOAST, name);
         assert_eq!(
-            got.get(..5),
+            got.get(..3),
             Some(
                 [
-                    ("0%", Some(BELOW_THE_EDGE), Some("1")),
-                    (grows, None, Some("1")),
-                    (peak, Some(PEAK), Some("1.04")),
-                    (settled, Some(REST), Some("1")),
-                    (held, Some(REST), None),
+                    (
+                        "0%",
+                        Some(BELOW_THE_EDGE),
+                        Some(STAMP_FROM),
+                        Some(RISE_CURVE)
+                    ),
+                    (lands, Some(REST), Some("1"), None),
+                    (held, Some(REST), None, None),
                 ]
                 .as_slice()
             ),
-            "{name}: {got:?}"
+            "{name}: the rise and shrink end together, and it holds still until it leaves: {got:?}"
         );
     }
 }
