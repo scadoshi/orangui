@@ -40,7 +40,7 @@ fn the_search_stays_in_view_as_the_themes_scroll() {
     let bar = rule(".theme-search-bar");
     assert!(bar.contains("position: sticky;"), "{bar}");
     assert!(
-        bar.contains("top: calc(-1 * var(--space-4));"),
+        bar.contains("top: calc(-1 * var(--panel-pad));"),
         "pinned at the sheet body's padding edge, past the content edge sticky uses: {bar}"
     );
     assert!(
