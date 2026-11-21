@@ -2,9 +2,9 @@
 //! radius with the panel padding inside, and every chip and button at the chip radius. A box that
 //! sits in a container's corner, nearer than the padding (a dock button, the toast's close), takes
 //! the container's radius less the border and its inset instead, so the two curves match. Clickable
-//! and read-only chips share the corner and differ by border, hover, press and fill. No rule sets a radius of its own, except the
-//! shapes that are no container, chip or button: dots, bars, handles, focus rings and round
-//! buttons.
+//! and read-only chips share the corner and differ by border, hover, press and fill. No rule sets
+//! a radius of its own, except the shapes that are no container, chip or button: dots, bars,
+//! handles, focus rings and round buttons.
 
 #![expect(
     clippy::string_slice,
