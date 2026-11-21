@@ -158,10 +158,6 @@
     font-size: 0.75rem;
 }
 
-/* A tag or stat chip that is a link or a button takes the control corner. */
-:where(a.tag, button.tag, a.stat-chip, button.stat-chip) {
-}
-
 .stat-chip {
     display: inline-block;
     max-width: 100%;
@@ -771,7 +767,7 @@ a.stat-chip {
     border: 1px solid var(--border-primary);
     border-radius: var(--panel-radius);
     min-width: 11rem;
-    padding: var(--panel-pad);
+    padding: var(--space-2) 0;
     /* One above the triggers (200). In the hamburger panel a menu drops over
        the stacked triggers below its own, which won the tie and covered it. */
     z-index: 201;

@@ -178,12 +178,6 @@ fn read_only_and_clickable_chips_share_the_chip_radius() {
             "{selector}"
         );
     }
-    assert!(
-        rules(COMPONENTS).iter().all(|(head, body)| head
-            != ":where(a.tag, button.tag, a.stat-chip, button.stat-chip)"
-            || value(body, "border-radius").is_none()),
-        "a linked chip keeps the chip's corner"
-    );
 }
 
 #[test]
@@ -220,5 +214,20 @@ fn the_dock_s_buttons_land_on_the_chip_radius() {
     assert_eq!(
         value(&button, "border-radius").as_deref(),
         Some("var(--chip-radius)")
+    );
+}
+
+#[test]
+fn a_menu_s_rows_run_edge_to_edge_and_its_corners_clip_their_hover() {
+    let menu = rule(COMPONENTS, ".nav-dropdown-content");
+    assert_eq!(
+        value(&menu, "padding").as_deref(),
+        Some("var(--space-2) 0"),
+        "a row's own padding is the menu's inset, so its hover fill meets the edges"
+    );
+    assert_eq!(
+        value(&menu, "overflow-y").as_deref(),
+        Some("auto"),
+        "the menu clips its rows to its rounded corners"
     );
 }
