@@ -114,7 +114,8 @@ pub fn Heatmap(
         div {
             class: "chart-scroll scroll-fade-x heat-scroll",
             onmounted: move |event| async move {
-                // The open-on-newest script settles a cut month a beat later.
+                // A scroll that fails is dropped: the open-on-newest script scrolls the grid to
+                // its newest week a beat later either way, and settles a cut month.
                 let _ = event
                     .data()
                     .scroll(PixelsVector2D::new(width, 0.0), ScrollBehavior::Instant)
