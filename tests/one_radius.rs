@@ -1,7 +1,8 @@
-//! One radius: every container (a panel, a sheet, a dialog, a toast) rounds at the panel radius
-//! with the panel padding inside, and every chip and button rounds at the panel radius minus that
-//! padding, so a chip in a container's corner nests in it. Clickable and read-only chips share the
-//! corner and differ by border, hover, press and fill. No rule sets a radius of its own, except the
+//! One radius: every container (a panel, a sheet, a dialog, a toast, the dock) rounds at the panel
+//! radius with the panel padding inside, and every chip and button at the chip radius. A box that
+//! sits in a container's corner, nearer than the padding (a dock button, the toast's close), takes
+//! the container's radius less the border and its inset instead, so the two curves match. Clickable
+//! and read-only chips share the corner and differ by border, hover, press and fill. No rule sets a radius of its own, except the
 //! shapes that are no container, chip or button: dots, bars, handles, focus rings and round
 //! buttons.
 
@@ -26,16 +27,26 @@ const SHEETS: [(&str, &str); 8] = [
 const COMPONENTS: &str = include_str!("../assets/components.css");
 const TOAST: &str = include_str!("../assets/toast.css");
 
-/// The radii a rule may set: the panel's, a chip's, a bottom sheet's top corners, the dock's
-/// (built back up from a chip's, so its buttons land on the chip radius), and the toast's close
-/// button, which sits a smaller inset in from the toast's edge and nests at that inset.
-const ALLOWED: [&str; 5] = [
+/// The radii a rule may set: the panel's, a chip's, a bottom sheet's top corners, and the dock's.
+/// A box in a container's corner may also take [`nested`], the container's radius less the border
+/// and its inset.
+const ALLOWED: [&str; 4] = [
     "var(--panel-radius)",
     "var(--chip-radius)",
     "var(--panel-radius) var(--panel-radius) 0 0",
     "var(--dock-radius)",
-    "max(0.15rem, calc(var(--panel-radius) - 1px - var(--space-2)))",
 ];
+
+/// Whether `radius` is the nested formula: a container's radius token less the 1px border and an
+/// inset token, floored so it never goes square.
+fn nested(radius: &str) -> bool {
+    radius
+        .strip_prefix("max(0.15rem, calc(var(--")
+        .and_then(|rest| rest.split_once(") - 1px - var(--"))
+        .is_some_and(|(outer, inset)| {
+            ["panel-radius", "dock-radius"].contains(&outer) && inset.ends_with(")))")
+        })
+}
 
 /// Rules whose shape is no container, chip or button, each with its own radius.
 const OUT_OF_SCOPE: [&str; 5] = [
@@ -119,16 +130,12 @@ fn rule(css: &str, selector: &str) -> String {
 #[test]
 fn the_panel_s_radius_and_padding_and_the_chip_s_radius_are_tokens() {
     let root = rule(COMPONENTS, ":root");
-    assert_eq!(value(&root, "--panel-radius").as_deref(), Some("1.5rem"));
+    assert_eq!(value(&root, "--panel-radius").as_deref(), Some("0.75rem"));
     assert_eq!(
         value(&root, "--panel-pad").as_deref(),
         Some("var(--space-4)")
     );
-    assert_eq!(
-        value(&root, "--chip-radius").as_deref(),
-        Some("calc(var(--panel-radius) - var(--panel-pad))"),
-        "a chip's corner nests in a panel's"
-    );
+    assert_eq!(value(&root, "--chip-radius").as_deref(), Some("0.375rem"));
 }
 
 #[test]
@@ -139,7 +146,10 @@ fn no_rule_sets_a_radius_of_its_own() {
             let Some(radius) = value(&body, "border-radius") else {
                 continue;
             };
-            if !ALLOWED.contains(&radius.as_str()) && !OUT_OF_SCOPE.contains(&selector.as_str()) {
+            if !ALLOWED.contains(&radius.as_str())
+                && !nested(&radius)
+                && !OUT_OF_SCOPE.contains(&selector.as_str())
+            {
                 own.push(format!("{file}: {selector} {{ border-radius: {radius} }}"));
             }
         }
@@ -203,17 +213,17 @@ fn containers_take_the_panel_radius_and_padding() {
 }
 
 #[test]
-fn the_dock_s_buttons_land_on_the_chip_radius() {
+fn the_dock_is_a_container_and_its_buttons_nest_in_its_corners() {
     let dock = rule(COMPONENTS, ":where(.action-dock)");
     assert_eq!(
         value(&dock, "--dock-radius").as_deref(),
-        Some("calc(var(--chip-radius) + 1px + var(--dock-inset))"),
-        "the dock's corner is a button's plus the border and the inset"
+        Some("var(--panel-radius)")
     );
     let button = rule(COMPONENTS, ":where(.action-dock-btn)");
     assert_eq!(
         value(&button, "border-radius").as_deref(),
-        Some("var(--chip-radius)")
+        Some("max(0.15rem, calc(var(--dock-radius) - 1px - var(--dock-inset)))"),
+        "a button sits the inset in from the dock's corner"
     );
 }
 
