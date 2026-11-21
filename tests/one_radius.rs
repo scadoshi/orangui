@@ -213,6 +213,15 @@ fn containers_take_the_panel_radius_and_padding() {
 }
 
 #[test]
+fn a_stat_tile_inside_a_panel_takes_the_chip_radius() {
+    assert_eq!(
+        value(&rule(COMPONENTS, ".stats-strip .stat"), "border-radius").as_deref(),
+        Some("var(--chip-radius)"),
+        "a tile sits at the panel's padding, out of its corner"
+    );
+}
+
+#[test]
 fn the_dock_is_a_container_and_its_buttons_nest_in_its_corners() {
     let dock = rule(COMPONENTS, ":where(.action-dock)");
     assert_eq!(
