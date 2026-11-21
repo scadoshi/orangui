@@ -24,6 +24,7 @@
 //! [`NAV_GLIDE_JS`], [`SCROLL_FADE_JS`]) is for websites, with the gallery
 //! base in [`SITE_CSS`]. [`HeatGrid`] draws a year of days for any surface
 //! that shows one, and [`HeatReadout`] names its totals and a picked day.
+//! [`Heatmap`] puts them together into the one scroller every host shows.
 //!
 //! The theme model ([`ThemeConfig`], [`ALLOWED_THEMES`], [`RETIRED_THEMES`], [`THEME_GROUPS`], [`COLORBLIND_THEMES`],
 //! [`display_theme_name`]) lives here beside the palettes it names. A host that
@@ -65,6 +66,7 @@ mod grid_cells;
 mod heat_axis;
 mod heat_grid;
 mod heat_readout;
+mod heatmap;
 mod hint;
 mod icon_button;
 mod icon_text;
@@ -134,6 +136,7 @@ pub use heat_grid::{
     use_scroll_to_end,
 };
 pub use heat_readout::{HEAT_PICK_MS, HeatPick, HeatReadout, use_heat_pick};
+pub use heatmap::{HEAT_LEFT, HEAT_TOP, HEATMAP_PARTS, HeatGhost, Heatmap};
 pub use hint::{
     HintBullet, HintBullets, HintChip, HintDialog, HintKey, HintLine, InfoButton, ScreenHint,
     use_screen_hint, use_screen_hint_slot,
