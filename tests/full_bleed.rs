@@ -154,6 +154,20 @@ fn side_margins(body: &str) -> Vec<String> {
     out
 }
 
+/// Whether `side`, a side margin, pulls out by something other than a container's padding.
+fn off_padding(side: &str) -> bool {
+    (side.starts_with('-') || side.starts_with("calc(-1 *")) && !PADDING.contains(&side)
+}
+
+#[test]
+fn a_bare_negative_length_is_off_the_padding() {
+    assert!(off_padding("-1.5rem"));
+    assert!(off_padding("calc(-1 * var(--space-5))"));
+    assert!(!off_padding("calc(-1 * var(--panel-pad))"));
+    assert!(!off_padding("0"));
+    assert!(!off_padding("var(--space-4)"));
+}
+
 #[test]
 fn a_full_bleed_box_pulls_out_by_its_container_s_padding() {
     let mut off = Vec::new();
@@ -163,7 +177,7 @@ fn a_full_bleed_box_pulls_out_by_its_container_s_padding() {
                 continue;
             }
             for side in side_margins(&body) {
-                if side.starts_with("calc(-1 *") && !PADDING.contains(&side.as_str()) {
+                if off_padding(&side) {
                     off.push(format!("{file}: {selector} {{ margin: {side} }}"));
                 }
             }
