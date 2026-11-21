@@ -25,6 +25,8 @@ src/
 ├── chart_tip.rs         # ChartTip: the chip over a chart's point
 ├── heat_grid.rs         # HeatGrid: a year of days, a column per week
 ├── heat_readout.rs      # HeatReadout, use_heat_pick: the tags under a heatmap, a picked day's for a few seconds on touch
+├── heat_axis.rs         # HeatWeekdays, use_open_on_newest: the pinned weekday strip and the script that opens on the newest weeks
+├── heatmap.rs           # Heatmap, HeatGhost: the whole scroller every host shows, and its loading shape
 ├── grid_cells.rs        # GridCells: the backdrop as shaded squares that rain in
 ├── splash.rs            # Splash: the opening overlay, the backdrop raining in under the host's mark
 │
