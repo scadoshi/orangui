@@ -16,7 +16,7 @@ fn the_kit_owns_the_no_results_chip() {
         "padding: var(--space-1) var(--space-2);",
         "background-color: var(--bg-primary);",
         "border: 1px solid var(--border-muted);",
-        "border-radius: var(--radius-readonly);",
+        "border-radius: var(--chip-radius);",
         "font-size: 0.75rem;",
         "color: var(--ink-text-muted, var(--text-muted));",
         "box-shadow: var(--shadow-sm);",

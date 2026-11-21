@@ -1,7 +1,7 @@
 //! Nested corners: a rounded box that sits near another's corner takes the outer radius minus
 //! the border and the inset between them (never under 0.15rem), so the gap between the two
-//! curves stays even around the corner. The outer radius and the inset are tokens, so a host
-//! that changes one moves the inner corner with it.
+//! curves stays even around the corner. The dock works it the other way: its buttons are
+//! buttons, at the chip radius, and its corner is theirs plus the border and the inset.
 
 const COMPONENTS: &str = include_str!("../assets/components.css");
 
@@ -20,8 +20,8 @@ fn rule(sheet: &'static str, selector: &str) -> &'static str {
 fn dock_buttons_follow_the_dock_corner() {
     let dock = rule(COMPONENTS, ":where(.action-dock)");
     assert!(
-        dock.contains("--dock-radius: var(--corner-radius);"),
-        "the corner floats share one radius: {dock:?}"
+        dock.contains("--dock-radius: calc(var(--chip-radius) + 1px + var(--dock-inset));"),
+        "the dock's corner is a button's plus the border and the inset: {dock:?}"
     );
     assert!(dock.contains("--dock-inset: var(--space-1);"), "{dock:?}");
     assert!(
@@ -34,9 +34,7 @@ fn dock_buttons_follow_the_dock_corner() {
         "{button:?}"
     );
     assert!(
-        button.contains(
-            "border-radius: max(0.15rem, calc(var(--dock-radius) - 1px - var(--dock-inset)));"
-        ),
-        "{button:?}"
+        button.contains("border-radius: var(--chip-radius);"),
+        "a dock button is a button: {button:?}"
     );
 }

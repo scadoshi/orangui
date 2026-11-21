@@ -1,8 +1,8 @@
 //! Toasts and banners sit in the bottom-left corner as the action dock's [+] sits in the
 //! bottom-right one: as far from the screen's side edge as from its bottom edge, measured from
 //! the physical edges, on a phone with a home indicator and on the web alike. One gap,
-//! `--corner-gap`, places all three, so they sit on the same 45 degree line from their corners,
-//! and one radius, `--corner-radius`, rounds the toast and the dock alike.
+//! `--corner-gap`, places all three, so they sit on the same 45 degree line from their corners.
+//! A toast is a container, so it rounds at the panel radius with the panel padding inside.
 //!
 //! A toast rises in from below the bottom edge and drops back below it as it leaves, moving by
 //! translate only. Stacked, the older toasts line up behind the newest, which stays in front.
@@ -145,24 +145,17 @@ fn the_toast_s_side_and_bottom_gaps_match_with_and_without_a_home_indicator() {
 }
 
 #[test]
-fn the_toast_and_the_dock_share_a_corner_and_the_close_button_nests_inside_it() {
-    assert_eq!(
-        value(rule(COMPONENTS, ":root"), "--corner-radius"),
-        Some("0.9rem")
-    );
-    assert_eq!(
-        value(rule(COMPONENTS, ":where(.action-dock)"), "--dock-radius"),
-        Some("var(--corner-radius)")
-    );
+fn the_toast_takes_the_panel_corner_and_the_close_button_nests_inside_it() {
     let toast = rule(TOAST, ".toast-container [role=\"alertdialog\"]");
-    assert_eq!(value(toast, "border-radius"), Some("var(--corner-radius)"));
+    assert_eq!(value(toast, "border-radius"), Some("var(--panel-radius)"));
+    assert_eq!(value(toast, "padding"), Some("var(--panel-pad)"));
     // The × sits var(--space-2) in from the toast's edge: its padding less its negative margin.
     assert_eq!(
         value(
             rule(TOAST, ".toast-container [role=\"alertdialog\"] button"),
             "border-radius"
         ),
-        Some("max(0.15rem, calc(var(--corner-radius) - 1px - var(--space-2)))")
+        Some("max(0.15rem, calc(var(--panel-radius) - 1px - var(--space-2)))")
     );
 }
 

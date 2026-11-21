@@ -55,7 +55,7 @@ fn the_search_is_a_theme_rows_size() {
     for want in [
         "padding: var(--space-2) var(--space-4);",
         "font-size: 0.85rem;",
-        "border-radius: 0.4rem;",
+        "border-radius: var(--chip-radius);",
     ] {
         assert!(field.contains(want), "{want} as a row has it: {field}");
     }
