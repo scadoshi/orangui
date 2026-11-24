@@ -55,9 +55,10 @@ pub fn ToastStack(
     screen: Option<ReadSignal<String>>,
     children: Element,
 ) -> Element {
-    // A leaving toast drops below the bottom edge.
+    // A leaving toast fades from where it sat, and a width change eases.
     use_hook(|| {
         document::eval(crate::TOAST_LEAVE_JS);
+        document::eval(crate::TOAST_WIDTH_JS);
     });
     use_context_provider(|| LiveToasts(Signal::new(HashMap::new())));
     use_context_provider(|| ToastScreen(screen));

@@ -267,3 +267,28 @@ fn stacked_toasts_line_up_behind_the_newest_which_stays_in_front() {
         "a leaving newest fades in front of the rest, an older one behind them"
     );
 }
+
+#[test]
+fn a_width_change_eases_and_older_toasts_keep_to_one_line() {
+    let js = orangui::TOAST_WIDTH_JS;
+    assert!(js.contains("toast.animate([{ width:"), "{js}");
+    assert!(
+        js.contains("prefers-reduced-motion: reduce"),
+        "it jumps under reduced motion: {js}"
+    );
+    assert!(
+        js.contains("offsetWidth"),
+        "it reads layout widths, so the arrival's scale is no change: {js}"
+    );
+    assert!(
+        TOAST_STACK.contains("document::eval(crate::TOAST_WIDTH_JS)"),
+        "ToastStack installs it"
+    );
+    let older = TOAST
+        .split(".toast-container:not(.expanded) li:not(:first-child) [id$=\"-label\"],")
+        .nth(1)
+        .expect("older toasts' label rule");
+    let rule = older.split('}').next().expect("rule ends");
+    assert!(rule.contains("white-space: nowrap"), "{rule}");
+    assert!(rule.contains("text-overflow: ellipsis"), "{rule}");
+}

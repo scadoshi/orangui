@@ -270,3 +270,8 @@ pub const TOAST_CSS: &str = include_str!("../assets/toast.css");
 /// [`ToastStack`] installs it once a page.
 #[cfg(feature = "toast")]
 pub const TOAST_LEAVE_JS: &str = include_str!("../assets/toast-leave.js");
+/// Eases each toast to the width it takes when the stack changes, a toast arriving or leaving or
+/// the stack opening or closing, rather than letting it jump there. [`ToastStack`] installs it
+/// once a page.
+#[cfg(feature = "toast")]
+pub const TOAST_WIDTH_JS: &str = include_str!("../assets/toast-width.js");
